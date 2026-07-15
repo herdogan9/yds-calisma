@@ -935,6 +935,7 @@
     const STORAGE_WORD_SEED_VERSION = "yds-word-seed-version-v1";
     const STORAGE_REMOVE_BUILTIN_SEEDS = "yds-remove-builtin-seeds-v1";
     const STORAGE_DAILY_HARD_WORDS = "yds-daily-hard-words-v1";
+    const STORAGE_SUPABASE_CONFIG = "yds-supabase-config-v1";
     const VOCABULARY_SEED_VERSION = baseBank.vocabularySeedVersion || "2026-07-13-vocabulary";
     const vocabularySeed = baseBank.vocabularySeed || [];
 
@@ -1785,12 +1786,140 @@
       renderSettingsPage("Yedek başarıyla geri yüklendi.");
     }
 
+    function normalizeSupabaseUrl(value) {
+      return String(value || "").trim().replace(/\/+$/, "");
+    }
+
+    function loadSupabaseConfig() {
+      const config = loadJson(STORAGE_SUPABASE_CONFIG, {});
+      return {
+        url: normalizeSupabaseUrl(config.url),
+        anonKey: String(config.anonKey || "").trim(),
+        syncId: String(config.syncId || "").trim(),
+      };
+    }
+
+    function saveSupabaseConfig(config) {
+      const normalized = {
+        url: normalizeSupabaseUrl(config.url),
+        anonKey: String(config.anonKey || "").trim(),
+        syncId: String(config.syncId || "").trim(),
+      };
+      saveJson(STORAGE_SUPABASE_CONFIG, normalized);
+      return normalized;
+    }
+
+    function currentSupabaseFormConfig() {
+      return saveSupabaseConfig({
+        url: document.getElementById("supabaseUrlInput")?.value || "",
+        anonKey: document.getElementById("supabaseKeyInput")?.value || "",
+        syncId: document.getElementById("supabaseSyncIdInput")?.value || "",
+      });
+    }
+
+    function supabaseStatus(message, tone = "info") {
+      const status = document.getElementById("supabaseStatus");
+      if (!status) return;
+      const toneClass = tone === "error"
+        ? "border-red-200 bg-red-50 text-red-700"
+        : tone === "success"
+          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+          : "border-slate-200 bg-slate-50 text-slate-600";
+      status.className = "mt-4 rounded-xl border p-3 text-sm font-semibold " + toneClass;
+      status.textContent = message;
+    }
+
+    function validateSupabaseConfig(config) {
+      if (!config.url || !config.anonKey || !config.syncId) {
+        throw new Error("Supabase URL, anon public key ve eşitleme kodu birlikte doldurulmalı.");
+      }
+      if (!/^https:\/\/.+\.supabase\.co$/i.test(config.url)) {
+        throw new Error("Supabase URL şu biçimde olmalı: https://proje-ref.supabase.co");
+      }
+      if (config.syncId.length < 8) {
+        throw new Error("Eşitleme kodu en az 8 karakter olmalı. Bunu küçük bir parola gibi düşün.");
+      }
+      return config;
+    }
+
+    function supabaseHeaders(config, extra = {}) {
+      return {
+        apikey: config.anonKey,
+        Authorization: "Bearer " + config.anonKey,
+        "Content-Type": "application/json",
+        ...extra,
+      };
+    }
+
+    async function testSupabaseConnection() {
+      try {
+        const config = validateSupabaseConfig(currentSupabaseFormConfig());
+        supabaseStatus("Bağlantı test ediliyor...");
+        const response = await fetch(config.url + "/rest/v1/yds_cloud_backups?select=sync_id&limit=1", {
+          headers: supabaseHeaders(config),
+        });
+        if (!response.ok) throw new Error(await response.text() || "Supabase bağlantısı başarısız.");
+        supabaseStatus("Bağlantı başarılı. Artık buluta yedek alabilirsin.", "success");
+      } catch (error) {
+        supabaseStatus(error.message || "Bağlantı test edilemedi.", "error");
+      }
+    }
+
+    async function uploadSupabaseBackup() {
+      try {
+        const config = validateSupabaseConfig(currentSupabaseFormConfig());
+        supabaseStatus("Veriler buluta yedekleniyor...");
+        const response = await fetch(config.url + "/rest/v1/yds_cloud_backups?on_conflict=sync_id", {
+          method: "POST",
+          headers: supabaseHeaders(config, { Prefer: "resolution=merge-duplicates,return=representation" }),
+          body: JSON.stringify([{
+            sync_id: config.syncId,
+            payload: backupPayload(),
+            updated_at: new Date().toISOString(),
+          }]),
+        });
+        if (!response.ok) throw new Error(await response.text() || "Buluta yedek alınamadı.");
+        supabaseStatus("Bulut yedeği güncellendi.", "success");
+      } catch (error) {
+        supabaseStatus(error.message || "Buluta yedek alınamadı.", "error");
+      }
+    }
+
+    async function restoreSupabaseBackup() {
+      try {
+        const config = validateSupabaseConfig(currentSupabaseFormConfig());
+        supabaseStatus("Bulut yedeği okunuyor...");
+        const response = await fetch(config.url + "/rest/v1/yds_cloud_backups?sync_id=eq." + encodeURIComponent(config.syncId) + "&select=payload,updated_at&limit=1", {
+          headers: supabaseHeaders(config),
+        });
+        if (!response.ok) throw new Error(await response.text() || "Bulut yedeği okunamadı.");
+        const rows = await response.json();
+        if (!rows.length || !rows[0].payload) throw new Error("Bu eşitleme koduyla kayıtlı bulut yedeği bulunamadı.");
+        restoreBackupPayload(rows[0].payload);
+      } catch (error) {
+        supabaseStatus(error.message || "Bulut yedeği geri yüklenemedi.", "error");
+      }
+    }
+
     function renderSettingsPage(message = "") {
       pageTitle.textContent = "Ayarlar";
       renderMenu();
       renderStats();
       const totalQuestions = (uploadedBank.questions || []).length;
       const totalSources = (uploadedBank.documents || []).length;
+      const supabaseConfig = loadSupabaseConfig();
+      const supabaseSql = "create table if not exists public.yds_cloud_backups (\n" +
+        "  sync_id text primary key,\n" +
+        "  payload jsonb not null,\n" +
+        "  updated_at timestamptz not null default now()\n" +
+        ");\n\n" +
+        "alter table public.yds_cloud_backups enable row level security;\n\n" +
+        "create policy \"Anon okuyabilir\" on public.yds_cloud_backups\n" +
+        "for select to anon using (true);\n\n" +
+        "create policy \"Anon ekleyebilir\" on public.yds_cloud_backups\n" +
+        "for insert to anon with check (true);\n\n" +
+        "create policy \"Anon guncelleyebilir\" on public.yds_cloud_backups\n" +
+        "for update to anon using (true) with check (true);";
       appArea.innerHTML =
         '<div class="grid gap-4">' +
           '<section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
@@ -1816,6 +1945,34 @@
             '</div>' +
             '<p id="backupStatus" class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold text-slate-600">' + escapeHtml(message || "Henüz işlem yapılmadı.") + '</p>' +
           '</section>' +
+          '<section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
+            '<div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">' +
+              '<div>' +
+                '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Bulut Eşitleme</p>' +
+                '<h3 class="mt-1 text-xl font-black text-slate-950">Supabase ile her yerden kullan</h3>' +
+                '<p class="mt-1 max-w-3xl text-sm font-semibold text-slate-500">Vercel uygulamayı internete açar; Supabase ise PDF kaynaklarını, kelime defterini, makaleleri ve yanlış soru havuzunu cihazlar arasında yedekler. Service role key kullanma; yalnızca anon public key gir.</p>' +
+              '</div>' +
+              '<div class="flex flex-wrap gap-2">' +
+                '<button id="saveSupabaseBtn" class="rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-black text-blue-700 hover:bg-blue-100">Bağlantıyı Kaydet</button>' +
+                '<button id="testSupabaseBtn" class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 hover:bg-slate-50">Test Et</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="mt-4 grid gap-3 lg:grid-cols-3">' +
+              '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Supabase URL</span><input id="supabaseUrlInput" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white" placeholder="https://proje-ref.supabase.co" value="' + escapeHtml(supabaseConfig.url) + '" /></label>' +
+              '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Anon public key</span><input id="supabaseKeyInput" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white" placeholder="eyJhbGci..." value="' + escapeHtml(supabaseConfig.anonKey) + '" /></label>' +
+              '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Eşitleme kodu</span><input id="supabaseSyncIdInput" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white" placeholder="hakan-yds-gizli-kod" value="' + escapeHtml(supabaseConfig.syncId) + '" /></label>' +
+            '</div>' +
+            '<div class="mt-4 flex flex-wrap gap-2">' +
+              '<button id="uploadSupabaseBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white shadow-sm hover:bg-blue-500">Buluta Yedekle</button>' +
+              '<button id="restoreSupabaseBtn" class="rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-black text-blue-700 hover:bg-blue-100">Buluttan Geri Yükle</button>' +
+            '</div>' +
+            '<details class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold text-slate-600">' +
+              '<summary class="cursor-pointer font-black text-slate-800">Supabase tablo kodunu göster</summary>' +
+              '<p class="mt-2">Supabase SQL Editor içinde bir kere çalıştır:</p>' +
+              '<pre class="mt-2 max-h-72 overflow-auto rounded-xl bg-slate-950 p-3 text-xs font-semibold leading-5 text-slate-100">' + escapeHtml(supabaseSql) + '</pre>' +
+            '</details>' +
+            '<p id="supabaseStatus" class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold text-slate-600">Supabase bağlantısı henüz kurulmadı.</p>' +
+          '</section>' +
         '</div>';
       document.getElementById("exportBackupBtn").addEventListener("click", downloadBackupJson);
       document.getElementById("importBackupInput").addEventListener("change", event => {
@@ -1832,6 +1989,17 @@
         };
         reader.readAsText(file);
       });
+      document.getElementById("saveSupabaseBtn").addEventListener("click", () => {
+        try {
+          validateSupabaseConfig(currentSupabaseFormConfig());
+          supabaseStatus("Supabase bağlantı bilgileri kaydedildi.", "success");
+        } catch (error) {
+          supabaseStatus(error.message || "Bağlantı bilgileri kaydedilemedi.", "error");
+        }
+      });
+      document.getElementById("testSupabaseBtn").addEventListener("click", testSupabaseConnection);
+      document.getElementById("uploadSupabaseBtn").addEventListener("click", uploadSupabaseBackup);
+      document.getElementById("restoreSupabaseBtn").addEventListener("click", restoreSupabaseBackup);
     }
 
     function startWrongQuestionReview() {
