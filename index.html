@@ -2640,7 +2640,7 @@
                   '<span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-white">TÜRKÇE</span>' +
                   '<p class="mt-1 text-sm font-black text-blue-950">' + escapeHtml(wordTurkish(item)) + '</p>' +
                 '</div>' +
-                (wordMeaningNote(item) ? '<div class="rounded-xl border border-slate-200 bg-white p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-white">SYNONYM</span><p class="mt-2 text-sm font-semibold text-slate-800">' + escapeHtml(wordMeaningNote(item)) + '</p></div>' : '') +
+                (wordMeaningNote(item) ? '<div class="rounded-xl border border-slate-200 bg-white p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-white">YAKIN ANLAM</span><p class="mt-2 text-sm font-semibold text-slate-800">' + escapeHtml(wordMeaningNote(item)) + '</p></div>' : '') +
                 (wordExample(item) ? '<div class="rounded-xl border border-slate-200 bg-white p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-white">ÖRNEK CÜMLE</span><p class="mt-2 text-sm font-semibold leading-relaxed text-slate-700">' + escapeHtml(wordExample(item)) + '</p></div>' : '') +
               '</div>' +
             '</article>';
@@ -3002,7 +3002,7 @@
             (wordCardRevealed
               ? '<div class="grid gap-3 md:grid-cols-2">' +
                   '<div class="rounded-xl border border-blue-200 bg-blue-50 p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">TÜRKÇE</span><p class="mt-2 text-base font-bold text-blue-950">' + escapeHtml(wordTurkish(item)) + '</p></div>' +
-                  '<div class="rounded-xl border border-blue-200 bg-blue-50 p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">SYNONYM</span><p class="mt-2 text-base font-bold text-blue-950">' + escapeHtml(wordMeaningNote(item) || "Synonym eklenmedi.") + '</p></div>' +
+                  '<div class="rounded-xl border border-blue-200 bg-blue-50 p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">YAKIN ANLAM</span><p class="mt-2 text-base font-bold text-blue-950">' + escapeHtml(wordMeaningNote(item) || "Yakın anlam eklenmedi.") + '</p></div>' +
                   '<div class="rounded-xl border border-slate-200 bg-white p-3 md:col-span-2"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">ÖRNEK CÜMLE</span><p class="mt-2 text-sm font-semibold leading-relaxed text-slate-700">' + escapeHtml(example || "Bu kelime için örnek cümle henüz eklenmedi.") + '</p></div>' +
                 '</div>'
               : '<div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm font-semibold leading-relaxed text-slate-500">Space tuşu veya Anlamı Göster ile kartı çevir. Değerlendirme seçenekleri cevap açıldıktan sonra gelir.</div>') +
