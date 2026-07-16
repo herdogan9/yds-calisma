@@ -1068,6 +1068,7 @@
     let articleSearchQuery = "";
     let articleSearchRenderTimer = null;
     let articleStatusFilter = "all";
+    let articleTopicFilter = "all";
     let articleSortMode = "recent";
     let articleFormMode = "external";
     let articleSavedPanelOpen = false;
@@ -1312,7 +1313,7 @@
         multipleChoice: 50,
         pastExamReading: 1,
         externalReading: 1,
-        difficultWords: 3,
+        difficultWords: 25,
         streakMode: "all",
       };
     }
@@ -1329,7 +1330,7 @@
         multipleChoice: clamp(value.multipleChoice, 10, 200, base.multipleChoice),
         pastExamReading: clamp(value.pastExamReading, 0, 5, base.pastExamReading),
         externalReading: clamp(value.externalReading, 0, 5, base.externalReading),
-        difficultWords: clamp(value.difficultWords, 1, 20, base.difficultWords),
+        difficultWords: clamp(value.difficultWords, 1, 200, base.difficultWords),
         streakMode: value.streakMode === "80" ? "80" : "all",
       };
     }
@@ -1339,8 +1340,8 @@
         flashcards: { icon: "K", title: "Kelime Kartı Çalışması", action: "Devam Et", view: "flashcards" },
         multipleChoice: { icon: "T", title: "Çoktan Seçmeli Kelime Testi", action: "Devam Et", view: "quiz" },
         pastExamReading: { icon: "Y", title: "Çıkmış YDS Okuma Parçası", action: "Parça Seç", view: "yds-reading" },
-        externalReading: { icon: "M", title: "Serbest Okuma Metni", action: "Metin Seç", view: "external-reading" },
-        difficultWords: { icon: "Z", title: "Zor Kelime Tekrarı", action: "Devam Et", view: "difficult" },
+        externalReading: { icon: "M", title: "Kendi Metnim", action: "Metin Seç", view: "external-reading" },
+        difficultWords: { icon: "S", title: "Soru Çözümü", action: "Devam Et", view: "question-solving" },
       };
     }
 
@@ -1511,6 +1512,10 @@
     }
 
     dailyGoals = normalizeDailyGoals(loadJson(STORAGE_DAILY_GOALS, defaultDailyGoals()));
+    if (!localStorage.getItem("yds-question-goal-migrated-v1") && Number(dailyGoals.difficultWords || 0) <= 3) {
+      dailyGoals.difficultWords = 25;
+      localStorage.setItem("yds-question-goal-migrated-v1", "1");
+    }
     dailyHistory = Array.isArray(loadJson(STORAGE_DAILY_HISTORY, [])) ? loadJson(STORAGE_DAILY_HISTORY, []) : [];
     dailyProgress = normalizeDailyProgress(loadJson(STORAGE_DAILY_PROGRESS, null));
     lastDailyDateCheck = todayKey();
@@ -1594,7 +1599,7 @@
         { id: "yokdil", title: "Çıkmış YÖKDİL Soruları", icon: "YD", count: "Hazırlanıyor", items: [] },
         { id: "exams", title: "Denemeler", icon: "D", count: uploadedDocuments.length + " PDF", items: uploadedDocuments },
         { id: "wrong", title: "Yanlış Sorular", icon: "!", count: wrongQuestions().length + " soru", items: [] },
-        { id: "articles", title: "Makaleler", icon: "M", count: articles.length + " içerik", items: articles },
+        { id: "articles", title: "Okuma Merkezi", icon: "O", count: articles.length + " içerik", items: articles },
         { id: "words", title: "Kelime Defteri", icon: "K", count: wordbook.length + " kelime", items: [] },
       ];
 
@@ -1614,7 +1619,7 @@
               countHtml +
             '</button>' +
           '</div>' +
-          (expanded && module.id !== "words" ? '<div class="mx-2 mb-2 space-y-1 rounded-xl border border-blue-100 bg-blue-50/70 p-2" data-module-items="' + module.id + '"></div>' : "");
+          (expanded && module.id !== "words" && module.id !== "articles" ? '<div class="mx-2 mb-2 space-y-1 rounded-xl border border-blue-100 bg-blue-50/70 p-2" data-module-items="' + module.id + '"></div>' : "");
         categoryMenu.appendChild(wrapper);
         const itemsContainer = wrapper.querySelector("[data-module-items]");
         if (itemsContainer) renderModuleItems(itemsContainer, module);
@@ -1740,16 +1745,8 @@
 
     function dailyWordItems() {
       const date = todayKey();
-      const dailyLimit = Math.max(1, Number(dailyGoals?.difficultWords || 3));
+      const dailyLimit = 3;
       const hardWords = wordbook.filter(isHardDailyWord);
-      if (dailyProgress?.difficultWords) {
-        const nextTarget = Math.min(dailyLimit, hardWords.length || dailyLimit);
-        if (dailyProgress.difficultWords.target !== nextTarget) {
-          dailyProgress.difficultWords.target = nextTarget;
-          dailyProgress.difficultWords.completed = taskProgressCount(dailyProgress.difficultWords) >= nextTarget;
-          saveDailyProgress(false);
-        }
-      }
       const hardById = new Map(hardWords.map(item => [item.id, item]));
       const stored = loadJson(STORAGE_DAILY_HARD_WORDS, null);
       if (stored?.date === date) {
@@ -1784,13 +1781,11 @@
 
     function renderDailyWordPanel() {
       const words = dailyWordItems();
-      const completed = taskProgressCount(ensureDailyProgress().difficultWords);
-      const target = Number(dailyProgress.difficultWords.target || words.length || dailyGoals.difficultWords);
       if (!words.length) {
         return '<section class="mb-4 rounded-2xl border border-dashed border-blue-200 bg-blue-50/60 p-4">' +
           '<div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">' +
             '<div>' +
-              '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Bugünün Zor Kelimeleri</p>' +
+              '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Günün Kelimeleri</p>' +
               '<h4 class="mt-1 text-xl font-black text-slate-950">Bugün tekrar bekleyen zor kelime yok.</h4>' +
               '<p class="mt-1 text-sm font-semibold text-slate-500">Zor olarak işaretlediğin kelimeler burada günlük tekrar listesine alınacak.</p>' +
             '</div>' +
@@ -1801,12 +1796,11 @@
       return '<section class="mb-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
         '<div class="mb-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">' +
           '<div>' +
-            '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Bugünün Zor Kelimeleri</p>' +
+            '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Günün Kelimeleri</p>' +
             '<h4 class="mt-1 text-xl font-black text-slate-950">Bugün tekrar edeceğin ' + words.length + ' kelime</h4>' +
-            '<p class="mt-1 text-sm font-semibold text-slate-500">Daha önce zor olarak işaretlediğin kelimelerden seçildi. ' + Math.min(completed, target) + ' / ' + target + ' tamamlandı.</p>' +
+            '<p class="mt-1 text-sm font-semibold text-slate-500">Daha önce zor olarak işaretlediğin kelimelerden seçildi.</p>' +
           '</div>' +
           '<div class="flex flex-wrap items-center gap-2">' +
-            '<button id="dailyWordStudyBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white shadow-sm hover:bg-blue-500">' + words.length + ' Kelimeyi Çalış</button>' +
             '<button id="dailyWordListBtn" class="rounded-xl px-3 py-2 text-sm font-black text-slate-600 hover:bg-slate-100">Kelime Defteri</button>' +
           '</div>' +
         '</div>' +
@@ -1830,12 +1824,8 @@
 
     function bindDailyWordPanel() {
       const addButton = document.getElementById("dailyWordAddBtn");
-      const studyButton = document.getElementById("dailyWordStudyBtn");
       const listButton = document.getElementById("dailyWordListBtn");
       if (addButton) addButton.addEventListener("click", openBlankWordModal);
-      if (studyButton) studyButton.addEventListener("click", () => {
-        startDailyWordStudy();
-      });
       if (listButton) listButton.addEventListener("click", () => setView("words"));
     }
 
@@ -1861,39 +1851,49 @@
     }
 
     function renderDailyOverviewPanel() {
-      ensureDailyProgress();
-      const summary = dailyTaskSummary();
-      const streak = calculateStreak();
-      return '<section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
-        '<div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">' +
-          '<div>' +
-            '<p class="text-xs font-black uppercase tracking-wide text-blue-500">' + escapeHtml(formatTurkishDate()) + '</p>' +
-            '<h3 class="mt-1 text-xl font-black text-slate-950">Bugünkü Görevler</h3>' +
-            '<p class="mt-1 text-sm font-semibold text-slate-500">Günlük ilerleme: %' + summary.percent + ' · Tamamlanan: ' + summary.completed + ' / ' + summary.total + ' · Seri: ' + streak + ' gün</p>' +
-          '</div>' +
-          '<div class="min-w-[220px] rounded-xl border border-slate-200 bg-slate-50 p-3">' +
-            '<div class="h-2 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full bg-blue-600" style="width:' + summary.percent + '%"></div></div>' +
-            '<p class="mt-2 text-right text-xs font-black text-slate-500">%' + summary.percent + '</p>' +
-          '</div>' +
-        '</div>' +
-      '</section>';
+      return "";
+    }
+
+    function dailyTaskActionLabel(key, task, count) {
+      if (task?.completed || count >= Number(task?.target || 0)) return "Tamamlandı ✓";
+      if (key === "pastExamReading") return count > 0 ? "Devam Et" : "Parça Seç";
+      if (key === "externalReading") return count > 0 ? "Devam Et" : "Metin Seç";
+      return count > 0 ? "Devam Et" : "Başla";
+    }
+
+    function startQuestionSolvingTask() {
+      const current = activeDocument();
+      const currentHasQuestions = current && questionBank.some(item => item.documentId === current.id);
+      const nextDoc = currentHasQuestions ? current : documents.find(doc => questionBank.some(item => item.documentId === doc.id));
+      if (nextDoc) {
+        selectDocument(nextDoc.id);
+        return;
+      }
+      setView("yds");
     }
 
     function renderDailyTasksPanel() {
       ensureDailyProgress();
       const labels = dailyTaskLabels();
+      const summary = dailyTaskSummary();
+      const streak = calculateStreak();
       return '<section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
-        '<div class="mb-3 flex items-center justify-between gap-3">' +
-          '<div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Plan</p><h3 class="text-lg font-black text-slate-950">Bugünkü çalışma görevleri</h3></div>' +
+        '<div class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">' +
+          '<div>' +
+            '<p class="text-xs font-black uppercase tracking-wide text-blue-500">' + escapeHtml(formatTurkishDate()) + '</p>' +
+            '<h3 class="mt-1 text-xl font-black text-slate-950">Bugünkü Görevler</h3>' +
+            '<p class="mt-1 text-sm font-semibold text-slate-500">Günlük ilerleme: %' + summary.percent + ' · Tamamlanan: ' + summary.completed + ' / ' + summary.total + ' · Seri: ' + streak + ' gün</p>' +
+          '</div>' +
           '<button id="dailyGoalSettingsBtn" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-600 hover:bg-slate-50">Hedefleri Düzenle</button>' +
         '</div>' +
+        '<div class="mb-4 h-2 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full bg-blue-600" style="width:' + summary.percent + '%"></div></div>' +
         '<div class="grid gap-3 lg:grid-cols-2">' + Object.entries(labels).map(([key, meta]) => {
           const task = dailyProgress[key];
           if (!task || Number(task.target || 0) <= 0) return "";
           const count = Math.min(taskProgressCount(task), task.target);
           const percent = task.target ? Math.min(100, Math.round((count / task.target) * 100)) : 100;
           const completed = task.completed || count >= task.target;
-          return '<article class="daily-task-card rounded-xl border p-3 ' + (completed ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-slate-50') + '">' +
+          return '<article class="daily-task-card rounded-xl border p-3 ' + (key === "difficultWords" ? 'lg:col-span-2 ' : '') + (completed ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-slate-50') + '">' +
             '<div class="flex items-center gap-3">' +
               '<span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ' + (completed ? 'border-emerald-200 bg-white text-emerald-700' : 'border-blue-100 bg-white text-blue-700') + ' text-sm font-black">' + meta.icon + '</span>' +
               '<div class="min-w-0 flex-1">' +
@@ -1903,7 +1903,7 @@
                 '</div>' +
                 '<div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full ' + (completed ? 'bg-emerald-600' : 'bg-blue-600') + '" style="width:' + percent + '%"></div></div>' +
               '</div>' +
-              '<button class="daily-task-start rounded-xl px-3 py-2 text-xs font-black ' + (completed ? 'border border-emerald-200 bg-white text-emerald-700' : 'bg-blue-600 text-white hover:bg-blue-500') + '" data-task="' + key + '">' + (completed ? 'Tamamlandı' : meta.action) + '</button>' +
+              '<button class="daily-task-start rounded-xl px-3 py-2 text-xs font-black ' + (completed ? 'border border-emerald-200 bg-white text-emerald-700' : 'bg-blue-600 text-white hover:bg-blue-500') + '" data-task="' + key + '">' + dailyTaskActionLabel(key, task, count) + '</button>' +
             '</div>' +
           '</article>';
         }).join("") + '</div>' +
@@ -1916,8 +1916,8 @@
       cutoff.setDate(cutoff.getDate() - 6);
       const recent = rows.filter(item => new Date(item.date + "T12:00:00") >= cutoff);
       return {
-        words: recent.reduce((sum, item) => sum + taskProgressCount(item.flashcards || {}) + taskProgressCount(item.difficultWords || {}), 0),
-        questions: recent.reduce((sum, item) => sum + taskProgressCount(item.multipleChoice || {}), 0),
+        words: recent.reduce((sum, item) => sum + taskProgressCount(item.flashcards || {}), 0),
+        questions: recent.reduce((sum, item) => sum + taskProgressCount(item.multipleChoice || {}) + taskProgressCount(item.difficultWords || {}), 0),
         readings: recent.reduce((sum, item) => sum + taskProgressCount(item.pastExamReading || {}) + taskProgressCount(item.externalReading || {}), 0),
         activeDays: recent.filter(item => taskCompletionRatio(item) > 0).length,
       };
@@ -1925,6 +1925,16 @@
 
     function renderWeeklySummaryPanel() {
       const summary = weeklySummary();
+      const rowsByDate = new Map([dailyProgress, ...dailyHistory].filter(Boolean).map(item => [item.date, item]));
+      const dots = Array.from({ length: 7 }, (_, index) => {
+        const date = new Date(todayKey() + "T12:00:00");
+        date.setDate(date.getDate() - (6 - index));
+        const key = date.toISOString().slice(0, 10);
+        const row = rowsByDate.get(key);
+        const ratio = row ? taskCompletionRatio(row) : 0;
+        const color = ratio >= 100 ? "bg-emerald-500" : ratio > 0 ? "bg-blue-500" : "bg-slate-300";
+        return '<span class="h-2.5 w-2.5 rounded-full ' + color + '" title="' + escapeHtml(formatTurkishDate(key)) + ' · %' + ratio + '"></span>';
+      }).join("");
       const cards = [
         ["Çalışılan kelime", summary.words],
         ["Çözülen soru", summary.questions],
@@ -1932,8 +1942,11 @@
         ["Aktif gün", summary.activeDays],
       ];
       return '<section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
-        '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Bu Hafta</p>' +
-        '<div class="mt-3 grid gap-2 sm:grid-cols-4">' + cards.map(([label, value]) =>
+        '<div class="flex items-center justify-between gap-3">' +
+          '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Bu Hafta</p>' +
+          '<div class="flex items-center gap-1.5" aria-label="Son yedi gün">' + dots + '</div>' +
+        '</div>' +
+        '<div class="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-2">' + cards.map(([label, value]) =>
           '<div class="rounded-xl bg-slate-50 p-3"><p class="text-xs font-bold text-slate-500">' + label + '</p><p class="mt-1 text-xl font-black text-slate-950">' + value + '</p></div>'
         ).join("") + '</div>' +
       '</section>';
@@ -1945,6 +1958,8 @@
       document.querySelectorAll(".daily-task-start").forEach(button => {
         button.addEventListener("click", () => {
           const task = button.dataset.task;
+          const currentTask = dailyProgress?.[task];
+          if (currentTask?.completed || taskProgressCount(currentTask || {}) >= Number(currentTask?.target || 0)) return;
           if (task === "flashcards") {
             wordSessionSize = String(dailyGoals.flashcards);
             localStorage.setItem("yds-word-session-size-v1", wordSessionSize);
@@ -1967,7 +1982,7 @@
             localStorage.setItem("yds-article-library-tab-v1", articleLibraryTab);
             setView("articles");
           }
-          if (task === "difficultWords") startDailyWordStudy();
+          if (task === "difficultWords") startQuestionSolvingTask();
         });
       });
     }
@@ -1983,38 +1998,10 @@
           '</div>' +
         '</section>';
       }
-      const doc = activeDocument();
-      const docQuestions = doc ? questionBank.filter(item => item.documentId === doc.id).length : 0;
-      const docDisplay = doc ? friendlyDocumentDisplay(doc, docQuestions) : null;
       const wrongCount = wrongQuestions().length;
-      const wordSummary = wordStats();
-      const wrongCardClass = wrongCount ? "bg-red-50" : "bg-slate-50";
-      const wrongLabelClass = wrongCount ? "text-red-700" : "text-slate-500";
-      const wrongValueClass = wrongCount ? "text-red-700" : "text-slate-950";
-      return '<section class="grid gap-3 xl:grid-cols-[minmax(0,1fr)_360px]">' +
-        '<div class="grid gap-3 lg:grid-cols-2 xl:grid-cols-1">' +
-        '<article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
-          '<p class="text-xs font-black uppercase tracking-wide text-slate-500">Kaldığın Yerden Devam Et</p>' +
-          '<h3 class="mt-1 text-lg font-black text-slate-950">' + escapeHtml(docDisplay?.title || "Kelime Çalışması") + '</h3>' +
-          '<p class="mt-1 text-sm font-semibold text-slate-500">' + escapeHtml(doc ? (docDisplay.meta || docQuestions + ' soru hazır') : wordbook.length + ' kelime defterinde') + '</p>' +
-          '<div class="mt-3 flex flex-wrap gap-2">' +
-            (doc ? '<button id="homeContinueBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white hover:bg-blue-500">Devam Et</button>' : '') +
-            '<button id="homeStudyBtn" class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 hover:bg-slate-50">Kelime Çalışması</button>' +
-          '</div>' +
-        '</article>' +
-        '<article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
-          '<p class="text-xs font-black uppercase tracking-wide text-slate-500">Bugünkü Hedef</p>' +
-          '<div class="mt-2 grid grid-cols-2 gap-2">' +
-            '<div class="rounded-xl bg-slate-50 p-3"><p class="text-xs font-bold text-slate-500">Kelime hedefi</p><p class="mt-1 text-xl font-black text-slate-950">' + wordSummary.dailyTarget + '</p></div>' +
-            '<div class="rounded-xl ' + wrongCardClass + ' p-3"><p class="text-xs font-bold ' + wrongLabelClass + '">Yanlış soru</p><p class="mt-1 text-xl font-black ' + wrongValueClass + '">' + wrongCount + '</p></div>' +
-          '</div>' +
-          '<div class="mt-3 flex flex-wrap gap-2">' +
-            '<button id="homeWrongBtn" ' + (wrongCount ? "" : "disabled ") + 'class="rounded-xl border border-red-200 bg-white px-4 py-2 text-sm font-black text-red-700 hover:bg-red-50 disabled:border-slate-200 disabled:text-slate-400 disabled:hover:bg-white">Yanlışları Çöz</button>' +
-            '<button id="homeWordsBtn" class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 hover:bg-slate-50">Kelime Defteri</button>' +
-          '</div>' +
-        '</article>' +
-        '</div>' +
-        renderRecentWordsPanel() +
+      if (!wrongCount) return "";
+      return '<section class="grid gap-3">' +
+        '<article class="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 shadow-sm"><div class="flex flex-wrap items-center justify-between gap-3"><p class="text-sm font-black text-red-800">' + wrongCount + ' yanlış soru tekrar bekliyor</p><button id="homeWrongBtn" class="rounded-xl border border-red-200 bg-white px-3 py-2 text-sm font-black text-red-700 hover:bg-red-50">Çöz</button></div></article>' +
       '</section>';
     }
 
@@ -2071,12 +2058,13 @@
       renderMenu();
       renderStats();
       appArea.innerHTML =
-        '<div class="grid gap-3">' +
-          renderDailyOverviewPanel() +
-          renderDailyTasksPanel() +
-          renderDailyWordPanel() +
-          renderHomeActionPanel() +
-          renderWeeklySummaryPanel() +
+        '<div class="grid gap-3 xl:grid-cols-[minmax(0,1fr)_360px]">' +
+          '<div class="grid gap-3">' +
+            renderDailyTasksPanel() +
+            renderDailyWordPanel() +
+            renderHomeActionPanel() +
+          '</div>' +
+          '<div class="grid gap-3 self-start xl:sticky xl:top-4">' + renderWeeklySummaryPanel() + renderRecentWordsPanel() + '</div>' +
         '</div>';
       bindDailyTasksPanel();
       bindDailyWordPanel();
@@ -2437,7 +2425,7 @@
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Çoktan seçmeli</span><input id="goalMultipleChoiceInput" type="number" min="10" max="200" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500" value="' + dailyGoals.multipleChoice + '" /></label>' +
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">YDS parçası</span><input id="goalPastExamInput" type="number" min="0" max="5" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500" value="' + dailyGoals.pastExamReading + '" /></label>' +
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Dış metin</span><input id="goalExternalInput" type="number" min="0" max="5" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500" value="' + dailyGoals.externalReading + '" /></label>' +
-              '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Zor kelime</span><input id="goalDifficultInput" type="number" min="1" max="20" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500" value="' + dailyGoals.difficultWords + '" /></label>' +
+              '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Soru çözümü</span><input id="goalDifficultInput" type="number" min="1" max="200" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500" value="' + dailyGoals.difficultWords + '" /></label>' +
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Seri koşulu</span><select id="goalStreakModeInput" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500"><option value="all" ' + (dailyGoals.streakMode === "all" ? "selected" : "") + '>Tüm görevler</option><option value="80" ' + (dailyGoals.streakMode === "80" ? "selected" : "") + '>%80 yeterli</option></select></label>' +
             '</div>' +
             '<div class="mt-4">' +
@@ -2548,18 +2536,7 @@
     }
 
     function renderModuleItems(container, module) {
-      if (module.id === "articles") {
-        const ydsCount = articles.filter(item => articleKind(item) === "yds").length;
-        const externalCount = articles.filter(item => articleKind(item) === "external").length;
-        container.innerHTML =
-          '<button class="article-sidebar-section w-full rounded-xl border px-3 py-2 text-left text-sm font-bold transition ' + (articleLibraryTab === "yds" ? 'border-blue-200 bg-blue-100 text-slate-950 shadow-[inset_3px_0_0_#2563eb]' : 'border-transparent text-slate-700 hover:bg-white') + '" data-tab="yds">' +
-            '<span class="block">Çıkmış YDS Parçaları</span><span class="mt-0.5 block text-xs text-slate-500">' + ydsCount + ' içerik</span>' +
-          '</button>' +
-          '<button class="article-sidebar-section mt-1 w-full rounded-xl border px-3 py-2 text-left text-sm font-bold transition ' + (articleLibraryTab === "external" ? 'border-blue-200 bg-blue-100 text-slate-950 shadow-[inset_3px_0_0_#2563eb]' : 'border-transparent text-slate-700 hover:bg-white') + '" data-tab="external">' +
-            '<span class="block">Serbest Okuma Metinleri</span><span class="mt-0.5 block text-xs text-slate-500">' + externalCount + ' içerik</span>' +
-          '</button>';
-        return;
-      }
+      if (module.id === "articles") return;
       if (module.id === "wrong") {
         container.innerHTML = wrongQuestions().length
           ? '<p class="px-3 py-2 text-sm font-semibold text-slate-500">Yanlışları ana panelden tekrar çözebilirsin.</p>'
@@ -2760,7 +2737,7 @@
     function articleDisplayTitle(article) {
       const rawTitle = String(article?.title || "").replace(/\.pdf$/i, "").replace(/_/g, " ").trim();
       if ((!rawTitle || /^Yeni Makale$/i.test(rawTitle)) && /pigeons?/i.test(article?.text || "")) return "Pigeons";
-      return rawTitle || "Makale";
+      return rawTitle || "Metin";
     }
 
     function articleKind(article) {
@@ -2775,7 +2752,7 @@
         id: article?.id || "article-" + Date.now() + "-" + Math.random().toString(16).slice(2),
         kind,
         sourceType: kind === "yds" ? (article?.examType || article?.sourceType || "YDS") : (article?.sourceType || "Serbest Okuma"),
-        title: article?.title || (kind === "yds" ? "YDS Okuma Parçası" : "Makale"),
+        title: article?.title || (kind === "yds" ? "YDS Okuma Parçası" : "Metin"),
         topic: article?.topic || "",
         level: article?.level || "",
         text: article?.text || "",
@@ -2811,11 +2788,11 @@
         return [article.examType || "YDS", article.year, article.session].filter(Boolean).join(" · ") || "Çıkmış YDS";
       }
       const sourceName = String(article.sourceName || "").trim();
-      return /^dış kaynak$/i.test(sourceName) ? "Serbest Okuma" : (sourceName || "Serbest Okuma");
+      return /^dış kaynak$/i.test(sourceName) || /^serbest okuma$/i.test(sourceName) ? "Kendi Metinlerim" : (sourceName || "Kendi Metinlerim");
     }
 
     function articleTypeLabel(article) {
-      return articleKind(article) === "yds" ? "Çıkmış YDS" : "Serbest Okuma";
+      return articleKind(article) === "yds" ? "Çıkmış YDS" : "Kendi Metinlerim";
     }
 
     function articleWordCount(text) {
@@ -3012,6 +2989,11 @@
       return parts.length ? '<div class="mt-2 flex flex-wrap gap-2 text-sm font-semibold" style="color: var(--text-secondary)">' + parts.map(item => '<span class="rounded-full border px-3 py-1" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-secondary)">' + escapeHtml(item) + '</span>').join("") + '</div>' : "";
     }
 
+    function articleTopicOptions() {
+      const topics = [...new Set(articles.map(article => String(article.topic || "").trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, "tr"));
+      return topics;
+    }
+
     function sortedFilteredArticles() {
       const query = normalizeLookup(articleSearchQuery);
       return [...articles].filter(article => {
@@ -3019,6 +3001,7 @@
         if (articleLibraryTab === "yds" && kind !== "yds") return false;
         if (articleLibraryTab === "external" && kind !== "external") return false;
         if (articleStatusFilter !== "all" && articleReadingStatus(article).key !== articleStatusFilter) return false;
+        if (articleTopicFilter !== "all" && normalizeLookup(article.topic || "") !== normalizeLookup(articleTopicFilter)) return false;
         if (!query) return true;
         return [articleDisplayTitle(article), articleSourceLabel(article), article.topic, article.level, article.text]
           .some(value => normalizeLookup(value || "").includes(query));
@@ -3176,6 +3159,7 @@
       if (answered) return;
       answered = true;
       const selectedKey = selectedButton.dataset.key;
+      markDailyTaskItem("difficultWords", question.id);
       const optionButtons = document.querySelectorAll(".option-btn");
       const feedbackArea = document.getElementById("feedbackArea");
 
@@ -3660,7 +3644,6 @@
       saveJson(STORAGE_WORDS, wordbook);
       if (source === "flashcards") {
         markDailyTaskItem("flashcards", id);
-        if (dailyWordItems().some(word => word.id === id)) markDailyTaskItem("difficultWords", id);
       }
     }
 
@@ -4102,7 +4085,7 @@
       const tabs = [
         { key: "all", label: "Tümü" },
         { key: "yds", label: "Çıkmış YDS" },
-        { key: "external", label: "Serbest Okuma" },
+        { key: "external", label: "Kendi Metinlerim" },
       ];
       return '<div class="flex flex-wrap gap-2">' + tabs.map(tab =>
         '<button class="article-library-tab rounded-xl border px-4 py-2 text-sm font-black transition ' + (articleLibraryTab === tab.key ? 'border-blue-600 bg-blue-600 text-white shadow-sm' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:bg-blue-50') + '" data-tab="' + tab.key + '">' + tab.label + '</button>'
@@ -4113,7 +4096,7 @@
       return '<div id="articleFormPanel" class="mt-3 hidden rounded-2xl border p-4" style="border-color: var(--border-color); background: var(--bg-surface-secondary)">' +
         '<div class="mb-4 flex flex-wrap gap-2">' +
           '<button class="article-type-choice rounded-xl border px-4 py-2 text-sm font-black ' + (articleFormMode === "yds" ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-200 bg-white text-slate-700') + '" data-type="yds">Çıkmış YDS Okuma Parçası</button>' +
-          '<button class="article-type-choice rounded-xl border px-4 py-2 text-sm font-black ' + (articleFormMode === "external" ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-200 bg-white text-slate-700') + '" data-type="external">Serbest Okuma Metni</button>' +
+          '<button class="article-type-choice rounded-xl border px-4 py-2 text-sm font-black ' + (articleFormMode === "external" ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-200 bg-white text-slate-700') + '" data-type="external">Kendi Metnim</button>' +
         '</div>' +
         '<div class="grid gap-3 lg:grid-cols-4">' +
           '<label class="block lg:col-span-2"><span class="mb-1 block text-xs font-black uppercase tracking-wide text-slate-500">Başlık</span><input id="articleTitleInput" class="w-full rounded-xl border px-4 py-2.5 outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary)" placeholder="' + (articleFormMode === "yds" ? 'Örn: Reading Passage 1' : 'Örn: Artemis II') + '" /></label>' +
@@ -4139,12 +4122,45 @@
       '</div>';
     }
 
+    function articleQuestionStats(article) {
+      const questions = Array.isArray(article?.questions) ? article.questions : [];
+      const answers = article?.userAnswers || {};
+      const keyMap = article?.answerKey || {};
+      const answered = questions.filter(question => answers[question.questionNumber]).length;
+      const correct = questions.filter(question => {
+        const key = keyMap[question.questionNumber];
+        return key && answers[question.questionNumber] === key;
+      }).length;
+      return { total: questions.length, answered, correct, success: answered ? Math.round((correct / answered) * 100) : 0 };
+    }
+
+    function articleCardActionLabel(article) {
+      const status = articleReadingStatus(article);
+      if (articleKind(article) === "yds" && Array.isArray(article.questions) && article.questions.length) return "Oku ve Soruları Çöz";
+      if (status.key === "completed") return "Tekrar Oku";
+      if (status.key === "reading") return "Devam Et";
+      return "Oku";
+    }
+
     function renderArticleCard(article) {
       const kind = articleKind(article);
       const status = articleReadingStatus(article);
       const added = articleAddedWordCount(article);
-      const metaParts = [added ? "Deftere eklenen: " + added + " kelime" : ""].filter(Boolean);
-      return '<article class="reading-content-card rounded-2xl border p-4 shadow-sm transition hover:border-blue-200 hover:bg-blue-50/40" style="border-color: var(--border-color); background: var(--bg-surface)">' +
+      const words = articleWordCount(article.text || "");
+      const minutes = articleReadMinutes(article.text || "");
+      const progress = Math.max(0, Math.min(100, Math.round(Number(article.readingProgress || 0))));
+      const qStats = articleQuestionStats(article);
+      const metaParts = [
+        words ? words + " kelime" : "",
+        minutes ? minutes + " dk okuma" : "",
+        added ? "Kaydedilen: " + added : "",
+      ].filter(Boolean);
+      if (kind === "yds" && qStats.total) {
+        metaParts.push(qStats.total + " soru");
+        metaParts.push(qStats.answered + " çözüldü");
+        metaParts.push("%" + qStats.success);
+      }
+      return '<article class="reading-content-card relative rounded-2xl border p-4 shadow-sm transition hover:border-blue-200 hover:bg-blue-50/40" style="border-color: var(--border-color); background: var(--bg-surface)">' +
         '<div class="mb-3 flex items-start justify-between gap-3">' +
           '<span class="rounded-full border px-3 py-1 text-xs font-black text-blue-700" style="border-color: var(--border-color); background: var(--bg-surface-secondary)">' + articleTypeLabel(article) + '</span>' +
           '<span class="rounded-full border px-3 py-1 text-xs font-black" style="border-color: var(--border-color); color: var(--text-secondary); background: var(--bg-surface-secondary)">' + status.label + '</span>' +
@@ -4152,16 +4168,27 @@
         '<h3 class="line-clamp-2 text-lg font-black" style="color: var(--text-primary)">' + escapeHtml(articleDisplayTitle(article)) + '</h3>' +
         '<p class="mt-2 line-clamp-2 text-sm font-semibold" style="color: var(--text-secondary)">' + escapeHtml(normalizeArticleTextForReading(article.text || "").slice(0, 180)) + (article.text && article.text.length > 180 ? '...' : '') + '</p>' +
         (metaParts.length ? '<div class="mt-3 flex flex-wrap gap-2">' + metaParts.map(item => '<span class="rounded-full border px-2.5 py-1 text-xs font-bold" style="border-color: var(--border-color); color: var(--text-secondary); background: var(--bg-surface-secondary)">' + escapeHtml(item) + '</span>').join("") + '</div>' : '') +
-        '<div class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">' +
-          '<button class="article-list-card rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-sm hover:bg-blue-500" data-id="' + escapeHtml(article.id) + '">Oku</button>' +
-          '<label class="flex items-center gap-2 text-xs font-black" style="color: var(--text-secondary)"><span>Tür</span><select class="article-kind-select rounded-lg border px-2 py-2 text-xs font-black outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)" data-id="' + escapeHtml(article.id) + '"><option value="yds" ' + (kind === "yds" ? "selected" : "") + '>Çıkmış YDS</option><option value="external" ' + (kind === "external" ? "selected" : "") + '>Serbest Okuma</option></select></label>' +
+        '<div class="mt-3">' +
+          '<div class="mb-1 flex items-center justify-between text-[11px] font-black uppercase tracking-wide" style="color: var(--text-secondary)"><span>Okuma ilerlemesi</span><span>%' + progress + '</span></div>' +
+          '<div class="h-1.5 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full bg-blue-600" style="width:' + progress + '%"></div></div>' +
+        '</div>' +
+        '<div class="mt-4 flex items-center justify-between gap-2">' +
+          '<button class="article-list-card rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-sm hover:bg-blue-500" data-id="' + escapeHtml(article.id) + '">' + articleCardActionLabel(article) + '</button>' +
+          '<button class="article-card-menu-btn article-icon-btn flex h-10 w-10 items-center justify-center rounded-xl text-xl font-black" data-id="' + escapeHtml(article.id) + '" aria-label="İçerik işlemleri" title="Diğer işlemler">⋯</button>' +
+        '</div>' +
+        '<div class="article-card-menu word-action-menu absolute bottom-14 right-4 z-30 min-w-52 rounded-xl border p-2 text-sm font-bold shadow-xl" style="border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary)" data-id="' + escapeHtml(article.id) + '">' +
+          '<button class="article-card-rename block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100" data-id="' + escapeHtml(article.id) + '">Yeniden adlandır</button>' +
+          '<button class="article-card-edit block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100" data-id="' + escapeHtml(article.id) + '">Düzenle</button>' +
+          '<button class="article-card-change-kind block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100" data-id="' + escapeHtml(article.id) + '" data-kind="' + (kind === "yds" ? "external" : "yds") + '">Türü değiştir</button>' +
+          '<button class="article-card-mark-read block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100" data-id="' + escapeHtml(article.id) + '">Okundu olarak işaretle</button>' +
+          '<button class="article-card-delete block w-full rounded-lg px-3 py-2 text-left text-red-600 hover:bg-red-50" data-id="' + escapeHtml(article.id) + '">Sil</button>' +
         '</div>' +
       '</article>';
     }
 
     function renderArticleResultsHtml(filtered = sortedFilteredArticles()) {
       return filtered.length
-        ? '<div class="mt-4 grid gap-3 xl:grid-cols-2">' + filtered.map(renderArticleCard).join("") + '</div>'
+        ? '<div class="mt-4 grid gap-3 lg:grid-cols-2">' + filtered.map(renderArticleCard).join("") + '</div>'
         : '<div class="mt-4 rounded-2xl border border-dashed p-8 text-center" style="border-color: var(--border-color); background: var(--bg-surface-secondary)"><h3 class="text-lg font-black" style="color: var(--text-primary)">Bu filtrede içerik yok</h3><p class="mt-2 text-sm font-semibold" style="color: var(--text-secondary)">Filtreleri değiştir veya yeni içerik ekle.</p></div>';
     }
 
@@ -4177,39 +4204,43 @@
     }
 
     function renderArticlesPage() {
-      pageTitle.textContent = "Makale";
+      pageTitle.textContent = "Okuma Merkezi";
       renderMenu();
       renderStats();
       const activeArticle = activeArticleId === "__list__" ? null : (articles.find(item => item.id === activeArticleId) || null);
       const filtered = sortedFilteredArticles();
+      const topicOptions = articleTopicOptions();
       appArea.innerHTML =
         '<div class="grid gap-4">' +
           '<section class="rounded-2xl border p-4 shadow-sm" style="border-color: var(--border-color); background: var(--bg-surface)">' +
             '<div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">' +
               '<div>' +
-                '<p class="text-sm font-bold uppercase tracking-wide text-blue-500">Makale</p>' +
-                '<h2 class="mt-1 text-2xl font-black" style="color: var(--text-primary)">Makale</h2>' +
-                '<p class="mt-1 text-sm font-semibold" style="color: var(--text-secondary)">YDS parçalarını ve serbest okuma metinlerini çalış.</p>' +
+                '<p class="text-sm font-bold uppercase tracking-wide text-blue-500">Okuma Merkezi</p>' +
+                '<h2 class="mt-1 text-2xl font-black" style="color: var(--text-primary)">Okuma Merkezi</h2>' +
+                '<p class="mt-1 text-sm font-semibold" style="color: var(--text-secondary)">Çıkmış YDS parçalarını ve kendi eklediğin metinleri çalış.</p>' +
+                '<span class="mt-2 inline-flex rounded-full border px-3 py-1 text-xs font-black" style="border-color: var(--border-color); color: var(--text-secondary); background: var(--bg-surface-secondary)">' + articles.length + ' içerik</span>' +
               '</div>' +
-              '<button id="toggleArticleFormBtn" class="shrink-0 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-sm transition hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500">Yeni İçerik Ekle</button>' +
+              '<button id="toggleArticleFormBtn" class="shrink-0 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-sm transition hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500">Yeni Metin Ekle</button>' +
             '</div>' +
             renderArticleCreatePanel() +
-          '</section>' +
-          (activeArticle ? '<section id="articleReader" class="min-w-0"></section>' :
-            '<section class="rounded-2xl border p-4 shadow-sm" style="border-color: var(--border-color); background: var(--bg-surface)">' +
+            (activeArticle ? '' :
+              '<div class="mt-4">' +
               '<div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">' +
                 renderArticleTypeTabs() +
                 '<span id="articleResultCount" class="rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color: var(--border-color); color: var(--text-secondary); background: var(--bg-surface-secondary)">' + filtered.length + ' içerik</span>' +
               '</div>' +
-              '<div class="mt-4 grid gap-2 md:grid-cols-3">' +
+              '<div class="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-4">' +
                 '<input id="articleSearchInput" class="rounded-xl border px-3 py-2 text-sm font-semibold outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)" placeholder="Metin ara" value="' + escapeHtml(articleSearchQuery) + '" />' +
                 '<select id="articleStatusFilter" class="rounded-xl border px-3 py-2 text-sm font-bold outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)"><option value="all">Okuma durumu</option><option value="new">Yeni</option><option value="reading">Okunuyor</option><option value="completed">Tamamlandı</option></select>' +
+                '<select id="articleTopicFilter" class="rounded-xl border px-3 py-2 text-sm font-bold outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)"><option value="all">Konu</option>' + topicOptions.map(topic => '<option value="' + escapeHtml(topic) + '">' + escapeHtml(topic) + '</option>').join("") + '</select>' +
                 '<select id="articleSortMode" class="rounded-xl border px-3 py-2 text-sm font-bold outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)"><option value="recent">Son eklenen</option><option value="az">A-Z</option><option value="short">En kısa</option><option value="long">En uzun</option><option value="studied">Son çalışılan</option></select>' +
               '</div>' +
               '<div id="articleResults">' +
                 renderArticleResultsHtml(filtered) +
               '</div>' +
-            '</section>') +
+              '</div>') +
+          '</section>' +
+          (activeArticle ? '<section id="articleReader" class="min-w-0"></section>' : '') +
         '</div>';
 
       bindArticleLibraryControls();
@@ -4258,37 +4289,35 @@
         });
       };
       bindSelect("articleStatusFilter", value => articleStatusFilter = value, articleStatusFilter);
+      bindSelect("articleTopicFilter", value => articleTopicFilter = value, articleTopicFilter);
       bindSelect("articleSortMode", value => articleSortMode = value, articleSortMode);
       bindArticleResultControls();
     }
 
+    function updateArticleKind(article, nextKind) {
+      if (!article) return;
+      article.kind = nextKind === "yds" ? "yds" : "external";
+      article.updatedAt = new Date().toISOString();
+      if (article.kind === "yds") {
+        article.sourceType = "YDS";
+        article.examType = article.examType || "YDS";
+        article.questions = Array.isArray(article.questions) ? article.questions : [];
+        article.answerKey = article.answerKey && typeof article.answerKey === "object" ? article.answerKey : {};
+        article.userAnswers = article.userAnswers && typeof article.userAnswers === "object" ? article.userAnswers : {};
+        article.lastStudiedAt = article.lastStudiedAt || article.lastReadAt || "";
+      } else {
+        article.sourceType = article.sourceType || "Serbest Okuma";
+        article.sourceName = article.sourceName || "";
+        article.sourceUrl = article.sourceUrl || "";
+        article.notes = article.notes || "";
+        article.lastReadAt = article.lastReadAt || article.lastStudiedAt || "";
+      }
+      saveArticles();
+      renderMenu();
+      renderArticlesPage();
+    }
+
     function bindArticleResultControls() {
-      document.querySelectorAll(".article-kind-select").forEach(select => {
-        select.addEventListener("change", () => {
-          const article = articles.find(item => item.id === select.dataset.id);
-          if (!article) return;
-          const nextKind = select.value === "yds" ? "yds" : "external";
-          article.kind = nextKind;
-          article.updatedAt = new Date().toISOString();
-          if (nextKind === "yds") {
-            article.sourceType = "YDS";
-            article.examType = article.examType || "YDS";
-            article.questions = Array.isArray(article.questions) ? article.questions : [];
-            article.answerKey = article.answerKey && typeof article.answerKey === "object" ? article.answerKey : {};
-            article.userAnswers = article.userAnswers && typeof article.userAnswers === "object" ? article.userAnswers : {};
-            article.lastStudiedAt = article.lastStudiedAt || article.lastReadAt || "";
-          } else {
-            article.sourceType = "Serbest Okuma";
-            article.sourceName = article.sourceName || "";
-            article.sourceUrl = article.sourceUrl || "";
-            article.notes = article.notes || "";
-            article.lastReadAt = article.lastReadAt || article.lastStudiedAt || "";
-          }
-          saveArticles();
-          renderMenu();
-          renderArticlesPage();
-        });
-      });
       document.querySelectorAll(".article-list-card").forEach(button => {
         button.addEventListener("click", () => {
           activeArticleId = button.dataset.id;
@@ -4299,6 +4328,66 @@
             else article.lastReadAt = new Date().toISOString();
             saveArticles();
           }
+          renderArticlesPage();
+        });
+      });
+      document.querySelectorAll(".article-card-menu-btn").forEach(button => {
+        button.addEventListener("click", event => {
+          event.stopPropagation();
+          document.querySelectorAll(".article-card-menu.is-open").forEach(menu => {
+            if (menu.dataset.id !== button.dataset.id) menu.classList.remove("is-open");
+          });
+          const menu = document.querySelector('.article-card-menu[data-id="' + CSS.escape(button.dataset.id || "") + '"]');
+          if (menu) menu.classList.toggle("is-open");
+        });
+      });
+      document.querySelectorAll(".article-card-rename").forEach(button => {
+        button.addEventListener("click", () => {
+          const article = articles.find(item => item.id === button.dataset.id);
+          if (!article) return;
+          const nextTitle = window.prompt("Yeni içerik adı", articleDisplayTitle(article));
+          if (!nextTitle || !nextTitle.trim()) return;
+          article.title = nextTitle.trim();
+          article.updatedAt = new Date().toISOString();
+          saveArticles();
+          renderMenu();
+          renderArticlesPage();
+        });
+      });
+      document.querySelectorAll(".article-card-edit").forEach(button => {
+        button.addEventListener("click", () => {
+          const article = articles.find(item => item.id === button.dataset.id);
+          if (article) openArticleEditModal(article);
+        });
+      });
+      document.querySelectorAll(".article-card-change-kind").forEach(button => {
+        button.addEventListener("click", () => {
+          const article = articles.find(item => item.id === button.dataset.id);
+          updateArticleKind(article, button.dataset.kind);
+        });
+      });
+      document.querySelectorAll(".article-card-mark-read").forEach(button => {
+        button.addEventListener("click", () => {
+          const article = articles.find(item => item.id === button.dataset.id);
+          if (!article) return;
+          article.status = "completed";
+          article.readingProgress = 100;
+          if (articleKind(article) === "external" || isYdsArticleWorkComplete(article)) markArticleDailyCompletion(article);
+          article.updatedAt = new Date().toISOString();
+          saveArticles();
+          renderMenu();
+          renderArticlesPage();
+        });
+      });
+      document.querySelectorAll(".article-card-delete").forEach(button => {
+        button.addEventListener("click", () => {
+          const article = articles.find(item => item.id === button.dataset.id);
+          if (!article) return;
+          if (!window.confirm('"' + articleDisplayTitle(article) + '" içeriğini silmek istiyor musun?')) return;
+          articles = articles.filter(item => item.id !== article.id);
+          if (activeArticleId === article.id) activeArticleId = "__list__";
+          saveArticles();
+          renderMenu();
           renderArticlesPage();
         });
       });
@@ -4348,7 +4437,7 @@
       const base = {
         id: "article-" + Date.now(),
         kind,
-        title: titleInput.value.trim() || file?.name?.replace(/\.pdf$/i, "") || (kind === "yds" ? "YDS Okuma Parçası" : "Yeni Makale"),
+        title: titleInput.value.trim() || file?.name?.replace(/\.pdf$/i, "") || (kind === "yds" ? "YDS Okuma Parçası" : "Yeni Metin"),
         topic: document.getElementById("articleTopicInput")?.value?.trim() || "",
         level: document.getElementById("articleLevelInput")?.value?.trim() || "",
         text: normalizeArticleTextForReading(sections.text || cleanText),
@@ -4525,7 +4614,7 @@
       if (!article) {
         reader.innerHTML =
           '<div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-10 text-center">' +
-            '<h3 class="text-2xl font-bold text-white">Makale yükle ve okumaya başla</h3>' +
+            '<h3 class="text-2xl font-bold text-white">Metin yükle ve okumaya başla</h3>' +
             '<p class="mt-3 text-slate-400">Artemis örneği gibi PDF’lerdeki Vocabulary bölümü otomatik kelime ipucuna dönüşür.</p>' +
           '</div>';
         return;
@@ -4541,7 +4630,7 @@
         '<article class="article-reader-surface ' + (articleFocusMode ? 'is-focus-mode ' : '') + 'rounded-2xl border p-4 lg:p-5">' +
           '<div class="mb-4 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">' +
             '<div class="min-w-0">' +
-              '<p class="text-sm font-semibold uppercase tracking-wider text-blue-500">' + (kind === "yds" ? 'Çıkmış YDS Parçası' : 'Serbest Okuma Metni') + '</p>' +
+              '<p class="text-sm font-semibold uppercase tracking-wider text-blue-500">' + (kind === "yds" ? 'Çıkmış YDS Parçası' : 'Kendi Metnim') + '</p>' +
               '<h3 class="mt-1 break-words text-2xl font-bold lg:text-3xl" style="color: var(--text-primary)">' + escapeHtml(title) + '</h3>' +
               articleMetadataHtml(article) +
             '</div>' +
@@ -4551,7 +4640,7 @@
               '<button id="articleFocusBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black ' + (articleFocusMode ? 'ring-2 ring-blue-300' : '') + '" title="Odak moduna geç" aria-label="Odak moduna geç">' + (articleFocusMode ? '↔' : '◎') + '</button>' +
               '<button id="articleSavedWordsBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="Kaydedilenleri göster" aria-label="Kaydedilenleri göster">Kaydedilenler (' + savedEntryCount + ')</button>' +
               '<button id="articleHighlightToggleBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black" title="Vurguları göster/gizle" aria-label="Vurguları göster/gizle">' + (articleHighlightsVisible ? '◐' : '○') + '</button>' +
-              '<button id="articleBackBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black" title="Makale listesine dön" aria-label="Makale listesine dön">←</button>' +
+              '<button id="articleBackBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black" title="Okuma listesine dön" aria-label="Okuma listesine dön">←</button>' +
               '<button id="articleMenuBtn" class="article-icon-btn flex h-10 w-10 items-center justify-center rounded-xl text-xl font-black" title="Diğer işlemler" aria-label="Diğer işlemler">⋯</button>' +
               '<div id="articleActionMenu" class="word-action-menu absolute right-0 top-12 z-30 min-w-52 rounded-xl border p-2 text-sm font-bold shadow-xl" style="border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary)">' +
                 '<button id="renameArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Yeniden adlandır</button>' +
@@ -4559,12 +4648,12 @@
                 '<button id="markArticleReadBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Okundu olarak işaretle</button>' +
                 (kind === "external" && article.sourceUrl ? '<button id="openArticleSourceBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Kaynak bağlantısını aç</button>' : '') +
                 '<button id="exportArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Dışa aktar</button>' +
-                '<button id="removeArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left text-red-600 hover:bg-red-50">Makaleyi sil</button>' +
+                '<button id="removeArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left text-red-600 hover:bg-red-50">İçeriği sil</button>' +
               '</div>' +
             '</div>' +
           '</div>' +
           '<div id="articleReadingBody" class="article-body ' + (articleHighlightsVisible ? '' : 'article-hide-highlights ') + 'mx-auto max-w-[900px] rounded-2xl border px-5 py-5 sm:px-7 lg:px-8" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary); font-size: ' + fontSize + 'px; line-height: 1.76;">' + renderArticleParagraphs(article, vocabMap, savedEntries) + '</div>' +
-          (kind === "yds" ? renderYdsReadingQuestions(article) : '<section class="mx-auto mt-4 max-w-[900px] rounded-2xl border p-4" style="border-color: var(--border-color); background: var(--bg-surface-secondary)"><div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Okuma</p><p class="text-sm font-semibold" style="color: var(--text-secondary)">Metni bitirdiğinde günlük serbest okuma görevin tamamlanır.</p></div><div class="flex flex-wrap gap-2"><button id="studyArticleWordsBtn" class="rounded-xl border px-4 py-2 text-sm font-black" style="border-color: var(--border-color); color: var(--button-secondary-text); background: var(--button-secondary-bg)">Bu metnin kelimeleri</button><button id="completeArticleReadingBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white hover:bg-blue-500">Okumayı Tamamla</button></div></div></section>') +
+          (kind === "yds" ? renderYdsReadingQuestions(article) : '<section class="mx-auto mt-4 max-w-[900px] rounded-2xl border p-4" style="border-color: var(--border-color); background: var(--bg-surface-secondary)"><div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Okuma</p><p class="text-sm font-semibold" style="color: var(--text-secondary)">Metni bitirdiğinde günlük kendi metnim görevin tamamlanır.</p></div><div class="flex flex-wrap gap-2"><button id="studyArticleWordsBtn" class="rounded-xl border px-4 py-2 text-sm font-black" style="border-color: var(--border-color); color: var(--button-secondary-text); background: var(--button-secondary-bg)">Bu metnin kelimeleri</button><button id="completeArticleReadingBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white hover:bg-blue-500">Okumayı Tamamla</button></div></div></section>') +
         '</article>' +
         renderArticleSavedDrawer(article, savedEntries);
 
@@ -4646,7 +4735,7 @@
         articleMenu.classList.toggle("is-open");
       });
       document.getElementById("renameArticleBtn").addEventListener("click", () => {
-        const nextTitle = window.prompt("Yeni makale adı", title);
+        const nextTitle = window.prompt("Yeni içerik adı", title);
         if (!nextTitle || !nextTitle.trim()) return;
         article.title = nextTitle.trim();
         saveArticles();
@@ -4706,7 +4795,7 @@
         renderArticleReader(article);
       });
       document.getElementById("removeArticleBtn").addEventListener("click", () => {
-        if (!window.confirm('"' + title + '" makalesini silmek istiyor musun?')) return;
+        if (!window.confirm('"' + title + '" içeriğini silmek istiyor musun?')) return;
         articles = articles.filter(item => item.id !== article.id);
         activeArticleId = "__list__";
         saveArticles();
@@ -4933,7 +5022,7 @@
         '<div class="w-full max-w-5xl rounded-2xl border bg-white p-4 shadow-2xl" style="border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary)">' +
           '<div class="flex items-start justify-between gap-3">' +
             '<div>' +
-              '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Makale düzenle</p>' +
+              '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Metni düzenle</p>' +
               '<h3 class="mt-1 text-xl font-black">' + escapeHtml(articleDisplayTitle(article)) + '</h3>' +
             '</div>' +
             '<button id="closeArticleEditBtn" class="article-icon-btn flex h-10 w-10 items-center justify-center rounded-xl text-xl font-black" aria-label="Düzenleme penceresini kapat" title="Kapat">×</button>' +
