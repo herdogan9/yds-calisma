@@ -35,20 +35,72 @@
       --sidebar-text: #172033;
       --sidebar-muted: #475569;
       --theme-bg: #ffffff;
-      --theme-text: #172033;
-      --theme-border: #cbd5e1;
-      --theme-hover: #f1f5f9;
-      --home-work-surface: #ffffff;
-      --home-summary-surface: #f3f6fa;
-      --home-list-surface: #f7faff;
-      --home-list-item-surface: #f6f8fc;
-      --home-review-surface: #fffdf8;
-      --home-complete-surface: #f0fdf4;
-      --home-alert-surface: #fff1f2;
-      --danger-surface: #fee2e2;
-      --danger-text: #991b1b;
-      --danger-border: #fca5a5;
-    }
+  --theme-text: #172033;
+  --theme-border: #cbd5e1;
+  --theme-hover: #f1f5f9;
+  --home-task-surface: #ffffff;
+  --home-task-item-surface: #f8fafc;
+  --home-week-surface: #eef3f8;
+  --home-week-item-surface: #f8fafc;
+  --home-recent-surface: #f7faff;
+  --home-recent-item-surface: #ffffff;
+  --home-daily-words-surface: #fffdf8;
+  --home-daily-word-item-surface: #ffffff;
+  --home-daily-words-empty: #f7faff;
+  --home-warning-surface: #fef2f2;
+  --home-complete-surface: #ecfdf5;
+  --danger-surface: #fee2e2;
+  --danger-text: #991b1b;
+  --danger-border: #fca5a5;
+}
+
+/* Ana sayfa: kartlar ayni dilde, ancak islevlerine gore hafif ton farklariyla ayrilir. */
+.home-card-task,
+.home-card-week,
+.home-card-recent,
+.home-card-daily-words,
+.home-card-daily-words-empty,
+.home-card-warning {
+  border-color: var(--border-color) !important;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.035) !important;
+}
+
+.home-card-task { background-color: var(--home-task-surface) !important; }
+.home-card-week { background-color: var(--home-week-surface) !important; }
+.home-card-recent { background-color: var(--home-recent-surface) !important; }
+.home-card-daily-words { background-color: var(--home-daily-words-surface) !important; }
+.home-card-daily-words-empty { background-color: var(--home-daily-words-empty) !important; }
+.home-card-warning {
+  background-color: var(--home-warning-surface) !important;
+  border-color: var(--danger-border) !important;
+}
+
+.home-task-pending,
+.home-week-stat,
+.home-recent-word,
+.home-daily-word {
+  border-color: var(--border-color) !important;
+}
+
+.home-task-pending { background-color: var(--home-task-item-surface) !important; }
+.home-task-completed { background-color: var(--home-complete-surface) !important; }
+.home-week-stat { background-color: var(--home-week-item-surface) !important; }
+.home-recent-word { background-color: var(--home-recent-item-surface) !important; }
+.home-daily-word { background-color: var(--home-daily-word-item-surface) !important; }
+
+[data-theme="dark"] .home-card-task,
+[data-theme="dark"] .home-card-week,
+[data-theme="dark"] .home-card-recent,
+[data-theme="dark"] .home-card-daily-words,
+[data-theme="dark"] .home-card-daily-words-empty,
+[data-theme="dark"] .home-card-warning {
+  box-shadow: none !important;
+}
+
+[data-theme="dark"] .home-card-warning .text-red-700,
+[data-theme="dark"] .home-card-warning .text-red-800 {
+  color: #fecaca !important;
+}
 
     [data-theme="dark"] {
       --bg-page: #111827;
@@ -65,20 +117,24 @@
       --sidebar-text: #f8fafc;
       --sidebar-muted: #cbd5e1;
       --theme-bg: #182235;
-      --theme-text: #f8fafc;
-      --theme-border: #506176;
-      --theme-hover: #25324a;
-      --home-work-surface: #1f2937;
-      --home-summary-surface: #263142;
-      --home-list-surface: #202b3b;
-      --home-list-item-surface: #182235;
-      --home-review-surface: #2f2a1d;
-      --home-complete-surface: #143123;
-      --home-alert-surface: #3a1b22;
-      --danger-surface: #461a1d;
-      --danger-text: #fecaca;
-      --danger-border: #b91c1c;
-    }
+  --theme-text: #f8fafc;
+  --theme-border: #506176;
+  --theme-hover: #25324a;
+  --home-task-surface: #1f2937;
+  --home-task-item-surface: #182235;
+  --home-week-surface: #263142;
+  --home-week-item-surface: #1b2433;
+  --home-recent-surface: #1d2738;
+  --home-recent-item-surface: #182235;
+  --home-daily-words-surface: #241f16;
+  --home-daily-word-item-surface: #1b2433;
+  --home-daily-words-empty: #1d2738;
+  --home-warning-surface: #3b171a;
+  --home-complete-surface: #113226;
+  --danger-surface: #461a1d;
+  --danger-text: #fecaca;
+  --danger-border: #b91c1c;
+}
 
     html {
       background: var(--bg-page);
@@ -322,32 +378,21 @@
 
     .yds-sidebar .yds-brand-card {
       display: flex;
-      min-height: 76px;
+      min-height: 68px;
       align-items: center;
-      gap: .7rem;
-      background: transparent !important;
-      border-color: transparent !important;
+      gap: 0;
+      background: #ffffff !important;
+      border: 1px solid #cbd6e4 !important;
+      border-left: 5px solid #0A63FF !important;
       box-shadow: none !important;
-      padding: .45rem .3rem !important;
+      padding: .55rem .7rem !important;
       text-align: left;
     }
 
     .yds-sidebar .yds-brand-card:hover {
-      background: rgb(255 255 255 / 32%) !important;
-    }
-
-    .yds-brand-monogram {
-      display: grid;
-      width: 42px;
-      height: 42px;
-      flex: 0 0 42px;
-      place-items: center;
-      border: 1px solid #9ec5ff;
-      border-radius: 12px;
-      color: #2563eb;
-      font-size: 1.15rem;
-      font-weight: 600;
-      line-height: 1;
+      background: #f8fbff !important;
+      border-color: #b8cdf0 !important;
+      border-left-color: #0A63FF !important;
     }
 
     .yds-brand-copy {
@@ -385,7 +430,7 @@
     }
 
     .yds-sidebar .yds-brand-title {
-      color: #2563EB !important;
+      color: #0A63FF !important;
       font-size: 1.42rem;
       font-weight: 500;
       letter-spacing: normal;
@@ -405,8 +450,12 @@
     .yds-sidebar .yds-module-active {
       background: #dbeafe !important;
       border-color: #93c5fd !important;
-      box-shadow: inset 4px 0 0 #2563eb, 0 8px 18px rgb(37 99 235 / 10%) !important;
+      border-left: 3px solid #2563eb !important;
+      box-shadow: none !important;
     }
+
+    .yds-sidebar .yds-exams-active { background: #dbeafe !important; border-color: #93c5fd !important; border-left: 3px solid #2563eb !important; box-shadow: none !important; }
+    .yds-sidebar .yds-exams-active .yds-module-toggle { background: #eff6ff !important; border-color: #93c5fd !important; color: #2563eb !important; }
 
     .yds-sidebar .yds-module-toggle {
       background: #eaf2ff !important;
@@ -432,9 +481,20 @@
       border-color: transparent !important;
     }
 
-    .yds-credit-card p {
+    .yds-sidebar .yds-credit-card p {
       color: #64748b !important;
     }
+
+    .home-recent-words-panel { background: #f3f7fc !important; border-color: #cbd8e8 !important; box-shadow: 0 4px 12px rgb(15 23 42 / 4%) !important; }
+    .home-recent-words-panel .home-recent-words-item { background: #ffffff !important; border-color: #d5e0ee !important; box-shadow: none !important; }
+    .home-recent-words-panel .home-recent-words-meaning { color: #315887 !important; }
+    .home-recent-words-link { border: 1px solid transparent; background: #edf3fa; color: #526b8a !important; }
+    .home-recent-words-link:hover { background: #e4eef9; color: #3f5f85 !important; }
+    [data-theme="dark"] .home-recent-words-panel { background: #202b3b !important; border-color: #506176 !important; box-shadow: none !important; }
+    [data-theme="dark"] .home-recent-words-panel .home-recent-words-item { background: #182235 !important; border-color: #506176 !important; }
+    [data-theme="dark"] .home-recent-words-panel .home-recent-words-meaning { color: #a9c3ec !important; }
+    [data-theme="dark"] .home-recent-words-link { background: #263142; color: #cbd5e1 !important; }
+    [data-theme="dark"] .home-recent-words-link:hover { background: #303b4d; color: #f8fafc !important; }
 
     .yds-top-dashboard {
       background: #e3eaf3 !important;
@@ -465,68 +525,6 @@
       box-shadow: none !important;
     }
 
-    .home-work-card {
-      background: var(--home-work-surface) !important;
-      border-color: var(--border-color) !important;
-      box-shadow: inset 4px 0 0 #2563eb, 0 10px 24px rgb(15 23 42 / 6%) !important;
-    }
-
-    .home-summary-card {
-      background: var(--home-summary-surface) !important;
-      border-color: var(--border-color) !important;
-      box-shadow: 0 8px 20px rgb(15 23 42 / 6%) !important;
-    }
-
-    .home-list-card {
-      background: var(--home-list-surface) !important;
-      border-color: var(--border-color) !important;
-      box-shadow: 0 8px 18px rgb(15 23 42 / 5%) !important;
-    }
-
-    .home-list-item {
-      background: var(--home-list-item-surface) !important;
-      border-color: var(--border-color) !important;
-    }
-
-    .home-review-card {
-      background: var(--home-review-surface) !important;
-      border-color: var(--border-color) !important;
-    }
-
-    .home-complete-card {
-      background: var(--home-complete-surface) !important;
-    }
-
-    .home-alert-card {
-      background: var(--home-alert-surface) !important;
-    }
-
-    .home-progress-track {
-      background: #cbd5e1 !important;
-    }
-
-    .home-summary-metric {
-      background: rgb(255 255 255 / 82%) !important;
-      border: 1px solid #dbe3ed !important;
-    }
-
-    .home-word-meaning {
-      color: #3b5f9c !important;
-    }
-
-    body.dark-theme .home-progress-track {
-      background: #475569 !important;
-    }
-
-    body.dark-theme .home-summary-metric {
-      background: #303b4d !important;
-      border-color: #506176 !important;
-    }
-
-    body.dark-theme .home-word-meaning {
-      color: #a9c3ec !important;
-    }
-
     body.dark-theme .yds-sidebar {
       background: #263142 !important;
       border-color: #435267 !important;
@@ -546,18 +544,16 @@
     }
 
     body.dark-theme .yds-sidebar .yds-brand-card {
-      background: transparent !important;
-      border-color: transparent !important;
+      background: #1f2937 !important;
+      border: 1px solid #506176 !important;
+      border-left: 5px solid #58A6FF !important;
       box-shadow: none !important;
     }
 
     body.dark-theme .yds-sidebar .yds-brand-card:hover {
-      background: rgb(255 255 255 / 7%) !important;
-    }
-
-    body.dark-theme .yds-brand-monogram {
-      border-color: #5b8fc7;
-      color: #60a5fa;
+      background: #26364c !important;
+      border-color: #6a819e !important;
+      border-left-color: #58A6FF !important;
     }
 
     body.dark-theme .yds-sidebar .yds-brand-card p,
@@ -577,7 +573,7 @@
     }
 
     body.dark-theme .yds-sidebar .yds-brand-title {
-      color: #2563EB !important;
+      color: #58A6FF !important;
     }
 
     body.dark-theme .yds-sidebar .yds-module-card {
@@ -593,8 +589,12 @@
     body.dark-theme .yds-sidebar .yds-module-active {
       background: #314b73 !important;
       border-color: #93c5fd !important;
-      box-shadow: inset 4px 0 0 #60a5fa, 0 10px 22px rgb(0 0 0 / 22%) !important;
+      border-left: 3px solid #60a5fa !important;
+      box-shadow: none !important;
     }
+
+    body.dark-theme .yds-sidebar .yds-exams-active { background: #243c5c !important; border-color: #5d92cf !important; border-left-color: #60a5fa !important; box-shadow: none !important; }
+    body.dark-theme .yds-sidebar .yds-exams-active .yds-module-toggle { background: #1e3a5f !important; border-color: #5d92cf !important; color: #93c5fd !important; }
 
     body.dark-theme .yds-sidebar [data-module-items] {
       background: #263142 !important;
@@ -614,7 +614,7 @@
       border-color: transparent !important;
     }
 
-    body.dark-theme .yds-credit-card p {
+    body.dark-theme .yds-sidebar .yds-credit-card p {
       color: #cbd5e1 !important;
     }
 
@@ -650,10 +650,13 @@
       border-bottom: 1px solid var(--border-color);
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: center;
       gap: .5rem;
       padding: .5rem .25rem;
     }
+
+    body.light-theme .sidebar-utility { border-bottom: 0; }
+    body.light-theme .yds-sidebar-footer { background: transparent !important; border-top: 1px solid #cbd6e4; padding-top: .75rem !important; }
 
     .sidebar-utility-item {
       display: inline-flex;
@@ -939,16 +942,23 @@
     }
 
     .article-body {
+      min-width: 0;
+      width: 100%;
+      max-width: min(980px, 100%);
+      margin-inline: auto;
       text-align: left;
       text-align-last: auto;
       word-spacing: normal;
       letter-spacing: normal;
       hyphens: none;
       overflow-wrap: break-word;
+      color: #172033;
+      font-size: clamp(20px, 2vw, var(--article-font-size, 25px));
+      line-height: var(--article-line-height, 1.7);
     }
 
     .article-body p {
-      margin: 0 0 1.45rem;
+      margin: 0 0 1.65rem;
     }
 
     .article-body p:last-child {
@@ -956,14 +966,157 @@
     }
 
     .article-reader-surface {
+      min-width: 0;
       background: var(--bg-surface);
       border-color: var(--border-color);
       color: var(--text-primary);
     }
 
+    .article-reading-progress {
+      position: sticky;
+      top: 0;
+      z-index: 24;
+      height: 4px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--border-color);
+      background: color-mix(in srgb, var(--border-color) 72%, transparent);
+    }
+
+    .article-reading-progress > span {
+      display: block;
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: #2563eb;
+      transition: width .12s linear;
+    }
+
+    .article-reader-toolbar {
+      position: sticky;
+      top: .5rem;
+      z-index: 23;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .75rem;
+      margin: .75rem auto 1.5rem;
+      padding: .75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      background: var(--bg-surface);
+      background: color-mix(in srgb, var(--bg-surface) 94%, transparent);
+      box-shadow: 0 8px 22px rgb(15 23 42 / 8%);
+      backdrop-filter: blur(12px);
+      transition: padding .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+
+    .article-reader-toolbar.is-compact {
+      box-shadow: 0 5px 14px rgb(15 23 42 / 10%);
+      background: var(--bg-surface);
+    }
+
+    .article-reader-toolbar.is-compact .article-reader-heading {
+      opacity: .72;
+    }
+
+    .article-reader-heading {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .article-reader-actions {
+      display: flex;
+      min-width: 0;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: .5rem;
+    }
+
+    .article-settings-panel {
+      position: absolute;
+      top: calc(100% + .5rem);
+      right: 0;
+      z-index: 40;
+      width: min(22rem, calc(100vw - 2rem));
+      padding: 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      box-shadow: 0 18px 42px rgb(15 23 42 / 18%);
+    }
+
+    .article-settings-panel[hidden] {
+      display: none;
+    }
+
+    .article-surface-white { background: #fff !important; color: #172033 !important; }
+    .article-surface-neutral { background: #f3f4f6 !important; color: #172033 !important; }
+    .article-surface-warm { background: #fff8eb !important; color: #2c2419 !important; }
+    .article-surface-dark { background: #182235 !important; color: #f8fafc !important; border-color: #506176 !important; }
+    /* The app's light-theme token rule is intentionally more specific, so restate
+       the reader palette here to keep every word readable on the dark surface. */
+    .article-body.article-surface-dark,
+    .article-body.article-surface-dark p { color: #f8fafc !important; }
+    .article-body.article-surface-dark .word-token,
+    .article-body.article-surface-dark .word-token[data-vocab-key] { color: #e5edf9 !important; }
+    .article-body.article-surface-dark .article-saved-highlight { color: #fde68a !important; }
+    .article-body.article-surface-dark .word-token:hover { color: #93c5fd !important; }
+
+    @media (max-width: 640px) {
+      .article-reader-surface { padding: .75rem !important; }
+
+      .article-reader-toolbar {
+        top: .25rem;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        padding: .6rem;
+      }
+
+      .article-reader-actions { gap: .35rem; }
+
+      .article-reader-heading {
+        order: 3;
+        flex-basis: 100%;
+      }
+
+      .article-reader-actions .article-toolbar-btn,
+      .article-reader-actions .article-icon-btn { min-height: 38px; }
+
+      .article-body {
+        padding: 1.25rem !important;
+        font-size: min(22px, var(--article-font-size, 25px));
+        line-height: 1.68;
+      }
+
+      .article-body p { margin-bottom: 1.5rem; }
+
+      .article-settings-panel {
+        position: fixed;
+        top: auto;
+        right: .75rem;
+        bottom: .75rem;
+        left: .75rem;
+        width: auto;
+        max-height: 72vh;
+        overflow-y: auto;
+      }
+    }
+
     .article-reader-surface.is-focus-mode,
     .question-reader-surface.is-focus-mode {
       max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    body.question-focus-mode .question-reader-surface.is-focus-mode {
+      width: min(100%, 1000px);
+      min-width: 0;
+      min-height: 0;
+      height: auto;
       margin-left: auto;
       margin-right: auto;
     }
@@ -1041,6 +1194,14 @@
       display: block;
     }
 
+    .document-action-menu {
+      display: none;
+    }
+
+    .document-action-menu.is-open {
+      display: block;
+    }
+
     @media (min-width: 1024px) {
       #sidebarOverlay {
         display: none !important;
@@ -1049,15 +1210,7 @@
 
     @media (max-width: 640px) {
       .yds-sidebar .yds-brand-card {
-        min-height: 70px;
-      }
-
-      .yds-brand-monogram {
-        width: 36px;
-        height: 36px;
-        flex-basis: 36px;
-        border-radius: 10px;
-        font-size: 1rem;
+        min-height: 63px;
       }
 
       .yds-sidebar .yds-brand-title {
@@ -1078,14 +1231,13 @@
     <div id="sidebarOverlay" class="fixed inset-0 z-30 hidden bg-slate-950/40 lg:hidden"></div>
     <aside id="appSidebar" class="yds-sidebar fixed inset-y-0 left-0 z-40 flex w-64 -translate-x-full flex-col border-r border-slate-200 bg-white p-3 shadow-xl shadow-slate-200/70 transition-transform duration-200 lg:translate-x-0">
       <button id="brandHomeBtn" class="yds-brand-card mb-2 shrink-0 rounded-xl border border-transparent bg-transparent transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500" aria-label="Ana Sayfaya Git">
-        <span class="yds-brand-monogram" aria-hidden="true">Y</span>
         <span class="yds-brand-copy">
           <span class="yds-brand-title">YDS Çalışma</span>
           <span class="yds-brand-subtitle">Henüz dünyaya gelmeden hayatımı güzelleştiren kızıma…</span>
         </span>
       </button>
 
-      <nav id="categoryMenu" class="min-h-0 flex-1 space-y-2 overflow-y-auto pr-2"></nav>
+      <nav id="categoryMenu" class="min-h-0 flex-1 space-y-1.5 overflow-y-auto pr-2"></nav>
 
       <div class="sidebar-utility mt-2 shrink-0">
         <button id="themeToggleBtn" aria-label="Temayı değiştir" title="Temayı değiştir" class="theme-toggle" type="button"><span class="theme-toggle-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg></span></button>
@@ -1101,7 +1253,7 @@
 
       <div class="yds-sidebar-footer mt-2 shrink-0 pt-1">
         <div class="yds-credit-card px-1 py-1">
-          <p class="text-xs font-bold">© 2026 Hakan Erdoğan</p>
+          <p class="text-[11px] font-semibold">© 2026 Yzb. Hakan ERDOĞAN</p>
         </div>
       </div>
     </aside>
@@ -1166,29 +1318,30 @@
     const STORAGE_DAILY_PROGRESS = "yds-daily-progress-v1";
     const STORAGE_DAILY_HISTORY = "yds-daily-history-v1";
     const STORAGE_SUPABASE_CONFIG = "yds-supabase-config-v1";
-    const STORAGE_QUESTION_PROGRESS = "yds-question-progress-v1";
+    const STORAGE_DOCUMENT_PROGRESS = "yds-document-progress-v1";
     const VOCABULARY_SEED_VERSION = baseBank.vocabularySeedVersion || "2026-07-13-vocabulary";
     const vocabularySeed = baseBank.vocabularySeed || [];
 
     let uploadedBank = loadJson(STORAGE_UPLOADS, { documents: [], questions: [] });
-    let uploadMethod = "text";
+    let uploadTargetModule = "exams";
     let lastTextImport = null;
     let wordbook = loadJson(STORAGE_WORDS, []);
     let articles = loadJson(STORAGE_ARTICLES, []);
     let wrongQuestionIds = loadJson(STORAGE_WRONG_QUESTIONS, []);
+    let documentProgress = loadJson(STORAGE_DOCUMENT_PROGRESS, {});
     let documents = [];
     let questionBank = [];
     let activeDocumentId = "";
     let activeArticleId = "";
     let currentIndex = 0;
     let answered = false;
-    let paletteFilter = "all";
-    let questionProgress = loadJson(STORAGE_QUESTION_PROGRESS, {});
     let activeView = "home";
     let solveMode = "document";
     let wrongReviewIds = [];
     let pendingWord = null;
     let wordStudyMode = "cards";
+    let wordStudyScopeIds = null;
+    let wordStudyScopeLabel = "";
     let wordSessionSize = localStorage.getItem("yds-word-session-size-v1") || "20";
     let wordCustomSessionSize = Number(localStorage.getItem("yds-word-custom-session-size-v1") || 20);
     let wordSessionIds = loadJson("yds-word-session-ids-v1", []);
@@ -1205,13 +1358,16 @@
     let wordStatusFilter = "all";
     let wordSortMode = "az";
     let wordSearchTimer = null;
-    let articleFontSize = Number(localStorage.getItem("yds-article-font-size-v1") || 19);
+    let articleFontSize = Number(localStorage.getItem("yds-article-font-size-v1") || 25);
+    let articleLineHeight = Number(localStorage.getItem("yds-article-line-height-v1") || 1.7);
+    let articleContentWidth = Number(localStorage.getItem("yds-article-content-width-v1") || 940);
+    let articleReadingSurface = localStorage.getItem("yds-article-reading-surface-v1") || "neutral";
+    let articleReadingScrollCleanup = null;
     let articleFocusMode = localStorage.getItem("yds-article-focus-v1") === "1";
-    let articleLibraryTab = localStorage.getItem("yds-article-library-tab-v1") || "all";
     let articleSearchQuery = "";
     let articleSearchRenderTimer = null;
     let articleStatusFilter = "all";
-    let articleTopicFilter = "all";
+    let articleTypeFilter = "all";
     let articleSortMode = "recent";
     let articleFormMode = "external";
     let articleSavedPanelOpen = false;
@@ -1223,62 +1379,7 @@
     let activeSentencePanel = null;
     let lastPdfImportReport = null;
     const stats = { correct: 0, wrong: 0 };
-
-    function progressScope() {
-      return (solveMode === "wrong" ? "wrong" : "document") + ":" + (activeDocumentId || "active");
-    }
-
-    function activeQuestionProgress() {
-      const key = progressScope();
-      if (!questionProgress[key]) questionProgress[key] = { answers: {}, flagged: {}, currentIndex: 0, completed: false, updatedAt: new Date().toISOString() };
-      return questionProgress[key];
-    }
-
-    function saveQuestionProgress() {
-      const progress = activeQuestionProgress();
-      progress.currentIndex = currentIndex;
-      progress.updatedAt = new Date().toISOString();
-      saveJson(STORAGE_QUESTION_PROGRESS, questionProgress);
-    }
-
-    function questionPaletteHtml(questions) {
-      const progress = activeQuestionProgress();
-      const answeredCount = questions.filter(question => progress.answers[question.id]).length;
-      const flaggedCount = questions.filter(question => progress.flagged[question.id]).length;
-      const visible = questions.map((question, index) => ({ question, index })).filter(item => paletteFilter === "all" || paletteFilter === "blank" ? !progress.answers[item.question.id] : progress.flagged[item.question.id]);
-      const button = item => {
-        const selected = progress.answers[item.question.id];
-        const isCurrent = item.index === currentIndex;
-        const isFlagged = progress.flagged[item.question.id];
-        const resultClass = progress.completed && selected ? (selected === item.question.correctAnswer ? "border-emerald-500 bg-emerald-50 text-emerald-800" : "border-red-500 bg-red-50 text-red-700") : selected ? "border-emerald-500 bg-emerald-50 text-emerald-800" : "border-slate-300 bg-white text-slate-800";
-        const status = progress.completed && selected ? (selected === item.question.correctAnswer ? "doğru" : "yanlış") : selected ? "cevaplandı" : "cevaplanmadı";
-        return '<button class="palette-jump relative flex h-10 min-w-10 items-center justify-center rounded-lg border text-sm font-black ' + resultClass + (isCurrent ? ' ring-2 ring-blue-500 ring-offset-1' : '') + '" data-index="' + item.index + '" aria-label="Soru ' + (item.index + 1) + ', ' + status + (isFlagged ? ' ve işaretlendi' : '') + (isCurrent ? ', mevcut soru' : '') + '">' + (item.index + 1) + (selected ? '<span class="absolute bottom-0.5 right-1 text-[10px]">✓</span>' : '') + (isFlagged ? '<span class="absolute right-1 top-0 text-[10px] text-amber-500">●</span>' : '') + '</button>';
-      };
-      return '<aside id="questionPalette" class="question-palette-order rounded-2xl border p-3 shadow-sm lg:sticky lg:top-4" style="border-color:var(--border-color);background:var(--bg-surface-secondary)">' +
-        '<div class="flex items-start justify-between gap-3"><div><p class="text-xs font-black uppercase tracking-wider text-blue-500">Sorular</p><p class="text-sm font-black" style="color:var(--text-primary)">' + answeredCount + ' / ' + questions.length + ' cevaplandı</p></div><button class="mobile-palette-close text-sm font-bold text-blue-600 lg:hidden">Kapat</button></div>' +
-        '<div class="mt-3 grid grid-cols-3 gap-2 text-[11px] font-semibold" style="color:var(--text-secondary)"><span class="rounded-lg border p-2"><b class="block text-base" style="color:var(--text-primary)">' + answeredCount + '</b>Cevaplanan</span><span class="rounded-lg border p-2"><b class="block text-base" style="color:var(--text-primary)">' + (questions.length - answeredCount) + '</b>Boş</span><span class="rounded-lg border p-2"><b class="block text-base" style="color:var(--text-primary)">' + flaggedCount + '</b>İşaretli</span></div>' +
-        '<div class="mt-3 grid grid-cols-3 gap-1">' + [ ["all", "Tümü"], ["blank", "Boşlar"], ["flagged", "İşaretliler"] ].map(item => '<button class="palette-filter rounded-lg border px-1 py-2 text-xs font-bold ' + (paletteFilter === item[0] ? 'border-blue-500 bg-blue-100 text-blue-700' : '') + '" data-filter="' + item[0] + '">' + item[1] + '</button>').join("") + '</div>' +
-        '<div class="mt-3 grid grid-cols-5 gap-2">' + visible.map(button).join("") + '</div>' +
-        '<div class="mt-3 grid gap-2"><button class="first-blank-btn rounded-lg border px-2 py-2 text-xs font-bold">İlk Boş Soruya Git</button><button class="next-blank-btn rounded-lg border px-2 py-2 text-xs font-bold">Sonraki Boş Soru</button></div>' +
-      '</aside>';
-    }
-
-    function bindQuestionPalette(questions) {
-      document.querySelectorAll(".palette-jump").forEach(button => button.addEventListener("click", () => { currentIndex = Number(button.dataset.index); saveQuestionProgress(); renderQuestion(); }));
-      document.querySelectorAll(".palette-filter").forEach(button => button.addEventListener("click", () => { paletteFilter = button.dataset.filter || "all"; renderQuestion(); }));
-      const goBlank = next => {
-        const progress = activeQuestionProgress();
-        const indexes = questions.map((_, index) => index);
-        const ordered = next ? indexes.slice(currentIndex + 1).concat(indexes.slice(0, currentIndex + 1)) : indexes;
-        const target = ordered.find(index => !progress.answers[questions[index].id]);
-        if (target !== undefined) { currentIndex = target; saveQuestionProgress(); renderQuestion(); }
-      };
-      document.querySelectorAll(".first-blank-btn").forEach(button => button.addEventListener("click", () => goBlank(false)));
-      document.querySelectorAll(".next-blank-btn").forEach(button => button.addEventListener("click", () => goBlank(true)));
-      document.querySelectorAll(".mobile-palette-close").forEach(button => button.addEventListener("click", () => document.getElementById("mobilePaletteWrap")?.classList.add("hidden")));
-    }
     articles = articles.map(normalizeArticleRecord);
-
     const categoryMenu = document.getElementById("categoryMenu");
     const appArea = document.getElementById("appArea");
     const headerStats = document.getElementById("headerStats");
@@ -1752,8 +1853,114 @@
       };
     }
 
-    function isYdsSource(doc) {
-      return Boolean(doc?.builtIn || doc?.importMethod === "text");
+    function documentDisplayTitle(doc) {
+      return String(doc?.title || "Soru Kaynağı")
+        .replace(/_/g, " ")
+        .replace(/\s+/g, " ")
+        .trim() || "Soru Kaynağı";
+    }
+
+    function documentAddedAtLabel(doc) {
+      const value = doc?.createdAt || doc?.addedAt || doc?.importedAt || doc?.updatedAt || doc?.lastModified;
+      if (!value) return "—";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "—";
+      return date.toLocaleDateString("tr-TR", { day: "numeric", month: "short", year: "numeric" });
+    }
+
+    function documentSolvedCount(doc) {
+      const stored = Number(documentProgress?.[doc?.id]);
+      const legacy = Number(doc?.solvedCount ?? doc?.progress ?? doc?.completedQuestions ?? 0);
+      const count = Number.isFinite(stored) ? stored : legacy;
+      return Math.max(0, Math.min(Number(doc?.questionCount || 0), Number.isFinite(count) ? count : 0));
+    }
+
+    function rememberDocumentProgress(documentId, solvedCount) {
+      if (!documentId) return;
+      const current = Number(documentProgress?.[documentId] || 0);
+      const next = Math.max(current, Number(solvedCount || 0));
+      if (next === current) return;
+      documentProgress = { ...documentProgress, [documentId]: next };
+      saveJson(STORAGE_DOCUMENT_PROGRESS, documentProgress);
+    }
+
+    function documentSourceText(doc) {
+      const savedText = doc?.sourceText || doc?.rawText || doc?.text || doc?.extractedText;
+      if (String(savedText || "").trim()) return String(savedText);
+      return questionBank
+        .filter(question => question.documentId === doc?.id)
+        .sort((a, b) => Number(a.questionNumber || 0) - Number(b.questionNumber || 0))
+        .map(question => {
+          const options = ["A", "B", "C", "D", "E"]
+            .filter(key => question.options?.[key])
+            .map(key => key + ") " + question.options[key])
+            .join("\n");
+          return String(question.questionNumber || "") + ". " + String(question.question || "") + "\n" + options;
+        })
+        .join("\n\n");
+    }
+
+    function documentAnswerMap(documentId) {
+      return questionBank
+        .filter(question => question.documentId === documentId && question.correctAnswer)
+        .reduce((answers, question) => {
+          answers[question.questionNumber] = question.correctAnswer;
+          return answers;
+        }, {});
+    }
+
+    function closeDocumentEditModal() {
+      document.getElementById("documentEditModal")?.remove();
+    }
+
+    function openDocumentEditModal(doc) {
+      closeDocumentEditModal();
+      const modal = document.createElement("div");
+      modal.id = "documentEditModal";
+      modal.className = "fixed inset-0 z-[95] flex items-center justify-center bg-slate-950/50 p-4";
+      modal.innerHTML =
+        '<div class="flex max-h-[94vh] w-full max-w-5xl flex-col rounded-2xl border bg-white p-4 shadow-2xl" style="border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary)">' +
+          '<div class="flex items-start justify-between gap-3"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Kaynağı düzenle</p><h3 class="mt-1 text-xl font-black">' + escapeHtml(documentDisplayTitle(doc)) + '</h3></div><button id="closeDocumentEditBtn" class="flex h-10 w-10 items-center justify-center rounded-xl border text-xl font-black" style="border-color: var(--border-color)" aria-label="Düzenleme penceresini kapat" title="Kapat">×</button></div>' +
+          '<label class="mt-4 block text-sm font-black">Başlık<input id="documentEditTitle" class="mt-1 w-full rounded-xl border px-3 py-2.5 outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)" value="' + escapeHtml(doc.title || "") + '" /></label>' +
+          '<label class="mt-4 flex min-h-0 flex-1 flex-col text-sm font-black">Kaynak metin / sorular<textarea id="documentEditText" class="mt-1 min-h-64 flex-1 resize-y rounded-xl border px-4 py-3 font-normal leading-7 outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)">' + escapeHtml(documentSourceText(doc)) + '</textarea></label>' +
+          '<p id="documentEditStatus" class="mt-3 text-sm font-semibold" style="color: var(--text-secondary)">Metni düzenleyip kaydettiğinde bu kaynağın soruları yeniden oluşturulur.</p>' +
+          '<div class="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-end"><button id="cancelDocumentEditBtn" class="rounded-xl border px-5 py-3 text-sm font-black" style="border-color: var(--border-color); color: var(--button-secondary-text); background: var(--button-secondary-bg)">İptal</button><button id="saveDocumentEditBtn" class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-sm hover:bg-blue-500">Kaydet ve Soruları Güncelle</button></div>' +
+        '</div>';
+      document.body.appendChild(modal);
+      const titleInput = document.getElementById("documentEditTitle");
+      const textInput = document.getElementById("documentEditText");
+      const status = document.getElementById("documentEditStatus");
+      document.getElementById("closeDocumentEditBtn").addEventListener("click", closeDocumentEditModal);
+      document.getElementById("cancelDocumentEditBtn").addEventListener("click", closeDocumentEditModal);
+      modal.addEventListener("click", event => {
+        if (event.target === modal) closeDocumentEditModal();
+      });
+      document.getElementById("saveDocumentEditBtn").addEventListener("click", () => {
+        const title = titleInput.value.trim();
+        const sourceText = textInput.value.trim();
+        if (!title || !sourceText) {
+          status.textContent = "Başlık ve kaynak metin zorunludur.";
+          return;
+        }
+        const parsedQuestions = parseQuestionsFromText(sourceText, title, { sets: [], manual: documentAnswerMap(doc.id) }, doc.id);
+        if (!parsedQuestions.length) {
+          status.textContent = "Metinden soru çıkarılamadı. Soru ve A)–E) seçenek biçimini kontrol et.";
+          return;
+        }
+        doc.title = title;
+        doc.sourceText = sourceText;
+        doc.questionCount = parsedQuestions.length;
+        doc.updatedAt = new Date().toISOString();
+        uploadedBank.questions = (uploadedBank.questions || []).filter(question => question.documentId !== doc.id);
+        uploadedBank.questions.push(...parsedQuestions);
+        const solvedCount = documentSolvedCount(doc);
+        documentProgress = { ...documentProgress, [doc.id]: Math.min(solvedCount, parsedQuestions.length) };
+        saveJson(STORAGE_DOCUMENT_PROGRESS, documentProgress);
+        saveJson(STORAGE_UPLOADS, uploadedBank);
+        rebuildBank();
+        closeDocumentEditModal();
+        renderHub(activeView);
+      });
     }
 
     function setView(view) {
@@ -1765,6 +1972,7 @@
         closeSentencePanel();
         closeArticleEditModal();
       }
+      if (view !== "yds" && view !== "exams") closeDocumentEditModal();
       if (view !== "solve") {
         setQuestionFocusMode(false);
       }
@@ -1792,35 +2000,33 @@
       if (documentCount) documentCount.textContent = documents.length;
       if (sidebarWordCount) sidebarWordCount.textContent = wordbook.length;
 
-      const builtInDocuments = documents.filter(isYdsSource);
-      const uploadedDocuments = documents.filter(item => !isYdsSource(item));
+      const ydsDocuments = documents.filter(item => item.builtIn || (!item.builtIn && item.collection === "yds"));
+      const uploadedDocuments = documents.filter(item => !item.builtIn && item.collection !== "yds");
       const modules = [
-        { id: "yds", title: "Çıkmış YDS Soruları", icon: "YS", count: builtInDocuments.length + " kaynak", items: builtInDocuments },
-        { id: "eyds", title: "Çıkmış e-YDS Soruları", icon: "eY", count: "Hazırlanıyor", items: [] },
-        { id: "yokdil", title: "Çıkmış YÖKDİL Soruları", icon: "YD", count: "Hazırlanıyor", items: [] },
-        { id: "exams", title: "Denemeler", icon: "D", count: uploadedDocuments.length + " PDF", items: uploadedDocuments },
-        { id: "wrong", title: "Yanlış Sorular", icon: "!", count: wrongQuestions().length + " soru", items: [] },
-        { id: "articles", title: "Okuma Merkezi", icon: "O", count: articles.length + " içerik", items: articles },
-        { id: "words", title: "Kelime Defteri", icon: "K", count: wordbook.length + " kelime", items: [] },
+        { id: "yds", title: "Çıkmış Sorular", icon: "▤", count: ydsDocuments.length + " kaynak", items: ydsDocuments },
+        { id: "exams", title: "Denemeler", icon: "✎", count: uploadedDocuments.length + " kaynak", items: uploadedDocuments },
+        { id: "wrong", title: "Yanlış Sorular", icon: "↻", count: wrongQuestions().length + " soru", items: [] },
+        { id: "articles", title: "Okuma Merkezi", icon: "▰", count: articles.length + " içerik", items: articles },
+        { id: "words", title: "Kelime Defteri", icon: "▣", count: wordbook.length + " kelime", items: [] },
       ];
 
       modules.forEach(module => {
         const wrapper = document.createElement("section");
         const expanded = openSectionId === module.id;
-        const active = activeView === module.id || (module.id === "yds" && activeView === "solve" && solveMode === "document" && isYdsSource(activeDocument())) || (module.id === "exams" && activeView === "solve" && solveMode === "document" && !isYdsSource(activeDocument())) || (module.id === "wrong" && activeView === "solve" && solveMode === "wrong") || (module.id === "words" && ["words", "study"].includes(activeView)) || (module.id === "articles" && activeView === "articles");
+        const active = activeView === module.id || (module.id === "yds" && activeView === "solve" && solveMode === "document" && (activeDocument()?.builtIn || activeDocument()?.collection === "yds")) || (module.id === "exams" && activeView === "solve" && solveMode === "document" && !activeDocument()?.builtIn && activeDocument()?.collection !== "yds") || (module.id === "wrong" && activeView === "solve" && solveMode === "wrong") || (module.id === "words" && ["words", "study"].includes(activeView)) || (module.id === "articles" && activeView === "articles");
         const countHtml = module.count === "Hazırlanıyor"
           ? '<span class="soon-badge mt-1">Yakında</span>'
           : '<span class="mt-0.5 block text-xs font-bold text-slate-500">' + escapeHtml(module.count) + '</span>';
-        wrapper.className = "yds-module-card rounded-xl border transition " + (active ? "yds-module-active border-blue-200 bg-blue-50 shadow-sm" : "border-slate-200 bg-white hover:border-blue-100");
+        wrapper.className = "yds-module-card rounded-xl border transition " + (active ? "yds-module-active border-blue-200 bg-blue-50 shadow-sm" : "border-slate-200 bg-white hover:border-blue-100") + (active && ["yds", "exams"].includes(module.id) ? " yds-exams-active" : "");
         wrapper.innerHTML =
-          '<div class="flex items-center gap-2 px-2 py-1.5">' +
-            '<button class="yds-module-toggle module-open flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-white text-base font-black text-blue-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500" data-module="' + module.id + '" aria-expanded="' + expanded + '" aria-label="' + escapeHtml(module.title) + ' bölümünü aç/kapat">' + (expanded ? "−" : "+") + '</button>' +
+          '<div class="flex items-center gap-2 px-2 py-1">' +
+            '<button class="yds-module-toggle module-open flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-white text-base font-black text-blue-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500" data-module="' + module.id + '" aria-expanded="' + expanded + '" aria-label="' + escapeHtml(module.title) + ' bölümünü aç/kapat">' + module.icon + '</button>' +
             '<button class="module-title min-w-0 flex-1 text-left" data-module="' + module.id + '">' +
               '<span class="block truncate text-sm font-extrabold leading-tight text-slate-950">' + escapeHtml(module.title) + '</span>' +
               countHtml +
             '</button>' +
           '</div>' +
-          (expanded && module.id !== "words" && module.id !== "articles" ? '<div class="mx-2 mb-2 space-y-1 rounded-xl border border-blue-100 bg-blue-50/70 p-2" data-module-items="' + module.id + '"></div>' : "");
+          (expanded && module.id !== "words" && module.id !== "articles" && module.id !== "yds" && module.id !== "exams" && module.id !== "wrong" ? '<div class="mx-2 mb-2 space-y-1 rounded-xl border border-blue-100 bg-blue-50/70 p-2" data-module-items="' + module.id + '"></div>' : "");
         categoryMenu.appendChild(wrapper);
         const itemsContainer = wrapper.querySelector("[data-module-items]");
         if (itemsContainer) renderModuleItems(itemsContainer, module);
@@ -1867,15 +2073,6 @@
           closeSidebarOnMobile();
         });
       });
-      categoryMenu.querySelectorAll(".article-sidebar-section").forEach(button => {
-        button.addEventListener("click", () => {
-          articleLibraryTab = button.dataset.tab || "all";
-          localStorage.setItem("yds-article-library-tab-v1", articleLibraryTab);
-          activeArticleId = "__list__";
-          setView("articles");
-          closeSidebarOnMobile();
-        });
-      });
       const showAllArticles = categoryMenu.querySelector(".article-show-all");
       if (showAllArticles) {
         showAllArticles.addEventListener("click", event => {
@@ -1888,9 +2085,9 @@
 
     function selectDocument(documentId) {
       activeDocumentId = documentId;
-      solveMode = "document";
-      currentIndex = Number(activeQuestionProgress().currentIndex || 0);
+      currentIndex = 0;
       answered = false;
+      solveMode = "document";
       wrongReviewIds = [];
       activeView = "solve";
       updateViewButtons();
@@ -1898,13 +2095,14 @@
     }
 
     function moduleMeta(moduleId) {
-      const builtInDocuments = documents.filter(isYdsSource);
-      const uploadedDocuments = documents.filter(item => !isYdsSource(item));
+      const builtInDocuments = documents.filter(item => item.builtIn);
+      const ydsDocuments = documents.filter(item => item.builtIn || (!item.builtIn && item.collection === "yds"));
+      const uploadedDocuments = documents.filter(item => !item.builtIn && item.collection !== "yds");
       const map = {
         yds: {
-          title: "Çıkmış YDS Soruları",
+          title: "Çıkmış Sorular",
           description: "Hazır soru kaynaklarından birini seçip sırayla çözmeye başlayabilirsin.",
-          items: builtInDocuments,
+          items: ydsDocuments,
           empty: "Henüz hazır YDS kaynağı yok.",
           primaryLabel: "+ Ekle",
         },
@@ -1924,9 +2122,9 @@
         },
         exams: {
           title: "Denemeler",
-          description: "Dışarıdan yüklediğin PDF denemeleri burada listelenir.",
+          description: "Dışarıdan yüklediğin deneme kaynakları burada listelenir.",
           items: uploadedDocuments,
-          empty: "Henüz deneme PDF’i eklenmedi.",
+          empty: "Henüz deneme kaynağı eklenmedi.",
           primaryLabel: "+ Ekle",
         },
       };
@@ -1983,7 +2181,7 @@
     function renderDailyWordPanel() {
       const words = dailyWordItems();
       if (!words.length) {
-        return '<section class="home-review-card mb-4 rounded-2xl border border-dashed border-blue-200 bg-blue-50/60 p-4">' +
+        return '<section class="mb-4 rounded-2xl border border-dashed border-blue-200 bg-blue-50/60 p-4">' +
           '<div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">' +
             '<div>' +
               '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Günün Kelimeleri</p>' +
@@ -1994,7 +2192,7 @@
           '</div>' +
         '</section>';
       }
-      return '<section class="home-review-card mb-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
+      return '<section class="mb-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
         '<div class="mb-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">' +
           '<div>' +
             '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Günün Kelimeleri</p>' +
@@ -2008,14 +2206,14 @@
         '<div class="grid gap-3 md:grid-cols-3">' + words.map(item => {
           const itemDifficulty = dailyWordDifficulty(item);
           const synonymText = wordMeaningNote(item);
-          return '<article class="home-list-item rounded-xl border border-slate-200 bg-slate-50 p-3">' +
+          return '<article class="rounded-xl border border-slate-200 bg-slate-50 p-3">' +
             '<div class="mb-2 flex items-center justify-between gap-2">' +
               '<span class="rounded-full border px-2 py-0.5 text-[11px] font-black ' + itemDifficulty.className + '">' + itemDifficulty.label + '</span>' +
               '<span class="text-[11px] font-black uppercase tracking-wide text-slate-400">Kelime</span>' +
             '</div>' +
             '<h5 class="truncate text-lg font-black text-slate-950">' + escapeHtml(item.word) + '</h5>' +
             '<div class="mt-2 space-y-1.5">' +
-              '<p class="home-word-meaning line-clamp-2 text-sm font-black">' + escapeHtml(wordTurkish(item) || "Anlam eklenmemiş") + '</p>' +
+              '<p class="line-clamp-2 text-sm font-black text-blue-700">' + escapeHtml(wordTurkish(item) || "Anlam eklenmemiş") + '</p>' +
               (synonymText ? '<p class="line-clamp-1 text-xs font-bold text-slate-600" title="' + escapeHtml(synonymText) + '">Yakın anlamlılar: ' + escapeHtml(synonymText) + '</p>' : '') +
             '</div>' +
           '</article>';
@@ -2036,6 +2234,8 @@
         setView("words");
         return;
       }
+      wordStudyScopeIds = null;
+      wordStudyScopeLabel = "";
       wordStudyMode = "cards";
       wordSessionSize = String(ids.length);
       localStorage.setItem("yds-word-session-size-v1", String(wordSessionSize));
@@ -2078,7 +2278,7 @@
       const labels = dailyTaskLabels();
       const summary = dailyTaskSummary();
       const streak = calculateStreak();
-      return '<section class="home-work-card rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
+      return '<section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
         '<div class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">' +
           '<div>' +
             '<p class="text-xs font-black uppercase tracking-wide text-blue-500">' + escapeHtml(formatTurkishDate()) + '</p>' +
@@ -2087,14 +2287,14 @@
           '</div>' +
           '<button id="dailyGoalSettingsBtn" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-600 hover:bg-slate-50">Hedefleri Düzenle</button>' +
         '</div>' +
-        '<div class="home-progress-track mb-4 h-2 overflow-hidden rounded-full"><div class="h-full rounded-full bg-blue-600" style="width:' + summary.percent + '%"></div></div>' +
-        '<div class="grid gap-3 lg:grid-cols-2">' + Object.entries(labels).map(([key, meta], index) => {
+        '<div class="mb-4 h-2 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full bg-blue-600" style="width:' + summary.percent + '%"></div></div>' +
+        '<div class="grid gap-3 lg:grid-cols-2">' + Object.entries(labels).map(([key, meta]) => {
           const task = dailyProgress[key];
           if (!task || Number(task.target || 0) <= 0) return "";
           const count = Math.min(taskProgressCount(task), task.target);
           const percent = task.target ? Math.min(100, Math.round((count / task.target) * 100)) : 100;
           const completed = task.completed || count >= task.target;
-          return '<article class="daily-task-card rounded-xl border p-3 ' + (key === "difficultWords" ? 'lg:col-span-2 ' : '') + (completed ? 'home-complete-card border-emerald-200 bg-emerald-50' : 'home-list-item border-slate-200 bg-slate-50') + '">' +
+          return '<article class="daily-task-card rounded-xl border p-3 ' + (key === "difficultWords" ? 'lg:col-span-2 ' : '') + (completed ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-slate-50') + '">' +
             '<div class="flex items-center gap-3">' +
               '<span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ' + (completed ? 'border-emerald-200 bg-white text-emerald-700' : 'border-blue-100 bg-white text-blue-700') + ' text-sm font-black">' + meta.icon + '</span>' +
               '<div class="min-w-0 flex-1">' +
@@ -2102,9 +2302,9 @@
                   '<h4 class="truncate text-sm font-black text-slate-950">' + meta.title + '</h4>' +
                   '<span class="text-xs font-black ' + (completed ? 'text-emerald-700' : 'text-slate-500') + '">' + (completed ? '✓ Tamamlandı' : count + ' / ' + task.target) + '</span>' +
                 '</div>' +
-                '<div class="home-progress-track mt-2 h-1.5 overflow-hidden rounded-full"><div class="h-full rounded-full ' + (completed ? 'bg-emerald-600' : 'bg-blue-600') + '" style="width:' + percent + '%"></div></div>' +
+                '<div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full ' + (completed ? 'bg-emerald-600' : 'bg-blue-600') + '" style="width:' + percent + '%"></div></div>' +
               '</div>' +
-              '<button class="daily-task-start rounded-xl px-3 py-2 text-xs font-black ' + (completed ? 'border border-emerald-200 bg-white text-emerald-700' : (index === 0 ? 'bg-blue-600 text-white hover:bg-blue-500' : 'border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100')) + '" data-task="' + key + '">' + dailyTaskActionLabel(key, task, count) + '</button>' +
+              '<button class="daily-task-start rounded-xl px-3 py-2 text-xs font-black ' + (completed ? 'border border-emerald-200 bg-white text-emerald-700' : 'bg-blue-600 text-white hover:bg-blue-500') + '" data-task="' + key + '">' + dailyTaskActionLabel(key, task, count) + '</button>' +
             '</div>' +
           '</article>';
         }).join("") + '</div>' +
@@ -2142,13 +2342,13 @@
         ["Okunan metin", summary.readings],
         ["Aktif gün", summary.activeDays],
       ];
-      return '<section class="home-summary-card rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
+      return '<section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
         '<div class="flex items-center justify-between gap-3">' +
           '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Bu Hafta</p>' +
           '<div class="flex items-center gap-1.5" aria-label="Son yedi gün">' + dots + '</div>' +
         '</div>' +
         '<div class="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-2">' + cards.map(([label, value]) =>
-          '<div class="home-summary-metric rounded-xl p-3"><p class="text-xs font-bold text-slate-500">' + label + '</p><p class="mt-1 text-xl font-black text-slate-950">' + value + '</p></div>'
+          '<div class="rounded-xl bg-slate-50 p-3"><p class="text-xs font-bold text-slate-500">' + label + '</p><p class="mt-1 text-xl font-black text-slate-950">' + value + '</p></div>'
         ).join("") + '</div>' +
       '</section>';
     }
@@ -2172,15 +2372,11 @@
             startWordStudy("quiz", true);
           }
           if (task === "pastExamReading") {
-            articleLibraryTab = "yds";
             activeArticleId = "__list__";
-            localStorage.setItem("yds-article-library-tab-v1", articleLibraryTab);
             setView("articles");
           }
           if (task === "externalReading") {
-            articleLibraryTab = "external";
             activeArticleId = "__list__";
-            localStorage.setItem("yds-article-library-tab-v1", articleLibraryTab);
             setView("articles");
           }
           if (task === "difficultWords") startQuestionSolvingTask();
@@ -2190,11 +2386,11 @@
 
     function renderHomeActionPanel() {
       if (!hasHomeData()) {
-        return '<section class="home-list-card rounded-2xl border border-dashed border-slate-300 bg-white p-5 text-center shadow-sm">' +
+        return '<section class="rounded-2xl border border-dashed border-slate-300 bg-white p-5 text-center shadow-sm">' +
           '<h3 class="text-lg font-black text-slate-950">Başlamak için bir bölüm seç</h3>' +
-          '<p class="mt-1 text-sm font-semibold text-slate-500">PDF yükleyebilir, makale ekleyebilir veya kelime defterini oluşturmaya başlayabilirsin.</p>' +
+          '<p class="mt-1 text-sm font-semibold text-slate-500">TXT/Markdown kaynak ekleyebilir, makale ekleyebilir veya kelime defterini oluşturmaya başlayabilirsin.</p>' +
           '<div class="mt-4 flex flex-wrap justify-center gap-2">' +
-            '<button id="homeUploadBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white hover:bg-blue-500">PDF Ekle</button>' +
+            '<button id="homeUploadBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white hover:bg-blue-500">TXT Kaynak Ekle</button>' +
             '<button id="homeWordAddBtn" class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 hover:bg-slate-50">Yeni Kelime</button>' +
           '</div>' +
         '</section>';
@@ -2202,7 +2398,7 @@
       const wrongCount = wrongQuestions().length;
       if (!wrongCount) return "";
       return '<section class="grid gap-3">' +
-        '<article class="home-alert-card rounded-2xl border border-red-100 bg-red-50 px-4 py-3 shadow-sm"><div class="flex flex-wrap items-center justify-between gap-3"><p class="text-sm font-black text-red-800">' + wrongCount + ' yanlış soru tekrar bekliyor</p><button id="homeWrongBtn" class="rounded-xl border border-red-200 bg-white px-3 py-2 text-sm font-black text-red-700 hover:bg-red-50">Çöz</button></div></article>' +
+        '<article class="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 shadow-sm"><div class="flex flex-wrap items-center justify-between gap-3"><p class="text-sm font-black text-red-800">' + wrongCount + ' yanlış soru tekrar bekliyor</p><button id="homeWrongBtn" class="rounded-xl border border-red-200 bg-white px-3 py-2 text-sm font-black text-red-700 hover:bg-red-50">Çöz</button></div></article>' +
       '</section>';
     }
 
@@ -2211,19 +2407,19 @@
         .sort((a, b) => new Date(b.createdAt || b.updatedAt || 0) - new Date(a.createdAt || a.updatedAt || 0))
         .slice(0, 3);
       if (!recent.length) return "";
-      return '<aside class="home-list-card rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
+      return '<aside class="home-recent-words-panel rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
         '<div class="mb-3 flex items-start justify-between gap-3">' +
           '<div>' +
             '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Son Eklenen Kelimeler</p>' +
             '<h4 class="mt-1 text-base font-black text-slate-950">Yeni eklenenler</h4>' +
           '</div>' +
-          '<button id="recentWordsOpenBtn" class="rounded-xl px-2.5 py-2 text-xs font-black text-slate-600 hover:bg-slate-100">Kelime Defteri</button>' +
+          '<button id="recentWordsOpenBtn" class="home-recent-words-link rounded-xl px-2.5 py-2 text-xs font-black">Kelime Defteri</button>' +
         '</div>' +
         '<div class="grid gap-2">' + recent.map(item => {
           const synonym = wordMeaningNote(item);
-          return '<article class="home-list-item rounded-xl border border-slate-200 bg-slate-50 p-3">' +
+          return '<article class="home-recent-words-item rounded-xl border border-slate-200 bg-slate-50 p-3">' +
             '<h5 class="truncate text-lg font-black text-slate-950">' + escapeHtml(item.word) + '</h5>' +
-            '<p class="home-word-meaning mt-2 line-clamp-2 text-sm font-black">' + escapeHtml(wordTurkish(item) || "Anlam eklenmemiş") + '</p>' +
+            '<p class="home-recent-words-meaning mt-2 line-clamp-2 text-sm font-black">' + escapeHtml(wordTurkish(item) || "Anlam eklenmemiş") + '</p>' +
             (synonym ? '<p class="mt-1 line-clamp-2 text-xs font-bold text-slate-600" title="' + escapeHtml(synonym) + '">Yakın anlamlılar: ' + escapeHtml(synonym) + '</p>' : '') +
           '</article>';
         }).join("") + '</div>' +
@@ -2290,26 +2486,43 @@
               '</div>' +
             '</div>' +
             '<div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">' +
-              (meta.items.length ? meta.items.map(item =>
-                '<article class="rounded-xl border border-slate-200 bg-slate-50 p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:bg-white hover:shadow-md">' +
-                  '<button class="hub-document-card block w-full text-left" data-id="' + escapeHtml(item.id) + '">' +
-                    '<span class="mb-2 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100 text-xs font-black text-blue-700">' + (item.importMethod === "text" ? "TXT" : "PDF") + '</span>' +
-                    '<span class="block text-base font-extrabold text-slate-950">' + escapeHtml(item.title) + '</span>' +
-                    '<span class="mt-1 block text-sm font-semibold text-slate-500">' + item.questionCount + ' soru</span>' +
-                  '</button>' +
-                  '<div class="mt-3 flex items-center justify-between gap-2 border-t border-slate-200 pt-3">' +
-                    '<button class="hub-document-card rounded-lg bg-blue-600 px-3 py-2 text-xs font-black text-white hover:bg-blue-500" data-id="' + escapeHtml(item.id) + '">Çöz</button>' +
-                    (item.builtIn ? '' : '<button class="delete-uploaded-pdf rounded-lg border border-red-200 bg-white px-3 py-2 text-xs font-black text-red-600 hover:bg-red-50" data-id="' + escapeHtml(item.id) + '">Sil</button>') +
+              (meta.items.length ? meta.items.map(item => {
+                const solvedCount = documentSolvedCount(item);
+                const isComplete = item.questionCount > 0 && solvedCount >= item.questionCount;
+                const actionLabel = isComplete ? "Sonuçları Gör" : solvedCount > 0 ? "Devam Et" : "Başla";
+                return '<article class="rounded-xl border p-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ' + (isComplete ? 'border-emerald-200 bg-emerald-50/50 hover:border-emerald-300' : 'border-slate-200 bg-slate-50 hover:border-blue-300 hover:bg-white') + '">' +
+                  '<div class="flex items-start justify-between gap-3">' +
+                    '<button class="hub-document-card min-w-0 flex-1 text-left" data-id="' + escapeHtml(item.id) + '"><span class="block truncate text-base font-extrabold text-slate-950">' + escapeHtml(documentDisplayTitle(item)) + '</span></button>' +
+                    (item.builtIn ? '' : '<div class="relative shrink-0"><button class="document-menu-toggle flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-xl font-black text-slate-500 hover:bg-slate-50" aria-label="' + escapeHtml(documentDisplayTitle(item)) + ' işlemleri" data-id="' + escapeHtml(item.id) + '">⋯</button><div class="document-action-menu absolute right-0 top-10 z-10 min-w-32 rounded-xl border border-slate-200 bg-white p-1 shadow-xl shadow-slate-200"><button class="edit-document block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50" data-id="' + escapeHtml(item.id) + '">Düzenle</button><button class="delete-uploaded-pdf block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-red-700 hover:bg-red-50" data-id="' + escapeHtml(item.id) + '">Sil</button></div></div>') +
                   '</div>' +
-                '</article>'
-              ).join("") : '<div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center md:col-span-2 xl:col-span-3"><p class="text-base font-extrabold text-slate-700">' + escapeHtml(meta.empty) + '</p><p class="mt-2 text-sm font-medium text-slate-500">Kaynaklar başlığının sağındaki ekleme düğmesiyle yeni kaynak ekleyebilirsin.</p></div>') +
+                  (isComplete ? '<span class="mt-3 inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700">Tamamlandı</span>' : '') +
+                  '<div class="mt-3 space-y-1 text-sm font-semibold text-slate-500"><p>Eklendi: ' + escapeHtml(documentAddedAtLabel(item)) + '</p><p>İlerleme: ' + solvedCount + ' / ' + item.questionCount + ' soru</p></div>' +
+                  '<div class="mt-3 border-t border-slate-200 pt-3"><button class="hub-document-card rounded-lg bg-blue-600 px-3 py-2 text-xs font-black text-white hover:bg-blue-500" data-id="' + escapeHtml(item.id) + '">' + actionLabel + '</button></div>' +
+                '</article>';
+              }).join("") : '<div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center md:col-span-2 xl:col-span-3"><p class="text-base font-extrabold text-slate-700">' + escapeHtml(meta.empty) + '</p><p class="mt-2 text-sm font-medium text-slate-500">Kaynaklar başlığının sağındaki ekleme düğmesiyle yeni kaynak ekleyebilirsin.</p></div>') +
             '</div>' +
           '</section>';
       document.querySelectorAll(".hub-document-card").forEach(button => {
         button.addEventListener("click", () => selectDocument(button.dataset.id));
       });
+      document.querySelectorAll(".document-menu-toggle").forEach(button => {
+        button.addEventListener("click", event => {
+          event.stopPropagation();
+          document.querySelectorAll(".document-action-menu.is-open").forEach(menu => {
+            if (menu !== button.nextElementSibling) menu.classList.remove("is-open");
+          });
+          button.nextElementSibling.classList.toggle("is-open");
+        });
+      });
+      document.querySelectorAll(".edit-document").forEach(button => {
+        button.addEventListener("click", event => {
+          event.stopPropagation();
+          const documentRecord = (uploadedBank.documents || []).find(item => item.id === button.dataset.id);
+          if (documentRecord) openDocumentEditModal(documentRecord);
+        });
+      });
       bindDeleteUploadedPdfButtons();
-      document.getElementById("hubAddBtn").addEventListener("click", () => setView("upload"));
+      document.getElementById("hubAddBtn").addEventListener("click", () => { uploadTargetModule = moduleId === "yds" ? "yds" : "exams"; setView("upload"); });
     }
 
     function renderWrongQuestionsPage() {
@@ -2366,7 +2579,6 @@
           dailyProgress,
           dailyHistory,
           dailyHardWords: loadJson(STORAGE_DAILY_HARD_WORDS, null),
-          questionProgress,
           preferences: {
             theme: localStorage.getItem(STORAGE_THEME) || "light",
             wordSessionSize,
@@ -2403,7 +2615,6 @@
         dailyProgress: data.dailyProgress || null,
         dailyHistory: Array.isArray(data.dailyHistory) ? data.dailyHistory : [],
         dailyHardWords: data.dailyHardWords || null,
-        questionProgress: data.questionProgress || {},
         preferences: data.preferences || {},
       };
     }
@@ -2419,8 +2630,6 @@
       dailyGoals = normalizeDailyGoals(normalized.dailyGoals);
       dailyHistory = normalized.dailyHistory;
       dailyProgress = normalizeDailyProgress(normalized.dailyProgress);
-      questionProgress = normalized.questionProgress;
-      saveJson(STORAGE_QUESTION_PROGRESS, questionProgress);
       if (normalized.preferences.theme) localStorage.setItem(STORAGE_THEME, normalized.preferences.theme);
       if (normalized.preferences.wordSessionSize) {
         wordSessionSize = normalized.preferences.wordSessionSize;
@@ -2741,7 +2950,7 @@
     }
 
     function renderModuleItems(container, module) {
-      if (module.id === "articles") return;
+      if (module.id === "articles" || module.id === "yds" || module.id === "exams") return;
       if (module.id === "wrong") {
         container.innerHTML = wrongQuestions().length
           ? '<p class="px-3 py-2 text-sm font-semibold text-slate-500">Yanlışları ana panelden tekrar çözebilirsin.</p>'
@@ -2863,13 +3072,6 @@
         }
         return escapeHtml(part);
       }).join("");
-    }
-
-    function clickableSharedText(text, question) {
-      const html = clickableQuestionText(text);
-      if (question?.type !== "cloze_question") return html;
-      const marker = "(" + question.questionNumber + ")----";
-      return html.replace(marker, '<mark class="rounded bg-amber-200 px-1 text-amber-950">' + marker + '</mark>');
     }
 
     function renderArticleTokenText(text, baseOffset = 0, vocabulary = null) {
@@ -3201,19 +3403,11 @@
       return parts.length ? '<div class="mt-2 flex flex-wrap gap-2 text-sm font-semibold" style="color: var(--text-secondary)">' + parts.map(item => '<span class="rounded-full border px-3 py-1" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-secondary)">' + escapeHtml(item) + '</span>').join("") + '</div>' : "";
     }
 
-    function articleTopicOptions() {
-      const topics = [...new Set(articles.map(article => String(article.topic || "").trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, "tr"));
-      return topics;
-    }
-
     function sortedFilteredArticles() {
       const query = normalizeLookup(articleSearchQuery);
       return [...articles].filter(article => {
-        const kind = articleKind(article);
-        if (articleLibraryTab === "yds" && kind !== "yds") return false;
-        if (articleLibraryTab === "external" && kind !== "external") return false;
         if (articleStatusFilter !== "all" && articleReadingStatus(article).key !== articleStatusFilter) return false;
-        if (articleTopicFilter !== "all" && normalizeLookup(article.topic || "") !== normalizeLookup(articleTopicFilter)) return false;
+        if (articleTypeFilter !== "all" && articleKind(article) !== articleTypeFilter) return false;
         if (!query) return true;
         return [articleDisplayTitle(article), articleSourceLabel(article), article.topic, article.level, article.text]
           .some(value => normalizeLookup(value || "").includes(query));
@@ -3262,14 +3456,34 @@
       ).join("");
     }
 
+    function questionPaletteHtml(questions) {
+      const solvedCount = solveMode === "document" ? documentSolvedCount(activeDocument()) : 0;
+      return '<aside class="question-palette hidden self-start rounded-2xl border border-slate-200 bg-white p-3 shadow-sm xl:block" aria-label="Soru haritası">' +
+        '<div class="mb-3 flex items-center justify-between gap-2"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Soru Haritası</p><p class="mt-0.5 text-xs font-semibold text-slate-500">' + questions.length + ' soru</p></div><span class="rounded-lg bg-blue-50 px-2 py-1 text-xs font-black text-blue-700">' + (currentIndex + 1) + ' / ' + questions.length + '</span></div>' +
+        '<div class="grid grid-cols-5 gap-1.5">' + questions.map((item, index) => {
+          const isActive = index === currentIndex;
+          const isWrong = wrongQuestionIds.includes(item.id);
+          const isSolved = solveMode === "document" && index < solvedCount;
+          const color = isActive
+            ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
+            : isWrong
+              ? 'border-red-200 bg-red-50 text-red-700 hover:border-red-300'
+              : isSolved
+                ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-300'
+                : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-blue-300 hover:bg-blue-50';
+          const state = isActive ? 'aktif soru' : isWrong ? 'yanlış cevaplandı' : isSolved ? 'cevaplandı' : 'henüz çözülmedi';
+          return '<button class="question-palette-item flex h-9 items-center justify-center rounded-lg border text-xs font-black transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 ' + color + '" data-index="' + index + '" aria-label="Soru ' + (index + 1) + ', ' + state + '"' + (isActive ? ' aria-current="step"' : '') + '>' + (index + 1) + '</button>';
+        }).join("") + '</div>' +
+        '<div class="mt-3 grid gap-1 text-[11px] font-semibold text-slate-500"><span><i class="mr-1 inline-block h-2 w-2 rounded-full bg-blue-600"></i>Aktif</span><span><i class="mr-1 inline-block h-2 w-2 rounded-full bg-emerald-500"></i>Cevaplandı</span><span><i class="mr-1 inline-block h-2 w-2 rounded-full bg-red-500"></i>Yanlış</span></div>' +
+      '</aside>';
+    }
+
     function renderQuestion() {
       pageTitle.textContent = solveMode === "wrong" ? "Yanlış Sorular" : "Etkileşimli Soru Çözme";
+      answered = false;
       const questions = getCategoryQuestions();
-      const progress = activeQuestionProgress();
-      currentIndex = Math.max(0, Math.min(currentIndex, Math.max(questions.length - 1, 0)));
       const question = questions[currentIndex];
       const documentInfo = question ? (documents.find(item => item.id === question.documentId) || activeDocument()) : activeDocument();
-      const sharedText = question?.passage || documentInfo?.blocks?.find(block => block.id === question.blockId)?.sharedText || null;
       renderMenu();
       renderStats();
       document.body.classList.toggle("question-focus-mode", questionFocusMode && activeView === "solve");
@@ -3278,13 +3492,12 @@
         renderFinishScreen();
         return;
       }
-      answered = Boolean(progress.answers[question.id]);
       const fontSize = Math.max(17, Math.min(23, questionFontSize || 19));
       const questionDocDisplay = documentInfo ? friendlyDocumentDisplay(documentInfo, questions.length) : { title: "Soru" };
 
       appArea.innerHTML =
-        '<div class="grid items-start gap-4 xl:grid-cols-[250px_minmax(0,1fr)]">' +
-          '<div id="desktopPalette" class="hidden xl:block">' + questionPaletteHtml(questions) + '</div>' +
+        '<div class="grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)]">' +
+        questionPaletteHtml(questions) +
         '<article class="question-reader-surface article-reader-surface ' + (questionFocusMode ? 'is-focus-mode ' : '') + 'rounded-2xl border p-4 lg:p-5">' +
           '<div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">' +
             '<div>' +
@@ -3295,33 +3508,37 @@
               '<button id="questionFontDownBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-sm font-black" title="Yazı boyutunu azalt" aria-label="Yazı boyutunu azalt">A-</button>' +
               '<button id="questionFontUpBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-sm font-black" title="Yazı boyutunu artır" aria-label="Yazı boyutunu artır">A+</button>' +
               '<button id="questionFocusBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black ' + (questionFocusMode ? 'ring-2 ring-blue-300' : '') + '" title="Odak moduna geç" aria-label="Odak moduna geç">' + (questionFocusMode ? '↔' : '◎') + '</button>' +
-              '<button id="mobilePaletteBtn" class="article-toolbar-btn rounded-xl px-3 text-xs font-black xl:hidden" aria-label="Soru haritasını aç">Soru Haritası</button>' +
-              '<button id="flagQuestionBtn" class="article-toolbar-btn rounded-xl px-3 text-xs font-black ' + (progress.flagged[question.id] ? 'ring-2 ring-amber-400' : '') + '" aria-label="Soruyu sonra bakmak için işaretle">' + (progress.flagged[question.id] ? 'Bayrağı Kaldır' : 'Sonra Bak') + '</button>' +
               '<button id="questionBackBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black" title="Kaynaklara dön" aria-label="Kaynaklara dön">←</button>' +
             '</div>' +
           '</div>' +
-          (sharedText
+          (question.passage
             ? '<section class="mx-auto mb-5 max-w-[900px] rounded-2xl border px-5 py-5 sm:px-7 lg:px-8" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary); font-size: ' + fontSize + 'px; line-height: 1.76;">' +
                 '<div class="mb-3 text-xs font-bold uppercase tracking-wider text-blue-500">Okuma Parçası</div>' +
-                '<p class="whitespace-pre-line text-left">' + clickableSharedText(sharedText, question) + '</p>' +
+                '<p class="whitespace-pre-line text-left">' + clickableQuestionText(question.passage) + '</p>' +
               '</section>'
             : '') +
           '<div class="mx-auto max-w-[900px]">' +
           '<p id="questionText" class="mb-5 whitespace-pre-line text-left font-medium" style="color: var(--text-primary); font-size: ' + fontSize + 'px; line-height: 1.72;">' + clickableQuestionText(question.question) + '</p>' +
           '<div id="optionsArea" class="space-y-3">' +
             Object.entries(question.options || {}).map(([key, value]) =>
-              '<div class="option-btn group flex w-full cursor-pointer items-start gap-3 rounded-2xl border p-3.5 text-left transition hover:border-blue-300 hover:bg-blue-50 ' + (progress.answers[question.id] === key ? 'ring-2 ring-blue-500' : '') + '" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)" role="button" data-key="' + escapeHtml(key) + '">' +
+              '<div class="option-btn group flex w-full cursor-pointer items-start gap-3 rounded-2xl border p-3.5 text-left transition hover:border-blue-300 hover:bg-blue-50" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)" role="button" data-key="' + escapeHtml(key) + '">' +
                 '<span class="option-letter flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 font-bold text-blue-600 group-hover:bg-blue-600 group-hover:text-white">' + escapeHtml(key) + '</span>' +
                 '<span class="block flex-1 pt-1 leading-relaxed" style="font-size: ' + Math.max(16, fontSize - 1) + 'px;">' + clickableQuestionText(value) + '</span>' +
               '</div>'
             ).join("") +
           '</div>' +
-          '<div id="feedbackArea" class="mt-6">' + (progress.completed ? '<div class="rounded-2xl border border-blue-200 bg-blue-50 p-4 text-sm font-bold text-slate-800">Senin cevabın: <b>' + escapeHtml(progress.answers[question.id] || "Boş") + '</b> · Doğru cevap: <b>' + escapeHtml(question.correctAnswer || "Henüz doğrulanmadı") + '</b></div>' : '') + '</div>' +
+          '<div id="feedbackArea" class="mt-6"></div>' +
           '<div id="questionNavArea" class="mt-5 flex justify-end">' + nextButtonHtml() + '</div>' +
           '</div>' +
-        '</article>' +
-        '<div id="mobilePaletteWrap" class="fixed inset-0 z-50 hidden overflow-auto bg-slate-950/60 p-4 xl:hidden"><div class="ml-auto w-full max-w-sm">' + questionPaletteHtml(questions) + '</div></div>' +
-        '</div>';
+        '</article></div>';
+
+      document.querySelectorAll(".question-palette-item").forEach(button => {
+        button.addEventListener("click", () => {
+          currentIndex = Number(button.dataset.index || 0);
+          answered = false;
+          renderQuestion();
+        });
+      });
 
       document.querySelectorAll(".option-btn").forEach(button => {
         button.addEventListener("click", event => {
@@ -3355,15 +3572,8 @@
           setView("wrong");
           return;
         }
-        setView(isYdsSource(activeDocument()) ? "yds" : "exams");
+        setView(activeDocument()?.builtIn || activeDocument()?.collection === "yds" ? "yds" : "exams");
       });
-      document.getElementById("flagQuestionBtn").addEventListener("click", () => {
-        progress.flagged[question.id] = !progress.flagged[question.id];
-        saveQuestionProgress();
-        renderQuestion();
-      });
-      document.getElementById("mobilePaletteBtn").addEventListener("click", () => document.getElementById("mobilePaletteWrap")?.classList.remove("hidden"));
-      bindQuestionPalette(questions);
       bindNextQuestionButton();
     }
 
@@ -3384,17 +3594,9 @@
     }
 
     function checkAnswer(selectedButton, question) {
-      if (solveMode === "document") {
-        const progress = activeQuestionProgress();
-        progress.answers[question.id] = selectedButton.dataset.key;
-        progress.completed = false;
-        markDailyTaskItem("difficultWords", question.id);
-        saveQuestionProgress();
-        renderQuestion();
-        return;
-      }
       if (answered) return;
       answered = true;
+      if (solveMode === "document") rememberDocumentProgress(activeDocumentId, currentIndex + 1);
       const selectedKey = selectedButton.dataset.key;
       markDailyTaskItem("difficultWords", question.id);
       const optionButtons = document.querySelectorAll(".option-btn");
@@ -3440,44 +3642,16 @@
       const nextButton = document.getElementById("nextQuestionBtn");
       if (!nextButton) return;
       nextButton.addEventListener("click", () => {
-        const questions = getCategoryQuestions();
-        if (currentIndex + 1 >= questions.length) {
-          finishDocumentSession();
-          return;
-        }
         currentIndex++;
-        saveQuestionProgress();
         renderQuestion();
       });
-    }
-
-    function finishDocumentSession() {
-      const questions = getCategoryQuestions();
-      const progress = activeQuestionProgress();
-      const answeredCount = questions.filter(question => progress.answers[question.id]).length;
-      const blank = questions.length - answeredCount;
-      const flagged = questions.filter(question => progress.flagged[question.id]).length;
-      if (blank && !window.confirm("Sınav Özeti\n\nCevaplanan: " + answeredCount + "\nBoş: " + blank + "\nİşaretli: " + flagged + "\n\nBoş sorulara dönmek için İptal, sınavı bitirmek için Tamam seçin.")) {
-        const index = questions.findIndex(question => !progress.answers[question.id]);
-        if (index >= 0) { currentIndex = index; saveQuestionProgress(); renderQuestion(); }
-        return;
-      }
-      stats.correct = questions.filter(question => progress.answers[question.id] && progress.answers[question.id] === question.correctAnswer).length;
-      stats.wrong = questions.filter(question => progress.answers[question.id] && question.correctAnswer && progress.answers[question.id] !== question.correctAnswer).length;
-      questions.filter(question => progress.answers[question.id] && question.correctAnswer && progress.answers[question.id] !== question.correctAnswer).forEach(question => addWrongQuestion(question.id));
-      progress.completed = true;
-      saveQuestionProgress();
-      renderStats();
-      renderFinishScreen();
     }
 
     function renderFinishScreen() {
       const documentInfo = solveMode === "wrong" ? { title: "Yanlış Sorular" } : activeDocument();
       const total = stats.correct + stats.wrong;
       const rate = total === 0 ? 0 : Math.round((stats.correct / total) * 100);
-      const questions = getCategoryQuestions();
       appArea.innerHTML =
-        '<div class="grid items-start gap-4 xl:grid-cols-[250px_minmax(0,1fr)]"><div class="hidden xl:block">' + questionPaletteHtml(questions) + '</div>' +
         '<div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-10 text-center shadow-2xl shadow-black/30">' +
           '<div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500/20 text-3xl">✓</div>' +
           '<h3 class="text-3xl font-bold text-white">Tebrikler, bu bölümü tamamladınız!</h3>' +
@@ -3488,8 +3662,7 @@
             '<div class="rounded-2xl bg-slate-800 p-5"><p class="text-sm text-slate-400">Başarı Oranı</p><p class="mt-1 text-3xl font-bold text-blue-400">%' + rate + '</p></div>' +
           '</div>' +
           '<button onclick="restartCategory()" class="mt-8 rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg shadow-blue-950/40 transition hover:bg-blue-500">Bu Bölümü Tekrar Çöz</button>' +
-        '</div></div>';
-      bindQuestionPalette(questions);
+        '</div>';
     }
 
     function restartCategory() {
@@ -3607,6 +3780,8 @@
     }
 
     function startWordStudy(mode = "cards", fresh = false) {
+      wordStudyScopeIds = null;
+      wordStudyScopeLabel = "";
       wordStudyMode = mode === "quiz" ? "quiz" : "cards";
       wordStudyIndex = 0;
       wordCardRevealed = false;
@@ -3804,8 +3979,14 @@
       return 3;
     }
 
+    function activeStudyPool() {
+      if (!Array.isArray(wordStudyScopeIds)) return studyWords();
+      const scopedIds = new Set(wordStudyScopeIds);
+      return wordPracticeWords().filter(item => scopedIds.has(item.id));
+    }
+
     function allStudyWords() {
-      return studyWords().sort((a, b) =>
+      return activeStudyPool().sort((a, b) =>
         dueRank(a) - dueRank(b) ||
         new Date(a.dueAt || a.updatedAt || a.createdAt || 0) - new Date(b.dueAt || b.updatedAt || b.createdAt || 0) ||
         String(a.word || "").localeCompare(String(b.word || ""), "tr")
@@ -3972,7 +4153,9 @@
             '<div>' +
               '<p class="text-sm font-black uppercase tracking-wide text-blue-500">' + (wordStudyMode === "quiz" ? "SORU" : "KART") + ' ' + displayIndex + ' / ' + words.length + '</p>' +
               '<p class="mt-1 text-xs font-semibold text-slate-500">' + (wordStudyMode === "quiz" ? "Oturum: " + words.length + " soru" : "Çalışılabilir havuz: " + pool.length + " kelime") + '</p>' +
-              '<p class="mt-1 text-xs font-semibold text-slate-400">Genel havuz: ' + totalPracticeWords + ' kelime</p>' +
+              (wordStudyScopeLabel
+                ? '<p class="mt-1 text-xs font-black text-blue-600">' + escapeHtml(wordStudyScopeLabel) + '</p>'
+                : '<p class="mt-1 text-xs font-semibold text-slate-400">Genel havuz: ' + totalPracticeWords + ' kelime</p>') +
               (limitMessage ? '<p class="mt-1 text-xs font-bold text-amber-700">' + escapeHtml(limitMessage) + '</p>' : '') +
             '</div>' +
             '<div class="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-2">' +
@@ -4347,17 +4530,6 @@
       document.body.classList.toggle("question-focus-mode", questionFocusMode && activeView === "solve");
     }
 
-    function renderArticleTypeTabs() {
-      const tabs = [
-        { key: "all", label: "Tümü" },
-        { key: "yds", label: "Çıkmış YDS" },
-        { key: "external", label: "Kendi Metinlerim" },
-      ];
-      return '<div class="flex flex-wrap gap-2">' + tabs.map(tab =>
-        '<button class="article-library-tab rounded-xl border px-4 py-2 text-sm font-black transition ' + (articleLibraryTab === tab.key ? 'border-blue-600 bg-blue-600 text-white shadow-sm' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:bg-blue-50') + '" data-tab="' + tab.key + '">' + tab.label + '</button>'
-      ).join("") + '</div>';
-    }
-
     function renderArticleCreatePanel() {
       return '<div id="articleFormPanel" class="mt-3 hidden rounded-2xl border p-4" style="border-color: var(--border-color); background: var(--bg-surface-secondary)">' +
         '<div class="mb-4 flex flex-col gap-2 rounded-xl border p-3 md:flex-row md:items-end md:justify-between" style="border-color: var(--border-color); background: var(--bg-surface)">' +
@@ -4466,7 +4638,6 @@
       renderStats();
       const activeArticle = activeArticleId === "__list__" ? null : (articles.find(item => item.id === activeArticleId) || null);
       const filtered = sortedFilteredArticles();
-      const topicOptions = articleTopicOptions();
       appArea.innerHTML =
         '<div class="grid gap-4">' +
           '<section class="rounded-2xl border p-4 shadow-sm" style="border-color: var(--border-color); background: var(--bg-surface)">' +
@@ -4475,7 +4646,6 @@
                 '<p class="text-sm font-bold uppercase tracking-wide text-blue-500">Okuma Merkezi</p>' +
                 '<h2 class="mt-1 text-2xl font-black" style="color: var(--text-primary)">Okuma Merkezi</h2>' +
                 '<p class="mt-1 text-sm font-semibold" style="color: var(--text-secondary)">Çıkmış YDS parçalarını ve kendi eklediğin metinleri çalış.</p>' +
-                '<span class="mt-2 inline-flex rounded-full border px-3 py-1 text-xs font-black" style="border-color: var(--border-color); color: var(--text-secondary); background: var(--bg-surface-secondary)">' + articles.length + ' içerik</span>' +
               '</div>' +
               '<button id="toggleArticleFormBtn" class="shrink-0 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-sm transition hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500">Yeni Metin Ekle</button>' +
             '</div>' +
@@ -4483,13 +4653,12 @@
             (activeArticle ? '' :
               '<div class="mt-4">' +
               '<div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">' +
-                renderArticleTypeTabs() +
                 '<span id="articleResultCount" class="rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color: var(--border-color); color: var(--text-secondary); background: var(--bg-surface-secondary)">' + filtered.length + ' içerik</span>' +
               '</div>' +
               '<div class="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-4">' +
                 '<input id="articleSearchInput" class="rounded-xl border px-3 py-2 text-sm font-semibold outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)" placeholder="Metin ara" value="' + escapeHtml(articleSearchQuery) + '" />' +
                 '<select id="articleStatusFilter" class="rounded-xl border px-3 py-2 text-sm font-bold outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)"><option value="all">Okuma durumu</option><option value="new">Yeni</option><option value="reading">Okunuyor</option><option value="completed">Tamamlandı</option></select>' +
-                '<select id="articleTopicFilter" class="rounded-xl border px-3 py-2 text-sm font-bold outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)"><option value="all">Konu</option>' + topicOptions.map(topic => '<option value="' + escapeHtml(topic) + '">' + escapeHtml(topic) + '</option>').join("") + '</select>' +
+                '<select id="articleTypeFilter" class="rounded-xl border px-3 py-2 text-sm font-bold outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)"><option value="all">İçerik türü</option><option value="yds">Çıkmış YDS</option><option value="external">Kendi Metinlerim</option></select>' +
                 '<select id="articleSortMode" class="rounded-xl border px-3 py-2 text-sm font-bold outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)"><option value="recent">Son eklenen</option><option value="az">A-Z</option><option value="short">En kısa</option><option value="long">En uzun</option><option value="studied">Son çalışılan</option></select>' +
               '</div>' +
               '<div id="articleResults">' +
@@ -4520,14 +4689,6 @@
       }
       const saveButton = document.getElementById("saveArticleBtn");
       if (saveButton) saveButton.addEventListener("click", saveArticleFromInputs);
-      document.querySelectorAll(".article-library-tab").forEach(button => {
-        button.addEventListener("click", () => {
-          articleLibraryTab = button.dataset.tab || "all";
-          localStorage.setItem("yds-article-library-tab-v1", articleLibraryTab);
-          activeArticleId = "__list__";
-          renderArticlesPage();
-        });
-      });
       const search = document.getElementById("articleSearchInput");
       if (search) search.addEventListener("input", () => {
         articleSearchQuery = search.value;
@@ -4546,7 +4707,7 @@
         });
       };
       bindSelect("articleStatusFilter", value => articleStatusFilter = value, articleStatusFilter);
-      bindSelect("articleTopicFilter", value => articleTopicFilter = value, articleTopicFilter);
+      bindSelect("articleTypeFilter", value => articleTypeFilter = value, articleTypeFilter);
       bindSelect("articleSortMode", value => articleSortMode = value, articleSortMode);
       bindArticleResultControls();
     }
@@ -4723,11 +4884,9 @@
             sourceUrl: document.getElementById("articleSourceUrlInput")?.value?.trim() || "",
             publicationDate: "",
             notes: "",
-          });
+      });
       articles.unshift(article);
       activeArticleId = article.id;
-      articleLibraryTab = kind === "yds" ? "yds" : "external";
-      localStorage.setItem("yds-article-library-tab-v1", articleLibraryTab);
       saveArticles();
       renderArticlesPage();
     }
@@ -4866,6 +5025,52 @@
       '</aside>';
     }
 
+    function articleScrollStorageKey(article) {
+      return "yds-article-scroll-v1:" + String(article?.id || "");
+    }
+
+    function bindArticleReadingProgress(article) {
+      if (articleReadingScrollCleanup) articleReadingScrollCleanup();
+      const body = document.getElementById("articleReadingBody");
+      const toolbar = document.getElementById("articleReaderToolbar");
+      const progress = document.getElementById("articleReadingProgressValue");
+      if (!body || !toolbar || !progress) return;
+      const storageKey = articleScrollStorageKey(article);
+      const savedScroll = Number(localStorage.getItem(storageKey) || 0);
+      let lastScrollY = window.scrollY;
+      let frame = 0;
+      let saveTimer = 0;
+      const update = () => {
+        frame = 0;
+        const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        const currentScroll = Math.max(0, window.scrollY);
+        const percent = Math.max(0, Math.min(100, Math.round((currentScroll / maxScroll) * 100)));
+        progress.style.width = percent + "%";
+        progress.parentElement?.setAttribute("aria-valuenow", String(percent));
+        toolbar.classList.toggle("is-compact", currentScroll > 140 && currentScroll > lastScrollY);
+        lastScrollY = currentScroll;
+      };
+      const onScroll = () => {
+        if (!frame) frame = window.requestAnimationFrame(update);
+        if (saveTimer) window.clearTimeout(saveTimer);
+        saveTimer = window.setTimeout(() => localStorage.setItem(storageKey, String(Math.round(window.scrollY))), 160);
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll);
+      window.requestAnimationFrame(() => {
+        const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+        if (savedScroll > 0) window.scrollTo({ top: Math.min(savedScroll, maxScroll), behavior: "auto" });
+        update();
+      });
+      articleReadingScrollCleanup = () => {
+        window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("resize", onScroll);
+        if (frame) window.cancelAnimationFrame(frame);
+        if (saveTimer) window.clearTimeout(saveTimer);
+        articleReadingScrollCleanup = null;
+      };
+    }
+
     function renderArticleReader(article) {
       const reader = document.getElementById("articleReader");
       if (!article) {
@@ -4878,27 +5083,37 @@
       }
       const vocabMap = articleVocabularyMap(article);
       const title = articleDisplayTitle(article);
-      const fontSize = Math.max(18, Math.min(22, articleFontSize || 19));
+      const fontSize = Math.max(22, Math.min(28, articleFontSize || 25));
+      const lineHeight = [1.65, 1.7, 1.75].includes(articleLineHeight) ? articleLineHeight : 1.7;
+      const contentWidth = [920, 940, 960, 980].includes(articleContentWidth) ? articleContentWidth : 940;
+      const surface = ["white", "neutral", "warm", "dark"].includes(articleReadingSurface) ? articleReadingSurface : "neutral";
       const kind = articleKind(article);
       const savedEntries = savedArticleEntries(article);
       const savedEntryCount = savedEntries.filter(entry => !entry.unresolved).length;
       setArticleFocusMode(articleFocusMode);
       reader.innerHTML =
         '<article class="article-reader-surface ' + (articleFocusMode ? 'is-focus-mode ' : '') + 'rounded-2xl border p-4 lg:p-5">' +
-          '<div class="mb-4 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">' +
-            '<div class="min-w-0">' +
+          '<div class="article-reading-progress" role="progressbar" aria-label="Okuma ilerlemesi" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="articleReadingProgressValue"></span></div>' +
+          '<header id="articleReaderToolbar" class="article-reader-toolbar" role="toolbar" aria-label="Okuma araçları">' +
+            '<button id="articleBackBtn" class="article-toolbar-btn flex h-10 shrink-0 items-center justify-center rounded-xl px-3 text-xs font-black" title="Okuma listesine dön" aria-label="Okuma listesine dön">← <span class="article-toolbar-back-copy ml-1">Listeye dön</span></button>' +
+            '<div class="article-reader-heading">' +
               '<p class="text-sm font-semibold uppercase tracking-wider text-blue-500">' + (kind === "yds" ? 'Çıkmış YDS Parçası' : 'Kendi Metnim') + '</p>' +
               '<h3 class="mt-1 break-words text-2xl font-bold lg:text-3xl" style="color: var(--text-primary)">' + escapeHtml(title) + '</h3>' +
               articleMetadataHtml(article) +
             '</div>' +
-            '<div class="relative flex items-center gap-2">' +
-              '<button id="articleFontDownBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-sm font-black" title="Yazı boyutunu azalt" aria-label="Yazı boyutunu azalt">A-</button>' +
-              '<button id="articleFontUpBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-sm font-black" title="Yazı boyutunu artır" aria-label="Yazı boyutunu artır">A+</button>' +
-              '<button id="articleFocusBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black ' + (articleFocusMode ? 'ring-2 ring-blue-300' : '') + '" title="Odak moduna geç" aria-label="Odak moduna geç">' + (articleFocusMode ? '↔' : '◎') + '</button>' +
+            '<div class="article-reader-actions relative">' +
               '<button id="articleSavedWordsBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="Kaydedilenleri göster" aria-label="Kaydedilenleri göster">Kaydedilenler (' + savedEntryCount + ')</button>' +
               '<button id="articleHighlightToggleBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black" title="Vurguları göster/gizle" aria-label="Vurguları göster/gizle">' + (articleHighlightsVisible ? '◐' : '○') + '</button>' +
-              '<button id="articleBackBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black" title="Okuma listesine dön" aria-label="Okuma listesine dön">←</button>' +
+              '<button id="articleSettingsBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="Okuma ayarlarını aç" aria-label="Okuma ayarlarını aç" aria-expanded="false" aria-controls="articleSettingsPanel">Okuma Ayarları</button>' +
               '<button id="articleMenuBtn" class="article-icon-btn flex h-10 w-10 items-center justify-center rounded-xl text-xl font-black" title="Diğer işlemler" aria-label="Diğer işlemler">⋯</button>' +
+              '<section id="articleSettingsPanel" class="article-settings-panel" hidden aria-label="Okuma ayarları">' +
+                '<div class="mb-3 flex items-center justify-between"><h4 class="text-sm font-black">Okuma Ayarları</h4><span id="articleFontSizeValue" class="text-xs font-bold" style="color: var(--text-secondary)">' + fontSize + ' px</span></div>' +
+                '<label class="block text-xs font-black" for="articleFontSizeInput">Yazı boyutu<input id="articleFontSizeInput" class="mt-2 w-full" type="range" min="22" max="28" step="1" value="' + fontSize + '" /></label>' +
+                '<label class="mt-4 block text-xs font-black" for="articleLineHeightSelect">Satır aralığı<select id="articleLineHeightSelect" class="mt-2 w-full rounded-xl border px-3 py-2 text-sm font-bold" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)"><option value="1.65" ' + (lineHeight === 1.65 ? 'selected' : '') + '>Sıkı</option><option value="1.7" ' + (lineHeight === 1.7 ? 'selected' : '') + '>Dengeli</option><option value="1.75" ' + (lineHeight === 1.75 ? 'selected' : '') + '>Geniş</option></select></label>' +
+                '<label class="mt-4 block text-xs font-black" for="articleContentWidthSelect">Metin genişliği<select id="articleContentWidthSelect" class="mt-2 w-full rounded-xl border px-3 py-2 text-sm font-bold" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)"><option value="920" ' + (contentWidth === 920 ? 'selected' : '') + '>Dar</option><option value="940" ' + (contentWidth === 940 ? 'selected' : '') + '>Dengeli</option><option value="960" ' + (contentWidth === 960 ? 'selected' : '') + '>Geniş</option><option value="980" ' + (contentWidth === 980 ? 'selected' : '') + '>En geniş</option></select></label>' +
+                '<fieldset class="mt-4"><legend class="text-xs font-black">Okuma yüzeyi</legend><div class="mt-2 grid grid-cols-2 gap-2">' + ["white", "neutral", "warm", "dark"].map(value => '<button class="article-surface-choice rounded-xl border px-3 py-2 text-xs font-black ' + (surface === value ? 'ring-2 ring-blue-400' : '') + '" data-surface="' + value + '" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)">' + ({ white: "Beyaz", neutral: "Yumuşak nötr", warm: "Sıcak", dark: "Koyu" })[value] + '</button>').join("") + '</div></fieldset>' +
+                '<button id="articleFocusBtn" class="mt-4 w-full rounded-xl border px-3 py-2 text-sm font-black" style="border-color: var(--border-color); color: var(--button-secondary-text); background: var(--button-secondary-bg)">' + (articleFocusMode ? 'Odak modundan çık' : 'Odak moduna geç') + '</button>' +
+              '</section>' +
               '<div id="articleActionMenu" class="word-action-menu absolute right-0 top-12 z-30 min-w-52 rounded-xl border p-2 text-sm font-bold shadow-xl" style="border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary)">' +
                 '<button id="renameArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Yeniden adlandır</button>' +
                 '<button id="editArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Metni düzenle</button>' +
@@ -4908,8 +5123,8 @@
                 '<button id="removeArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left text-red-600 hover:bg-red-50">İçeriği sil</button>' +
               '</div>' +
             '</div>' +
-          '</div>' +
-          '<div id="articleReadingBody" class="article-body ' + (articleHighlightsVisible ? '' : 'article-hide-highlights ') + 'mx-auto max-w-[900px] rounded-2xl border px-5 py-5 sm:px-7 lg:px-8" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary); font-size: ' + fontSize + 'px; line-height: 1.76;">' + renderArticleParagraphs(article, vocabMap, savedEntries) + '</div>' +
+          '</header>' +
+          '<div id="articleReadingBody" class="article-body article-surface-' + surface + ' ' + (articleHighlightsVisible ? '' : 'article-hide-highlights ') + 'rounded-2xl border px-5 py-6 sm:px-7 lg:px-8" style="max-width: ' + contentWidth + 'px; --article-font-size: ' + fontSize + 'px; --article-line-height: ' + lineHeight + '; border-color: var(--border-color);">' + renderArticleParagraphs(article, vocabMap, savedEntries) + '</div>' +
           (kind === "yds" ? renderYdsReadingQuestions(article) : '<section class="mx-auto mt-4 max-w-[900px] rounded-2xl border p-4" style="border-color: var(--border-color); background: var(--bg-surface-secondary)"><div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Okuma</p><p class="text-sm font-semibold" style="color: var(--text-secondary)">Metni bitirdiğinde günlük kendi metnim görevin tamamlanır.</p></div><div class="flex flex-wrap gap-2"><button id="studyArticleWordsBtn" class="rounded-xl border px-4 py-2 text-sm font-black" style="border-color: var(--border-color); color: var(--button-secondary-text); background: var(--button-secondary-bg)">Bu metnin kelimeleri</button><button id="completeArticleReadingBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white hover:bg-blue-500">Okumayı Tamamla</button></div></div></section>') +
         '</article>' +
         renderArticleSavedDrawer(article, savedEntries);
@@ -4963,15 +5178,42 @@
       const quizSavedButton = document.getElementById("quizSavedArticleWordsBtn");
       if (quizSavedButton) quizSavedButton.addEventListener("click", () => startArticleSavedWordStudy(article, "quiz"));
       bindArticleSelectionSaving(article, vocabMap);
-      document.getElementById("articleFontDownBtn").addEventListener("click", () => {
-        articleFontSize = Math.max(18, fontSize - 1);
-        localStorage.setItem("yds-article-font-size-v1", String(articleFontSize));
-        renderArticleReader(article);
+      const readingBody = document.getElementById("articleReadingBody");
+      const settingsButton = document.getElementById("articleSettingsBtn");
+      const settingsPanel = document.getElementById("articleSettingsPanel");
+      if (settingsButton && settingsPanel) settingsButton.addEventListener("click", () => {
+        const willOpen = settingsPanel.hidden;
+        settingsPanel.hidden = !willOpen;
+        settingsButton.setAttribute("aria-expanded", String(willOpen));
       });
-      document.getElementById("articleFontUpBtn").addEventListener("click", () => {
-        articleFontSize = Math.min(22, fontSize + 1);
+      const fontSizeInput = document.getElementById("articleFontSizeInput");
+      if (fontSizeInput && readingBody) fontSizeInput.addEventListener("input", () => {
+        articleFontSize = Math.max(22, Math.min(28, Number(fontSizeInput.value) || 25));
         localStorage.setItem("yds-article-font-size-v1", String(articleFontSize));
-        renderArticleReader(article);
+        readingBody.style.setProperty("--article-font-size", articleFontSize + "px");
+        const value = document.getElementById("articleFontSizeValue");
+        if (value) value.textContent = articleFontSize + " px";
+      });
+      const lineHeightSelect = document.getElementById("articleLineHeightSelect");
+      if (lineHeightSelect && readingBody) lineHeightSelect.addEventListener("change", () => {
+        articleLineHeight = [1.65, 1.7, 1.75].includes(Number(lineHeightSelect.value)) ? Number(lineHeightSelect.value) : 1.7;
+        localStorage.setItem("yds-article-line-height-v1", String(articleLineHeight));
+        readingBody.style.setProperty("--article-line-height", String(articleLineHeight));
+      });
+      const contentWidthSelect = document.getElementById("articleContentWidthSelect");
+      if (contentWidthSelect && readingBody) contentWidthSelect.addEventListener("change", () => {
+        articleContentWidth = [920, 940, 960, 980].includes(Number(contentWidthSelect.value)) ? Number(contentWidthSelect.value) : 940;
+        localStorage.setItem("yds-article-content-width-v1", String(articleContentWidth));
+        readingBody.style.maxWidth = articleContentWidth + "px";
+      });
+      document.querySelectorAll(".article-surface-choice").forEach(button => {
+        button.addEventListener("click", () => {
+          const nextSurface = button.dataset.surface || "neutral";
+          if (!["white", "neutral", "warm", "dark"].includes(nextSurface)) return;
+          articleReadingSurface = nextSurface;
+          localStorage.setItem("yds-article-reading-surface-v1", articleReadingSurface);
+          renderArticleReader(article);
+        });
       });
       document.getElementById("articleFocusBtn").addEventListener("click", () => {
         setArticleFocusMode(!articleFocusMode);
@@ -4986,6 +5228,7 @@
         if (!paragraph) return;
         openSentencePanel(paragraph.textContent.trim(), article);
       });
+      bindArticleReadingProgress(article);
       const articleMenu = document.getElementById("articleActionMenu");
       document.getElementById("articleMenuBtn").addEventListener("click", event => {
         event.stopPropagation();
@@ -5120,12 +5363,14 @@
         .map(entry => entry.item.id)
         .filter(Boolean);
       if (!ids.length) return;
+      wordStudyScopeIds = [...new Set(ids)];
+      wordStudyScopeLabel = 'Bu metinden kaydettiklerin: ' + wordStudyScopeIds.length + ' kelime';
       wordStudyMode = mode === "quiz" ? "quiz" : "cards";
-      wordSessionIds = [...new Set(ids)];
+      wordSessionIds = [...wordStudyScopeIds];
       wordStudyIndex = 0;
       wordCardRevealed = false;
       wordQuizQuestion = null;
-      saveJson("yds-word-session-ids-v1", wordSessionIds);
+      if (wordStudyMode === "quiz") resetWordQuizSessionResults();
       setView("study");
     }
 
@@ -5459,104 +5704,106 @@
       });
     }
 
-    function renderTextImportForm() {
-      return '<div class="mt-6 grid gap-4">' +
-        '<div class="grid gap-4 md:grid-cols-2">' +
-          '<label class="block"><span class="mb-2 block text-sm font-semibold text-slate-300">Kaynak adı</span><input id="textTitle" class="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-blue-500" placeholder="Örn: 2025 YDS Sonbahar" /></label>' +
-          '<label class="block"><span class="mb-2 block text-sm font-semibold text-slate-300">Sınav yılı</span><input id="textYear" type="number" min="1960" max="2100" class="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-blue-500" placeholder="2025" /></label>' +
-          '<label class="block"><span class="mb-2 block text-sm font-semibold text-slate-300">Sınav dönemi</span><input id="textSession" class="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-blue-500" placeholder="Sonbahar" /></label>' +
-          '<label class="block"><span class="mb-2 block text-sm font-semibold text-slate-300">Sınav türü</span><select id="textExamType" class="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-blue-500"><option>YDS</option><option>e-YDS</option><option>YÖKDİL</option><option>DENEME</option></select></label>' +
-        '</div>' +
-        '<label class="block"><span class="mb-2 block text-sm font-semibold text-slate-300">TXT veya MD dosyası</span><input id="textFileInput" type="file" accept=".txt,.md,.markdown,text/plain,text/markdown" class="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-300 file:mr-4 file:rounded-xl file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-white" /></label>' +
-        '<label class="block"><span class="mb-2 block text-sm font-semibold text-slate-300">Metin düzenleyicisi</span><textarea id="textImportInput" class="min-h-64 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 font-mono text-sm text-white outline-none focus:border-blue-500" placeholder="Soru 1&#10;Soru Kökü: ...&#10;A) ...&#10;B) ...&#10;C) ...&#10;D) ...&#10;E) ...&#10;Doğru Cevap: A"></textarea></label>' +
-        '<button id="parseTextBtn" class="rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg shadow-blue-950/40 hover:bg-blue-500">Metni Ayrıştır ve Ön İzle</button>' +
-        '<div id="textImportStatus" class="rounded-2xl border border-slate-800 bg-slate-950 p-4 text-slate-400">TXT veya Markdown dosyası seçin.</div>' +
-        '<div id="textImportPreview"></div>' +
-      '</div>';
-    }
-
-    function bindTextImportForm() {
-      const fileInput = document.getElementById("textFileInput");
-      fileInput.addEventListener("change", async event => {
-        const file = event.target.files?.[0];
-        const status = document.getElementById("textImportStatus");
-        if (!file) return;
-        if (!/\.(txt|md|markdown)$/i.test(file.name)) { status.textContent = "Yalnızca .txt, .md veya .markdown dosyası seçin."; return; }
-        document.getElementById("textImportInput").value = await file.text();
-        const title = document.getElementById("textTitle");
-        if (!title.value.trim()) title.value = file.name.replace(/\.(txt|md|markdown)$/i, "");
-        status.textContent = file.name + " yüklendi. Ön izlemek için metni ayrıştırın.";
-      });
-      document.getElementById("parseTextBtn").addEventListener("click", previewTextImport);
-    }
-
-    function normalizeImportText(value) {
-      return String(value || "").replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/\n[ \t]*\n(?:[ \t]*\n)+/g, "\n\n").trim();
-    }
-
-    function parseYdsTextImport(raw) {
-      const text = normalizeImportText(raw);
+    function parseTextSource(raw) {
+      const text = String(raw || "").replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").trim();
       const questions = [], blocks = [], errors = [];
-      let block = null, question = null, mode = "OUTSIDE_BLOCK", part = "stem";
-      const append = (object, key, value) => { const clean = String(value || "").trim(); if (clean) object[key] = object[key] ? object[key] + "\n" + clean : clean; };
-      const finishQuestion = reason => {
+      let block = null, question = null, part = "stem", readingShared = false;
+      const add = (object, key, value) => { const clean = String(value || "").trim(); if (clean) object[key] = object[key] ? object[key] + "\n" + clean : clean; };
+      const closeQuestion = () => {
         if (!question) return;
-        if (!question.question && question.type !== "cloze_question") errors.push("Soru " + question.questionNumber + ": soru kökü bulunamadı.");
-        ["A", "B", "C", "D", "E"].forEach(key => { if (!String(question.options[key] || "").trim()) errors.push("Soru " + question.questionNumber + ": " + key + " seçeneği bulunamadı."); });
+        ["A", "B", "C", "D", "E"].forEach(key => { if (!question.options[key]) errors.push("Soru " + question.questionNumber + ": " + key + " seçeneği bulunamadı."); });
         if (!/[A-E]/.test(question.correctAnswer || "")) errors.push("Soru " + question.questionNumber + ": Doğru cevap geçersiz veya eksik.");
-        if (reason === "eof" && !question.correctAnswer) errors.push("Soru " + question.questionNumber + ": dosya sonunda tamamlanmamış kayıt.");
+        if (!question.question && !block) errors.push("Soru " + question.questionNumber + ": soru kökü bulunamadı.");
         questions.push(question); question = null; part = "stem";
       };
-      const finishBlock = () => {
+      const closeBlock = () => {
         if (!block) return;
-        block.sharedText = block.sharedText.trim();
-        const expected = block.endQuestion - block.startQuestion + 1;
+        const count = questions.filter(item => item.blockId === block.id).length;
         if (!block.sharedText) errors.push(block.title + ": ortak metin/pasaj bulunamadı.");
-        if (block.questions.length !== expected) errors.push(block.title + ": " + block.startQuestion + "–" + block.endQuestion + " bekleniyordu, " + block.questions.length + " soru bulundu.");
-        blocks.push(block); block = null; mode = "OUTSIDE_BLOCK";
+        if (count !== block.endQuestion - block.startQuestion + 1) errors.push(block.title + ": " + block.startQuestion + "–" + block.endQuestion + " bekleniyordu, " + count + " soru bulundu.");
+        blocks.push(block); block = null; readingShared = false;
       };
       text.split("\n").forEach(rawLine => {
         const line = rawLine.trim();
-        const cleaned = line.replace(/^\s*#{1,6}\s*/, "").trim();
-        const type = /cloze\s*test/i.test(cleaned) ? "cloze_test" : /(reading\s*passage|okuma\s*parçası)/i.test(cleaned) ? "reading_passage" : null;
-        const range = type && cleaned.match(/(?:sorular?\s*)?(\d+)\s*[-–—]\s*(\d+)/i);
-        const header = line.match(/^\s*(?:#{1,6}\s*)?soru\s+(\d+)\s*$/i);
-        if (type && range) { finishQuestion("block"); finishBlock(); block = { id: "block-" + range[1] + "-" + range[2], type, title: cleaned.replace(/\s*\(?\s*(?:sorular?\s*)?\d+\s*[-–—]\s*\d+\s*\)?\s*$/i, "").trim(), startQuestion: Number(range[1]), endQuestion: Number(range[2]), sharedText: "", questions: [] }; mode = "BLOCK_HEADER"; return; }
-        if (header) { finishQuestion("question"); const number = Number(header[1]); const inBlock = block && number >= block.startQuestion && number <= block.endQuestion; question = { questionNumber: number, type: inBlock ? (block.type === "cloze_test" ? "cloze_question" : "reading_question") : "standard", question: "", options: {}, correctAnswer: null, blockId: inBlock ? block.id : null, blankNumber: inBlock && block.type === "cloze_test" ? number : null }; if (inBlock) block.questions.push(question); mode = "QUESTION"; part = "stem"; return; }
+        const heading = line.replace(/^#{1,6}\s*/, "");
+        const range = heading.match(/(?:sorular?\s*)?(\d+)\s*[-–—]\s*(\d+)/i);
+        const type = /cloze\s*test/i.test(heading) ? "cloze_test" : /(reading\s*passage|okuma\s*parçası)/i.test(heading) ? "reading_passage" : "";
+        if (type && range) {
+          closeQuestion(); closeBlock();
+          block = { id: "block-" + range[1] + "-" + range[2], type, title: heading, startQuestion: Number(range[1]), endQuestion: Number(range[2]), sharedText: "" };
+          return;
+        }
+        const questionHeader = heading.match(/^soru\s+(\d+)\s*$/i);
+        if (questionHeader) {
+          closeQuestion();
+          const number = Number(questionHeader[1]);
+          if (block && (number < block.startQuestion || number > block.endQuestion)) closeBlock();
+          question = { questionNumber: number, type: block?.type === "cloze_test" ? "cloze_question" : block?.type === "reading_passage" ? "reading_question" : "standard", question: "", options: {}, correctAnswer: null, blockId: block?.id || null, blankNumber: block?.type === "cloze_test" ? number : null, passage: block?.sharedText || "" };
+          return;
+        }
         if (!line) return;
-        if (block && !question && /^(metin|pasaj)\s*:/i.test(line)) { append(block, "sharedText", line.replace(/^(metin|pasaj)\s*:\s*/i, "")); mode = "SHARED_TEXT"; return; }
-        if (block && !question && mode === "SHARED_TEXT") { append(block, "sharedText", line); return; }
+        if (block && !question && /^(metin|pasaj)\s*:/i.test(line)) { readingShared = true; add(block, "sharedText", line.replace(/^(metin|pasaj)\s*:\s*/i, "")); return; }
+        if (block && !question && readingShared) { add(block, "sharedText", line); return; }
         if (!question) return;
         const answer = line.match(/^doğru\s*cevap\s*:\s*([A-E])\s*$/i);
+        if (answer) { question.correctAnswer = answer[1].toUpperCase(); return; }
         const option = line.match(/^\*?\s*([A-E])\s*(?:\)|\.|-)\s*(.*)$/i);
-        if (answer) { question.correctAnswer = answer[1].toUpperCase(); part = "answer"; return; }
         if (option) { part = option[1].toUpperCase(); question.options[part] = option[2].trim(); return; }
-        if (part === "stem") append(question, "question", line.replace(/^soru\s*kökü\s*:\s*/i, ""));
-        else if (/[A-E]/.test(part)) append(question.options, part, line);
+        if (part === "stem") add(question, "question", line.replace(/^soru\s*kökü\s*:\s*/i, ""));
+        else add(question.options, part, line);
       });
-      finishQuestion("eof"); finishBlock();
-      const seen = new Set(), duplicate = new Set();
-      questions.forEach(item => { if (seen.has(item.questionNumber)) duplicate.add(item.questionNumber); seen.add(item.questionNumber); });
-      [...duplicate].sort((a, b) => a - b).forEach(number => errors.push("Soru " + number + " iki kez bulundu."));
-      const missing = Array.from({ length: 80 }, (_, index) => index + 1).filter(number => !seen.has(number));
-      if (questions.length !== 80) errors.push("Beklenen toplam 80, bulunan toplam " + questions.length + ".");
+      closeQuestion(); closeBlock();
+      const seen = new Set(), duplicates = [];
+      questions.forEach(item => { if (seen.has(item.questionNumber)) duplicates.push(item.questionNumber); seen.add(item.questionNumber); });
+      [...new Set(duplicates)].forEach(number => errors.push("Soru " + number + " iki kez bulundu."));
+      const expectedTotal = Math.max(...seen, 0);
+      const missing = Array.from({ length: expectedTotal }, (_, index) => index + 1).filter(number => !seen.has(number));
+      if (!expectedTotal) errors.push("Hiç soru bulunamadı.");
       if (missing.length) errors.push("Eksik soru numaraları: " + missing.join(", ") + ".");
-      return { questions, blocks, report: { foundTotal: questions.length, missing, errors, valid: !errors.length } };
+      return { text, questions, blocks, report: { expectedTotal, foundTotal: questions.length, missing, errors, valid: !errors.length } };
     }
 
-    function previewTextImport() {
-      const parsed = parseYdsTextImport(document.getElementById("textImportInput").value);
+    function renderUploadPage() {
+      const targetTitle = uploadTargetModule === "yds" ? "Çıkmış YDS Soruları Ekle" : "Deneme Ekle";
+      pageTitle.textContent = targetTitle;
+      renderMenu();
+      renderStats();
+      appArea.innerHTML =
+        '<div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-2xl shadow-black/30 lg:p-8">' +
+          '<h3 class="text-2xl font-bold text-white">' + targetTitle + '</h3>' +
+          '<p class="mt-2 text-slate-400">TXT veya Markdown dosyanı seçebilir ya da metni doğrudan yapıştırabilirsin. Kaynak yalnızca ilgili bölüme kaydedilir.</p>' +
+          '<div class="mt-6 grid gap-4">' +
+            '<label class="block"><span class="mb-2 block text-sm font-semibold text-slate-300">Kaynak adı</span><input id="textTitle" class="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-blue-500" placeholder="Örn: 2025 YDS Sonbahar" /></label>' +
+            '<label class="block"><span class="mb-2 block text-sm font-semibold text-slate-300">TXT veya MD dosyası</span><input id="textFileInput" type="file" accept=".txt,.md,.markdown,text/plain,text/markdown" class="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-300 file:mr-4 file:rounded-xl file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-white" /></label>' +
+            '<label class="block"><span class="mb-2 block text-sm font-semibold text-slate-300">Metin düzenleyicisi</span><textarea id="textImportInput" class="min-h-64 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 font-mono text-sm text-white outline-none focus:border-blue-500" placeholder="Soru 1&#10;Soru Kökü: ...&#10;A) ...&#10;B) ...&#10;C) ...&#10;D) ...&#10;E) ...&#10;Doğru Cevap: A"></textarea></label>' +
+            '<button id="parseTextBtn" class="rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg shadow-blue-950/40 hover:bg-blue-500">Metni Ayrıştır ve Ön İzle</button>' +
+            '<div id="textImportStatus" class="rounded-2xl border border-slate-800 bg-slate-950 p-4 text-slate-400">TXT veya Markdown dosyası seçin.</div>' +
+            '<div id="textImportPreview"></div>' +
+          '</div>' +
+        '</div>';
+      document.getElementById("textFileInput").addEventListener("change", async event => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        if (!/\.(txt|md|markdown)$/i.test(file.name)) { document.getElementById("textImportStatus").textContent = "Yalnızca .txt, .md veya .markdown dosyası seçin."; return; }
+        document.getElementById("textImportInput").value = await file.text();
+        const title = document.getElementById("textTitle");
+        if (!title.value.trim()) title.value = file.name.replace(/\.(txt|md|markdown)$/i, "");
+        document.getElementById("textImportStatus").textContent = file.name + " yüklendi. Ön izlemek için metni ayrıştırın.";
+      });
+      document.getElementById("parseTextBtn").addEventListener("click", previewTextSource);
+    }
+
+    function previewTextSource() {
+      const parsed = parseTextSource(document.getElementById("textImportInput").value);
       lastTextImport = parsed;
       const status = document.getElementById("textImportStatus");
       const preview = document.getElementById("textImportPreview");
-      status.textContent = parsed.report.valid ? "80 soru eksiksiz; kaydetmeye hazır." : "Kaydetmeden önce kırmızı hataları metin düzenleyicisinde düzeltin.";
-      const standard = parsed.questions.filter(item => item.type === "standard").map(item => item.questionNumber);
-      preview.innerHTML = '<div class="rounded-2xl border border-slate-800 bg-slate-950 p-4"><h4 class="font-semibold text-white">Ön izleme ve doğrulama</h4><div class="mt-3 grid gap-2 text-sm md:grid-cols-2"><p class="rounded-xl bg-slate-900 p-3 text-slate-300">Beklenen toplam: <b class="text-white">80</b></p><p class="rounded-xl bg-slate-900 p-3 text-slate-300">Bulunan toplam: <b class="text-white">' + parsed.report.foundTotal + '</b></p><p class="rounded-xl bg-slate-900 p-3 text-slate-300">Eksik sorular: <b class="text-white">' + (parsed.report.missing.length ? parsed.report.missing.join(", ") : "Yok") + '</b></p><p class="rounded-xl bg-slate-900 p-3 text-slate-300">Standart sorular: <b class="text-white">' + (standard.length ? standard.join(", ") : "Yok") + '</b></p></div><div class="mt-3 grid gap-2">' + parsed.blocks.map(block => '<div class="rounded-xl border border-slate-800 bg-slate-900 p-3 text-sm text-slate-300"><b class="text-white">' + escapeHtml(block.title) + '</b> · ' + block.startQuestion + '–' + block.endQuestion + ' · ' + block.questions.length + ' soru · ' + (block.sharedText ? "ortak metin bulundu" : "ortak metin eksik") + '</div>').join("") + '</div>' + (parsed.report.errors.length ? '<ul class="mt-3 list-disc space-y-1 rounded-xl border border-red-500/50 bg-red-950/30 p-4 pl-8 text-sm text-red-100">' + parsed.report.errors.map(error => '<li>' + escapeHtml(error) + '</li>').join("") + '</ul>' : '<p class="mt-3 rounded-xl border border-emerald-500/40 bg-emerald-950/30 p-3 text-sm font-semibold text-emerald-100">Eksik veya hatalı kayıt yok.</p>') + (parsed.report.valid ? '<button id="saveTextImportBtn" class="mt-4 rounded-2xl bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-500">Doğrulanmış Kaynağı Kaydet</button>' : '') + '</div>';
-      const save = document.getElementById("saveTextImportBtn");
-      if (save) save.addEventListener("click", importParsedText);
+      status.textContent = parsed.report.valid ? parsed.report.foundTotal + " soru eksiksiz; kaydetmeye hazır." : "Kaydetmeden önce kırmızı hataları metin düzenleyicisinde düzeltin.";
+      preview.innerHTML = '<div class="rounded-2xl border border-slate-800 bg-slate-950 p-4"><h4 class="font-semibold text-white">Ön izleme ve doğrulama</h4><div class="mt-3 grid gap-2 text-sm md:grid-cols-2"><p class="rounded-xl bg-slate-900 p-3 text-slate-300">Beklenen toplam: <b class="text-white">' + parsed.report.expectedTotal + '</b></p><p class="rounded-xl bg-slate-900 p-3 text-slate-300">Bulunan toplam: <b class="text-white">' + parsed.report.foundTotal + '</b></p><p class="rounded-xl bg-slate-900 p-3 text-slate-300">Eksik sorular: <b class="text-white">' + (parsed.report.missing.length ? parsed.report.missing.join(", ") : "Yok") + '</b></p><p class="rounded-xl bg-slate-900 p-3 text-slate-300">Bloklar: <b class="text-white">' + (parsed.blocks.length || "Yok") + '</b></p></div>' + (parsed.blocks.length ? '<div class="mt-3 grid gap-2">' + parsed.blocks.map(block => '<p class="rounded-xl bg-slate-900 p-3 text-sm text-slate-300"><b class="text-white">' + escapeHtml(block.title) + '</b> · ' + block.startQuestion + '–' + block.endQuestion + '</p>').join("") + '</div>' : '') + (parsed.report.errors.length ? '<ul class="mt-3 list-disc space-y-1 rounded-xl border border-red-500/50 bg-red-950/30 p-4 pl-8 text-sm text-red-100">' + parsed.report.errors.map(error => '<li>' + escapeHtml(error) + '</li>').join("") + '</ul>' : '<p class="mt-3 rounded-xl border border-emerald-500/40 bg-emerald-950/30 p-3 text-sm font-semibold text-emerald-100">Eksik veya hatalı kayıt yok.</p>') + (parsed.report.valid ? '<button id="saveTextImportBtn" class="mt-4 rounded-2xl bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-500">Doğrulanmış Kaynağı Kaydet</button>' : '') + '</div>';
+      document.getElementById("saveTextImportBtn")?.addEventListener("click", saveTextSource);
     }
 
-    function importParsedText() {
+    function saveTextSource() {
       if (!lastTextImport?.report.valid) return;
       const title = document.getElementById("textTitle").value.trim() || "Adsız TXT Kaynağı";
       const docId = "text-" + Date.now();
@@ -5564,43 +5811,14 @@
       const blockMap = new Map(lastTextImport.blocks.map((block, index) => [block.id, blocks[index]]));
       const questions = lastTextImport.questions.map(item => {
         const block = blockMap.get(item.blockId);
-        return { ...item, id: docId + "-q-" + String(item.questionNumber).padStart(3, "0"), documentId: docId, setId: block ? block.id : docId + "-standard", category: title, sourcePage: null, builtIn: false, importMethod: "text", blockId: block?.id || null };
+        return { ...item, id: docId + "-q-" + String(item.questionNumber).padStart(3, "0"), documentId: docId, setId: block ? block.id : docId + "-standard", category: title, sourcePage: null, builtIn: false, importMethod: "text", blockId: block?.id || null, passage: block?.sharedText || item.passage || "" };
       });
-      const documentRecord = { id: docId, title, questionCount: questions.length, builtIn: false, importMethod: "text", examType: document.getElementById("textExamType").value, year: Number(document.getElementById("textYear").value) || null, session: document.getElementById("textSession").value.trim() || null, totalQuestions: questions.length, blocks, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
-      uploadedBank.documents = [...(uploadedBank.documents || []), documentRecord];
-      uploadedBank.questions = [...(uploadedBank.questions || []), ...questions];
+      const now = new Date().toISOString();
+      uploadedBank.documents.push({ id: docId, title, questionCount: questions.length, totalQuestions: questions.length, blocks, collection: uploadTargetModule, builtIn: false, importMethod: "text", sourceText: lastTextImport.text, createdAt: now, updatedAt: now });
+      uploadedBank.questions.push(...questions);
       saveJson(STORAGE_UPLOADS, uploadedBank);
       rebuildBank(); activeDocumentId = docId; currentIndex = 0; answered = false; solveMode = "document"; wrongReviewIds = [];
-      setView("solve"); renderMenu();
-    }
-
-    function renderUploadPage() {
-      pageTitle.textContent = "Çıkmış YDS Soruları Ekle";
-      renderMenu();
-      renderStats();
-      const textActive = uploadMethod === "text";
-      appArea.innerHTML =
-        '<div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-2xl shadow-black/30 lg:p-8">' +
-          '<h3 class="text-2xl font-bold text-white">Yeni kaynak ekle</h3>' +
-          '<p class="mt-2 text-slate-400">TXT/Markdown önerilir. Mevcut PDF ayrıştırma yöntemi deneysel olarak korunur.</p>' +
-          '<div class="mt-6 grid gap-3 sm:grid-cols-2">' +
-            '<button id="textImportTab" class="rounded-2xl border px-4 py-3 text-left ' + (textActive ? 'border-blue-400 bg-blue-600 text-white' : 'border-slate-700 bg-slate-950 text-slate-300') + '"><b class="block">TXT / Markdown’dan Aktar</b><span class="mt-1 block text-xs opacity-80">Önerilen · güvenilir soru yapısı</span></button>' +
-            '<button id="pdfImportTab" class="rounded-2xl border px-4 py-3 text-left ' + (!textActive ? 'border-blue-400 bg-blue-600 text-white' : 'border-slate-700 bg-slate-950 text-slate-300') + '"><b class="block">PDF’den Aktar</b><span class="mt-1 block text-xs opacity-80">Deneysel · mevcut işlev</span></button>' +
-          '</div>' +
-          (textActive ? renderTextImportForm() :
-          '<div class="mt-6 grid gap-4">' +
-            '<label class="block"><span class="mb-2 block text-sm font-semibold text-slate-300">Bölüm adı</span><input id="uploadTitle" class="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-blue-500" placeholder="Örn: 2026 Deneme PDF" /></label>' +
-            '<label class="block"><span class="mb-2 block text-sm font-semibold text-slate-300">PDF dosyası</span><input id="pdfInput" type="file" accept="application/pdf" class="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-300 file:mr-4 file:rounded-xl file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-white" /></label>' +
-            '<label class="block"><span class="mb-2 block text-sm font-semibold text-slate-300">Cevap anahtarı (opsiyonel)</span><textarea id="answerKeyInput" class="min-h-28 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-blue-500" placeholder="PDF içinde cevap anahtarı yoksa buraya yaz: 1 B\n2 C\n3 A veya 1-B 2-C 3-A"></textarea></label>' +
-            '<button id="parsePdfBtn" class="rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg shadow-blue-950/40 hover:bg-blue-500">PDF’yi Tara ve Soruları Çıkar</button>' +
-            '<div id="uploadStatus" class="rounded-2xl border border-slate-800 bg-slate-950 p-4 text-slate-400">Henüz PDF seçilmedi.</div>' +
-            '<div id="uploadPreview"></div>' +
-          '</div>') +
-        '</div>';
-      document.getElementById("textImportTab").addEventListener("click", () => { uploadMethod = "text"; renderUploadPage(); });
-      document.getElementById("pdfImportTab").addEventListener("click", () => { uploadMethod = "pdf"; renderUploadPage(); });
-      if (textActive) bindTextImportForm();
-      else document.getElementById("parsePdfBtn").addEventListener("click", parseSelectedPdf);
+      setView("solve");
     }
 
     async function parseSelectedPdf() {
@@ -5648,7 +5866,7 @@
             : '<div class="mt-4 rounded-2xl border border-amber-400/40 bg-amber-950/30 p-3 text-sm font-semibold text-amber-100">Beş şıkkı olmayan veya aynı set içinde tekrarlanan sorular var. Kaydetmeden önce manuel kontrol etmelisin.</div>') +
         '</div>';
       const importPdfBtn = document.getElementById("importPdfBtn");
-      if (importPdfBtn) importPdfBtn.addEventListener("click", () => importParsedPdf(title, parsedQuestions));
+      if (importPdfBtn) importPdfBtn.addEventListener("click", () => importParsedPdf(title, parsedQuestions, text));
     }
 
     function formatSetIssues(issues) {
@@ -6009,8 +6227,8 @@
       return questions;
     }
 
-    function parseQuestionsFromText(text, title, answerSource) {
-      const docId = "upload-" + Date.now();
+    function parseQuestionsFromText(text, title, answerSource, existingDocumentId = "") {
+      const docId = existingDocumentId || ("upload-" + Date.now());
       const clean = String(text || "").replace(/\r/g, "\n").replace(/[ \t]+/g, " ");
       const groupedQuestions = parseGroupedQuestionsFromText(clean, title, answerSource, docId);
       const groupedNumbers = new Set(groupedQuestions.map(question => question.questionNumber));
@@ -6074,13 +6292,15 @@
       return questions;
     }
 
-    function importParsedPdf(title, parsedQuestions) {
+    function importParsedPdf(title, parsedQuestions, sourceText = "") {
       const docId = parsedQuestions.documentId || parsedQuestions[0]?.documentId || ("upload-" + Date.now());
       const documentRecord = {
         id: docId,
         title,
         questionCount: parsedQuestions.length,
         builtIn: false,
+        createdAt: new Date().toISOString(),
+        sourceText: String(sourceText || ""),
       };
       uploadedBank.documents = (uploadedBank.documents || []).filter(doc => doc.id !== docId);
       uploadedBank.questions = (uploadedBank.questions || []).filter(question => question.documentId !== docId);
@@ -6123,6 +6343,7 @@
         closeArticleWordPopover();
         closeSentencePanel();
         closeArticleEditModal();
+        closeDocumentEditModal();
         if (activeView === "articles" && articleSavedPanelOpen) {
           articleSavedPanelOpen = false;
           const article = currentArticle();
@@ -6140,14 +6361,14 @@
         const article = currentArticle();
         if ((event.metaKey || event.ctrlKey) && (event.key === "+" || event.key === "=")) {
           event.preventDefault();
-          articleFontSize = Math.min(22, Math.max(18, articleFontSize || 19) + 1);
+          articleFontSize = Math.min(28, Math.max(22, articleFontSize || 25) + 1);
           localStorage.setItem("yds-article-font-size-v1", String(articleFontSize));
           if (article) renderArticleReader(article);
           return;
         }
         if ((event.metaKey || event.ctrlKey) && (event.key === "-" || event.key === "_")) {
           event.preventDefault();
-          articleFontSize = Math.max(18, Math.max(18, articleFontSize || 19) - 1);
+          articleFontSize = Math.max(22, Math.max(22, articleFontSize || 25) - 1);
           localStorage.setItem("yds-article-font-size-v1", String(articleFontSize));
           if (article) renderArticleReader(article);
           return;
@@ -6160,32 +6381,6 @@
         }
       }
       if (!typing && activeView === "solve") {
-        const questions = getCategoryQuestions();
-        const question = questions[currentIndex];
-        if (event.key === "ArrowRight") {
-          event.preventDefault();
-          document.getElementById("nextQuestionBtn")?.click();
-          return;
-        }
-        if (event.key === "ArrowLeft") {
-          event.preventDefault();
-          currentIndex = Math.max(0, currentIndex - 1);
-          saveQuestionProgress();
-          renderQuestion();
-          return;
-        }
-        if (event.key.toLowerCase() === "b") {
-          event.preventDefault();
-          document.querySelector(".first-blank-btn")?.click();
-          return;
-        }
-        const optionIndex = ["1", "2", "3", "4", "5"].indexOf(event.key);
-        const optionKey = optionIndex >= 0 ? ["A", "B", "C", "D", "E"][optionIndex] : event.key.toUpperCase();
-        if (question && ["A", "B", "C", "D", "E"].includes(optionKey)) {
-          event.preventDefault();
-          document.querySelector('.option-btn[data-key="' + optionKey + '"]')?.click();
-          return;
-        }
         if (event.key === "Escape" && questionFocusMode) {
           event.preventDefault();
           setQuestionFocusMode(false);
@@ -6208,7 +6403,7 @@
         }
         if (event.key.toLowerCase() === "f") {
           event.preventDefault();
-          document.getElementById("flagQuestionBtn")?.click();
+          setQuestionFocusMode(!questionFocusMode);
           renderQuestion();
           return;
         }
