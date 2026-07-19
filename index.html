@@ -487,19 +487,76 @@
 
     .home-recent-words-panel { background: #f3f7fc !important; border-color: #cbd8e8 !important; box-shadow: 0 4px 12px rgb(15 23 42 / 4%) !important; }
     .home-recent-words-panel .home-recent-words-item { background: #ffffff !important; border-color: #d5e0ee !important; box-shadow: none !important; }
-    .home-recent-words-panel .home-recent-words-meaning { color: #315887 !important; }
+    .home-recent-words-panel .home-recent-words-meaning { color: #1d4ed8 !important; }
     .home-recent-words-link { border: 1px solid transparent; background: #edf3fa; color: #526b8a !important; }
     .home-recent-words-link:hover { background: #e4eef9; color: #3f5f85 !important; }
     [data-theme="dark"] .home-recent-words-panel { background: #202b3b !important; border-color: #506176 !important; box-shadow: none !important; }
     [data-theme="dark"] .home-recent-words-panel .home-recent-words-item { background: #182235 !important; border-color: #506176 !important; }
-    [data-theme="dark"] .home-recent-words-panel .home-recent-words-meaning { color: #a9c3ec !important; }
+    [data-theme="dark"] .home-recent-words-panel .home-recent-words-meaning { color: #93c5fd !important; }
     [data-theme="dark"] .home-recent-words-link { background: #263142; color: #cbd5e1 !important; }
     [data-theme="dark"] .home-recent-words-link:hover { background: #303b4d; color: #f8fafc !important; }
 
+    .daily-task-action {
+      box-sizing: border-box;
+      display: inline-flex !important;
+      flex: 0 0 128px !important;
+      width: 128px !important;
+      min-width: 128px !important;
+      height: 48px !important;
+      align-items: center;
+      justify-content: center;
+      padding: 0 !important;
+      white-space: nowrap;
+      border-radius: .75rem;
+      font-size: .875rem;
+      font-weight: 900;
+      line-height: 1;
+      transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .15s ease;
+    }
+
+    .daily-task-action:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .daily-task-action:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 1023px) {
+      .daily-task-action {
+        flex-basis: 116px !important;
+        width: 116px !important;
+        min-width: 116px !important;
+      }
+    }
+
+    @media (max-width: 639px) {
+      .daily-task-card > div {
+        flex-wrap: nowrap;
+      }
+
+      .daily-task-action {
+        flex: 0 0 108px !important;
+        width: 108px !important;
+        min-width: 108px !important;
+      }
+    }
+
     .yds-top-dashboard {
+      height: 88px;
+      min-height: 88px;
+      max-height: 88px;
       background: #e3eaf3 !important;
       border-color: #c5cfdd !important;
       box-shadow: 0 8px 20px rgb(15 23 42 / 10%) !important;
+    }
+
+    @media (max-width: 1279px) {
+      .yds-top-dashboard {
+        height: auto;
+        max-height: none;
+      }
     }
 
     .yds-top-dashboard #pageTitle,
@@ -651,17 +708,16 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: .5rem;
-      padding: .5rem .25rem;
+      gap: 11px;
+      padding: .25rem;
     }
 
-    body.light-theme .sidebar-utility { border-bottom: 0; }
-    body.light-theme .yds-sidebar-footer { background: transparent !important; border-top: 1px solid #cbd6e4; padding-top: .75rem !important; }
+    body.light-theme .yds-sidebar-footer { background: transparent !important; border-top: 0; padding-top: 0 !important; }
 
     .sidebar-utility-item {
       display: inline-flex;
-      height: 2.5rem;
-      width: 2.5rem;
+      height: 42px;
+      width: 42px;
       align-items: center;
       justify-content: center;
       border: 1px solid var(--theme-border);
@@ -675,6 +731,11 @@
     .sidebar-utility-item:hover {
       border-color: #93c5fd;
       background: var(--theme-hover);
+    }
+
+    .sidebar-utility-item:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
     }
 
     [data-theme="dark"] .sidebar-utility-item:hover {
@@ -711,8 +772,8 @@
 
     .theme-toggle {
       display: flex;
-      height: 2.5rem;
-      width: 2.5rem;
+      height: 42px;
+      width: 42px;
       align-items: center;
       justify-content: center;
       border-radius: .8rem;
@@ -730,6 +791,22 @@
     .theme-toggle:focus-visible {
       outline: 2px solid #2563eb;
       outline-offset: 2px;
+    }
+
+    body.dark-theme .sidebar-utility {
+      border-color: #506176;
+    }
+
+    body.dark-theme .sidebar-utility-item,
+    body.dark-theme .theme-toggle {
+      border-color: #506176 !important;
+      color: #e2e8f0 !important;
+    }
+
+    body.dark-theme .sidebar-utility-item:hover,
+    body.dark-theme .theme-toggle:hover {
+      border-color: #60a5fa !important;
+      background: #263142 !important;
     }
 
     .theme-toggle:active {
@@ -965,6 +1042,29 @@
       margin-bottom: 0;
     }
 
+    .article-language-control { display: inline-flex; overflow: hidden; border: 1px solid var(--border-color); border-radius: .8rem; background: var(--bg-surface-secondary); }
+    .article-language-choice { min-height: 42px; padding: .35rem .65rem; border-right: 1px solid var(--border-color); color: var(--text-secondary); font-size: .75rem; font-weight: 800; }
+    .article-language-choice:last-child { border-right: 0; }
+    .article-language-choice.is-active { background: #2563eb; color: white; }
+    .article-language-choice:disabled { cursor: not-allowed; opacity: .48; }
+    .article-bilingual-grid { display: grid; gap: 0; }
+    .article-bilingual-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; padding: 1.1rem 0; border: 0; border-radius: 0; transition: background-color .15s ease; }
+    .article-bilingual-pair + .article-bilingual-pair { border-top: 1px solid var(--border-color); }
+    .article-bilingual-pair:hover, .article-bilingual-pair:focus-within { background: color-mix(in srgb, #dbeafe 22%, transparent); }
+    .article-bilingual-copy { min-width: 0; padding-right: 1.15rem; transition: background-color .15s ease; }
+    .article-bilingual-copy + .article-bilingual-copy { padding-right: 0; padding-left: 1.15rem; border-left: 1px solid color-mix(in srgb, var(--border-color) 84%, transparent); }
+    .article-bilingual-copy p { margin: .4rem 0 0; font-size: clamp(22px, calc(var(--article-font-size, 25px) - 1px), 27px); line-height: var(--article-line-height, 1.7); }
+    .article-bilingual-label { font-size: .7rem; font-weight: 900; letter-spacing: .08em; color: #2563eb; }
+    .article-bilingual-copy:not(.article-bilingual-tr) { color: #172033; font-weight: 500; }
+    .article-bilingual-tr { color: #4b5b73; font-weight: 400; }
+    .article-surface-dark .article-bilingual-pair + .article-bilingual-pair { border-color: #506176; }
+    .article-surface-dark .article-bilingual-copy + .article-bilingual-copy { border-color: #506176; }
+    .article-surface-dark .article-bilingual-pair:hover, .article-surface-dark .article-bilingual-pair:focus-within { background: rgba(96, 165, 250, .12); }
+    .article-surface-dark .article-bilingual-copy:not(.article-bilingual-tr) { color: #f8fafc; }
+    .article-surface-dark .article-bilingual-tr { color: #e5edf9; }
+    .article-translation-editor { position: fixed; top: 0; right: 0; bottom: 0; z-index: 90; width: min(48rem, 92vw); overflow-y: auto; border-left: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-primary); box-shadow: -18px 0 42px rgb(15 23 42 / 20%); }
+    .translation-editor-pair { border-color: var(--border-color); background: var(--bg-surface-secondary); }
+
     .article-reader-surface {
       min-width: 0;
       background: var(--bg-surface);
@@ -993,15 +1093,19 @@
     }
 
     .article-reader-toolbar {
-      position: sticky;
-      top: .5rem;
+      position: relative;
+      top: auto;
       z-index: 23;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: .75rem;
-      margin: .75rem auto 1.5rem;
-      padding: .75rem;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      align-content: start;
+      gap: .625rem;
+      height: auto;
+      min-height: 0;
+      margin: .5rem auto 1rem;
+      padding: 1.25rem;
       border: 1px solid var(--border-color);
       border-radius: 1rem;
       background: var(--bg-surface);
@@ -1022,7 +1126,34 @@
 
     .article-reader-heading {
       min-width: 0;
-      flex: 1;
+      min-height: 0;
+      flex: 0 0 auto;
+      width: 100%;
+      max-width: 950px;
+    }
+
+    .article-reader-title {
+      max-width: none;
+      margin: .1rem 0 0;
+      color: var(--text-primary);
+      font-size: clamp(34px, 2.5vw, 42px);
+      font-weight: 700;
+      line-height: 1.12;
+      word-break: normal;
+      overflow-wrap: normal;
+      hyphens: none;
+      white-space: normal;
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    .article-toolbar-toprow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .75rem;
     }
 
     .article-reader-actions {
@@ -1033,6 +1164,46 @@
       justify-content: flex-end;
       gap: .5rem;
     }
+
+    .article-reader-toolbar .article-toolbar-btn {
+      min-height: 44px;
+      height: 44px;
+      padding-inline: .75rem;
+    }
+
+    .article-reader-toolbar .article-icon-btn {
+      width: 44px;
+      min-height: 44px;
+      height: 44px;
+    }
+
+    .article-reader-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: .5rem .75rem;
+      margin-top: .55rem;
+    }
+
+    .article-reader-metadata {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      font-size: .875rem;
+      font-weight: 600;
+    }
+
+    .article-reader-metadata span {
+      padding: .4rem .7rem;
+    }
+
+    .article-reader-meta-row .article-language-control {
+      display: inline-flex;
+      width: fit-content;
+      max-width: 100%;
+    }
+
+    .article-reader-heading + .article-reader-actions { display: contents; }
 
     .article-settings-panel {
       position: absolute;
@@ -1069,21 +1240,26 @@
       .article-reader-surface { padding: .75rem !important; }
 
       .article-reader-toolbar {
-        top: .25rem;
-        align-items: flex-start;
-        flex-wrap: wrap;
-        padding: .6rem;
+        top: auto;
+        display: grid;
+        align-items: start;
+        align-content: start;
+        min-height: 0;
+        height: auto;
+        margin: .35rem auto .75rem;
+        padding: .875rem;
       }
 
-      .article-reader-actions { gap: .35rem; }
+      .article-toolbar-toprow { display: contents; }
+      .article-toolbar-toprow > #articleBackBtn { order: 1; justify-self: start; }
+      .article-reader-heading { order: 2; width: 100%; max-width: none; }
+      .article-reader-actions { order: 3; gap: .35rem; justify-content: flex-start; }
 
-      .article-reader-heading {
-        order: 3;
-        flex-basis: 100%;
-      }
+      .article-reader-title { font-size: clamp(28px, 8vw, 36px); line-height: 1.14; }
 
       .article-reader-actions .article-toolbar-btn,
-      .article-reader-actions .article-icon-btn { min-height: 38px; }
+      .article-reader-actions .article-icon-btn { min-height: 40px; height: 40px; }
+      .article-reader-actions .article-icon-btn { width: 40px; }
 
       .article-body {
         padding: 1.25rem !important;
@@ -1092,6 +1268,14 @@
       }
 
       .article-body p { margin-bottom: 1.5rem; }
+
+      .article-reader-meta-row { align-items: stretch; margin-top: .6rem; }
+      .article-reader-meta-row .article-language-control { display: flex; width: 100%; flex-basis: 100%; }
+      .article-language-choice { flex: 1; padding-inline: .35rem; font-size: .68rem; }
+      .article-bilingual-pair { grid-template-columns: minmax(0, 1fr); gap: .8rem; padding: 1rem 0; }
+      .article-bilingual-copy { padding-right: 0; }
+      .article-bilingual-copy + .article-bilingual-copy { padding-left: 0; border-left: 0; }
+      .article-translation-editor { width: 100%; }
 
       .article-settings-panel {
         position: fixed;
@@ -1240,8 +1424,8 @@
       <nav id="categoryMenu" class="min-h-0 flex-1 space-y-1.5 overflow-y-auto pr-2"></nav>
 
       <div class="sidebar-utility mt-2 shrink-0">
-        <button id="themeToggleBtn" aria-label="Temayı değiştir" title="Temayı değiştir" class="theme-toggle" type="button"><span class="theme-toggle-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg></span></button>
-        <button id="sidebarSettingsBtn" class="sidebar-utility-item" aria-label="Ayarlar" title="Ayarlar">
+        <button id="themeToggleBtn" aria-label="Temayı Değiştir" title="Temayı Değiştir" class="theme-toggle" type="button"><span class="theme-toggle-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg></span></button>
+        <button id="sidebarSettingsBtn" class="sidebar-utility-item" aria-label="Ayarları Aç" title="Ayarları Aç">
           <span class="sidebar-utility-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
@@ -1251,7 +1435,7 @@
         </button>
       </div>
 
-      <div class="yds-sidebar-footer mt-2 shrink-0 pt-1">
+      <div class="yds-sidebar-footer mt-5 shrink-0 pt-0">
         <div class="yds-credit-card px-1 py-1">
           <p class="text-[11px] font-semibold">© 2026 Yzb. Hakan ERDOĞAN</p>
         </div>
@@ -1319,16 +1503,23 @@
     const STORAGE_DAILY_HISTORY = "yds-daily-history-v1";
     const STORAGE_SUPABASE_CONFIG = "yds-supabase-config-v1";
     const STORAGE_DOCUMENT_PROGRESS = "yds-document-progress-v1";
+    const STORAGE_NOTES = "yds-notebook-notes-v1";
+    const STORAGE_EXAM_PROGRESS = "yds-exam-progress-v1";
     const VOCABULARY_SEED_VERSION = baseBank.vocabularySeedVersion || "2026-07-13-vocabulary";
     const vocabularySeed = baseBank.vocabularySeed || [];
 
     let uploadedBank = loadJson(STORAGE_UPLOADS, { documents: [], questions: [] });
     let uploadTargetModule = "exams";
     let lastTextImport = null;
+    let isSavingTextImport = false;
     let wordbook = loadJson(STORAGE_WORDS, []);
     let articles = loadJson(STORAGE_ARTICLES, []);
     let wrongQuestionIds = loadJson(STORAGE_WRONG_QUESTIONS, []);
     let documentProgress = loadJson(STORAGE_DOCUMENT_PROGRESS, {});
+    let examProgress = normalizeExamProgress(loadJson(STORAGE_EXAM_PROGRESS, { version: 1, exams: {} }));
+    let notes = loadJson(STORAGE_NOTES, []);
+    if (!Array.isArray(notes)) notes = [];
+    notes = notes.map(normalizeNote);
     let documents = [];
     let questionBank = [];
     let activeDocumentId = "";
@@ -1358,6 +1549,9 @@
     let wordStatusFilter = "all";
     let wordSortMode = "az";
     let wordSearchTimer = null;
+    let noteSearchQuery = "";
+    let noteSearchTimer = null;
+    let noteSortMode = "newest";
     let articleFontSize = Number(localStorage.getItem("yds-article-font-size-v1") || 25);
     let articleLineHeight = Number(localStorage.getItem("yds-article-line-height-v1") || 1.7);
     let articleContentWidth = Number(localStorage.getItem("yds-article-content-width-v1") || 940);
@@ -1368,11 +1562,14 @@
     let articleSearchRenderTimer = null;
     let articleStatusFilter = "all";
     let articleTypeFilter = "all";
+    let articleLanguageFilter = "all";
     let articleSortMode = "recent";
     let articleFormMode = "external";
     let articleSavedPanelOpen = false;
     let articleSavedFilter = "all";
     let articleHighlightsVisible = localStorage.getItem("yds-article-highlights-visible-v1") !== "0";
+    let articleLanguageView = "en";
+    let activeTranslationDraft = null;
     let questionFontSize = Number(localStorage.getItem("yds-question-font-size-v1") || 19);
     let questionFocusMode = localStorage.getItem("yds-question-focus-v1") === "1";
     let activeArticlePopover = null;
@@ -1399,6 +1596,15 @@
     const meaningInput = document.getElementById("meaningInput");
     const exampleInput = document.getElementById("exampleInput");
 
+    function closeDocumentActionMenus() {
+      document.querySelectorAll(".document-action-menu.is-open").forEach(menu => menu.classList.remove("is-open"));
+    }
+
+    document.addEventListener("click", event => {
+      if (!(event.target instanceof Element) || event.target.closest(".document-menu")) return;
+      closeDocumentActionMenus();
+    });
+
     function loadJson(key, fallback) {
       try {
         const value = localStorage.getItem(key);
@@ -1410,6 +1616,66 @@
 
     function saveJson(key, value) {
       localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function isAnswerKey(value) {
+      return value === "A" || value === "B" || value === "C" || value === "D" || value === "E";
+    }
+
+    function normalizeExamProgress(value) {
+      const raw = value && typeof value === "object" ? value : {};
+      const exams = raw.exams && typeof raw.exams === "object" ? raw.exams : {};
+      return { version: 1, exams };
+    }
+
+    function examKeyForQuestion(question) {
+      return "document:" + String(question?.documentId || activeDocumentId || "unknown");
+    }
+
+    function progressForQuestion(question, create = false) {
+      const key = examKeyForQuestion(question);
+      let progress = examProgress.exams[key];
+      if (!progress && create) {
+        progress = { examId: String(question?.documentId || activeDocumentId || "unknown"), currentQuestionId: null, answers: {}, updatedAt: new Date().toISOString() };
+        examProgress.exams[key] = progress;
+      }
+      return progress || null;
+    }
+
+    function selectedAnswerForQuestion(question) {
+      const value = progressForQuestion(question)?.answers?.[question?.id];
+      return isAnswerKey(value) ? value : null;
+    }
+
+    function saveExamProgress() {
+      saveJson(STORAGE_EXAM_PROGRESS, examProgress);
+    }
+
+    function rememberCurrentQuestion(question) {
+      if (!question?.id) return;
+      const progress = progressForQuestion(question, true);
+      if (progress.currentQuestionId === question.id) return;
+      progress.currentQuestionId = question.id;
+      progress.updatedAt = new Date().toISOString();
+      saveExamProgress();
+    }
+
+    function saveSelectedAnswer(question, selectedKey) {
+      if (!question?.id || !isAnswerKey(selectedKey)) return;
+      const progress = progressForQuestion(question, true);
+      progress.answers = { ...(progress.answers || {}), [question.id]: selectedKey };
+      progress.updatedAt = new Date().toISOString();
+      saveExamProgress();
+    }
+
+    function selectedAnswerSummary(questions = getCategoryQuestions()) {
+      return questions.reduce((summary, question) => {
+        const selectedKey = selectedAnswerForQuestion(question);
+        if (!selectedKey) summary.blank++;
+        else if (question.correctAnswer && selectedKey === question.correctAnswer) summary.correct++;
+        else if (question.correctAnswer) summary.wrong++;
+        return summary;
+      }, { correct: 0, wrong: 0, blank: 0 });
     }
 
     function removeBundledVocabularyOnce() {
@@ -1504,8 +1770,8 @@
       document.body.classList.toggle("light-theme", nextTheme === "light");
       document.body.classList.toggle("dark-theme", nextTheme === "dark");
       themeToggleBtn.innerHTML = '<span class="theme-toggle-icon" aria-hidden="true">' + themeIconMarkup(nextTheme) + '</span>';
-      themeToggleBtn.title = "Temayı değiştir";
-      themeToggleBtn.setAttribute("aria-label", "Temayı değiştir");
+      themeToggleBtn.title = "Temayı Değiştir";
+      themeToggleBtn.setAttribute("aria-label", "Temayı Değiştir");
       localStorage.setItem(STORAGE_THEME, nextTheme);
     }
 
@@ -1635,10 +1901,9 @@
 
     function dailyTaskLabels() {
       return {
-        flashcards: { icon: "K", title: "Kelime Kartı Çalışması", action: "Devam Et", view: "flashcards" },
-        multipleChoice: { icon: "T", title: "Çoktan Seçmeli Kelime Testi", action: "Devam Et", view: "quiz" },
-        pastExamReading: { icon: "Y", title: "Çıkmış YDS Okuma Parçası", action: "Parça Seç", view: "yds-reading" },
-        externalReading: { icon: "M", title: "Kendi Metnim", action: "Metin Seç", view: "external-reading" },
+        flashcards: { icon: "K", title: "Kelime Kartları", action: "Devam Et", view: "flashcards" },
+        multipleChoice: { icon: "T", title: "Çoktan Seçmeli", action: "Devam Et", view: "quiz" },
+        pastExamReading: { icon: "Y", title: "Okuma", action: "Parça Seç", view: "yds-reading" },
         difficultWords: { icon: "S", title: "Soru Çözümü", action: "Devam Et", view: "question-solving" },
       };
     }
@@ -1987,6 +2252,7 @@
       if (view === "upload") renderUploadPage();
       if (view === "articles") renderArticlesPage();
       if (view === "words") renderWordbook();
+      if (view === "notes") renderNotebook();
       if (view === "study") renderWordStudy();
       if (view === "settings") renderSettingsPage();
     }
@@ -2008,6 +2274,7 @@
         { id: "wrong", title: "Yanlış Sorular", icon: "↻", count: wrongQuestions().length + " soru", items: [] },
         { id: "articles", title: "Okuma Merkezi", icon: "▰", count: articles.length + " içerik", items: articles },
         { id: "words", title: "Kelime Defteri", icon: "▣", count: wordbook.length + " kelime", items: [] },
+        { id: "notes", title: "Not Defteri", icon: "▧", count: notes.length + " not", items: [] },
       ];
 
       modules.forEach(module => {
@@ -2026,7 +2293,7 @@
               countHtml +
             '</button>' +
           '</div>' +
-          (expanded && module.id !== "words" && module.id !== "articles" && module.id !== "yds" && module.id !== "exams" && module.id !== "wrong" ? '<div class="mx-2 mb-2 space-y-1 rounded-xl border border-blue-100 bg-blue-50/70 p-2" data-module-items="' + module.id + '"></div>' : "");
+          (expanded && module.id !== "words" && module.id !== "notes" && module.id !== "articles" && module.id !== "yds" && module.id !== "exams" && module.id !== "wrong" ? '<div class="mx-2 mb-2 space-y-1 rounded-xl border border-blue-100 bg-blue-50/70 p-2" data-module-items="' + module.id + '"></div>' : "");
         categoryMenu.appendChild(wrapper);
         const itemsContainer = wrapper.querySelector("[data-module-items]");
         if (itemsContainer) renderModuleItems(itemsContainer, module);
@@ -2085,8 +2352,13 @@
 
     function selectDocument(documentId) {
       activeDocumentId = documentId;
-      currentIndex = 0;
+      const documentQuestions = questionBank.filter(item => item.documentId === documentId);
+      const savedQuestionId = progressForQuestion(documentQuestions[0])?.currentQuestionId;
+      const savedIndex = documentQuestions.findIndex(item => item.id === savedQuestionId);
+      currentIndex = savedIndex >= 0 ? savedIndex : 0;
       answered = false;
+      stats.correct = 0;
+      stats.wrong = 0;
       solveMode = "document";
       wrongReviewIds = [];
       activeView = "solve";
@@ -2294,9 +2566,8 @@
           const count = Math.min(taskProgressCount(task), task.target);
           const percent = task.target ? Math.min(100, Math.round((count / task.target) * 100)) : 100;
           const completed = task.completed || count >= task.target;
-          return '<article class="daily-task-card rounded-xl border p-3 ' + (key === "difficultWords" ? 'lg:col-span-2 ' : '') + (completed ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-slate-50') + '">' +
+          return '<article class="daily-task-card rounded-xl border p-3 ' + (completed ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-slate-50') + '">' +
             '<div class="flex items-center gap-3">' +
-              '<span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ' + (completed ? 'border-emerald-200 bg-white text-emerald-700' : 'border-blue-100 bg-white text-blue-700') + ' text-sm font-black">' + meta.icon + '</span>' +
               '<div class="min-w-0 flex-1">' +
                 '<div class="flex flex-wrap items-center justify-between gap-2">' +
                   '<h4 class="truncate text-sm font-black text-slate-950">' + meta.title + '</h4>' +
@@ -2304,7 +2575,7 @@
                 '</div>' +
                 '<div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full ' + (completed ? 'bg-emerald-600' : 'bg-blue-600') + '" style="width:' + percent + '%"></div></div>' +
               '</div>' +
-              '<button class="daily-task-start rounded-xl px-3 py-2 text-xs font-black ' + (completed ? 'border border-emerald-200 bg-white text-emerald-700' : 'bg-blue-600 text-white hover:bg-blue-500') + '" data-task="' + key + '">' + dailyTaskActionLabel(key, task, count) + '</button>' +
+              '<button class="daily-task-start daily-task-action ' + (completed ? 'border border-emerald-200 bg-white text-emerald-700' : 'bg-blue-600 text-white hover:bg-blue-500') + '" data-task="' + key + '">' + dailyTaskActionLabel(key, task, count) + '</button>' +
             '</div>' +
           '</article>';
         }).join("") + '</div>' +
@@ -2456,7 +2727,7 @@
       renderStats();
       appArea.innerHTML =
         '<div class="grid gap-3 xl:grid-cols-[minmax(0,1fr)_360px]">' +
-          '<div class="grid gap-3">' +
+          '<div class="grid content-start gap-3 self-start">' +
             renderDailyTasksPanel() +
             renderDailyWordPanel() +
             renderHomeActionPanel() +
@@ -2493,7 +2764,7 @@
                 return '<article class="rounded-xl border p-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ' + (isComplete ? 'border-emerald-200 bg-emerald-50/50 hover:border-emerald-300' : 'border-slate-200 bg-slate-50 hover:border-blue-300 hover:bg-white') + '">' +
                   '<div class="flex items-start justify-between gap-3">' +
                     '<button class="hub-document-card min-w-0 flex-1 text-left" data-id="' + escapeHtml(item.id) + '"><span class="block truncate text-base font-extrabold text-slate-950">' + escapeHtml(documentDisplayTitle(item)) + '</span></button>' +
-                    (item.builtIn ? '' : '<div class="relative shrink-0"><button class="document-menu-toggle flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-xl font-black text-slate-500 hover:bg-slate-50" aria-label="' + escapeHtml(documentDisplayTitle(item)) + ' işlemleri" data-id="' + escapeHtml(item.id) + '">⋯</button><div class="document-action-menu absolute right-0 top-10 z-10 min-w-32 rounded-xl border border-slate-200 bg-white p-1 shadow-xl shadow-slate-200"><button class="edit-document block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50" data-id="' + escapeHtml(item.id) + '">Düzenle</button><button class="delete-uploaded-pdf block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-red-700 hover:bg-red-50" data-id="' + escapeHtml(item.id) + '">Sil</button></div></div>') +
+                    (item.builtIn ? '' : '<div class="document-menu relative shrink-0"><button class="document-menu-toggle flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-xl font-black text-slate-500 hover:bg-slate-50" aria-label="' + escapeHtml(documentDisplayTitle(item)) + ' işlemleri" data-id="' + escapeHtml(item.id) + '">⋯</button><div class="document-action-menu absolute right-0 top-10 z-10 min-w-32 rounded-xl border border-slate-200 bg-white p-1 shadow-xl shadow-slate-200"><button class="edit-document block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50" data-id="' + escapeHtml(item.id) + '">Düzenle</button><button class="delete-uploaded-pdf block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-red-700 hover:bg-red-50" data-id="' + escapeHtml(item.id) + '">Sil</button></div></div>') +
                   '</div>' +
                   (isComplete ? '<span class="mt-3 inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700">Tamamlandı</span>' : '') +
                   '<div class="mt-3 space-y-1 text-sm font-semibold text-slate-500"><p>Eklendi: ' + escapeHtml(documentAddedAtLabel(item)) + '</p><p>İlerleme: ' + solvedCount + ' / ' + item.questionCount + ' soru</p></div>' +
@@ -2574,6 +2845,7 @@
           uploadedBank,
           wordbook,
           articles,
+          notes,
           wrongQuestionIds,
           dailyGoals,
           dailyProgress,
@@ -2610,6 +2882,7 @@
         uploadedBank: data.uploadedBank || data.uploads || { documents: [], questions: [] },
         wordbook: Array.isArray(data.wordbook) ? data.wordbook : [],
         articles: Array.isArray(data.articles) ? data.articles : [],
+        notes: Array.isArray(data.notes) ? data.notes.map(normalizeNote) : [],
         wrongQuestionIds: Array.isArray(data.wrongQuestionIds) ? data.wrongQuestionIds : [],
         dailyGoals: normalizeDailyGoals(data.dailyGoals || {}),
         dailyProgress: data.dailyProgress || null,
@@ -2626,6 +2899,7 @@
       uploadedBank = normalized.uploadedBank;
       wordbook = normalized.wordbook;
       articles = normalized.articles.map(normalizeArticleRecord);
+      notes = normalized.notes;
       wrongQuestionIds = normalized.wrongQuestionIds;
       dailyGoals = normalizeDailyGoals(normalized.dailyGoals);
       dailyHistory = normalized.dailyHistory;
@@ -2642,6 +2916,7 @@
       saveJson(STORAGE_UPLOADS, uploadedBank);
       saveJson(STORAGE_WORDS, wordbook);
       saveJson(STORAGE_ARTICLES, articles);
+      saveNotes();
       saveJson(STORAGE_DAILY_GOALS, dailyGoals);
       saveJson(STORAGE_DAILY_PROGRESS, dailyProgress);
       saveJson(STORAGE_DAILY_HISTORY, dailyHistory);
@@ -2834,11 +3109,10 @@
               '</div>' +
               '<button id="saveDailyGoalsBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white shadow-sm hover:bg-blue-500">Hedefleri Kaydet</button>' +
             '</div>' +
-            '<div class="mt-4 grid gap-3 md:grid-cols-3 xl:grid-cols-6">' +
-              '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Kelime kartı</span><input id="goalFlashcardsInput" type="number" min="10" max="200" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500" value="' + dailyGoals.flashcards + '" /></label>' +
+            '<div class="mt-4 grid gap-3 md:grid-cols-3 xl:grid-cols-5">' +
+              '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Kelime Kartları</span><input id="goalFlashcardsInput" type="number" min="10" max="200" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500" value="' + dailyGoals.flashcards + '" /></label>' +
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Çoktan seçmeli</span><input id="goalMultipleChoiceInput" type="number" min="10" max="200" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500" value="' + dailyGoals.multipleChoice + '" /></label>' +
-              '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">YDS parçası</span><input id="goalPastExamInput" type="number" min="0" max="5" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500" value="' + dailyGoals.pastExamReading + '" /></label>' +
-              '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Dış metin</span><input id="goalExternalInput" type="number" min="0" max="5" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500" value="' + dailyGoals.externalReading + '" /></label>' +
+              '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Okuma</span><input id="goalPastExamInput" type="number" min="0" max="5" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500" value="' + dailyGoals.pastExamReading + '" /></label>' +
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Soru çözümü</span><input id="goalDifficultInput" type="number" min="1" max="200" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500" value="' + dailyGoals.difficultWords + '" /></label>' +
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Seri koşulu</span><select id="goalStreakModeInput" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500"><option value="all" ' + (dailyGoals.streakMode === "all" ? "selected" : "") + '>Tüm görevler</option><option value="80" ' + (dailyGoals.streakMode === "80" ? "selected" : "") + '>%80 yeterli</option></select></label>' +
             '</div>' +
@@ -2869,6 +3143,16 @@
               '<div class="rounded-xl border border-slate-200 bg-slate-50 p-3"><p class="text-xs font-black uppercase text-slate-500">Yanlış Soru</p><p class="mt-1 text-2xl font-black text-slate-950">' + wrongQuestions().length + '</p></div>' +
             '</div>' +
             '<p id="backupStatus" class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold text-slate-600">' + escapeHtml(message || "Henüz işlem yapılmadı.") + '</p>' +
+          '</section>' +
+          '<section class="rounded-2xl border border-red-200 bg-red-50 p-4 shadow-sm">' +
+            '<div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">' +
+              '<div>' +
+                '<p class="text-xs font-black uppercase tracking-wide text-red-600">Geri alınamaz işlem</p>' +
+                '<h3 class="mt-1 text-xl font-black text-slate-950">Tüm istatistikleri sıfırla</h3>' +
+                '<p class="mt-1 max-w-2xl text-sm font-semibold text-slate-600">Çözülen soru ilerlemesi, doğru-yanlış kayıtları, başarı oranları, okuma durumu, kelime kolay-zor bilgisi ve günlük çalışma geçmişi silinir. Kelime kartların, eklediğin kaynaklar ve notların korunur.</p>' +
+              '</div>' +
+              '<button id="resetStatisticsBtn" class="rounded-xl border border-red-300 bg-white px-4 py-2 text-sm font-black text-red-700 shadow-sm hover:bg-red-100">Tüm İstatistikleri Sıfırla</button>' +
+            '</div>' +
           '</section>' +
           '<section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
             '<div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">' +
@@ -2904,7 +3188,7 @@
           flashcards: document.getElementById("goalFlashcardsInput").value,
           multipleChoice: document.getElementById("goalMultipleChoiceInput").value,
           pastExamReading: document.getElementById("goalPastExamInput").value,
-          externalReading: document.getElementById("goalExternalInput").value,
+          externalReading: dailyGoals.externalReading,
           difficultWords: document.getElementById("goalDifficultInput").value,
           streakMode: document.getElementById("goalStreakModeInput").value,
         });
@@ -2912,6 +3196,7 @@
         renderSettingsPage("Günlük hedefler güncellendi.");
       });
       document.getElementById("exportBackupBtn").addEventListener("click", downloadBackupJson);
+      document.getElementById("resetStatisticsBtn").addEventListener("click", resetAllStatistics);
       document.getElementById("importBackupInput").addEventListener("change", event => {
         const file = event.target.files?.[0];
         if (!file) return;
@@ -2939,6 +3224,56 @@
       document.getElementById("restoreSupabaseBtn").addEventListener("click", restoreSupabaseBackup);
     }
 
+    function resetAllStatistics() {
+      const confirmed = window.confirm("Çözülen soru ilerlemesi, doğru-yanlış kayıtları, başarı oranları, okuma durumu, kelime kolay-zor bilgisi ve günlük çalışma geçmişi kalıcı olarak silinecek. Kelime kartların, kaynakların ve notların korunacak. Devam edilsin mi?");
+      if (!confirmed) return;
+
+      stats.correct = 0;
+      stats.wrong = 0;
+      wrongQuestionIds = [];
+      documentProgress = {};
+      dailyHistory = [];
+      dailyProgress = createDailyProgress();
+      wordbook = wordbook.map(item => ({
+        ...item,
+        seen: 0,
+        lastRating: "",
+        needsReview: false,
+        dueAt: "",
+        updatedAt: new Date().toISOString(),
+      }));
+      articles = articles.map(article => normalizeArticleRecord({
+        ...article,
+        status: "new",
+        readingProgress: 0,
+        lastReadAt: "",
+        lastStudiedAt: "",
+        userAnswers: {},
+        answersChecked: false,
+        updatedAt: new Date().toISOString(),
+      }));
+      wordSessionIds = [];
+      wordStudyIndex = 0;
+      wordQuizSessionResults = {};
+      wordCardRevealed = false;
+      wordQuizQuestion = null;
+      wrongReviewIds = [];
+      currentIndex = 0;
+      answered = false;
+
+      saveJson(STORAGE_WRONG_QUESTIONS, wrongQuestionIds);
+      saveJson(STORAGE_DOCUMENT_PROGRESS, documentProgress);
+      saveJson(STORAGE_DAILY_HISTORY, dailyHistory);
+      saveJson(STORAGE_DAILY_PROGRESS, dailyProgress);
+      saveJson(STORAGE_WORDS, wordbook);
+      saveJson(STORAGE_ARTICLES, articles);
+      saveJson("yds-word-session-ids-v1", wordSessionIds);
+      saveJson("yds-word-quiz-session-results-v1", wordQuizSessionResults);
+      localStorage.removeItem(STORAGE_DAILY_HARD_WORDS);
+      queueSupabaseAutoBackup();
+      renderSettingsPage("Tüm istatistikler sıfırlandı.");
+    }
+
     function startWrongQuestionReview() {
       const items = wrongQuestions();
       if (!items.length) return;
@@ -2946,6 +3281,8 @@
       solveMode = "wrong";
       currentIndex = 0;
       answered = false;
+      stats.correct = 0;
+      stats.wrong = 0;
       setView("solve");
     }
 
@@ -3034,6 +3371,7 @@
       else if (activeView === "words") bankInfo.textContent = wordbook.length + " kayıtlı kelime";
       else if (activeView === "study") bankInfo.textContent = "Aktif çalışma oturumu · " + activeWordSessionSize(studyWords().length) + " kelime";
       else if (activeView === "articles") bankInfo.textContent = articles.length + " içerik";
+      else if (activeView === "notes") bankInfo.textContent = notes.length + " not";
       else if (["yds", "eyds", "yokdil", "exams"].includes(activeView)) bankInfo.textContent = moduleMeta(activeView).description;
       else bankInfo.textContent = documents.length + " bölüm · " + questionBank.length + " soru · " + wordbook.length + " kelime kartı";
       if (activeView === "home") {
@@ -3050,7 +3388,7 @@
             '<p class="text-[11px] font-bold uppercase tracking-wide text-slate-500">Bugünkü Hedef</p>' +
             '<p class="mt-0.5 text-lg font-black text-slate-800">' + escapeHtml(wordSummary.dailyTarget) + '</p>' +
           '</div>';
-      } else if (activeView === "articles") {
+      } else if (["articles", "notes"].includes(activeView)) {
         headerStats.className = "hidden";
         headerStats.innerHTML = "";
       } else {
@@ -3175,6 +3513,11 @@
         status: article?.status || "new",
         createdAt: article?.createdAt || now,
         updatedAt: article?.updatedAt || article?.createdAt || now,
+        translationStatus: ["none", "draft", "complete"].includes(article?.translationStatus) ? article.translationStatus : "none",
+        titleTr: typeof article?.titleTr === "string" && article.titleTr.trim() ? article.titleTr.trim() : null,
+        bilingualParagraphs: Array.isArray(article?.bilingualParagraphs) ? article.bilingualParagraphs
+          .filter(item => item && typeof item.en === "string")
+          .map((item, index) => ({ id: String(item.id || "paragraph-" + (index + 1)), en: item.en, tr: typeof item.tr === "string" ? item.tr : "" })) : [],
       };
       if (kind === "yds") {
         normalized.examType = article?.examType || article?.sourceType || "YDS";
@@ -3195,6 +3538,32 @@
       normalized.wordCount = Number(article?.wordCount || articleWordCount(normalized.text));
       normalized.readingTime = Number(article?.readingTime || articleReadMinutes(normalized.text));
       return normalized;
+    }
+
+    function articleTranslationStatus(article) {
+      return ["none", "draft", "complete"].includes(article?.translationStatus) ? article.translationStatus : "none";
+    }
+
+    function articleEnglishParagraphs(article) {
+      return String(article?.text || "").replace(/\r\n?/g, "\n").split(/\n\s*\n/).filter(paragraph => paragraph.trim().length > 0);
+    }
+
+    function articleBilingualParagraphs(article) {
+      const english = articleEnglishParagraphs(article);
+      const current = Array.isArray(article?.bilingualParagraphs) ? article.bilingualParagraphs : [];
+      const currentEnglish = normalizeArticleTextForReading(current.map(item => item?.en || "").join("\n\n"));
+      const articleEnglish = normalizeArticleTextForReading(article?.text || "");
+      if (current.length && currentEnglish === articleEnglish) return current.map((item, index) => ({ id: String(item.id || "paragraph-" + (index + 1)), en: item.en, tr: typeof item.tr === "string" ? item.tr : "" }));
+      return english.map((en, index) => ({ id: String(current[index]?.id || "paragraph-" + (index + 1)), en, tr: typeof current[index]?.tr === "string" ? current[index].tr : "" }));
+    }
+
+    function articleHasTranslation(article) { return articleTranslationStatus(article) !== "none" && articleBilingualParagraphs(article).length > 0; }
+
+    function articleLanguageBadge(article) {
+      const status = articleTranslationStatus(article);
+      if (status === "complete") return "EN/TR";
+      if (status === "draft") return "TR Taslak";
+      return "EN";
     }
 
     function articleSourceLabel(article) {
@@ -3400,7 +3769,7 @@
       const added = articleAddedWordCount(article);
       if (minutes) parts.push(minutes + " dk okuma");
       if (added) parts.push("Deftere eklenen: " + added + " kelime");
-      return parts.length ? '<div class="mt-2 flex flex-wrap gap-2 text-sm font-semibold" style="color: var(--text-secondary)">' + parts.map(item => '<span class="rounded-full border px-3 py-1" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-secondary)">' + escapeHtml(item) + '</span>').join("") + '</div>' : "";
+      return parts.length ? '<div class="article-reader-metadata" style="color: var(--text-secondary)">' + parts.map(item => '<span class="rounded-full border" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-secondary)">' + escapeHtml(item) + '</span>').join("") + '</div>' : "";
     }
 
     function sortedFilteredArticles() {
@@ -3408,6 +3777,9 @@
       return [...articles].filter(article => {
         if (articleStatusFilter !== "all" && articleReadingStatus(article).key !== articleStatusFilter) return false;
         if (articleTypeFilter !== "all" && articleKind(article) !== articleTypeFilter) return false;
+        if (articleLanguageFilter === "translated" && articleTranslationStatus(article) !== "complete") return false;
+        if (articleLanguageFilter === "missing" && articleTranslationStatus(article) !== "none") return false;
+        if (articleLanguageFilter === "draft" && articleTranslationStatus(article) !== "draft") return false;
         if (!query) return true;
         return [articleDisplayTitle(article), articleSourceLabel(article), article.topic, article.level, article.text]
           .some(value => normalizeLookup(value || "").includes(query));
@@ -3456,25 +3828,42 @@
       ).join("");
     }
 
+    function renderTranslatedArticleBody(article, view, vocabulary, entries) {
+      const pairs = articleBilingualParagraphs(article);
+      if (view === "en") return renderArticleParagraphs(article, vocabulary, entries);
+      if (view === "tr") return pairs.map(pair => '<p class="article-bilingual-tr">' + escapeHtml(pair.tr || "Çeviri taslakta bekliyor.") + '</p>').join("");
+      const normalized = normalizeArticleTextForReading(article.text || "");
+      let searchFrom = 0;
+      return '<div class="article-bilingual-grid">' + pairs.map(pair => {
+        const english = normalizeArticleTextForReading(pair.en || "");
+        const offset = Math.max(0, normalized.indexOf(english, searchFrom));
+        searchFrom = offset + english.length;
+        return '<section class="article-bilingual-pair" data-paragraph-id="' + escapeHtml(pair.id) + '"><div class="article-bilingual-copy"><span class="article-bilingual-label">EN</span><p>' + renderArticleSegmentWithHighlights(english, offset, vocabulary, entries) + '</p></div><div class="article-bilingual-copy article-bilingual-tr"><span class="article-bilingual-label">TR</span><p>' + escapeHtml(pair.tr || "Çeviri taslakta bekliyor.") + '</p></div></section>';
+      }).join("") + '</div>';
+    }
+
     function questionPaletteHtml(questions) {
-      const solvedCount = solveMode === "document" ? documentSolvedCount(activeDocument()) : 0;
       return '<aside class="question-palette hidden self-start rounded-2xl border border-slate-200 bg-white p-3 shadow-sm xl:block" aria-label="Soru haritası">' +
         '<div class="mb-3 flex items-center justify-between gap-2"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Soru Haritası</p><p class="mt-0.5 text-xs font-semibold text-slate-500">' + questions.length + ' soru</p></div><span class="rounded-lg bg-blue-50 px-2 py-1 text-xs font-black text-blue-700">' + (currentIndex + 1) + ' / ' + questions.length + '</span></div>' +
         '<div class="grid grid-cols-5 gap-1.5">' + questions.map((item, index) => {
           const isActive = index === currentIndex;
-          const isWrong = wrongQuestionIds.includes(item.id);
-          const isSolved = solveMode === "document" && index < solvedCount;
-          const color = isActive
-            ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
+          const selectedKey = selectedAnswerForQuestion(item);
+          const isAnswered = isAnswerKey(selectedKey);
+          const isCorrect = Boolean(isAnswered && item.correctAnswer && selectedKey === item.correctAnswer);
+          const isWrong = Boolean(isAnswered && item.correctAnswer && selectedKey !== item.correctAnswer);
+          const color = isCorrect
+            ? 'border-emerald-300 bg-emerald-50 text-emerald-700 hover:border-emerald-400'
             : isWrong
-              ? 'border-red-200 bg-red-50 text-red-700 hover:border-red-300'
-              : isSolved
-                ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-300'
-                : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-blue-300 hover:bg-blue-50';
-          const state = isActive ? 'aktif soru' : isWrong ? 'yanlış cevaplandı' : isSolved ? 'cevaplandı' : 'henüz çözülmedi';
+              ? 'border-red-300 bg-red-50 text-red-700 hover:border-red-400'
+              : isActive
+                ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
+                : isAnswered
+                  ? 'border-cyan-300 bg-cyan-50 text-cyan-800 hover:border-cyan-400'
+                  : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-blue-300 hover:bg-blue-50';
+          const state = isCorrect ? 'doğru cevaplandı' : isWrong ? 'yanlış cevaplandı' : isActive ? 'aktif soru' : isAnswered ? 'cevaplandı' : 'henüz çözülmedi';
           return '<button class="question-palette-item flex h-9 items-center justify-center rounded-lg border text-xs font-black transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 ' + color + '" data-index="' + index + '" aria-label="Soru ' + (index + 1) + ', ' + state + '"' + (isActive ? ' aria-current="step"' : '') + '>' + (index + 1) + '</button>';
         }).join("") + '</div>' +
-        '<div class="mt-3 grid gap-1 text-[11px] font-semibold text-slate-500"><span><i class="mr-1 inline-block h-2 w-2 rounded-full bg-blue-600"></i>Aktif</span><span><i class="mr-1 inline-block h-2 w-2 rounded-full bg-emerald-500"></i>Cevaplandı</span><span><i class="mr-1 inline-block h-2 w-2 rounded-full bg-red-500"></i>Yanlış</span></div>' +
+        '<div class="mt-3 grid gap-1 text-[11px] font-semibold text-slate-500"><span><i class="mr-1 inline-block h-2 w-2 rounded-full bg-blue-600"></i>Aktif</span><span><i class="mr-1 inline-block h-2 w-2 rounded-full bg-emerald-500"></i>Doğru</span><span><i class="mr-1 inline-block h-2 w-2 rounded-full bg-red-500"></i>Yanlış</span><span><i class="mr-1 inline-block h-2 w-2 rounded-full bg-slate-300"></i>Boş</span></div>' +
       '</aside>';
     }
 
@@ -3492,6 +3881,8 @@
         renderFinishScreen();
         return;
       }
+      rememberCurrentQuestion(question);
+      const selectedAnswer = selectedAnswerForQuestion(question);
       const fontSize = Math.max(17, Math.min(23, questionFontSize || 19));
       const questionDocDisplay = documentInfo ? friendlyDocumentDisplay(documentInfo, questions.length) : { title: "Soru" };
 
@@ -3508,6 +3899,7 @@
               '<button id="questionFontDownBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-sm font-black" title="Yazı boyutunu azalt" aria-label="Yazı boyutunu azalt">A-</button>' +
               '<button id="questionFontUpBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-sm font-black" title="Yazı boyutunu artır" aria-label="Yazı boyutunu artır">A+</button>' +
               '<button id="questionFocusBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black ' + (questionFocusMode ? 'ring-2 ring-blue-300' : '') + '" title="Odak moduna geç" aria-label="Odak moduna geç">' + (questionFocusMode ? '↔' : '◎') + '</button>' +
+              '<button id="questionQuickNoteBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="Bu soru için not ekle" aria-label="Not Ekle">Not Ekle</button>' +
               '<button id="questionBackBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black" title="Kaynaklara dön" aria-label="Kaynaklara dön">←</button>' +
             '</div>' +
           '</div>' +
@@ -3520,12 +3912,18 @@
           '<div class="mx-auto max-w-[900px]">' +
           '<p id="questionText" class="mb-5 whitespace-pre-line text-left font-medium" style="color: var(--text-primary); font-size: ' + fontSize + 'px; line-height: 1.72;">' + clickableQuestionText(question.question) + '</p>' +
           '<div id="optionsArea" class="space-y-3">' +
-            Object.entries(question.options || {}).map(([key, value]) =>
-              '<div class="option-btn group flex w-full cursor-pointer items-start gap-3 rounded-2xl border p-3.5 text-left transition hover:border-blue-300 hover:bg-blue-50" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)" role="button" data-key="' + escapeHtml(key) + '">' +
-                '<span class="option-letter flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 font-bold text-blue-600 group-hover:bg-blue-600 group-hover:text-white">' + escapeHtml(key) + '</span>' +
+            Object.entries(question.options || {}).map(([key, value]) => {
+              const isSelected = selectedAnswer === key;
+              const isCorrect = Boolean(selectedAnswer && question.correctAnswer && key === question.correctAnswer);
+              const isWrong = Boolean(selectedAnswer && question.correctAnswer && isSelected && key !== question.correctAnswer);
+              const borderColor = isCorrect ? '#059669' : isWrong ? '#dc2626' : isSelected ? '#2563eb' : 'var(--border-color)';
+              const background = isCorrect ? '#ecfdf5' : isWrong ? '#fef2f2' : isSelected ? '#eff6ff' : 'var(--bg-surface-secondary)';
+              const letterColor = isCorrect ? 'bg-emerald-600 text-white' : isWrong ? 'bg-red-600 text-white' : isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white';
+              return '<div class="option-btn group flex w-full cursor-pointer items-start gap-3 rounded-2xl border p-3.5 text-left transition hover:border-blue-300 hover:bg-blue-50' + ((isCorrect || isWrong || isSelected) ? ' ring-1' : '') + '" style="border-color: ' + borderColor + '; background: ' + background + '; color: var(--text-primary)" role="button" aria-pressed="' + (isSelected ? 'true' : 'false') + '" data-key="' + escapeHtml(key) + '">' +
+                '<span class="option-letter flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ' + letterColor + ' font-bold">' + escapeHtml(key) + '</span>' +
                 '<span class="block flex-1 pt-1 leading-relaxed" style="font-size: ' + Math.max(16, fontSize - 1) + 'px;">' + clickableQuestionText(value) + '</span>' +
-              '</div>'
-            ).join("") +
+              '</div>';
+            }).join("") +
           '</div>' +
           '<div id="feedbackArea" class="mt-6"></div>' +
           '<div id="questionNavArea" class="mt-5 flex justify-end">' + nextButtonHtml() + '</div>' +
@@ -3566,6 +3964,18 @@
         setQuestionFocusMode(!questionFocusMode);
         renderQuestion();
       });
+      document.getElementById("questionQuickNoteBtn").addEventListener("click", () => {
+        openQuickNoteDrawer({
+          context: {
+            sourceType: "question",
+            sourceId: documentInfo?.id || null,
+            sourceTitle: questionDocDisplay.title || null,
+            questionId: question.id || null,
+            questionNumber: Number(question.questionNumber) || currentIndex + 1,
+          },
+          onSaved: () => showToast("Not kaydedildi."),
+        });
+      });
       document.getElementById("questionBackBtn").addEventListener("click", () => {
         setQuestionFocusMode(false);
         if (solveMode === "wrong") {
@@ -3594,42 +4004,20 @@
     }
 
     function checkAnswer(selectedButton, question) {
-      if (answered) return;
-      answered = true;
-      if (solveMode === "document") rememberDocumentProgress(activeDocumentId, currentIndex + 1);
       const selectedKey = selectedButton.dataset.key;
-      markDailyTaskItem("difficultWords", question.id);
-      const optionButtons = document.querySelectorAll(".option-btn");
-      const feedbackArea = document.getElementById("feedbackArea");
-
-      optionButtons.forEach(button => {
-        button.setAttribute("aria-disabled", "true");
-        button.classList.remove("hover:border-blue-500", "hover:bg-slate-800", "hover:shadow-lg");
-      });
-
-      if (!question.correctAnswer) {
-        paintButton(selectedButton, "manual");
-        feedbackArea.innerHTML =
-          '<div class="rounded-2xl border border-blue-200 bg-blue-50 p-4 font-semibold text-blue-950">Bu yüklenen PDF için cevap anahtarı yok. Seçimin işaretlendi; skor değişmedi.</div>';
-      } else if (selectedKey === question.correctAnswer) {
-        stats.correct++;
-        if (solveMode === "wrong") removeWrongQuestion(question.id);
-        paintButton(selectedButton, "correct");
-        feedbackArea.innerHTML =
-          '<div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 font-semibold text-emerald-950">Doğru cevap.' + (solveMode === "wrong" ? ' Bu soru yanlış havuzundan çıkarıldı.' : '') + '</div>';
-      } else {
-        stats.wrong++;
-        addWrongQuestion(question.id);
-        paintButton(selectedButton, "wrong");
-        optionButtons.forEach(button => {
-          if (button.dataset.key === question.correctAnswer) paintButton(button, "correct");
-        });
-        feedbackArea.innerHTML =
-          '<div class="rounded-2xl border border-red-200 bg-red-50 p-4 font-semibold text-red-950">Yanlış cevap. Doğru seçenek yeşil olarak gösterildi.</div>';
+      if (!isAnswerKey(selectedKey)) return;
+      const hadAnswer = isAnswerKey(selectedAnswerForQuestion(question));
+      saveSelectedAnswer(question, selectedKey);
+      answered = true;
+      if (!hadAnswer) markDailyTaskItem("difficultWords", question.id);
+      if (question.correctAnswer) {
+        if (selectedKey === question.correctAnswer) removeWrongQuestion(question.id);
+        else if (selectedKey !== question.correctAnswer) addWrongQuestion(question.id);
       }
-
-      renderStats();
-      renderMenu();
+      const result = selectedAnswerSummary();
+      stats.correct = result.correct;
+      stats.wrong = result.wrong;
+      renderQuestion();
     }
 
     function nextButtonHtml() {
@@ -3649,16 +4037,20 @@
 
     function renderFinishScreen() {
       const documentInfo = solveMode === "wrong" ? { title: "Yanlış Sorular" } : activeDocument();
-      const total = stats.correct + stats.wrong;
-      const rate = total === 0 ? 0 : Math.round((stats.correct / total) * 100);
+      const result = selectedAnswerSummary();
+      stats.correct = result.correct;
+      stats.wrong = result.wrong;
+      renderStats();
+      const total = result.correct + result.wrong;
+      const rate = total === 0 ? 0 : Math.round((result.correct / total) * 100);
       appArea.innerHTML =
         '<div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-10 text-center shadow-2xl shadow-black/30">' +
           '<div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500/20 text-3xl">✓</div>' +
           '<h3 class="text-3xl font-bold text-white">Tebrikler, bu bölümü tamamladınız!</h3>' +
           '<p class="mt-3 text-slate-400">' + escapeHtml(documentInfo.title) + ' bölümündeki ' + getCategoryQuestions().length + ' soru tamamlandı.</p>' +
           '<div class="mt-8 grid gap-4 md:grid-cols-3">' +
-            '<div class="rounded-2xl bg-slate-800 p-5"><p class="text-sm text-slate-400">Doğru</p><p class="mt-1 text-3xl font-bold text-emerald-400">' + stats.correct + '</p></div>' +
-            '<div class="rounded-2xl bg-slate-800 p-5"><p class="text-sm text-slate-400">Yanlış</p><p class="mt-1 text-3xl font-bold text-red-400">' + stats.wrong + '</p></div>' +
+            '<div class="rounded-2xl bg-slate-800 p-5"><p class="text-sm text-slate-400">Doğru</p><p class="mt-1 text-3xl font-bold text-emerald-400">' + result.correct + '</p></div>' +
+            '<div class="rounded-2xl bg-slate-800 p-5"><p class="text-sm text-slate-400">Yanlış</p><p class="mt-1 text-3xl font-bold text-red-400">' + result.wrong + '</p></div>' +
             '<div class="rounded-2xl bg-slate-800 p-5"><p class="text-sm text-slate-400">Başarı Oranı</p><p class="mt-1 text-3xl font-bold text-blue-400">%' + rate + '</p></div>' +
           '</div>' +
           '<button onclick="restartCategory()" class="mt-8 rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg shadow-blue-950/40 transition hover:bg-blue-500">Bu Bölümü Tekrar Çöz</button>' +
@@ -3812,6 +4204,261 @@
         return String(a.word || "").localeCompare(String(b.word || ""), "tr");
       });
       return items;
+    }
+
+    function createNoteId() {
+      return typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID()
+        : "note-" + Date.now() + "-" + Math.random().toString(36).slice(2, 10);
+    }
+
+    function normalizeNote(note = {}) {
+      const now = new Date().toISOString();
+      const validSourceTypes = ["manual", "question", "reading"];
+      const text = value => typeof value === "string" ? value : "";
+      const questionNumber = Number(note.questionNumber);
+      const legacyContent = [note.title, note.meaning, note.structure, note.sourceText, note.personalExample]
+        .map(text)
+        .map(value => value.trim())
+        .filter(Boolean)
+        .join("\n\n");
+      return {
+        id: text(note.id) || createNoteId(),
+        content: text(note.content) || legacyContent,
+        sourceType: validSourceTypes.includes(note.sourceType) ? note.sourceType : "manual",
+        sourceId: text(note.sourceId) || null,
+        sourceTitle: text(note.sourceTitle) || null,
+        questionId: text(note.questionId) || null,
+        questionNumber: Number.isFinite(questionNumber) && questionNumber > 0 ? questionNumber : null,
+        selectedText: text(note.selectedText) || null,
+        createdAt: text(note.createdAt) || now,
+        updatedAt: text(note.updatedAt) || now,
+      };
+    }
+
+    function saveNotes() {
+      saveJson(STORAGE_NOTES, notes);
+    }
+
+    async function copyNoteContent(note) {
+      const content = String(note?.content || "");
+      try {
+        await navigator.clipboard.writeText(content);
+        showToast("Not kopyalandı.");
+      } catch {
+        const input = document.createElement("textarea");
+        input.value = content;
+        input.style.position = "fixed";
+        input.style.opacity = "0";
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand("copy");
+        input.remove();
+        showToast("Not kopyalandı.");
+      }
+    }
+
+    function filteredNotes() {
+      const query = normalizeLookup(noteSearchQuery);
+      return notes
+        .filter(note => !query || normalizeLookup(note.content).includes(query) || normalizeLookup(note.sourceTitle).includes(query) || normalizeLookup(String(note.questionNumber || "")).includes(query))
+        .sort((a, b) => {
+          if (noteSortMode === "oldest") return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+          if (noteSortMode === "source") return String(a.sourceTitle || "").localeCompare(String(b.sourceTitle || ""), "tr");
+          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+        });
+    }
+
+    function closeNoteDrawer() {
+      document.getElementById("noteDrawerOverlay")?.remove();
+    }
+
+    function noteSourceLabel(note) {
+      if (!note?.sourceTitle) return "";
+      return note.sourceTitle + (note.questionNumber ? " · Soru " + note.questionNumber : note.sourceType === "reading" ? " · Okuma Merkezi" : "");
+    }
+
+    function noteSourceExists(note) {
+      if (note?.sourceType === "question") {
+        return questionBank.some(question => question.id === note.questionId || question.documentId === note.sourceId);
+      }
+      if (note?.sourceType === "reading") return articles.some(article => article.id === note.sourceId);
+      return false;
+    }
+
+    function goToNoteSource(note) {
+      if (!noteSourceExists(note)) return;
+      if (note.sourceType === "reading") {
+        activeArticleId = note.sourceId;
+        articleLanguageView = "en";
+        setView("articles");
+        return;
+      }
+      const question = questionBank.find(item => item.id === note.questionId) || questionBank.find(item => item.documentId === note.sourceId && Number(item.questionNumber) === Number(note.questionNumber)) || questionBank.find(item => item.documentId === note.sourceId);
+      if (!question) return;
+      const documentQuestions = questionBank.filter(item => item.documentId === question.documentId);
+      activeDocumentId = question.documentId;
+      currentIndex = Math.max(0, documentQuestions.findIndex(item => item.id === question.id));
+      answered = false;
+      solveMode = "document";
+      wrongReviewIds = [];
+      setView("solve");
+    }
+
+    function noteTitle(note) {
+      return String(note?.content || "").split(/\r?\n/).find(line => line.trim())?.trim() || "Başlıksız not";
+    }
+
+    function notePreview(note) {
+      const lines = String(note?.content || "").split(/\r?\n/);
+      const titleIndex = lines.findIndex(line => line.trim());
+      return titleIndex < 0 ? "" : lines.slice(titleIndex + 1).join("\n").trim();
+    }
+
+    function formatNoteDate(value) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? "" : date.toLocaleDateString("tr-TR", { day: "numeric", month: "short", year: "numeric" });
+    }
+
+    function openQuickNoteDrawer({ note = null, context = null, onSaved = null } = {}) {
+      closeNoteDrawer();
+      const item = note ? normalizeNote(note) : normalizeNote({ ...context, content: context?.selectedText ? context.selectedText + "\n\n" : "" });
+      const overlay = document.createElement("div");
+      overlay.id = "noteDrawerOverlay";
+      overlay.className = "fixed inset-0 z-[90] bg-slate-950/45";
+      const source = noteSourceLabel(item);
+      overlay.innerHTML =
+        '<aside class="absolute inset-y-0 right-0 flex w-full max-w-2xl flex-col border-l border-slate-200 bg-white shadow-2xl" role="dialog" aria-modal="true" aria-label="' + (note ? "Notu düzenle" : "Yeni not") + '">' +
+          '<div class="flex items-start justify-between border-b border-slate-200 px-5 py-4 sm:px-6">' +
+            '<div><p class="text-xs font-black uppercase tracking-wider text-blue-600">Not Defteri</p><h2 class="mt-1 text-xl font-black text-slate-950">' + (note ? "Notu Düzenle" : "Yeni Not") + '</h2></div>' +
+            '<button type="button" data-note-drawer-close class="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-xl font-black text-slate-700 hover:bg-slate-50" aria-label="Kapat">×</button>' +
+          '</div>' +
+          '<form id="noteEditorForm" class="min-h-0 flex-1 overflow-y-auto p-5 sm:p-6">' +
+            '<label class="grid h-full min-h-[360px] gap-2 text-sm font-bold text-slate-700"><span>Not <span class="text-rose-600">*</span></span><textarea id="noteContent" required class="min-h-[320px] flex-1 resize-y rounded-xl border border-slate-200 bg-slate-50 p-4 font-medium leading-relaxed text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white" placeholder="allow sb to do sth&#10;&#10;Birinin bir şey yapmasına izin vermek.&#10;&#10;Örnek:&#10;The system allows users to save their work.">' + escapeHtml(item.content) + '</textarea></label>' +
+            (source ? '<p class="mt-3 text-xs font-bold text-slate-500">Kaynak: ' + escapeHtml(source) + '</p>' : "") +
+            '<p id="noteEditorError" class="mt-3 hidden text-sm font-bold text-rose-600"></p>' +
+          '</form>' +
+          '<div class="flex flex-col-reverse gap-2 border-t border-slate-200 p-4 sm:flex-row sm:justify-end sm:px-6">' +
+            '<button type="button" data-note-drawer-close class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-black text-slate-700 hover:bg-slate-50">İptal</button>' +
+            '<button type="submit" form="noteEditorForm" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-lg shadow-blue-200 hover:bg-blue-500">' + (note ? "Kaydet" : "Notu Kaydet") + '</button>' +
+          '</div>' +
+        '</aside>';
+      document.body.appendChild(overlay);
+      overlay.addEventListener("click", event => { if (event.target === overlay) closeNoteDrawer(); });
+      overlay.querySelectorAll("[data-note-drawer-close]").forEach(button => button.addEventListener("click", closeNoteDrawer));
+      overlay.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeNoteDrawer();
+        if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+          event.preventDefault();
+          overlay.querySelector("#noteEditorForm").requestSubmit();
+        }
+      });
+      overlay.querySelector("#noteEditorForm").addEventListener("submit", event => {
+        event.preventDefault();
+        const content = overlay.querySelector("#noteContent").value;
+        const error = overlay.querySelector("#noteEditorError");
+        if (!content.trim()) {
+          error.textContent = "Not alanı boş bırakılamaz.";
+          error.classList.remove("hidden");
+          return;
+        }
+        const now = new Date().toISOString();
+        const record = normalizeNote({
+          ...item,
+          content,
+          createdAt: note?.createdAt || now,
+          updatedAt: now,
+        });
+        notes = note ? notes.map(existing => existing.id === note.id ? record : existing) : [record, ...notes];
+        saveNotes();
+        closeNoteDrawer();
+        if (typeof onSaved === "function") onSaved(record);
+        else if (activeView === "notes") renderNotebook();
+      });
+      overlay.querySelector("#noteContent").focus();
+    }
+
+    function noteCardHtml(note) {
+      const source = noteSourceLabel(note);
+      const preview = notePreview(note);
+      const hasSource = note.sourceType !== "manual";
+      const sourceExists = noteSourceExists(note);
+      return '<article class="note-card relative flex min-h-[180px] cursor-pointer flex-col rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-blue-200" data-note-open="' + escapeHtml(note.id) + '">' +
+        '<div class="flex items-start justify-between gap-3"><p class="text-xs font-bold text-slate-500">' + escapeHtml(formatNoteDate(note.createdAt)) + '</p>' +
+        '<button class="note-menu-toggle flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-lg font-black text-slate-500 hover:bg-slate-100 hover:text-blue-700" data-note-id="' + escapeHtml(note.id) + '" aria-label="Not işlemleri">…</button></div>' +
+        '<h3 class="mt-3 line-clamp-2 break-words text-[26px] font-bold leading-[1.25] text-blue-700">' + escapeHtml(noteTitle(note)) + '</h3>' +
+        (preview ? '<p class="mt-3 whitespace-pre-wrap line-clamp-6 text-[19px] font-medium leading-relaxed text-slate-700">' + escapeHtml(preview) + '</p>' : "") +
+        (hasSource ? '<div class="mt-auto pt-5 text-sm font-bold">' + (sourceExists ? '<button class="note-source-link inline-flex items-center gap-2 text-left text-blue-700 hover:text-blue-800 hover:underline" data-note-source="' + escapeHtml(note.id) + '">' + (note.sourceType === "reading" ? "Metne Git" : "Kaynağa Git") + (source ? '<span class="font-medium text-slate-600">' + escapeHtml(source) + '</span>' : "") + '</button>' : '<span class="text-slate-400">Kaynak bulunamadı</span>') + '</div>' : "") +
+        '<div class="note-action-menu hidden absolute right-4 top-14 z-10 w-48 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl" data-note-menu="' + escapeHtml(note.id) + '">' +
+          '<button data-note-action="edit" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50">Düzenle</button>' +
+          '<button data-note-action="copy" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50">Kopyala</button>' +
+          '<button data-note-action="delete" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-rose-600 hover:bg-rose-50">Sil</button>' +
+        '</div>' +
+      '</article>';
+    }
+
+    function renderNotebook() {
+      pageTitle.textContent = "YDS Hazırlık";
+      renderMenu();
+      renderStats();
+      const visibleNotes = filteredNotes();
+      appArea.innerHTML =
+        '<section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">' +
+          '<div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">' +
+            '<div><h1 class="text-2xl font-black text-slate-950">Not Defteri</h1><p class="mt-1 text-sm font-medium text-slate-500">Pratik gramer, kalıp ve çalışma notlarını tek yerde tut.</p></div>' +
+            '<div class="flex items-center gap-3"><span class="whitespace-nowrap text-sm font-black text-slate-600">' + notes.length + ' not</span><button id="newNoteBtn" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-sm hover:bg-blue-500">+ Yeni Not</button></div>' +
+          '</div>' +
+          '<div class="mt-4 grid gap-2 sm:grid-cols-[minmax(0,1fr)_190px]">' +
+            '<input id="noteSearchInput" class="h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white" placeholder="Notlarda ara..." value="' + escapeHtml(noteSearchQuery) + '">' +
+            '<select id="noteSortSelect" class="h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:bg-white"><option value="newest"' + (noteSortMode === "newest" ? " selected" : "") + '>Son eklenen</option><option value="oldest"' + (noteSortMode === "oldest" ? " selected" : "") + '>En eski</option><option value="source"' + (noteSortMode === "source" ? " selected" : "") + '>Kaynak adına göre</option></select>' +
+          '</div>' +
+        '</section>' +
+        (visibleNotes.length ? '<section class="mt-4 grid items-start gap-4" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),420px))">' + visibleNotes.map(noteCardHtml).join("") + '</section>' :
+          '<section class="mt-4 rounded-2xl border border-slate-200 bg-white px-6 py-14 text-center shadow-sm"><h2 class="text-xl font-black text-slate-950">Henüz not eklemedin.</h2><p class="mx-auto mt-2 max-w-md text-sm font-medium text-slate-500">Pratik gramer, kalıp ve çalışma notlarını burada biriktirebilirsin.</p><button id="firstNoteBtn" class="mt-5 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-lg shadow-blue-200 hover:bg-blue-500">İlk Notunu Ekle</button></section>');
+      document.getElementById("newNoteBtn")?.addEventListener("click", () => openQuickNoteDrawer());
+      document.getElementById("firstNoteBtn")?.addEventListener("click", () => openQuickNoteDrawer());
+      document.getElementById("noteSearchInput")?.addEventListener("input", event => {
+        noteSearchQuery = event.target.value;
+        clearTimeout(noteSearchTimer);
+        noteSearchTimer = setTimeout(renderNotebook, 180);
+      });
+      document.getElementById("noteSortSelect")?.addEventListener("change", event => {
+        noteSortMode = event.target.value || "newest";
+        renderNotebook();
+      });
+      appArea.querySelectorAll(".note-menu-toggle").forEach(button => button.addEventListener("click", event => {
+        event.stopPropagation();
+        const menu = appArea.querySelector('[data-note-menu="' + button.dataset.noteId + '"]');
+        const shouldOpen = menu?.classList.contains("hidden");
+        appArea.querySelectorAll(".note-action-menu").forEach(item => item.classList.add("hidden"));
+        if (shouldOpen) menu?.classList.remove("hidden");
+      }));
+      appArea.querySelectorAll("[data-note-action]").forEach(button => button.addEventListener("click", () => {
+        const index = notes.findIndex(note => note.id === button.dataset.noteId);
+        if (index < 0) return;
+        const action = button.dataset.noteAction;
+        if (action === "edit") return openQuickNoteDrawer({ note: notes[index] });
+        if (action === "copy") {
+          void copyNoteContent(notes[index]);
+          appArea.querySelectorAll(".note-action-menu").forEach(item => item.classList.add("hidden"));
+          return;
+        } else if (action === "delete") {
+          if (!window.confirm('"' + noteTitle(notes[index]) + '" notunu silmek istediğine emin misin?')) return;
+          notes.splice(index, 1);
+        }
+        saveNotes();
+        renderNotebook();
+      }));
+      appArea.querySelectorAll("[data-note-open]").forEach(card => card.addEventListener("click", event => {
+        if (event.target.closest("button")) return;
+        const note = notes.find(item => item.id === card.dataset.noteOpen);
+        if (note) openQuickNoteDrawer({ note });
+      }));
+      appArea.querySelectorAll("[data-note-source]").forEach(button => button.addEventListener("click", event => {
+        event.stopPropagation();
+        const note = notes.find(item => item.id === button.dataset.noteSource);
+        if (note) goToNoteSource(note);
+      }));
     }
 
     function renderWordbook() {
@@ -4591,7 +5238,7 @@
       }
       return '<article class="reading-content-card relative rounded-2xl border p-4 shadow-sm transition hover:border-blue-200 hover:bg-blue-50/40" style="border-color: var(--border-color); background: var(--bg-surface)">' +
         '<div class="mb-3 flex items-start justify-between gap-3">' +
-          '<span class="rounded-full border px-3 py-1 text-xs font-black text-blue-700" style="border-color: var(--border-color); background: var(--bg-surface-secondary)">' + articleTypeLabel(article) + '</span>' +
+          '<div class="flex flex-wrap gap-2"><span class="rounded-full border px-3 py-1 text-xs font-black text-blue-700" style="border-color: var(--border-color); background: var(--bg-surface-secondary)">' + articleTypeLabel(article) + '</span><span class="rounded-full border px-2.5 py-1 text-xs font-black" style="border-color: var(--border-color); color: var(--text-secondary); background: var(--bg-surface-secondary)" title="Çeviri durumu">' + articleLanguageBadge(article) + '</span></div>' +
           '<span class="rounded-full border px-3 py-1 text-xs font-black" style="border-color: var(--border-color); color: var(--text-secondary); background: var(--bg-surface-secondary)">' + status.label + '</span>' +
         '</div>' +
         '<h3 class="line-clamp-2 text-lg font-black" style="color: var(--text-primary)">' + escapeHtml(articleDisplayTitle(article)) + '</h3>' +
@@ -4608,6 +5255,7 @@
         '<div class="article-card-menu word-action-menu absolute bottom-14 right-4 z-30 min-w-52 rounded-xl border p-2 text-sm font-bold shadow-xl" style="border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary)" data-id="' + escapeHtml(article.id) + '">' +
           '<button class="article-card-rename block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100" data-id="' + escapeHtml(article.id) + '">Yeniden adlandır</button>' +
           '<button class="article-card-edit block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100" data-id="' + escapeHtml(article.id) + '">Düzenle</button>' +
+          '<button class="article-card-translation block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100" data-id="' + escapeHtml(article.id) + '">' + (articleHasTranslation(article) ? 'Türkçe Çeviriyi Düzenle' : 'Türkçe Çeviri Ekle') + '</button>' +
           '<button class="article-card-change-kind block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100" data-id="' + escapeHtml(article.id) + '" data-kind="' + (kind === "yds" ? "external" : "yds") + '">Türü değiştir</button>' +
           '<button class="article-card-mark-read block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100" data-id="' + escapeHtml(article.id) + '">Okundu olarak işaretle</button>' +
           '<button class="article-card-delete block w-full rounded-lg px-3 py-2 text-left text-red-600 hover:bg-red-50" data-id="' + escapeHtml(article.id) + '">Sil</button>' +
@@ -4640,7 +5288,7 @@
       const filtered = sortedFilteredArticles();
       appArea.innerHTML =
         '<div class="grid gap-4">' +
-          '<section class="rounded-2xl border p-4 shadow-sm" style="border-color: var(--border-color); background: var(--bg-surface)">' +
+          (activeArticle ? '' : '<section class="rounded-2xl border p-4 shadow-sm" style="border-color: var(--border-color); background: var(--bg-surface)">' +
             '<div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">' +
               '<div>' +
                 '<p class="text-sm font-bold uppercase tracking-wide text-blue-500">Okuma Merkezi</p>' +
@@ -4650,22 +5298,22 @@
               '<button id="toggleArticleFormBtn" class="shrink-0 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-sm transition hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500">Yeni Metin Ekle</button>' +
             '</div>' +
             renderArticleCreatePanel() +
-            (activeArticle ? '' :
               '<div class="mt-4">' +
               '<div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">' +
                 '<span id="articleResultCount" class="rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color: var(--border-color); color: var(--text-secondary); background: var(--bg-surface-secondary)">' + filtered.length + ' içerik</span>' +
               '</div>' +
-              '<div class="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-4">' +
+              '<div class="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-5">' +
                 '<input id="articleSearchInput" class="rounded-xl border px-3 py-2 text-sm font-semibold outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)" placeholder="Metin ara" value="' + escapeHtml(articleSearchQuery) + '" />' +
                 '<select id="articleStatusFilter" class="rounded-xl border px-3 py-2 text-sm font-bold outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)"><option value="all">Okuma durumu</option><option value="new">Yeni</option><option value="reading">Okunuyor</option><option value="completed">Tamamlandı</option></select>' +
                 '<select id="articleTypeFilter" class="rounded-xl border px-3 py-2 text-sm font-bold outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)"><option value="all">İçerik türü</option><option value="yds">Çıkmış YDS</option><option value="external">Kendi Metinlerim</option></select>' +
+                '<select id="articleLanguageFilter" class="rounded-xl border px-3 py-2 text-sm font-bold outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)"><option value="all">Dil durumu</option><option value="translated">Çevirisi olanlar</option><option value="missing">Çevirisi olmayanlar</option><option value="draft">Taslak çeviriler</option></select>' +
                 '<select id="articleSortMode" class="rounded-xl border px-3 py-2 text-sm font-bold outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)"><option value="recent">Son eklenen</option><option value="az">A-Z</option><option value="short">En kısa</option><option value="long">En uzun</option><option value="studied">Son çalışılan</option></select>' +
               '</div>' +
               '<div id="articleResults">' +
                 renderArticleResultsHtml(filtered) +
               '</div>' +
-              '</div>') +
-          '</section>' +
+              '</div>' +
+          '</section>') +
           (activeArticle ? '<section id="articleReader" class="min-w-0"></section>' : '') +
         '</div>';
 
@@ -4708,6 +5356,7 @@
       };
       bindSelect("articleStatusFilter", value => articleStatusFilter = value, articleStatusFilter);
       bindSelect("articleTypeFilter", value => articleTypeFilter = value, articleTypeFilter);
+      bindSelect("articleLanguageFilter", value => articleLanguageFilter = value, articleLanguageFilter);
       bindSelect("articleSortMode", value => articleSortMode = value, articleSortMode);
       bindArticleResultControls();
     }
@@ -4739,6 +5388,7 @@
       document.querySelectorAll(".article-list-card").forEach(button => {
         button.addEventListener("click", () => {
           activeArticleId = button.dataset.id;
+          articleLanguageView = "en";
           const article = articles.find(item => item.id === activeArticleId);
           if (article) {
             if (articleReadingStatus(article).key === "new") article.status = "reading";
@@ -4776,6 +5426,12 @@
         button.addEventListener("click", () => {
           const article = articles.find(item => item.id === button.dataset.id);
           if (article) openArticleEditModal(article);
+        });
+      });
+      document.querySelectorAll(".article-card-translation").forEach(button => {
+        button.addEventListener("click", () => {
+          const article = articles.find(item => item.id === button.dataset.id);
+          if (article) openArticleTranslationEditor(article);
         });
       });
       document.querySelectorAll(".article-card-change-kind").forEach(button => {
@@ -5090,22 +5746,34 @@
       const kind = articleKind(article);
       const savedEntries = savedArticleEntries(article);
       const savedEntryCount = savedEntries.filter(entry => !entry.unresolved).length;
+      const highlightToggleLabel = articleHighlightsVisible ? "Kelime vurgularını gizle" : "Kelime vurgularını göster";
+      const hasTranslation = articleHasTranslation(article);
+      if (!hasTranslation || articleLanguageView !== "bilingual") articleLanguageView = "en";
+      const languageView = articleLanguageView === "bilingual" ? "bilingual" : "en";
+      const visibleTitle = title;
       setArticleFocusMode(articleFocusMode);
       reader.innerHTML =
         '<article class="article-reader-surface ' + (articleFocusMode ? 'is-focus-mode ' : '') + 'rounded-2xl border p-4 lg:p-5">' +
           '<div class="article-reading-progress" role="progressbar" aria-label="Okuma ilerlemesi" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="articleReadingProgressValue"></span></div>' +
           '<header id="articleReaderToolbar" class="article-reader-toolbar" role="toolbar" aria-label="Okuma araçları">' +
-            '<button id="articleBackBtn" class="article-toolbar-btn flex h-10 shrink-0 items-center justify-center rounded-xl px-3 text-xs font-black" title="Okuma listesine dön" aria-label="Okuma listesine dön">← <span class="article-toolbar-back-copy ml-1">Listeye dön</span></button>' +
+            '<div class="article-toolbar-toprow">' +
+              '<button id="articleBackBtn" class="article-toolbar-btn flex h-10 shrink-0 items-center justify-center rounded-xl px-3 text-xs font-black" title="Okuma listesine dön" aria-label="Okuma listesine dön">← <span class="article-toolbar-back-copy ml-1">Listeye dön</span></button>' +
+              '<div class="article-reader-actions relative">' +
+                '<button id="articleQuickNoteBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="Bu metin için not ekle" aria-label="Not Ekle">Not Ekle</button>' +
+                '<button id="articleSavedWordsBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="Kaydedilenleri göster" aria-label="Kaydedilenleri göster">Kaydedilenler (' + savedEntryCount + ')</button>' +
+                '<button id="articleHighlightToggleBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black" title="' + highlightToggleLabel + '" aria-label="' + highlightToggleLabel + '">' + (articleHighlightsVisible ? '◐' : '○') + '</button>' +
+                '<button id="articleSettingsBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="Okuma ayarlarını aç" aria-label="Okuma ayarlarını aç" aria-expanded="false" aria-controls="articleSettingsPanel">Okuma Ayarları</button>' +
+                '<button id="articleMenuBtn" class="article-icon-btn flex h-10 w-10 items-center justify-center rounded-xl text-xl font-black" title="Diğer işlemler" aria-label="Diğer işlemler">⋯</button>' +
+              '</div>' +
+            '</div>' +
             '<div class="article-reader-heading">' +
               '<p class="text-sm font-semibold uppercase tracking-wider text-blue-500">' + (kind === "yds" ? 'Çıkmış YDS Parçası' : 'Kendi Metnim') + '</p>' +
-              '<h3 class="mt-1 break-words text-2xl font-bold lg:text-3xl" style="color: var(--text-primary)">' + escapeHtml(title) + '</h3>' +
-              articleMetadataHtml(article) +
+              '<h3 class="article-reader-title">' + escapeHtml(visibleTitle) + '</h3>' +
+              '<div class="article-reader-meta-row">' + articleMetadataHtml(article) +
+                '<div class="article-language-control" role="group" aria-label="Okuma dili"><button class="article-language-choice ' + (languageView === "en" ? 'is-active' : '') + '" data-language-view="en" aria-pressed="' + (languageView === "en") + '">İngilizce</button><button class="article-language-choice ' + (languageView === "bilingual" ? 'is-active' : '') + '" data-language-view="bilingual" aria-pressed="' + (languageView === "bilingual") + '"' + (!hasTranslation ? ' disabled title="Bu makaleye henüz Türkçe çeviri eklenmedi."' : '') + '>İngilizce + Türkçe</button></div>' +
+              '</div>' +
             '</div>' +
             '<div class="article-reader-actions relative">' +
-              '<button id="articleSavedWordsBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="Kaydedilenleri göster" aria-label="Kaydedilenleri göster">Kaydedilenler (' + savedEntryCount + ')</button>' +
-              '<button id="articleHighlightToggleBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black" title="Vurguları göster/gizle" aria-label="Vurguları göster/gizle">' + (articleHighlightsVisible ? '◐' : '○') + '</button>' +
-              '<button id="articleSettingsBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="Okuma ayarlarını aç" aria-label="Okuma ayarlarını aç" aria-expanded="false" aria-controls="articleSettingsPanel">Okuma Ayarları</button>' +
-              '<button id="articleMenuBtn" class="article-icon-btn flex h-10 w-10 items-center justify-center rounded-xl text-xl font-black" title="Diğer işlemler" aria-label="Diğer işlemler">⋯</button>' +
               '<section id="articleSettingsPanel" class="article-settings-panel" hidden aria-label="Okuma ayarları">' +
                 '<div class="mb-3 flex items-center justify-between"><h4 class="text-sm font-black">Okuma Ayarları</h4><span id="articleFontSizeValue" class="text-xs font-bold" style="color: var(--text-secondary)">' + fontSize + ' px</span></div>' +
                 '<label class="block text-xs font-black" for="articleFontSizeInput">Yazı boyutu<input id="articleFontSizeInput" class="mt-2 w-full" type="range" min="22" max="28" step="1" value="' + fontSize + '" /></label>' +
@@ -5117,6 +5785,7 @@
               '<div id="articleActionMenu" class="word-action-menu absolute right-0 top-12 z-30 min-w-52 rounded-xl border p-2 text-sm font-bold shadow-xl" style="border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary)">' +
                 '<button id="renameArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Yeniden adlandır</button>' +
                 '<button id="editArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Metni düzenle</button>' +
+                '<button id="editArticleTranslationBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">' + (hasTranslation ? 'Türkçe Çeviriyi Düzenle' : 'Türkçe Çeviri Ekle') + '</button>' +
                 '<button id="markArticleReadBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Okundu olarak işaretle</button>' +
                 (kind === "external" && article.sourceUrl ? '<button id="openArticleSourceBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Kaynak bağlantısını aç</button>' : '') +
                 '<button id="exportArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Dışa aktar</button>' +
@@ -5124,7 +5793,7 @@
               '</div>' +
             '</div>' +
           '</header>' +
-          '<div id="articleReadingBody" class="article-body article-surface-' + surface + ' ' + (articleHighlightsVisible ? '' : 'article-hide-highlights ') + 'rounded-2xl border px-5 py-6 sm:px-7 lg:px-8" style="max-width: ' + contentWidth + 'px; --article-font-size: ' + fontSize + 'px; --article-line-height: ' + lineHeight + '; border-color: var(--border-color);">' + renderArticleParagraphs(article, vocabMap, savedEntries) + '</div>' +
+          '<div id="articleReadingBody" class="article-body article-surface-' + surface + ' ' + (articleHighlightsVisible ? '' : 'article-hide-highlights ') + 'rounded-2xl border px-5 py-6 sm:px-7 lg:px-8" style="max-width: ' + contentWidth + 'px; --article-font-size: ' + fontSize + 'px; --article-line-height: ' + lineHeight + '; border-color: var(--border-color);">' + renderTranslatedArticleBody(article, languageView, vocabMap, savedEntries) + '</div>' +
           (kind === "yds" ? renderYdsReadingQuestions(article) : '<section class="mx-auto mt-4 max-w-[900px] rounded-2xl border p-4" style="border-color: var(--border-color); background: var(--bg-surface-secondary)"><div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Okuma</p><p class="text-sm font-semibold" style="color: var(--text-secondary)">Metni bitirdiğinde günlük kendi metnim görevin tamamlanır.</p></div><div class="flex flex-wrap gap-2"><button id="studyArticleWordsBtn" class="rounded-xl border px-4 py-2 text-sm font-black" style="border-color: var(--border-color); color: var(--button-secondary-text); background: var(--button-secondary-bg)">Bu metnin kelimeleri</button><button id="completeArticleReadingBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white hover:bg-blue-500">Okumayı Tamamla</button></div></div></section>') +
         '</article>' +
         renderArticleSavedDrawer(article, savedEntries);
@@ -5146,6 +5815,32 @@
         articleSavedPanelOpen = !articleSavedPanelOpen;
         renderArticleReader(article);
       });
+      document.querySelectorAll(".article-language-choice").forEach(button => {
+        button.addEventListener("click", () => {
+          if (button.disabled) return;
+          articleLanguageView = button.dataset.languageView || "en";
+          renderArticleReader(article);
+        });
+      });
+      const quickNoteButton = document.getElementById("articleQuickNoteBtn");
+      if (quickNoteButton) {
+        let selectedArticleText = "";
+        quickNoteButton.addEventListener("mousedown", () => {
+          selectedArticleText = window.getSelection?.().toString().trim() || "";
+        });
+        quickNoteButton.addEventListener("click", () => {
+          const selectedText = selectedArticleText || window.getSelection?.().toString().trim() || "";
+          openQuickNoteDrawer({
+            context: {
+              sourceType: "reading",
+              sourceId: article.id || null,
+              sourceTitle: title || null,
+              selectedText: selectedText || null,
+            },
+            onSaved: () => showToast("Not kaydedildi."),
+          });
+        });
+      }
       const highlightToggleButton = document.getElementById("articleHighlightToggleBtn");
       if (highlightToggleButton) highlightToggleButton.addEventListener("click", () => {
         articleHighlightsVisible = !articleHighlightsVisible;
@@ -5244,6 +5939,7 @@
       document.getElementById("editArticleBtn").addEventListener("click", () => {
         openArticleEditModal(article);
       });
+      document.getElementById("editArticleTranslationBtn").addEventListener("click", () => openArticleTranslationEditor(article));
       document.getElementById("markArticleReadBtn").addEventListener("click", () => {
         article.status = "completed";
         article.readingProgress = 100;
@@ -5513,6 +6209,82 @@
     function closeArticleEditModal() {
       const modal = document.getElementById("articleEditModal");
       if (modal) modal.remove();
+    }
+
+    function closeArticleTranslationEditor() {
+      document.getElementById("articleTranslationEditor")?.remove();
+      activeTranslationDraft = null;
+    }
+
+    function syncTranslationDraftFromEditor() {
+      if (!activeTranslationDraft) return;
+      activeTranslationDraft.titleTr = document.getElementById("translationTitleTrInput")?.value || "";
+      document.querySelectorAll(".translation-tr-input").forEach(input => {
+        const pair = activeTranslationDraft.pairs.find(item => item.id === input.dataset.pairId);
+        if (pair) pair.tr = input.value;
+      });
+    }
+
+    function translationDraftValidation(draft, requireComplete = false) {
+      const pairs = draft?.pairs || [];
+      const errors = [];
+      if (!pairs.length || pairs.some(pair => !String(pair.en || "").trim())) errors.push("İngilizce paragraf eşleşmesi geçerli değil.");
+      if (requireComplete && pairs.some(pair => !String(pair.tr || "").trim())) errors.push("Çeviriyi tamamlamak için tüm Türkçe paragrafları doldur.");
+      if (normalizeArticleTextForReading(draft?.article?.text || "") !== normalizeArticleTextForReading(pairs.map(pair => pair.en).join("\n\n"))) errors.push("İngilizce paragraflar metnin aslıyla eşleşmiyor.");
+      return errors;
+    }
+
+    function translationDraftPreviewHtml(draft) {
+      return '<div class="mt-4 rounded-xl border p-3 text-sm" style="border-color: var(--border-color); background: var(--bg-surface)"><p class="font-black">Ön izleme</p><p class="mt-1 font-semibold" style="color: var(--text-secondary)">' + draft.pairs.length + ' eşleşmiş paragraf · ' + draft.pairs.filter(pair => String(pair.tr || "").trim()).length + ' Türkçe çeviri dolu</p></div>';
+    }
+
+    function openArticleTranslationEditor(article) {
+      closeArticleTranslationEditor();
+      activeTranslationDraft = { article, titleTr: article.titleTr || "", pairs: articleBilingualParagraphs(article).map(pair => ({ ...pair })) };
+      renderArticleTranslationEditor();
+    }
+
+    function renderArticleTranslationEditor() {
+      const draft = activeTranslationDraft;
+      if (!draft?.article) return;
+      const article = draft.article;
+      const editor = document.createElement("aside");
+      editor.id = "articleTranslationEditor";
+      editor.className = "article-translation-editor p-4 sm:p-5";
+      editor.innerHTML = '<div class="sticky top-0 z-10 -mx-4 -mt-4 border-b p-4 sm:-mx-5 sm:-mt-5 sm:p-5" style="border-color: var(--border-color); background: var(--bg-surface)"><div class="flex items-start justify-between gap-3"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Türkçe Çeviri</p><h3 class="mt-1 text-xl font-black">' + escapeHtml(articleDisplayTitle(article)) + '</h3><p class="mt-1 text-xs font-semibold" style="color: var(--text-secondary)">İngilizce metin salt okunurdur; değişiklikler yalnızca kaydedildiğinde uygulanır.</p></div><button id="closeTranslationEditorBtn" class="article-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl font-black" aria-label="Çeviri düzenleyicisini kapat">×</button></div><button id="importBilingualTxtBtn" class="mt-3 rounded-xl border px-3 py-2 text-xs font-black" style="border-color: var(--border-color); color: var(--button-secondary-text); background: var(--button-secondary-bg)">Çift dilli TXT içe aktar</button></div><label class="mt-5 block text-sm font-black">Türkçe başlık<input id="translationTitleTrInput" class="mt-2 w-full rounded-xl border px-3 py-2.5 font-semibold" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)" value="' + escapeHtml(draft.titleTr) + '" /></label><div class="mt-5 grid gap-3">' + draft.pairs.map((pair, index) => '<section class="translation-editor-pair rounded-2xl border p-3"><div class="flex items-center justify-between gap-2"><p class="text-xs font-black uppercase tracking-wide text-blue-500">Paragraf ' + (index + 1) + '</p><div class="flex gap-2"><button class="translation-split-btn rounded-lg border px-2 py-1 text-[11px] font-black" data-pair-id="' + escapeHtml(pair.id) + '" style="border-color: var(--border-color)">Böl</button>' + (index < draft.pairs.length - 1 ? '<button class="translation-merge-btn rounded-lg border px-2 py-1 text-[11px] font-black" data-pair-id="' + escapeHtml(pair.id) + '" style="border-color: var(--border-color)">Sonrakiyle birleştir</button>' : '') + '</div></div><label class="mt-3 block text-xs font-black" style="color: var(--text-secondary)">İNGİLİZCE · SALT OKUNUR<textarea readonly class="mt-1 min-h-28 w-full rounded-xl border px-3 py-2 text-sm leading-6" style="border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary)">' + escapeHtml(pair.en) + '</textarea></label><label class="mt-3 block text-xs font-black" style="color: var(--text-secondary)">TÜRKÇE<textarea class="translation-tr-input mt-1 min-h-28 w-full rounded-xl border px-3 py-2 text-sm leading-6" data-pair-id="' + escapeHtml(pair.id) + '" style="border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary)">' + escapeHtml(pair.tr) + '</textarea></label></section>').join("") + '</div><div id="translationPreview">' + translationDraftPreviewHtml(draft) + '</div><p id="translationEditorStatus" class="mt-3 text-sm font-bold" style="color: var(--text-secondary)"></p><div class="sticky bottom-0 mt-5 flex flex-col gap-2 border-t py-4 sm:flex-row sm:justify-end" style="border-color: var(--border-color); background: var(--bg-surface)"><button id="cancelTranslationEditorBtn" class="rounded-xl border px-4 py-2.5 text-sm font-black" style="border-color: var(--border-color)">İptal</button><button id="saveTranslationDraftBtn" class="rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-black text-blue-700">Taslak Kaydet</button><button id="completeTranslationBtn" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white">Çeviriyi Tamamla</button></div>';
+      document.body.appendChild(editor);
+      document.getElementById("closeTranslationEditorBtn").addEventListener("click", closeArticleTranslationEditor);
+      document.getElementById("cancelTranslationEditorBtn").addEventListener("click", closeArticleTranslationEditor);
+      document.getElementById("importBilingualTxtBtn").addEventListener("click", () => openBilingualTxtImportModal(article.id));
+      const refresh = () => { syncTranslationDraftFromEditor(); document.getElementById("translationPreview").innerHTML = translationDraftPreviewHtml(activeTranslationDraft); };
+      document.querySelectorAll(".translation-tr-input, #translationTitleTrInput").forEach(input => input.addEventListener("input", refresh));
+      document.querySelectorAll(".translation-split-btn").forEach(button => button.addEventListener("click", () => { syncTranslationDraftFromEditor(); const index = activeTranslationDraft.pairs.findIndex(pair => pair.id === button.dataset.pairId); const pair = activeTranslationDraft.pairs[index]; const midpoint = pair.en.lastIndexOf(" ", Math.floor(pair.en.length / 2)); if (midpoint < 1) return; activeTranslationDraft.pairs.splice(index, 1, { ...pair, id: pair.id + "-a", en: pair.en.slice(0, midpoint).trim() }, { id: pair.id + "-b", en: pair.en.slice(midpoint).trim(), tr: "" }); renderArticleTranslationEditor(); }));
+      document.querySelectorAll(".translation-merge-btn").forEach(button => button.addEventListener("click", () => { syncTranslationDraftFromEditor(); const index = activeTranslationDraft.pairs.findIndex(pair => pair.id === button.dataset.pairId); const first = activeTranslationDraft.pairs[index]; const second = activeTranslationDraft.pairs[index + 1]; if (!first || !second) return; activeTranslationDraft.pairs.splice(index, 2, { id: first.id, en: first.en + "\n\n" + second.en, tr: [first.tr, second.tr].filter(Boolean).join("\n\n") }); renderArticleTranslationEditor(); }));
+      const save = complete => { syncTranslationDraftFromEditor(); const errors = translationDraftValidation(activeTranslationDraft, complete); const status = document.getElementById("translationEditorStatus"); if (errors.length) { status.textContent = errors.join(" "); status.style.color = "#b91c1c"; return; } article.titleTr = activeTranslationDraft.titleTr.trim() || null; article.bilingualParagraphs = activeTranslationDraft.pairs.map(pair => ({ id: pair.id, en: pair.en, tr: pair.tr })); article.translationStatus = complete ? "complete" : "draft"; article.updatedAt = new Date().toISOString(); saveArticles(); closeArticleTranslationEditor(); renderArticlesPage(); };
+      document.getElementById("saveTranslationDraftBtn").addEventListener("click", () => save(false));
+      document.getElementById("completeTranslationBtn").addEventListener("click", () => save(true));
+    }
+
+    function parseBilingualTxt(raw) {
+      const text = String(raw || "").replace(/\r\n?/g, "\n");
+      const errors = [];
+      if (!/^\s*BILINGUAL ARTICLE\s*$/mi.test(text)) errors.push("BILINGUAL ARTICLE başlığı bulunamadı.");
+      const titleEn = (text.match(/^TITLE_EN:\s*(.+)$/mi) || [])[1]?.trim() || "";
+      const titleTr = (text.match(/^TITLE_TR:\s*(.+)$/mi) || [])[1]?.trim() || "";
+      if (!titleEn || !titleTr) errors.push("TITLE_EN ve TITLE_TR alanları dolu olmalı.");
+      const markers = [...text.matchAll(/^\[PARAGRAPH\s+(\d+)\]\s*$/gmi)], seen = new Set();
+      const pairs = markers.map((marker, index) => { const number = Number(marker[1]); if (seen.has(number)) errors.push(number + ". paragraf numarası tekrar ediyor."); seen.add(number); const block = text.slice(marker.index + marker[0].length, markers[index + 1]?.index || text.length); const en = (block.match(/^EN:\s*\n?([\s\S]*?)(?=^TR:\s*$)/mi) || [])[1]?.trim() || ""; const tr = (block.match(/^TR:\s*\n?([\s\S]*)$/mi) || [])[1]?.trim() || ""; if (!en || !tr) errors.push(number + ". paragrafın EN ve TR alanları dolu olmalı."); return { id: "paragraph-" + number, number, en, tr }; });
+      if (!pairs.length) errors.push("En az bir [PARAGRAPH n] bölümü gerekli.");
+      if (pairs.map(pair => pair.number).sort((a, b) => a - b).some((number, index) => number !== index + 1)) errors.push("Paragraf numaraları 1’den başlayarak sıralı olmalı.");
+      return { titleEn, titleTr, pairs, errors };
+    }
+
+    function openBilingualTxtImportModal(preselectedId = "") {
+      const existing = document.getElementById("bilingualTxtImportModal"); if (existing) existing.remove();
+      const modal = document.createElement("div"); modal.id = "bilingualTxtImportModal"; modal.className = "fixed inset-0 z-[96] overflow-y-auto bg-slate-950/50 p-3 sm:p-6";
+      modal.innerHTML = '<div class="mx-auto w-full max-w-3xl rounded-2xl border p-4 shadow-2xl sm:p-5" style="border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary)"><div class="flex items-start justify-between gap-3"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Çift dilli TXT içe aktarma</p><h3 class="mt-1 text-xl font-black">Çeviriyi bir makaleye bağla</h3><p class="mt-1 text-xs font-semibold" style="color: var(--text-secondary)">Ön izleme ve doğrulama tamamlanmadan hiçbir makale değişmez.</p></div><button id="closeBilingualTxtImportBtn" class="article-icon-btn flex h-10 w-10 items-center justify-center rounded-xl text-xl font-black" aria-label="İçe aktarma penceresini kapat">×</button></div><label class="mt-4 block text-sm font-black">Hedef makale<select id="bilingualTargetArticle" class="mt-2 w-full rounded-xl border px-3 py-2.5" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)">' + articles.map(article => '<option value="' + escapeHtml(article.id) + '"' + (article.id === preselectedId ? ' selected' : '') + '>' + escapeHtml(articleDisplayTitle(article)) + '</option>').join("") + '</select></label><label class="mt-4 block text-sm font-black">TXT dosyası<input id="bilingualTxtFile" type="file" accept=".txt,text/plain" class="mt-2 block w-full rounded-xl border px-3 py-2" style="border-color: var(--border-color); background: var(--bg-surface-secondary)" /></label><button id="previewBilingualTxtBtn" class="mt-4 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white">Ön izleme ve doğrula</button><div id="bilingualTxtPreview" class="mt-4"></div></div>'; document.body.appendChild(modal);
+      document.getElementById("closeBilingualTxtImportBtn").addEventListener("click", () => modal.remove());
+      document.getElementById("previewBilingualTxtBtn").addEventListener("click", async () => { const file = document.getElementById("bilingualTxtFile").files?.[0], target = articles.find(article => article.id === document.getElementById("bilingualTargetArticle").value), preview = document.getElementById("bilingualTxtPreview"); if (!file || !target) { preview.innerHTML = '<p class="text-sm font-bold text-red-700">TXT dosyası ve hedef makale seç.</p>'; return; } const parsed = parseBilingualTxt(await file.text()); if (normalizeLookup(articleDisplayTitle(target)) !== normalizeLookup(parsed.titleEn)) parsed.errors.push("TITLE_EN hedef makale başlığıyla eşleşmiyor."); if (normalizeArticleTextForReading(target.text || "") !== normalizeArticleTextForReading(parsed.pairs.map(pair => pair.en).join("\n\n"))) parsed.errors.push("İngilizce paragraflar hedef makalenin içeriğiyle eşleşmiyor."); preview.innerHTML = parsed.errors.length ? '<div class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-bold text-red-800">' + parsed.errors.map(error => '<p>' + escapeHtml(error) + '</p>').join("") + '</div>' : '<div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm font-semibold text-emerald-900"><p class="font-black">Ön izleme doğrulandı</p><p class="mt-1">' + escapeHtml(parsed.titleEn) + ' → ' + escapeHtml(parsed.titleTr) + ' · ' + parsed.pairs.length + ' paragraf</p><button id="confirmBilingualTxtImportBtn" class="mt-3 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white">Çeviriyi hedef makaleye bağla</button></div>'; document.getElementById("confirmBilingualTxtImportBtn")?.addEventListener("click", () => { target.titleTr = parsed.titleTr; target.bilingualParagraphs = parsed.pairs.map(pair => ({ id: pair.id, en: pair.en, tr: pair.tr })); target.translationStatus = "complete"; target.updatedAt = new Date().toISOString(); saveArticles(); modal.remove(); if (activeTranslationDraft?.article?.id === target.id) openArticleTranslationEditor(target); else renderArticlesPage(); }); });
     }
 
     function openArticleEditModal(article) {
@@ -5803,10 +6575,24 @@
       document.getElementById("saveTextImportBtn")?.addEventListener("click", saveTextSource);
     }
 
+    function compactUploadedSourcesForStorage(bank) {
+      return {
+        ...bank,
+        documents: (Array.isArray(bank?.documents) ? bank.documents : []).map(document => {
+          // Sorular zaten ayrı kaydedilir; ham metin yalnızca düzenleme kolaylığı sağlar.
+          // Kota dolduğunda ham metni kaldırmak mevcut kaynakları silmeden yer açar.
+          const { sourceText, rawText, extractedText, ...compactDocument } = document;
+          return compactDocument;
+        }),
+      };
+    }
+
     function saveTextSource() {
-      if (!lastTextImport?.report.valid) return;
+      if (!lastTextImport?.report.valid || isSavingTextImport) return;
+      isSavingTextImport = true;
       const title = document.getElementById("textTitle").value.trim() || "Adsız TXT Kaynağı";
       const docId = "text-" + Date.now();
+      const collection = uploadTargetModule === "yds" ? "yds" : "exams";
       const blocks = lastTextImport.blocks.map(block => ({ ...block, id: docId + "-" + block.id }));
       const blockMap = new Map(lastTextImport.blocks.map((block, index) => [block.id, blocks[index]]));
       const questions = lastTextImport.questions.map(item => {
@@ -5814,11 +6600,37 @@
         return { ...item, id: docId + "-q-" + String(item.questionNumber).padStart(3, "0"), documentId: docId, setId: block ? block.id : docId + "-standard", category: title, sourcePage: null, builtIn: false, importMethod: "text", blockId: block?.id || null, passage: block?.sharedText || item.passage || "" };
       });
       const now = new Date().toISOString();
-      uploadedBank.documents.push({ id: docId, title, questionCount: questions.length, totalQuestions: questions.length, blocks, collection: uploadTargetModule, builtIn: false, importMethod: "text", sourceText: lastTextImport.text, createdAt: now, updatedAt: now });
-      uploadedBank.questions.push(...questions);
-      saveJson(STORAGE_UPLOADS, uploadedBank);
-      rebuildBank(); activeDocumentId = docId; currentIndex = 0; answered = false; solveMode = "document"; wrongReviewIds = [];
-      setView("solve");
+      const sourceRecord = { id: docId, title, questionCount: questions.length, totalQuestions: questions.length, blocks, collection, builtIn: false, importMethod: "text", sourceText: lastTextImport.text, createdAt: now, updatedAt: now };
+      const nextUploadedBank = {
+        ...uploadedBank,
+        documents: [...(Array.isArray(uploadedBank?.documents) ? uploadedBank.documents : []), sourceRecord],
+        questions: [...(Array.isArray(uploadedBank?.questions) ? uploadedBank.questions : []), ...questions],
+      };
+      let savedBank = nextUploadedBank;
+      try {
+        saveJson(STORAGE_UPLOADS, savedBank);
+      } catch (error) {
+        try {
+          savedBank = compactUploadedSourcesForStorage(nextUploadedBank);
+          saveJson(STORAGE_UPLOADS, savedBank);
+        } catch (retryError) {
+          const status = document.getElementById("textImportStatus");
+          if (status) status.textContent = "Kaynak kaydedilemedi: cihaz belleği dolu. Ayarlar'dan yedek aldıktan sonra kullanılmayan kaynakları silip tekrar deneyin.";
+          isSavingTextImport = false;
+          return;
+        }
+      }
+      uploadedBank = savedBank;
+      rebuildBank();
+      activeDocumentId = docId;
+      currentIndex = 0;
+      answered = false;
+      solveMode = "document";
+      wrongReviewIds = [];
+      setView(collection);
+      const sourceList = appArea.querySelector("section");
+      if (sourceList) sourceList.insertAdjacentHTML("afterbegin", '<p role="status" class="mb-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-800">“' + escapeHtml(title) + '” kaydedildi ve bu bölüme eklendi (' + questions.length + ' soru).</p>');
+      isSavingTextImport = false;
     }
 
     async function parseSelectedPdf() {
