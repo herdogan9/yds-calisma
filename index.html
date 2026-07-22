@@ -165,6 +165,104 @@
       transform: translateY(1px);
     }
 
+    /* Carousel arrows remain fixed around the card in every interaction state. */
+    #dailyWordPrevBtn,
+    #dailyWordNextBtn,
+    #dailyWordPrevBtn:hover,
+    #dailyWordNextBtn:hover,
+    #dailyWordPrevBtn:active,
+    #dailyWordNextBtn:active,
+    #dailyWordPrevBtn:focus-visible,
+    #dailyWordNextBtn:focus-visible {
+      box-sizing: border-box;
+      width: 42px;
+      min-width: 42px;
+      height: 42px;
+      min-height: 42px;
+      margin: 0;
+      padding: 0;
+      border-width: 1px;
+      transition: none !important;
+    }
+
+    #dailyWordPrevBtn:hover:not(:disabled),
+    #dailyWordNextBtn:hover:not(:disabled),
+    #dailyWordPrevBtn:active:not(:disabled),
+    #dailyWordNextBtn:active:not(:disabled) {
+      background-color: #eff6ff;
+    }
+
+    @media (min-width: 768px) {
+      .daily-word-carousel-stage {
+        position: relative;
+        width: 100%;
+        max-width: 850px;
+        margin-inline: auto;
+        padding-inline: 54px;
+      }
+
+      .daily-word-carousel-stage .daily-word-card {
+        width: 100%;
+        max-width: 740px;
+        min-width: 0;
+        margin-inline: auto;
+        box-sizing: border-box;
+      }
+
+      #dailyWordPrevBtn,
+      #dailyWordNextBtn,
+      #dailyWordPrevBtn:hover,
+      #dailyWordNextBtn:hover,
+      #dailyWordPrevBtn:active,
+      #dailyWordNextBtn:active,
+      #dailyWordPrevBtn:focus-visible,
+      #dailyWordNextBtn:focus-visible {
+        position: absolute;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        z-index: 2;
+      }
+
+      #dailyWordPrevBtn { left: 0 !important; right: auto !important; }
+      #dailyWordNextBtn { right: 0 !important; left: auto !important; }
+    }
+
+    #dailyWordPrevBtn:focus-visible,
+    #dailyWordNextBtn:focus-visible {
+      outline: 3px solid rgb(37 99 235 / 25%);
+      outline-offset: 2px;
+    }
+
+    [data-theme="dark"] .daily-word-synonyms { color: #cbd5e1 !important; }
+    [data-theme="dark"] .daily-word-synonyms-label { color: #e2e8f0 !important; }
+
+    @media (max-width: 767px) {
+      .daily-word-carousel-stage {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        width: 100%;
+      }
+
+      .daily-word-carousel-stage .daily-word-card {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        width: 100%;
+      }
+
+      #dailyWordPrevBtn,
+      #dailyWordNextBtn {
+        position: static !important;
+        top: auto !important;
+        width: 100%;
+        min-width: 0;
+        transform: none !important;
+      }
+
+      #dailyWordPrevBtn { grid-column: 1; grid-row: 2; }
+      #dailyWordNextBtn { grid-column: 2; grid-row: 2; }
+    }
+
     button:disabled,
     button[aria-disabled="true"] {
       cursor: not-allowed;
@@ -544,9 +642,9 @@
     }
 
     .yds-top-dashboard {
-      height: 88px;
-      min-height: 88px;
-      max-height: 88px;
+      height: 80px;
+      min-height: 80px;
+      max-height: 80px;
       background: #e3eaf3 !important;
       border-color: #c5cfdd !important;
       box-shadow: 0 8px 20px rgb(15 23 42 / 10%) !important;
@@ -1307,15 +1405,19 @@
 
     body.article-focus-mode #appSidebar,
     body.question-focus-mode #appSidebar,
+    body.read-for-speed-focus-mode #appSidebar,
     body.article-focus-mode #sidebarOverlay,
     body.question-focus-mode #sidebarOverlay,
+    body.read-for-speed-focus-mode #sidebarOverlay,
     body.article-focus-mode .yds-top-dashboard,
-    body.question-focus-mode .yds-top-dashboard {
+    body.question-focus-mode .yds-top-dashboard,
+    body.read-for-speed-focus-mode .yds-top-dashboard {
       display: none !important;
     }
 
     body.article-focus-mode main,
-    body.question-focus-mode main {
+    body.question-focus-mode main,
+    body.read-for-speed-focus-mode main {
       margin-left: 0 !important;
       padding-left: 1rem;
       padding-right: 1rem;
@@ -1401,6 +1503,70 @@
         font-size: 1.375rem;
       }
     }
+    /* Read for Speed: focus mode must visibly change the reading environment. */
+    .rfs-focus { max-width: 1220px !important; padding: 22px 34px; border-radius: 24px; background: var(--bg-surface); box-shadow: 0 20px 55px rgba(15, 23, 42, .16); }
+    .rfs-focus #rfsBody { margin-top: 26px !important; box-shadow: 0 14px 34px rgba(15, 23, 42, .12); }
+    .rfs-focus header { position: sticky; }
+    body.read-for-speed-focus-mode #appArea { width: 100%; max-width: none; }
+    body.read-for-speed-focus-mode .rfs-focus { max-width: min(100%, 1440px) !important; min-height: calc(100vh - 2.5rem); margin: 0 auto; }
+    body.read-for-speed-focus-mode .rfs-focus #rfsBody { max-width: min(100%, 1220px) !important; }
+    /* The Read for Speed controls share the Reading Center's popover treatment. */
+    #rfsSettingsPanel { position: fixed; top: 5.5rem; right: 1.25rem; z-index: 60; width: min(22rem, calc(100vw - 2rem)); padding: 1rem; border: 1px solid var(--border-color); border-radius: 1rem; background: var(--bg-surface); color: var(--text-primary); box-shadow: 0 18px 42px rgb(15 23 42 / 18%); }
+    #rfsSettingsPanel[hidden] { display: none; }
+    #rfsSettingsPanel .rfs-surface.is-selected { outline: 2px solid #60a5fa; outline-offset: 1px; }
+    #rfsBody .rfs-choice-group { display: inline-flex; align-items: center; gap: 6px; vertical-align: baseline; flex-wrap: wrap; max-width: 100%; }
+    #rfsBody .rfs-answer { min-height: 36px; padding: 6px 10px; border-radius: 10px; font-size: .86em; line-height: 1.2; white-space: normal; }
+    #rfsBody .rfs-question-status { margin-left: 4px; font-size: .76em; font-weight: 900; white-space: nowrap; }
+    #rfsBody .rfs-question-status.is-correct { color: #047857; }
+    #rfsBody .rfs-question-status.is-wrong { color: #dc2626; }
+    #rfsBody .rfs-question-status.is-blank { color: #c2410c; }
+    #rfsBody .rfs-question-status.is-blank { display: inline-flex; align-items: center; min-height: 20px; padding: 1px 6px; border-radius: 999px; background: #fff7ed; font-size: 12px; line-height: 1; }
+    #rfsBody .rfs-answer.rfs-blank-correct { border-color: #16a34a !important; background: transparent !important; color: inherit !important; }
+    .rfs-result-bar { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; max-width: 1220px !important; padding: .75rem 1rem !important; }
+    .rfs-result-bar h3, .rfs-result-bar p { display: none; }
+    .rfs-result-bar > div:first-of-type { display: flex; flex-wrap: wrap; gap: .3rem .75rem; margin: 0 !important; }
+    .rfs-result-bar > div:last-of-type { margin: 0 0 0 auto !important; }
+    .rfs-check-confirm { max-width: 1220px; margin: 1rem auto 0; padding: .8rem 1rem; border: 1px solid #fdba74; border-radius: 1rem; background: #fff7ed; color: #9a3412; }
+    .rfs-card-menu { position: absolute; top: 2.25rem; right: 0; z-index: 25; min-width: 11.5rem; padding: .3rem; border: 1px solid var(--border-color); border-radius: .85rem; background: var(--bg-surface); box-shadow: 0 14px 30px rgb(15 23 42 / 18%); }
+    .rfs-card-menu button { display: block; width: 100%; padding: .55rem .7rem; border-radius: .55rem; text-align: left; font-size: .82rem; font-weight: 800; }
+    .rfs-card-menu button:hover { background: var(--bg-surface-secondary); }
+    .rfs-card-menu .rfs-menu-delete { color: #dc2626; }
+    .rfs-list-heading { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+    .rfs-list-grid { display:grid; grid-template-columns:repeat(1, minmax(0, 1fr)); gap:1rem; }
+    .read-for-speed-card { display:flex; flex-direction:column; min-height:215px; padding:22px; border:1px solid var(--border-color); border-radius:1rem; background:var(--bg-surface-secondary); }
+    .read-for-speed-card.is-completed { background:color-mix(in srgb, #ecfdf5 55%, var(--bg-surface-secondary)); }
+    .rfs-card-status { display:inline-flex; align-items:center; width:max-content; border-radius:999px; padding:4px 9px; font-size:.72rem; font-weight:900; letter-spacing:.03em; }
+    .rfs-status-new { background:#eff6ff; color:#2563eb; }
+    .rfs-status-progress { background:#dbeafe; color:#1d4ed8; }
+    .rfs-status-completed { background:#ecfdf5; color:#047857; }
+    .read-for-speed-card-title { display:-webkit-box; margin-top:16px; overflow:hidden; -webkit-box-orient:vertical; -webkit-line-clamp:3; font-size:1.15rem; font-weight:900; line-height:1.25; }
+    .rfs-card-detail { margin-top:10px; font-size:.9rem; font-weight:700; color:var(--text-secondary); }
+    .rfs-card-progress { height:6px; margin-top:14px; overflow:hidden; border-radius:999px; background:var(--border-color); }
+    .rfs-card-progress span { display:block; height:100%; border-radius:inherit; background:#2563eb; }
+    .rfs-card-progress span.is-completed { background:#059669; }
+    .rfs-open { border-radius:.75rem; background:#2563eb; padding:.55rem 1rem; color:white; font-size:.9rem; font-weight:900; }
+    .read-for-speed-toolbar { display: grid !important; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 16px; }
+    .read-for-speed-heading { min-width: 0; }
+    .read-for-speed-title { margin-top: 2px; font-size: clamp(24px, 2vw, 28px); font-weight: 800; line-height: 1.2; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; overflow-wrap: anywhere; }
+    .read-for-speed-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+    @media (min-width: 1024px) {
+      #appArea:has(.rfs-open) > section > .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .rfs-list-grid { grid-template-columns:repeat(3, minmax(0, 1fr)); }
+    }
+    @media (min-width: 761px) and (max-width: 1023px) { .rfs-list-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 1250px) and (min-width: 761px) {
+      .read-for-speed-toolbar { grid-template-columns: auto minmax(0, 1fr); }
+      .read-for-speed-actions { grid-column: 1 / -1; justify-content: flex-end; }
+    }
+    @media (max-width: 760px) {
+      .read-for-speed-toolbar { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+      .read-for-speed-actions { justify-content: flex-start; }
+      .read-for-speed-title { font-size: 23px; }
+      .rfs-list-heading { align-items:stretch; flex-direction:column; }
+      .rfs-list-heading #rfsNewBtn { width:100%; }
+    }
+    .rfs-answer:disabled { cursor: default; }
+    @media (max-width: 760px) { .rfs-focus { padding: 12px; } #rfsSettingsPanel { top: auto; right: .75rem; bottom: .75rem; left: .75rem; width: auto; max-height: 72vh; overflow-y: auto; } #rfsBody .rfs-choice-group { display: inline-flex; width: 100%; margin: .15rem 0; } .rfs-result-bar > div:last-of-type { margin-left: 0 !important; } }
   </style>
 </head>
 <body class="light-theme min-h-screen bg-slate-100 text-slate-900">
@@ -1443,7 +1609,7 @@
     </aside>
 
     <main class="min-h-screen flex-1 p-4 lg:ml-64 lg:p-5">
-      <header class="yds-top-dashboard mb-3 rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm xl:flex xl:items-center xl:justify-between">
+      <header class="yds-top-dashboard mb-3 rounded-2xl border border-slate-200 bg-white px-2.5 py-1.5 shadow-sm xl:flex xl:items-center xl:justify-between">
         <div class="flex items-start gap-3">
           <button id="mobileMenuBtn" aria-label="Menüyü aç" class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-base font-black text-slate-700 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 lg:hidden">☰</button>
           <div>
@@ -1462,23 +1628,23 @@
     </main>
   </div>
 
-  <div id="wordModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 p-4">
-    <div class="w-full max-w-lg rounded-3xl border border-slate-700 bg-slate-900 p-6 shadow-2xl shadow-black/50">
+  <div id="wordModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/70 p-4">
+    <div class="my-auto max-h-[calc(100vh-32px)] w-full max-w-lg overflow-y-auto rounded-3xl border p-6 shadow-2xl" style="border-color:var(--border-color);background:var(--bg-surface);color:var(--text-primary)">
       <div class="mb-5 flex items-start justify-between gap-4">
         <div>
-          <p class="text-sm font-semibold uppercase tracking-wider text-blue-400">Sözlüğe ekle</p>
-          <h3 id="wordModalTitle" class="mt-1 text-2xl font-bold text-white"></h3>
+          <p class="text-sm font-semibold uppercase tracking-wider text-blue-500">SÖZLÜĞE EKLE</p>
+          <h3 id="wordModalTitle" class="mt-1 text-2xl font-bold"></h3>
         </div>
-        <button id="closeWordModal" class="rounded-xl border border-slate-700 px-3 py-2 text-sm text-slate-300 hover:bg-slate-800">Kapat</button>
+        <button id="closeWordModal" class="rounded-xl border px-3 py-2 text-sm font-semibold hover:bg-slate-100" style="border-color:var(--border-color)">Kapat</button>
       </div>
-      <label class="mb-2 block text-sm font-semibold text-slate-300" for="wordInput">Kelime</label>
-      <input id="wordInput" class="mb-4 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-blue-500" placeholder="Örn: memory" />
-      <label class="mb-2 block text-sm font-semibold text-slate-300" for="turkishInput">Türkçe Anlamı</label>
-      <textarea id="turkishInput" class="mb-4 min-h-20 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-blue-500" placeholder="Örn: hafıza"></textarea>
-      <label class="mb-2 block text-sm font-semibold text-slate-300" for="meaningInput">Synonyms</label>
-      <textarea id="meaningInput" class="mb-4 min-h-20 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-blue-500" placeholder="Örn: leave, desert, give up"></textarea>
-      <label class="mb-2 block text-sm font-semibold text-slate-300" for="exampleInput">Örnek Cümle</label>
-      <textarea id="exampleInput" class="mb-5 min-h-20 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-blue-500" placeholder="Örn: Their summer tour will culminate in London."></textarea>
+      <label class="mb-2 block text-sm font-black" for="wordInput">Kelime</label>
+      <input id="wordInput" class="mb-4 w-full rounded-2xl border px-4 py-3 text-base font-semibold outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="Örn: memory" />
+      <label class="mb-2 block text-sm font-black" for="turkishInput">Türkçe Anlamı</label>
+      <textarea id="turkishInput" class="mb-4 min-h-20 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="Örn: hafıza"></textarea>
+      <label class="mb-2 block text-sm font-black" for="meaningInput">Synonyms</label>
+      <textarea id="meaningInput" class="mb-4 min-h-20 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="Örn: leave, desert, give up"></textarea>
+      <label class="mb-2 block text-sm font-black" for="exampleInput">Örnek Cümle</label>
+      <textarea id="exampleInput" class="mb-5 min-h-20 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="Örnek cümleyi kendin yazabilirsin."></textarea>
       <button id="saveWordBtn" class="w-full rounded-2xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-950/40 hover:bg-blue-500">Kelime Defterine Ekle</button>
     </div>
   </div>
@@ -1493,14 +1659,21 @@
     const STORAGE_UPLOADS = "yds-uploaded-pdfs-v1";
     const STORAGE_WORDS = "yds-wordbook-v1";
     const STORAGE_ARTICLES = "yds-articles-v1";
+    const STORAGE_READ_FOR_SPEED = "yds-read-for-speed-v1";
     const STORAGE_THEME = "yds-theme-v1";
     const STORAGE_WRONG_QUESTIONS = "yds-wrong-questions-v1";
     const STORAGE_WORD_SEED_VERSION = "yds-word-seed-version-v1";
     const STORAGE_REMOVE_BUILTIN_SEEDS = "yds-remove-builtin-seeds-v1";
     const STORAGE_DAILY_HARD_WORDS = "yds-daily-hard-words-v1";
+    const STORAGE_DAILY_WORD_POOL = "yds-daily-word-pool-v1";
     const STORAGE_DAILY_GOALS = "yds-daily-goals-v1";
     const STORAGE_DAILY_PROGRESS = "yds-daily-progress-v1";
     const STORAGE_DAILY_HISTORY = "yds-daily-history-v1";
+    // The weekly card is derived from this immutable activity ledger, not from
+    // display counters. Each key is a completed item in one concrete session.
+    const STORAGE_WEEKLY_ACTIVITY = "yds-weekly-activity-v2";
+    const STORAGE_WORD_STUDY_SESSION = "yds-word-study-session-v2";
+    const STORAGE_QUESTION_SESSION = "yds-question-solving-session-v2";
     const STORAGE_SUPABASE_CONFIG = "yds-supabase-config-v1";
     const STORAGE_DOCUMENT_PROGRESS = "yds-document-progress-v1";
     const STORAGE_NOTES = "yds-notebook-notes-v1";
@@ -1514,6 +1687,7 @@
     let isSavingTextImport = false;
     let wordbook = loadJson(STORAGE_WORDS, []);
     let articles = loadJson(STORAGE_ARTICLES, []);
+    let readForSpeedArticles = loadJson(STORAGE_READ_FOR_SPEED, []);
     let wrongQuestionIds = loadJson(STORAGE_WRONG_QUESTIONS, []);
     let documentProgress = loadJson(STORAGE_DOCUMENT_PROGRESS, {});
     let examProgress = normalizeExamProgress(loadJson(STORAGE_EXAM_PROGRESS, { version: 1, exams: {} }));
@@ -1524,6 +1698,10 @@
     let questionBank = [];
     let activeDocumentId = "";
     let activeArticleId = "";
+    let readForSpeedMode = "list";
+    let readForSpeedAcceptedSuggestions = false;
+    let readForSpeedDraft = { title: "", source: "", articleNumber: "", difficulty: "", rawText: "", answerKey: "" };
+    let readForSpeedActiveArticle = null;
     let currentIndex = 0;
     let answered = false;
     let activeView = "home";
@@ -1540,6 +1718,9 @@
     let wordCardRevealed = false;
     let wordQuizQuestion = null;
     let wordQuizSessionResults = loadJson("yds-word-quiz-session-results-v1", {});
+    let wordStudySessionId = localStorage.getItem(STORAGE_WORD_STUDY_SESSION) || "";
+    let questionSolvingSessionId = localStorage.getItem(STORAGE_QUESTION_SESSION) || "";
+    let weeklyActivity = [];
     let dailyGoals = null;
     let dailyProgress = null;
     let dailyHistory = [];
@@ -1625,7 +1806,18 @@
     function normalizeExamProgress(value) {
       const raw = value && typeof value === "object" ? value : {};
       const exams = raw.exams && typeof raw.exams === "object" ? raw.exams : {};
-      return { version: 1, exams };
+      Object.keys(exams).forEach(key => {
+        const item = exams[key] && typeof exams[key] === "object" ? exams[key] : {};
+        exams[key] = {
+          examId: String(item.examId || key.replace(/^document:/, "")),
+          currentQuestionId: typeof item.currentQuestionId === "string" ? item.currentQuestionId : null,
+          answers: item.answers && typeof item.answers === "object" ? item.answers : {},
+          manuallyCompleted: item.manuallyCompleted === true,
+          completedAt: typeof item.completedAt === "string" ? item.completedAt : null,
+          updatedAt: typeof item.updatedAt === "string" ? item.updatedAt : new Date(0).toISOString(),
+        };
+      });
+      return { version: 2, exams };
     }
 
     function examKeyForQuestion(question) {
@@ -1649,6 +1841,7 @@
 
     function saveExamProgress() {
       saveJson(STORAGE_EXAM_PROGRESS, examProgress);
+      queueSupabaseAutoBackup();
     }
 
     function rememberCurrentQuestion(question) {
@@ -1666,6 +1859,40 @@
       progress.answers = { ...(progress.answers || {}), [question.id]: selectedKey };
       progress.updatedAt = new Date().toISOString();
       saveExamProgress();
+    }
+
+    // One canonical record per source. Answers are keyed by the full question
+    // id, so two sources with question "1" can never affect each other.
+    function sourceProgressForDocument(documentInfo) {
+      const sourceId = String(documentInfo?.id || "");
+      const questions = questionBank.filter(question => question.documentId === sourceId);
+      const stored = examProgress.exams["document:" + sourceId] || {};
+      const answers = stored.answers && typeof stored.answers === "object" ? stored.answers : {};
+      const answeredCount = questions.filter(question => isAnswerKey(answers[question.id])).length;
+      const totalCount = questions.length;
+      const isCompleted = stored.manuallyCompleted === true || (totalCount > 0 && answeredCount === totalCount);
+      return {
+        answeredCount,
+        totalCount,
+        progressPercent: totalCount ? Math.round(answeredCount / totalCount * 100) : 0,
+        status: isCompleted ? "completed" : answeredCount ? "inProgress" : "notStarted",
+        isCompleted,
+        manuallyCompleted: stored.manuallyCompleted === true,
+      };
+    }
+
+    function setDocumentManualCompletion(documentInfo, completed) {
+      if (!documentInfo?.id) return;
+      const key = "document:" + documentInfo.id;
+      const current = examProgress.exams[key] || { examId: documentInfo.id, answers: {}, currentQuestionId: null };
+      examProgress.exams[key] = { ...current, manuallyCompleted: completed, completedAt: completed ? new Date().toISOString() : null, updatedAt: new Date().toISOString() };
+      saveExamProgress();
+    }
+
+    function sortedSourceDocuments(items) {
+      const order = { inProgress: 0, notStarted: 1, completed: 2 };
+      return items.map((item, index) => ({ item, index, progress: sourceProgressForDocument(item) }))
+        .sort((a, b) => order[a.progress.status] - order[b.progress.status] || a.index - b.index);
     }
 
     function selectedAnswerSummary(questions = getCategoryQuestions()) {
@@ -1869,6 +2096,61 @@
       const now = new Date();
       const offset = now.getTimezoneOffset() * 60000;
       return new Date(now.getTime() - offset).toISOString().slice(0, 10);
+    }
+
+    function localDateKey(value = new Date()) {
+      const date = value instanceof Date ? value : new Date(value);
+      if (Number.isNaN(date.getTime())) return todayKey();
+      const offset = date.getTimezoneOffset() * 60000;
+      return new Date(date.getTime() - offset).toISOString().slice(0, 10);
+    }
+
+    function createActivitySession(prefix) {
+      return prefix + ":" + Date.now() + ":" + Math.random().toString(36).slice(2, 10);
+    }
+
+    function normalizeWeeklyActivity(value) {
+      const rows = Array.isArray(value) ? value : [];
+      const byKey = new Map();
+      rows.forEach(item => {
+        if (!item || !["word", "question", "reading"].includes(item.category) || !item.key) return;
+        const completedAt = typeof item.completedAt === "string" && !Number.isNaN(Date.parse(item.completedAt)) ? item.completedAt : new Date(0).toISOString();
+        const normalized = { key: String(item.key), category: item.category, completedAt, date: localDateKey(completedAt), updatedAt: typeof item.updatedAt === "string" ? item.updatedAt : completedAt };
+        const existing = byKey.get(normalized.key);
+        if (!existing || existing.updatedAt < normalized.updatedAt) byKey.set(normalized.key, normalized);
+      });
+      return [...byKey.values()].sort((a, b) => a.completedAt.localeCompare(b.completedAt)).slice(-5000);
+    }
+
+    function saveWeeklyActivity(queueCloud = true) {
+      saveJson(STORAGE_WEEKLY_ACTIVITY, weeklyActivity);
+      if (queueCloud) queueSupabaseAutoBackup();
+    }
+
+    function recordWeeklyActivity(category, key, completedAt = new Date().toISOString(), queueCloud = true) {
+      if (!key || !["word", "question", "reading"].includes(category)) return false;
+      const stableKey = String(key);
+      if (weeklyActivity.some(item => item.key === stableKey)) return false;
+      weeklyActivity.push({ key: stableKey, category, completedAt, date: localDateKey(completedAt), updatedAt: new Date().toISOString() });
+      weeklyActivity = normalizeWeeklyActivity(weeklyActivity);
+      saveWeeklyActivity(queueCloud);
+      return true;
+    }
+
+    // Preserve historic daily-task data without inventing a new visible counter.
+    // Legacy rows did not have sessions, so their original date and item id form
+    // a stable migration key. Re-running this migration is idempotent.
+    function migrateLegacyWeeklyActivity() {
+      const taskCategories = { flashcards: "word", multipleChoice: "word", difficultWords: "question", pastExamReading: "reading", externalReading: "reading" };
+      [dailyProgress, ...dailyHistory].filter(Boolean).forEach(row => {
+        Object.entries(taskCategories).forEach(([taskKey, category]) => {
+          const task = row[taskKey] || {};
+          const ids = Array.isArray(task.completedIds) ? [...new Set(task.completedIds.map(String))] : [];
+          const count = Math.max(Number(task.count || 0), ids.length);
+          const completeIds = ids.concat(Array.from({ length: Math.max(0, count - ids.length) }, (_, index) => "count-" + index));
+          completeIds.forEach(id => recordWeeklyActivity(category, "legacy:" + row.date + ":" + taskKey + ":" + id, row.date + "T12:00:00", false));
+        });
+      });
     }
 
     function defaultDailyGoals() {
@@ -2081,6 +2363,8 @@
     }
     dailyHistory = Array.isArray(loadJson(STORAGE_DAILY_HISTORY, [])) ? loadJson(STORAGE_DAILY_HISTORY, []) : [];
     dailyProgress = normalizeDailyProgress(loadJson(STORAGE_DAILY_PROGRESS, null));
+    weeklyActivity = normalizeWeeklyActivity(loadJson(STORAGE_WEEKLY_ACTIVITY, []));
+    migrateLegacyWeeklyActivity();
     lastDailyDateCheck = todayKey();
     saveDailyGoals();
 
@@ -2202,18 +2486,26 @@
       });
       document.getElementById("saveDocumentEditBtn").addEventListener("click", () => {
         const title = titleInput.value.trim();
-        const sourceText = textInput.value.trim();
+        const sourceText = textInput.value;
         if (!title || !sourceText) {
           status.textContent = "Başlık ve kaynak metin zorunludur.";
           return;
         }
-        const parsedQuestions = parseQuestionsFromText(sourceText, title, { sets: [], manual: documentAnswerMap(doc.id) }, doc.id);
-        if (!parsedQuestions.length) {
-          status.textContent = "Metinden soru çıkarılamadı. Soru ve A)–E) seçenek biçimini kontrol et.";
+        const parsed = parseTextSource(sourceText);
+        const oldQuestions = (uploadedBank.questions || []).filter(question => question.documentId === doc.id);
+        const oldNumbers = oldQuestions.map(question => Number(question.questionNumber));
+        const newNumbers = parsed.questions.map(question => Number(question.questionNumber));
+        const missing = oldNumbers.filter(number => !newNumbers.includes(number));
+        if (!parsed.report.valid || parsed.questions.length < oldQuestions.length || missing.length) {
+          status.innerHTML = '<b class="text-red-600">Kaydetme engellendi.</b> Önceki: ' + oldQuestions.length + ' soru · Yeni: ' + parsed.questions.length + ' soru · Kaybolacak soru: ' + (missing.length ? missing.join(", ") : "belirlenemedi") + '. Mevcut kaynak değiştirilmedi.' + (parsed.report.errors.length ? '<br>' + parsed.report.errors.map(escapeHtml).join("<br>") : "");
           return;
         }
+        const parsedQuestions = parsed.questions.map(item => ({ ...item, id: doc.id + "-q-" + String(item.questionNumber).padStart(3, "0"), documentId: doc.id, setId: item.blockId || doc.id + "-standard", category: title, sourcePage: null, builtIn: false, importMethod: "text" }));
+        doc.previousVersion = { rawText: doc.sourceText || "", parsedQuestions: oldQuestions, questionCount: oldQuestions.length, updatedAt: doc.updatedAt };
         doc.title = title;
         doc.sourceText = sourceText;
+        doc.rawText = sourceText;
+        doc.parsedQuestions = parsedQuestions;
         doc.questionCount = parsedQuestions.length;
         doc.updatedAt = new Date().toISOString();
         uploadedBank.questions = (uploadedBank.questions || []).filter(question => question.documentId !== doc.id);
@@ -2228,8 +2520,517 @@
       });
     }
 
+    function parseReadForSpeed(rawText, rawAnswerKey) {
+      const stop = /^(?:BONUS QUESTION|COMPREHENSION QUESTIONS?|VOCABULARY QUESTIONS?|MINI WORD TEST|EXERCISE)\b/im.exec(rawText || "");
+      const articleText = stop ? rawText.slice(0, stop.index) : String(rawText || "");
+      const questionKeyPattern = /^\d+(?:[a-zA-Z]+)?$/;
+      const normalizeQuestionKey = value => String(value || "").trim().toUpperCase();
+      const normalizeAnswer = value => String(value || "").trim().toUpperCase();
+      const answerMap = new Map();
+      const errors = [];
+      String(rawAnswerKey || "").split(/\r?\n/).forEach(line => {
+        if (!line.trim()) return;
+        const match = line.match(/^\s*(\d+(?:[a-zA-Z]+)?)\s*-\s*(.+?)\s*$/);
+        if (!match) return errors.push(`Cevap anahtarı satırı okunamadı: ${line.trim()}`);
+        const questionKey = match[1].trim();
+        const normalizedKey = normalizeQuestionKey(questionKey);
+        if (answerMap.has(normalizedKey)) errors.push(`${questionKey} numaralı cevap anahtarında birden fazla satır var.`);
+        answerMap.set(normalizedKey, match[2].trim());
+      });
+      const nodes = [];
+      const questions = [];
+      const choices = [];
+      const seen = new Set();
+      const duplicates = new Set();
+      const pattern = /\{\{([\s\S]*?)\}\}/g;
+      let cursor = 0;
+      let match;
+      while ((match = pattern.exec(articleText))) {
+        const fields = match[1].split("|").map(item => item.trim());
+        if (fields.length !== 4) { errors.push(`Hatalı token: ${match[0]}`); continue; }
+        const [numberText, optionA, optionB, correctOption] = fields;
+        const questionKey = numberText.trim();
+        const normalizedKey = normalizeQuestionKey(questionKey);
+        if (!questionKeyPattern.test(questionKey) || /^0+$/.test(questionKey)) { errors.push(`Geçersiz soru numarası: ${questionKey || "boş"}.`); continue; }
+        if (!optionA) { errors.push(`${questionKey} numaralı tokenda A seçeneği boş.`); continue; }
+        if (!optionB) { errors.push(`${questionKey} numaralı tokenda B seçeneği boş.`); continue; }
+        if (!/^[ABab]$/.test(correctOption)) { errors.push(`${questionKey} numaralı token doğru cevabı A veya B olmalı.`); continue; }
+        if (seen.has(normalizedKey)) { duplicates.add(questionKey); errors.push(`${questionKey} numarası birden fazla kullanılmıştır.`); continue; }
+        seen.add(normalizedKey);
+        const question = { type: "binary_choice", questionId: `rfs-import-choice-${questions.length}`, questionKey, order: questions.length, displayNumber: questionKey, optionA, optionB, correctOption: correctOption.toUpperCase() };
+        choices.push({ index: match.index, end: pattern.lastIndex, question }); questions.push(question);
+      }
+      const bracketed = /\(\s*(\d+(?:[a-zA-Z]+)?)\s*\)\s*\[([^\]]*)\]\s*\/\s*\[([^\]]*)\]/g;
+      if (!questions.length && !/\{\{[\s\S]*?\}\}/.test(articleText)) while ((match = bracketed.exec(articleText))) {
+        const questionKey = match[1].trim(), normalizedKey = normalizeQuestionKey(questionKey), optionA = match[2].trim(), optionB = match[3].trim();
+        if (!optionA || !optionB) { errors.push(`${questionKey} numaralı seçimde seçenek boş.`); continue; }
+        if (seen.has(normalizedKey)) { duplicates.add(questionKey); errors.push(`${questionKey} numarası birden fazla kullanılmıştır.`); continue; }
+        seen.add(normalizedKey); const question = { type: "binary_choice", questionId: `rfs-import-choice-${questions.length}`, questionKey, order: questions.length, displayNumber: questionKey, optionA, optionB, correctOption: null };
+        choices.push({ index: match.index, end: bracketed.lastIndex, question }); questions.push(question);
+      }
+      if (!questions.length && !/\{\{[\s\S]*?\}\}/.test(articleText) && /\(\s*\d+\s*\)\s*[^\n/]+\s*\/\s*[^\n]+/.test(articleText)) return { articleText, excludedHeading: stop?.[0].trim() || "", nodes: [{ type: "text", content: articleText }], questions: [], answerCount: answerMap.size, duplicates: [], suggestions: [], missingAnswers: [], errors: [], legacyDetected: true };
+      choices.sort((a, b) => a.index - b.index).forEach(choice => { if (choice.index > cursor) nodes.push({ type: "text", content: articleText.slice(cursor, choice.index) }); nodes.push(choice.question); cursor = choice.end; });
+      if (cursor < articleText.length || !nodes.length) nodes.push({ type: "text", content: articleText.slice(cursor) });
+      const missingAnswers = [];
+      questions.forEach(question => {
+        const answer = answerMap.get(normalizeQuestionKey(question.questionKey));
+        if (question.correctOption && answer === undefined) return;
+        if (answer === undefined) { missingAnswers.push(question.displayNumber); errors.push(`${question.displayNumber} numaralı seçim için cevap eksik.`); return; }
+        const upper = normalizeAnswer(answer);
+        const choices = upper === "A" ? ["A"] : upper === "B" ? ["B"] : [ ...(upper === normalizeAnswer(question.optionA) ? ["A"] : []), ...(upper === normalizeAnswer(question.optionB) ? ["B"] : []) ];
+        if (choices.length !== 1) { errors.push(`${question.displayNumber} numaralı cevap seçeneklerle eşleşmiyor veya belirsiz.`); return; }
+        if (question.correctOption && question.correctOption !== choices[0]) { errors.push(`${question.displayNumber} numaralı seçimde token cevabı ${question.correctOption}, ayrı cevap anahtarı ${choices[0]} olarak verilmiştir.`); return; }
+        question.correctOption = choices[0];
+      });
+      return { articleText, excludedHeading: stop?.[0].trim() || "", nodes, questions, answerCount: answerMap.size, duplicates: [...duplicates], suggestions: [], missingAnswers, errors, legacyDetected: false };
+    }
+
+    function rfsInput(label, id, value) {
+      return `<label class="block text-sm font-black">${label}<input id="${id}" value="${escapeHtml(value)}" class="mt-1 w-full rounded-xl border px-3 py-2.5 text-sm" style="border-color:var(--border-color);background:var(--bg-surface);color:var(--text-primary)"></label>`;
+    }
+
+    function renderReadForSpeedPage() {
+      pageTitle.textContent = "Read for Speed";
+      renderMenu(); renderStats();
+      if (readForSpeedMode === "list") {
+        appArea.innerHTML = `<section class="rounded-2xl border p-4 shadow-sm" style="border-color:var(--border-color);background:var(--bg-surface)"><div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><p class="text-sm font-bold uppercase tracking-wide text-blue-500">Read for Speed</p><h2 class="mt-1 text-2xl font-black">Read for Speed</h2><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">Toplam ${readForSpeedArticles.length} içerik · Metin içi ikili seçimlerle hızlı okuma pratiği.</p></div><button id="rfsNewBtn" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white">Yeni Çalışma Ekle</button></div>${readForSpeedArticles.length ? `<div class="mt-4 grid gap-3 md:grid-cols-2">${readForSpeedArticles.map(article => `<article class="rounded-2xl border p-4" style="border-color:var(--border-color);background:var(--bg-surface-secondary)"><span class="rounded-full border px-2 py-1 text-xs font-black" style="border-color:var(--border-color)">${escapeHtml(article.difficulty || "zorluksuz")}</span><h3 class="mt-3 text-lg font-black">${escapeHtml(article.title)}</h3><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">${escapeHtml(article.source || "Kaynak belirtilmedi")}${article.articleNumber ? ` · Makale ${escapeHtml(article.articleNumber)}` : ""}</p><p class="mt-3 text-sm font-black text-blue-600">${article.questionCount} seçim</p></article>`).join("")}</div>` : `<div class="mt-4 rounded-2xl border border-dashed p-10 text-center" style="border-color:var(--border-color);background:var(--bg-surface-secondary)"><div class="text-3xl">◴</div><h3 class="mt-2 text-lg font-black">Henüz çalışma eklenmedi</h3><p class="mt-2 text-sm font-semibold" style="color:var(--text-secondary)">Ham metin ve cevap anahtarını ekleyerek ilk çalışmanı oluştur.</p></div>`}</section>`;
+        document.getElementById("rfsNewBtn").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); };
+        return;
+      }
+      if (readForSpeedMode === "form") {
+        const d = readForSpeedDraft;
+        appArea.innerHTML = `<section class="rounded-2xl border p-4 shadow-sm" style="border-color:var(--border-color);background:var(--bg-surface)"><div class="flex items-center justify-between gap-3"><div><h2 class="text-2xl font-black">Yeni Çalışma Ekle</h2><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">Önerilen güvenli biçim: {{1|Even if|Unless|A}}</p></div><button id="rfsCancelBtn" class="rounded-xl border px-3 py-2 text-sm font-black">Geri Dön</button></div><div class="mt-5 grid gap-4"><div class="grid gap-3 md:grid-cols-2">${rfsInput("Başlık", "rfsTitle", d.title)}${rfsInput("Kaynak", "rfsSource", d.source)}${rfsInput("Makale numarası", "rfsNumber", d.articleNumber)}<label class="block text-sm font-black">Zorluk<select id="rfsDifficulty" class="mt-1 w-full rounded-xl border px-3 py-2.5 text-sm"><option value="">Seçiniz</option><option value="easy">Kolay</option><option value="medium">Orta</option><option value="hard">Zor</option></select></label></div><label class="block text-sm font-black">Ham metin<textarea id="rfsRawText" class="mt-1 min-h-56 w-full rounded-xl border px-3 py-2.5 text-sm" placeholder="{{1|Even if|Unless|A}} Antarctica is regarded as...">${escapeHtml(d.rawText)}</textarea></label><label class="block text-sm font-black">Cevap anahtarı (token cevabı varsa isteğe bağlı)<textarea id="rfsAnswerKey" class="mt-1 min-h-32 w-full rounded-xl border px-3 py-2.5 text-sm" placeholder="1-A&#10;2- attach">${escapeHtml(d.answerKey)}</textarea></label><div class="flex gap-2"><button id="rfsPreviewBtn" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white">Ön İzle</button><button id="rfsFormCancelBtn" class="rounded-xl border px-4 py-2.5 text-sm font-black">İptal</button></div></div></section>`;
+        document.getElementById("rfsDifficulty").value = d.difficulty;
+        const list = () => { readForSpeedMode = "list"; renderReadForSpeedPage(); };
+        document.getElementById("rfsCancelBtn").onclick = list; document.getElementById("rfsFormCancelBtn").onclick = list;
+        document.getElementById("rfsPreviewBtn").onclick = () => { d.title = document.getElementById("rfsTitle").value; d.source = document.getElementById("rfsSource").value; d.articleNumber = document.getElementById("rfsNumber").value; d.difficulty = document.getElementById("rfsDifficulty").value; d.rawText = document.getElementById("rfsRawText").value; d.answerKey = document.getElementById("rfsAnswerKey").value; readForSpeedAcceptedSuggestions = false; readForSpeedMode = "preview"; renderReadForSpeedPage(); };
+        return;
+      }
+      const parsed = parseReadForSpeed(readForSpeedDraft.rawText, readForSpeedDraft.answerKey);
+      if (parsed.legacyDetected) { appArea.innerHTML = `<section class="rounded-2xl border border-amber-300 bg-amber-50 p-5 text-amber-900"><h2 class="text-xl font-black">Güvenli içe aktarma gerekli</h2><p class="mt-2 font-semibold">Bu metindeki seçenek sınırları kesin olarak belirlenemiyor. Güvenli içe aktarma için seçenekleri {{numara|A|B|doğru seçenek}} biçiminde hazırlayın.</p><pre class="mt-3 rounded bg-white p-3">{{1|Even if|Unless|A}} Antarctica is regarded as...</pre><div class="mt-4 flex gap-2"><button id="rfsExampleBtn" class="rounded-xl bg-blue-600 px-3 py-2 text-sm font-black text-white">Biçim Örneğini Göster</button><button id="rfsLegacyEditBtn" class="rounded-xl border px-3 py-2 text-sm font-black">Metni Düzenlemeye Dön</button><button id="rfsLegacyCancelBtn" class="rounded-xl border px-3 py-2 text-sm font-black">İçe Aktarmayı İptal Et</button></div></section>`; const edit = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); }; document.getElementById("rfsExampleBtn").onclick = edit; document.getElementById("rfsLegacyEditBtn").onclick = edit; document.getElementById("rfsLegacyCancelBtn").onclick = () => { readForSpeedDraft = { title: "", source: "", articleNumber: "", difficulty: "", rawText: "", answerKey: "" }; readForSpeedMode = "list"; renderReadForSpeedPage(); }; return; }
+      const canSave = parsed.questions.length > 0 && !parsed.errors.length && !parsed.duplicates.length;
+      const preview = parsed.nodes.map(node => node.type === "text" ? escapeHtml(node.content).replace(/\n/g, "<br>") : `<span class="mx-1 inline-flex flex-wrap gap-2 rounded-lg border px-2 py-1 align-middle"><b>(${node.displayNumber})</b><span><b class="mr-1 rounded bg-slate-200 px-1">A</b>${escapeHtml(node.optionA)}</span><span><b class="mr-1 rounded bg-slate-200 px-1">B</b>${escapeHtml(node.optionB)}</span></span>`).join("");
+      appArea.innerHTML = `<section class="grid gap-4"><article class="rounded-2xl border p-4" style="border-color:var(--border-color);background:var(--bg-surface)"><div class="flex items-center justify-between"><div><h2 class="text-2xl font-black">İçe Aktarma Ön İzlemesi</h2><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">Kaydetmeden önce ayrıştırma ve cevap eşleşmelerini doğrula.</p></div><button id="rfsEditBtn" class="rounded-xl border px-3 py-2 text-sm font-black">Düzenlemeye Dön</button></div><div class="mt-4 grid gap-3 sm:grid-cols-3"><div class="rounded-xl border p-3"><b class="text-2xl text-blue-600">${parsed.questions.length}</b><span class="block text-sm">bulunan seçim</span></div><div class="rounded-xl border p-3"><b class="text-2xl text-blue-600">${parsed.answerCount}</b><span class="block text-sm">cevap anahtarı</span></div><div class="rounded-xl border p-3"><b class="text-2xl text-blue-600">${parsed.missingAnswers.length}</b><span class="block text-sm">eksik cevap</span></div></div>${parsed.excludedHeading ? `<div class="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm font-semibold text-amber-900">${escapeHtml(parsed.excludedHeading)} başlığından sonraki bağımsız soru bölümü işlenmedi.</div>` : ""}${parsed.duplicates.map(number => `<div class="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900"><b>${number} numarası birden fazla kullanılmıştır.</b>${parsed.suggestions.filter(item => item.displayNumber === number).map(item => `<p class="mt-1">İkinci ${number} numaralı seçim, görünme sırasına göre ${item.proposedNumber} olarak değerlendirilsin mi?</p>`).join("")}<div class="mt-3 flex flex-wrap gap-2"><button id="rfsAcceptBtn" class="rounded-xl bg-blue-600 px-3 py-2 text-sm font-black text-white">Öneriyi Kabul Et</button><button id="rfsManualBtn" class="rounded-xl border px-3 py-2 text-sm font-black">Elle Düzenle</button><button id="rfsDiscardBtn" class="rounded-xl border px-3 py-2 text-sm font-black">İçe Aktarmayı İptal Et</button></div></div>`).join("")}${parsed.errors.length ? `<div class="mt-4 rounded-xl border border-red-300 bg-red-50 p-3 text-sm text-red-800"><b>Kaydetme engellendi</b><ul class="mt-2 list-disc pl-5">${parsed.errors.map(error => `<li>${escapeHtml(error)}</li>`).join("")}</ul></div>` : ""}</article><article class="rounded-2xl border p-5" style="border-color:var(--border-color);background:var(--bg-surface)"><h3 class="text-lg font-black">İşlenmiş makale ön izlemesi</h3><div class="mt-3 leading-8">${preview}</div></article><div class="flex gap-2"><button id="rfsSaveBtn" ${canSave ? "" : "disabled"} class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white disabled:opacity-40">Yerel Olarak Kaydet</button><button id="rfsPreviewBackBtn" class="rounded-xl border px-4 py-2.5 text-sm font-black">Geri Dön</button></div></section>`;
+      const edit = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); };
+      document.getElementById("rfsEditBtn").onclick = edit; document.getElementById("rfsPreviewBackBtn").onclick = edit;
+      document.getElementById("rfsManualBtn")?.addEventListener("click", edit);
+      document.getElementById("rfsAcceptBtn")?.addEventListener("click", () => { readForSpeedAcceptedSuggestions = true; renderReadForSpeedPage(); });
+      document.getElementById("rfsDiscardBtn")?.addEventListener("click", () => { readForSpeedDraft = { title: "", source: "", articleNumber: "", difficulty: "", rawText: "", answerKey: "" }; readForSpeedMode = "list"; renderReadForSpeedPage(); });
+      document.getElementById("rfsSaveBtn").onclick = () => { if (!canSave) return; const now = new Date().toISOString(); readForSpeedArticles.push({ id: `read-for-speed-${Date.now()}`, title: readForSpeedDraft.title.trim() || "Başlıksız çalışma", source: readForSpeedDraft.source.trim() || null, articleNumber: readForSpeedDraft.articleNumber.trim() || null, difficulty: readForSpeedDraft.difficulty || null, rawText: readForSpeedDraft.rawText, contentNodes: parsed.nodes, questionCount: parsed.questions.length, createdAt: now, updatedAt: now }); saveJson(STORAGE_READ_FOR_SPEED, readForSpeedArticles); readForSpeedDraft = { title: "", source: "", articleNumber: "", difficulty: "", rawText: "", answerKey: "" }; readForSpeedAcceptedSuggestions = false; readForSpeedMode = "list"; renderReadForSpeedPage(); };
+    }
+
+    // Read for Speed has its own reader; it deliberately does not reuse the question-bank flow.
+    function renderReadForSpeedPage() {
+      pageTitle.textContent = "Read for Speed";
+      renderMenu(); renderStats();
+      const reset = () => { readForSpeedDraft = { title: "", rawText: "" }; readForSpeedMode = "list"; };
+      if (readForSpeedMode === "reader" && readForSpeedActiveArticle) {
+        const article = readForSpeedActiveArticle;
+        appArea.innerHTML = `<section class="mx-auto max-w-6xl"><header class="sticky top-0 z-20 flex flex-col gap-3 border-b py-3 md:flex-row md:items-center md:justify-between" style="border-color:var(--border-color);background:var(--bg-page)"><button id="rfsBackToList" class="rounded-xl border px-3 py-2 text-sm font-black" style="border-color:var(--border-color)">← Listeye dön</button><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h2 class="text-xl font-black">${escapeHtml(article.title)}</h2></div><div class="flex gap-2"><button id="rfsSettingsBtn" class="rounded-xl border px-3 py-2 text-sm font-black" style="border-color:var(--border-color)">Okuma Ayarları</button><button id="rfsFocusBtn" class="rounded-xl border px-3 py-2 text-sm font-black" style="border-color:var(--border-color)">Odak Modu</button></div></header><section id="rfsSettingsPanel" hidden class="mt-3 grid gap-3 rounded-2xl border p-4 md:grid-cols-4" style="border-color:var(--border-color);background:var(--bg-surface)"><label class="text-xs font-black">Yazı boyutu<input id="rfsFontSize" class="mt-2 w-full" type="range" min="20" max="30" value="25" /></label><label class="text-xs font-black">Satır aralığı<select id="rfsLineHeight" class="mt-2 w-full rounded-lg border p-2"><option value="1.6">Sıkı</option><option value="1.7" selected>Dengeli</option><option value="1.85">Geniş</option></select></label><label class="text-xs font-black">Metin genişliği<select id="rfsWidth" class="mt-2 w-full rounded-lg border p-2"><option value="760">Dar</option><option value="940" selected>Dengeli</option><option value="1080">Geniş</option></select></label><label class="text-xs font-black">Okuma yüzeyi<select id="rfsSurface" class="mt-2 w-full rounded-lg border p-2"><option value="#eef4fb">Yumuşak nötr</option><option value="#ffffff">Beyaz</option><option value="#fff8eb">Sıcak</option><option value="#182235">Koyu</option></select></label></section><article id="rfsReadingBody" class="mx-auto mt-4 rounded-2xl border p-5 text-[25px] leading-[1.7]" style="max-width:940px;border-color:var(--border-color);background:#eef4fb;color:var(--text-primary);white-space:pre-wrap">${article.contentNodes.map((node, index) => node.type === "text" ? escapeHtml(node.content) : `<span class="mx-1 inline-flex flex-wrap items-center gap-2 align-middle"><b>(${node.displayNumber})</b><button class="rfs-choice rounded-lg border px-2 py-1 text-sm font-black" data-choice="${node.questionId}" data-answer="A">A · ${escapeHtml(node.optionA)}</button><button class="rfs-choice rounded-lg border px-2 py-1 text-sm font-black" data-choice="${node.questionId}" data-answer="B">B · ${escapeHtml(node.optionB)}</button></span>`).join("")}</article></section>`;
+        const body = document.getElementById("rfsReadingBody"), panel = document.getElementById("rfsSettingsPanel");
+        document.getElementById("rfsBackToList").onclick = () => { readForSpeedMode = "list"; readForSpeedActiveArticle = null; renderReadForSpeedPage(); };
+        document.getElementById("rfsSettingsBtn").onclick = () => panel.hidden = !panel.hidden;
+        document.getElementById("rfsFocusBtn").onclick = () => document.body.classList.toggle("rfs-focus-mode");
+        document.getElementById("rfsFontSize").oninput = event => body.style.fontSize = event.target.value + "px";
+        document.getElementById("rfsLineHeight").onchange = event => body.style.lineHeight = event.target.value;
+        document.getElementById("rfsWidth").onchange = event => body.style.maxWidth = event.target.value + "px";
+        document.getElementById("rfsSurface").onchange = event => { body.style.background = event.target.value; body.style.color = event.target.value === "#182235" ? "#f8fafc" : "var(--text-primary)"; };
+        document.querySelectorAll(".rfs-choice").forEach(button => button.onclick = () => { document.querySelectorAll(`.rfs-choice[data-choice="${button.dataset.choice}"]`).forEach(item => item.classList.remove("border-blue-600", "bg-blue-100", "text-blue-700")); button.classList.add("border-blue-600", "bg-blue-100", "text-blue-700"); });
+        return;
+      }
+      if (readForSpeedMode === "list") {
+        appArea.innerHTML = `<section class="rounded-2xl border p-5" style="border-color:var(--border-color);background:var(--bg-surface)"><div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"><div><p class="text-sm font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h2 class="text-2xl font-black">Read for Speed</h2><p class="mt-1 font-semibold" style="color:var(--text-secondary)">Toplam ${readForSpeedArticles.length} içerik · Metin içi ikili seçimlerle hızlı okuma pratiği.</p></div><button id="rfsNewBtn" class="rounded-xl bg-blue-600 px-4 py-2.5 font-black text-white">Yeni Çalışma Ekle</button></div>${readForSpeedArticles.length ? `<div class="mt-4 grid gap-3 md:grid-cols-2">${readForSpeedArticles.map(article => `<button class="rfs-open-article rounded-2xl border p-4 text-left hover:border-blue-400" data-id="${escapeHtml(article.id)}" style="border-color:var(--border-color);background:var(--bg-surface-secondary)"><span class="text-xs font-black text-blue-600">READ FOR SPEED</span><h3 class="mt-2 text-lg font-black">${escapeHtml(article.title)}</h3><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">${article.questionCount} seçim · Okumaya devam et</p></button>`).join("")}</div>` : `<div class="mt-4 rounded-2xl border border-dashed p-10 text-center"><h3 class="text-lg font-black">Henüz çalışma eklenmedi</h3></div>`}</section>`;
+        document.getElementById("rfsNewBtn").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); };
+        document.querySelectorAll(".rfs-open-article").forEach(button => button.onclick = () => { readForSpeedActiveArticle = readForSpeedArticles.find(item => item.id === button.dataset.id); readForSpeedMode = "reader"; renderReadForSpeedPage(); });
+        return;
+      }
+      if (readForSpeedMode === "form") {
+        const d = readForSpeedDraft;
+        appArea.innerHTML = `<section class="rounded-2xl border p-5" style="border-color:var(--border-color);background:var(--bg-surface)"><div class="flex items-center justify-between"><div><h2 class="text-2xl font-black">Yeni Çalışma Ekle</h2><p class="mt-1 font-semibold" style="color:var(--text-secondary)">Önerilen biçim: {{1|Even if|Unless|A}}</p></div><button id="rfsCancel" class="rounded-xl border px-3 py-2 font-black">Geri Dön</button></div><label class="mt-5 block font-black">Başlık<input id="rfsTitle" class="mt-1 w-full rounded-xl border p-3" value="${escapeHtml(d.title || "")}" /></label><label class="mt-4 block font-black">Ham metin<textarea id="rfsRaw" class="mt-1 min-h-80 w-full rounded-xl border p-3" placeholder="{{1|Even if|Unless|A}} Antarctica is regarded as...">${escapeHtml(d.rawText || "")}</textarea></label><button id="rfsPreview" class="mt-4 rounded-xl bg-blue-600 px-4 py-2.5 font-black text-white">Ön İzle</button></section>`;
+        document.getElementById("rfsCancel").onclick = () => { reset(); renderReadForSpeedPage(); };
+        document.getElementById("rfsPreview").onclick = () => { d.title = document.getElementById("rfsTitle").value; d.rawText = document.getElementById("rfsRaw").value; readForSpeedMode = "preview"; renderReadForSpeedPage(); };
+        return;
+      }
+      const parsed = parseReadForSpeed(readForSpeedDraft.rawText, "");
+      if (parsed.legacyDetected) { appArea.innerHTML = `<section class="rounded-2xl border border-amber-300 bg-amber-50 p-5"><h2 class="text-xl font-black">Güvenli içe aktarma gerekli</h2><p class="mt-2 font-semibold">Bu metindeki seçenek sınırları kesin olarak belirlenemiyor. Seçenekleri {{numara|A|B|doğru seçenek}} biçiminde hazırlayın.</p><button id="rfsEditLegacy" class="mt-4 rounded-xl bg-blue-600 px-3 py-2 font-black text-white">Metni Düzenlemeye Dön</button></section>`; document.getElementById("rfsEditLegacy").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); }; return; }
+      const canSave = parsed.questions.length > 0 && !parsed.errors.length && !parsed.duplicates.length;
+      appArea.innerHTML = `<section class="rounded-2xl border p-5" style="border-color:var(--border-color);background:var(--bg-surface)"><h2 class="text-2xl font-black">İçe Aktarma Ön İzlemesi</h2><p class="mt-1 font-semibold" style="color:var(--text-secondary)">Bulunan seçim: ${parsed.questions.length} · Geçerli seçim: ${canSave ? parsed.questions.length : 0}</p>${parsed.errors.length ? `<ul class="mt-4 list-disc rounded-xl bg-red-50 p-4 pl-8 text-red-800">${parsed.errors.map(error => `<li>${escapeHtml(error)}</li>`).join("")}</ul>` : ""}<div class="mt-4 rounded-xl border p-4 leading-8" style="white-space:pre-wrap">${parsed.nodes.map(node => node.type === "text" ? escapeHtml(node.content) : `<span class="mx-1 inline-flex gap-2 rounded-lg border px-2 py-1"><b>(${node.displayNumber})</b><span>A: ${escapeHtml(node.optionA)}</span><span>B: ${escapeHtml(node.optionB)}</span></span>`).join("")}</div><div class="mt-4 flex gap-2"><button id="rfsSave" ${canSave ? "" : "disabled"} class="rounded-xl bg-blue-600 px-4 py-2.5 font-black text-white disabled:opacity-40">Yerel Olarak Kaydet</button><button id="rfsEdit" class="rounded-xl border px-4 py-2.5 font-black">Geri Dön</button></div></section>`;
+      document.getElementById("rfsEdit").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); };
+      document.getElementById("rfsSave").onclick = () => { if (!canSave) return; const id = `read-for-speed-${Date.now()}`, now = new Date().toISOString(); const article = { id, title: readForSpeedDraft.title.trim() || "Başlıksız çalışma", source: null, articleNumber: null, difficulty: null, rawText: readForSpeedDraft.rawText, contentNodes: parsed.nodes.map(node => node.type === "binary_choice" ? { ...node, questionId: `${id}:${node.questionKey}` } : node), questionCount: parsed.questions.length, createdAt: now, updatedAt: now }; readForSpeedArticles.push(article); saveJson(STORAGE_READ_FOR_SPEED, readForSpeedArticles); readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); };
+    }
+
+    function readForSpeedProgress(article) {
+      const base = article.progress && typeof article.progress === "object" ? article.progress : {};
+      article.progress = { selectedAnswers: base.selectedAnswers || {}, checked: !!base.checked, completed: !!base.completed, startedAt: base.startedAt || Date.now(), elapsedMs: Number(base.elapsedMs || 0), lastPosition: Number(base.lastPosition || 0) };
+      return article.progress;
+    }
+
+    function readForSpeedQuestionStatus(question, answers) {
+      const selectedOption = answers[question.questionId] ?? null;
+      const correctOption = String(question.correctOption || "").toUpperCase();
+      return selectedOption === null ? "blank" : selectedOption === correctOption ? "correct" : "wrong";
+    }
+
+    function enableReadForSpeedWordTokens(body) {
+      if (!body || body.dataset.wordTokensBound === "true") return;
+      body.dataset.wordTokensBound = "true";
+      const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, {
+        acceptNode(node) {
+          return node.parentElement?.closest("button, script, style") || !/[A-Za-z]/.test(node.nodeValue || "")
+            ? NodeFilter.FILTER_REJECT
+            : NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      const textNodes = [];
+      while (walker.nextNode()) textNodes.push(walker.currentNode);
+      textNodes.forEach(node => {
+        const fragment = document.createDocumentFragment();
+        String(node.nodeValue || "").split(/([A-Za-z]+(?:['’\-][A-Za-z]+)*)/g).forEach(part => {
+          if (/^[A-Za-z]+(?:['’\-][A-Za-z]+)*$/.test(part)) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "word-token";
+            button.dataset.word = normalizeWord(part);
+            button.textContent = part;
+            fragment.append(button);
+          } else fragment.append(document.createTextNode(part));
+        });
+        node.replaceWith(fragment);
+      });
+    }
+
+    function saveReadForSpeedArticles() { saveJson(STORAGE_READ_FOR_SPEED, readForSpeedArticles); }
+
+    function setReadForSpeedFocusMode(enabled) {
+      document.body.classList.toggle("read-for-speed-focus-mode", !!enabled && activeView === "read-for-speed" && readForSpeedMode === "reader");
+    }
+
+    function readForSpeedArticleSummary(article) {
+      const questions = (article.contentNodes || []).filter(node => node.type === "binary_choice");
+      const answers = article.progress?.selectedAnswers || {};
+      const questionIds = new Set(questions.map(question => question.questionId));
+      const answeredCount = new Set(Object.keys(answers).filter(id => questionIds.has(id) && ["A", "B"].includes(answers[id]))).size;
+      const completed = article.progress?.completed === true || article.progress?.checked === true;
+      const correctCount = completed ? questions.filter(question => answers[question.questionId] === String(question.correctOption || "").toUpperCase()).length : 0;
+      const incorrectCount = completed ? questions.filter(question => answers[question.questionId] && answers[question.questionId] !== String(question.correctOption || "").toUpperCase()).length : 0;
+      const blankCount = questions.length - answeredCount;
+      const status = completed ? "completed" : answeredCount ? "inProgress" : "new";
+      return { articleId: article.id, questionCount: questions.length || Number(article.questionCount || 0), answeredCount, correctCount, incorrectCount, blankCount, score: completed && questions.length ? Math.round(correctCount / questions.length * 100) : 0, completed, status, updatedAt: article.progress?.updatedAt || article.updatedAt || null };
+    }
+
+    function readForSpeedDisplayTitle(title) {
+      const value = String(title || "Başlıksız çalışma");
+      if (value !== value.toUpperCase()) return value;
+      const protectedWords = new Set(["YDS", "AI", "USA", "UK", "EU"]);
+      return value.toLowerCase().split(/(\s+)/).map(word => {
+        if (/^\s+$/.test(word)) return word;
+        const upper = word.toUpperCase();
+        if (protectedWords.has(upper)) return upper;
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      }).join("");
+    }
+
+    function renderReadForSpeedList() {
+      const statusOrder = { inProgress: 0, new: 1, completed: 2 };
+      const items = readForSpeedArticles.map(article => ({ article, summary: readForSpeedArticleSummary(article) })).sort((a, b) => statusOrder[a.summary.status] - statusOrder[b.summary.status] || new Date(b.summary.updatedAt || 0) - new Date(a.summary.updatedAt || 0));
+      const totalQuestions = items.reduce((sum, item) => sum + item.summary.questionCount, 0);
+      const completedCount = items.filter(item => item.summary.completed).length;
+      bankInfo.textContent = `${items.length} metin · ${totalQuestions} seçim · ${completedCount} tamamlandı`;
+      const badge = { new: ["YENİ", "rfs-status-new"], inProgress: ["DEVAM EDİYOR", "rfs-status-progress"], completed: ["TAMAMLANDI ✓", "rfs-status-completed"] };
+      const cards = items.map(({ article, summary }) => {
+        const [statusLabel, statusClass] = badge[summary.status];
+        const title = readForSpeedDisplayTitle(article.title);
+        const details = summary.status === "new" ? `${summary.questionCount} seçim` : summary.status === "inProgress" ? `${summary.answeredCount} / ${summary.questionCount} seçim cevaplandı · %${summary.questionCount ? Math.round(summary.answeredCount / summary.questionCount * 100) : 0}` : `${summary.correctCount} doğru · ${summary.incorrectCount} yanlış${summary.blankCount ? ` · ${summary.blankCount} boş` : ""} · Başarı %${summary.score}`;
+        const action = summary.status === "new" ? "Başla" : summary.status === "inProgress" ? "Devam Et" : "Sonuçları Gör";
+        const progress = summary.status === "new" ? "" : `<div class="rfs-card-progress"><span class="${summary.status === "completed" ? "is-completed" : ""}" style="width:${summary.status === "completed" ? 100 : Math.round(summary.answeredCount / summary.questionCount * 100)}%"></span></div>`;
+        return `<article class="read-for-speed-card ${summary.status === "completed" ? "is-completed" : ""}"><div class="relative flex items-start justify-between gap-3"><span class="rfs-card-status ${statusClass}">${statusLabel}</span><button class="rfs-reset" data-id="${escapeHtml(article.id)}" aria-label="Metin işlemleri: ${escapeHtml(title)}">⋯</button></div><h3 class="read-for-speed-card-title" title="${escapeHtml(article.title)}">${escapeHtml(title)}</h3><p class="rfs-card-detail">${details}</p>${progress}<div class="mt-auto pt-4"><button class="rfs-open" data-id="${escapeHtml(article.id)}" aria-label="${escapeHtml(title)} çalışmasına ${summary.status === "new" ? "başla" : summary.status === "inProgress" ? "devam et" : "sonuçlarını görüntüle"}">${action}</button></div></article>`;
+      }).join("");
+      appArea.innerHTML = `<section class="rounded-2xl border p-5" style="border-color:var(--border-color);background:var(--bg-surface)"><div class="rfs-list-heading"><p class="text-sm font-black">Metinler · ${items.length} kayıt</p><button id="rfsNewBtn" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white">Yeni Metin Ekle</button></div><div class="rfs-list-grid mt-4">${cards || `<div class="col-span-full rounded-2xl border border-dashed p-10 text-center">Henüz çalışma eklenmedi.</div>`}</div></section>`;
+      document.getElementById("rfsNewBtn").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); };
+      document.querySelectorAll(".rfs-open").forEach(button => button.onclick = () => { readForSpeedActiveArticle = readForSpeedArticles.find(article => article.id === button.dataset.id); readForSpeedMode = "reader"; renderReadForSpeedPage(); });
+    }
+
+    // Inline action bridge: keeps essential reader actions independent from optional settings bindings.
+    window.rfsAction = (action, questionId, option) => {
+      const article = readForSpeedActiveArticle;
+      if (!article) return;
+      const progress = readForSpeedProgress(article);
+      if (action === "answer" && !progress.checked) {
+        progress.selectedAnswers[questionId] = option;
+        article.pendingCheckConfirmation = false;
+      } else if ((action === "check" || action === "confirm-check") && !progress.checked) {
+        const choices = article.contentNodes.filter(node => node.type === "binary_choice");
+        const blankCount = choices.filter(node => readForSpeedQuestionStatus(node, progress.selectedAnswers) === "blank").length;
+        if (action === "check" && blankCount > 0 && !article.checkConfirmed) {
+          article.pendingCheckConfirmation = true;
+          renderReadForSpeedPage();
+          return;
+        }
+        article.pendingCheckConfirmation = false;
+        article.checkConfirmed = false;
+        progress.checked = true;
+        progress.completed = true;
+        progress.correctCount = choices.filter(node => readForSpeedQuestionStatus(node, progress.selectedAnswers) === "correct").length;
+        progress.incorrectCount = choices.filter(node => readForSpeedQuestionStatus(node, progress.selectedAnswers) === "wrong").length;
+        progress.blankCount = choices.filter(node => readForSpeedQuestionStatus(node, progress.selectedAnswers) === "blank").length;
+        progress.score = choices.length ? Math.round(progress.correctCount / choices.length * 100) : 0;
+      } else if (action === "clean") article.cleanReading = !article.cleanReading;
+      else if (action === "focus") {
+        article.focusMode = !article.focusMode;
+        setReadForSpeedFocusMode(article.focusMode);
+      }
+      else if (action === "settings") {
+        const panel = document.getElementById("rfsSettingsPanel");
+        const button = document.getElementById("rfsSettings");
+        if (panel) {
+          const willOpen = panel.hidden;
+          panel.hidden = !willOpen;
+          button?.setAttribute("aria-expanded", String(willOpen));
+        }
+        return;
+      }
+      else if (action === "blank") {
+        const firstBlank = article.contentNodes.find(node => node.type === "binary_choice" && readForSpeedQuestionStatus(node, progress.selectedAnswers) === "blank");
+        document.getElementById(`rfs-question-${firstBlank?.questionId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+      else if (action === "retry") {
+        article.progress = null;
+        article.cleanReading = false;
+        article.focusMode = false;
+        article.pendingCheckConfirmation = false;
+        setReadForSpeedFocusMode(false);
+        saveReadForSpeedArticles();
+        window.scrollTo({ top: 0, behavior: "auto" });
+        renderReadForSpeedPage();
+        return;
+      }
+      else return;
+      progress.elapsedMs += Date.now() - progress.startedAt;
+      progress.startedAt = Date.now();
+      progress.updatedAt = new Date().toISOString();
+      saveReadForSpeedArticles();
+      renderReadForSpeedPage();
+    };
+
+    // Reader actions use delegated capture events as a safety net. Optional controls
+    // must never be able to prevent answer selection or evaluation from working.
+    if (!window.__rfsReaderEventsBound) {
+      window.__rfsReaderEventsBound = true;
+      document.addEventListener("click", event => {
+        const target = event.target instanceof Element
+          ? event.target.closest("#rfsCheck, #rfsConfirmCheck, #rfsBlank, #rfsClean, #rfsFocus, #rfsSettings, #rfsRetry, #rfsCleanResult, .rfs-answer, .rfs-surface")
+          : null;
+        if (!target) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        if (target.id === "rfsCheck") return window.rfsAction("check");
+        if (target.id === "rfsConfirmCheck") return window.rfsAction("confirm-check");
+        if (target.id === "rfsBlank") return window.rfsAction("blank");
+        if (target.id === "rfsClean" || target.id === "rfsCleanResult") return window.rfsAction("clean");
+        if (target.id === "rfsFocus") return window.rfsAction("focus");
+        if (target.id === "rfsSettings") return window.rfsAction("settings");
+        if (target.id === "rfsRetry") return window.rfsAction("retry");
+        if (target.classList.contains("rfs-answer")) return window.rfsAction("answer", target.dataset.question, target.dataset.answer);
+        if (target.classList.contains("rfs-surface")) {
+          const nextSurface = target.dataset.surface || "neutral";
+          if (!["white", "neutral", "warm", "dark"].includes(nextSurface)) return;
+          articleReadingSurface = nextSurface;
+          localStorage.setItem("yds-article-reading-surface-v1", articleReadingSurface);
+          const body = document.getElementById("rfsBody");
+          if (body) {
+            body.classList.remove("article-surface-white", "article-surface-neutral", "article-surface-warm", "article-surface-dark");
+            body.classList.add(`article-surface-${articleReadingSurface}`);
+          }
+          document.querySelectorAll("#rfsSettingsPanel .rfs-surface").forEach(choice => choice.classList.toggle("is-selected", choice.dataset.surface === articleReadingSurface));
+          return;
+        }
+      }, true);
+      document.addEventListener("input", event => {
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement) || target.id !== "rfsFont") return;
+        articleFontSize = Number(target.value);
+        localStorage.setItem("yds-article-font-size-v1", String(articleFontSize));
+        const body = document.getElementById("rfsBody");
+        if (body) body.style.setProperty("--article-font-size", `${articleFontSize}px`);
+        const value = document.getElementById("rfsFontValue");
+        if (value) value.textContent = `${articleFontSize} px`;
+      }, true);
+      document.addEventListener("change", event => {
+        const target = event.target;
+        if (!(target instanceof HTMLSelectElement)) return;
+        const body = document.getElementById("rfsBody");
+        if (target.id === "rfsLine") {
+          articleLineHeight = [1.65, 1.7, 1.75].includes(Number(target.value)) ? Number(target.value) : 1.7;
+          localStorage.setItem("yds-article-line-height-v1", articleLineHeight);
+          if (body) body.style.setProperty("--article-line-height", String(articleLineHeight));
+        } else if (target.id === "rfsWidth") {
+          articleContentWidth = [920, 940, 960, 980].includes(Number(target.value)) ? Number(target.value) : 940;
+          localStorage.setItem("yds-article-content-width-v1", articleContentWidth);
+          if (body) body.style.maxWidth = `${articleContentWidth}px`;
+        } else return;
+      }, true);
+      window.addEventListener("keydown", event => {
+        if (event.key === "Escape" && readForSpeedMode === "reader" && readForSpeedActiveArticle?.focusMode) {
+          event.preventDefault();
+          window.rfsAction("focus");
+        }
+      });
+    }
+
+    // Match the document cards: the three-dot control opens visible actions, not a typed browser prompt.
+    if (!window.__rfsCardMenuEventsBound) {
+      window.__rfsCardMenuEventsBound = true;
+      const closeReadForSpeedCardMenus = () => document.querySelectorAll(".rfs-card-menu").forEach(menu => menu.remove());
+      document.addEventListener("click", event => {
+        const target = event.target instanceof Element ? event.target.closest(".rfs-reset, .rfs-menu-open, .rfs-menu-retry, .rfs-menu-edit, .rfs-menu-reset, .rfs-menu-delete") : null;
+        if (!target) { closeReadForSpeedCardMenus(); return; }
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        const articleId = target.dataset.id;
+        const article = readForSpeedArticles.find(item => item.id === articleId);
+        if (!article) return closeReadForSpeedCardMenus();
+        if (target.classList.contains("rfs-reset")) {
+          const existing = target.parentElement?.querySelector(".rfs-card-menu");
+          closeReadForSpeedCardMenus();
+          if (existing) return;
+          const menu = document.createElement("div");
+          menu.className = "rfs-card-menu";
+          const summary = readForSpeedArticleSummary(article);
+          menu.innerHTML = `${summary.completed ? `<button class="rfs-menu-open" data-id="${escapeHtml(article.id)}">Sonuçları Gör</button><button class="rfs-menu-retry" data-id="${escapeHtml(article.id)}">Tekrar Çöz</button>` : ""}<button class="rfs-menu-edit" data-id="${escapeHtml(article.id)}">Başlığı Düzenle</button>${summary.status === "inProgress" ? `<button class="rfs-menu-reset" data-id="${escapeHtml(article.id)}">İlerlemeyi Sıfırla</button>` : ""}<button class="rfs-menu-delete" data-id="${escapeHtml(article.id)}">Sil</button>`;
+          target.parentElement?.classList.add("relative");
+          target.parentElement?.append(menu);
+          return;
+        }
+        closeReadForSpeedCardMenus();
+        if (target.classList.contains("rfs-menu-open")) { readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); return; }
+        if (target.classList.contains("rfs-menu-retry")) { article.progress = null; article.cleanReading = false; saveReadForSpeedArticles(); readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); return; }
+        if (target.classList.contains("rfs-menu-edit")) {
+          const title = prompt("Yeni başlık", article.title);
+          if (title?.trim()) { article.title = title.trim(); article.updatedAt = new Date().toISOString(); saveReadForSpeedArticles(); renderReadForSpeedPage(); }
+          return;
+        }
+        if (target.classList.contains("rfs-menu-reset")) {
+          if (confirm("Bu çalışmanın ilerlemesi sıfırlansın mı?")) { article.progress = null; saveReadForSpeedArticles(); renderReadForSpeedPage(); }
+          return;
+        }
+        if (target.classList.contains("rfs-menu-delete") && confirm("Bu Read for Speed metni silinsin mi?")) {
+          readForSpeedArticles = readForSpeedArticles.filter(item => item.id !== article.id);
+          saveReadForSpeedArticles();
+          renderReadForSpeedPage();
+        }
+      }, true);
+    }
+
+    if (!window.__rfsWordEventsBound) {
+      window.__rfsWordEventsBound = true;
+      document.addEventListener("click", event => {
+        const token = event.target instanceof Element ? event.target.closest("#rfsBody .word-token") : null;
+        if (!token) return;
+        event.preventDefault();
+        event.stopPropagation();
+        openWordModal(token.dataset.word || "", null);
+      });
+    }
+
+    function renderReadForSpeedPage() {
+      pageTitle.textContent = "Read for Speed"; renderMenu(); renderStats();
+      setReadForSpeedFocusMode(!!readForSpeedActiveArticle?.focusMode);
+      const resetDraft = () => { readForSpeedDraft = { title: "", rawText: "" }; readForSpeedMode = "list"; };
+      if (readForSpeedMode === "list") { renderReadForSpeedList(); return; }
+      const summary = article => { const p = readForSpeedProgress(article), nodes = article.contentNodes.filter(node => node.type === "binary_choice"), answers = p.selectedAnswers; const correct = p.checked ? nodes.filter(node => answers[node.questionId] === String(node.correctOption || "").toUpperCase()).length : 0; const wrong = p.checked ? nodes.filter(node => answers[node.questionId] && answers[node.questionId] !== String(node.correctOption || "").toUpperCase()).length : 0; const blank = nodes.length - Object.keys(answers).length; return { total: nodes.length, correct, wrong, blank, percent: p.checked && nodes.length ? Math.round((correct / nodes.length) * 100) : 0 }; };
+      if (readForSpeedMode === "reader" && readForSpeedActiveArticle) {
+        const article = readForSpeedActiveArticle;
+        // Older locally saved articles may predate token answers. Recover them from raw tokens once.
+        const recovered = parseReadForSpeed(article.rawText || "", "");
+        const recoveredAnswers = new Map(recovered.questions.map(question => [question.displayNumber, question.correctOption]));
+        article.contentNodes.forEach(node => { if (node.type === "binary_choice" && !node.correctOption && recoveredAnswers.has(node.displayNumber)) node.correctOption = recoveredAnswers.get(node.displayNumber); });
+        const progress = readForSpeedProgress(article), stats = summary(article), clean = !!article.cleanReading;
+        const readerNodes = clean ? article.contentNodes.map(node => node.type === "text" ? node : { type: "text", content: node.correctOption === "A" ? node.optionA : node.optionB }) : article.contentNodes;
+        const prefs = { fontSize: articleFontSize, lineHeight: articleLineHeight, width: articleContentWidth, surface: articleReadingSurface };
+        appArea.innerHTML = `<section class="mx-auto max-w-6xl ${article.focusMode ? "rfs-focus" : ""}"><header class="sticky top-0 z-20 flex flex-col gap-2 border-b py-2 md:flex-row md:items-center md:justify-between" style="border-color:var(--border-color);background:var(--bg-page)"><button id="rfsBack" class="rounded-xl border px-3 py-2 text-sm font-black" style="border-color:var(--border-color)">← Listeye dön</button><div class="min-w-0"><p class="text-xs font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h2 class="truncate text-xl font-black">${escapeHtml(article.title)}</h2></div><div class="flex flex-wrap gap-2"><button id="rfsCheck" ${progress.checked ? "disabled" : ""} class="rounded-xl bg-blue-600 px-3 py-2 text-sm font-black text-white disabled:opacity-50">${progress.checked ? "Kontrol Edildi ✓" : "Kontrol Et"}</button><button id="rfsClean" class="rounded-xl border px-3 py-2 text-sm font-black">${clean ? "Çalışma Modu" : "Temiz Oku"}</button><button id="rfsFocus" class="rounded-xl border px-3 py-2 text-sm font-black">${article.focusMode ? "Odaktan Çık" : "Odak Modu"}</button><button id="rfsSettings" class="rounded-xl border px-3 py-2 text-sm font-black">Okuma Ayarları</button></div></header><section id="rfsSettingsPanel" hidden class="article-settings-panel" aria-label="Okuma ayarları"><div class="mb-3 flex items-center justify-between"><h4 class="text-sm font-black">Okuma Ayarları</h4><span id="rfsFontValue" class="text-xs font-bold">${prefs.fontSize} px</span></div><label class="block text-xs font-black">Yazı boyutu<input id="rfsFont" class="mt-2 w-full" type="range" min="22" max="28" value="${prefs.fontSize}" /></label><label class="mt-3 block text-xs font-black">Satır aralığı<select id="rfsLine" class="mt-2 w-full rounded-xl border p-2"><option value="1.65">Sıkı</option><option value="1.7">Dengeli</option><option value="1.75">Geniş</option></select></label><label class="mt-3 block text-xs font-black">Metin genişliği<select id="rfsWidth" class="mt-2 w-full rounded-xl border p-2"><option value="920">Dar</option><option value="940">Dengeli</option><option value="980">Geniş</option></select></label><fieldset class="mt-3"><legend class="text-xs font-black">Okuma yüzeyi</legend><div class="mt-2 grid grid-cols-2 gap-2">${["white", "neutral", "warm", "dark"].map(surface => `<button class="rfs-surface rounded-xl border px-2 py-2 text-xs font-black" data-surface="${surface}">${({ white: "Beyaz", neutral: "Yumuşak nötr", warm: "Sıcak", dark: "Koyu" })[surface]}</button>`).join("")}</div></fieldset></section><article id="rfsBody" class="article-body article-surface-${prefs.surface} mx-auto mt-4 rounded-2xl border p-5" style="max-width:${prefs.width}px;--article-font-size:${prefs.fontSize}px;--article-line-height:${prefs.lineHeight};border-color:var(--border-color);white-space:pre-wrap">${readerNodes.map((node, index) => node.type === "text" ? escapeHtml(node.content) : `<span id="rfs-question-${node.questionId}" class="mx-1 inline-flex flex-wrap items-center gap-2 align-middle"><b>(${node.displayNumber})</b>${["A", "B"].map(key => { const selected = progress.selectedAnswers[node.questionId] === key, correct = String(node.correctOption || "").toUpperCase() === key, checked = progress.checked; const color = checked ? (correct ? "border-emerald-600 bg-emerald-100 text-emerald-800" : selected ? "border-red-600 bg-red-100 text-red-800" : "opacity-45") : selected ? "border-blue-600 bg-blue-100 text-blue-800" : ""; const label = checked && correct ? ` ✓ Doğru cevap${!selected ? " · Boş" : ""}` : checked && selected ? " ✕ Yanlış" : ""; return `<button class="rfs-answer rounded-lg border px-2 py-1 text-sm font-black ${color}" data-question="${node.questionId}" data-answer="${key}" ${checked ? "disabled" : ""}>${key} · ${escapeHtml(key === "A" ? node.optionA : node.optionB)}${label}</button>`; }).join("")}</span>`).join("")}</article>${progress.checked ? `<section id="rfsResult" class="mx-auto mt-4 max-w-3xl rounded-2xl border p-4" style="border-color:var(--border-color);background:var(--bg-surface)"><h3 class="text-lg font-black">Sonuç Özeti</h3><div class="mt-3 grid grid-cols-2 gap-2 text-sm md:grid-cols-5"><b>Toplam ${stats.total}</b><b class="text-emerald-700">Doğru ${stats.correct}</b><b class="text-red-700">Yanlış ${stats.wrong}</b><b>Boş ${stats.blank}</b><b>Başarı %${stats.percent}</b></div><p class="mt-2 text-sm">Geçen süre: ${Math.floor((progress.elapsedMs + Date.now() - progress.startedAt) / 60)} sn</p><div class="mt-3 flex flex-wrap gap-2"><button id="rfsWrong" ${stats.wrong ? "" : "disabled"} class="rounded-xl border px-3 py-2 text-sm font-black disabled:opacity-40">${stats.wrong ? "Yanlışlara Git" : "Tüm cevapların doğru."}</button><button id="rfsRetry" class="rounded-xl border px-3 py-2 text-sm font-black">Tekrar Çöz</button><button id="rfsCleanResult" class="rounded-xl border px-3 py-2 text-sm font-black">Temiz Oku</button><button id="rfsListResult" class="rounded-xl border px-3 py-2 text-sm font-black">Listeye Dön</button></div></section>` : ""}</section>`;
+        const toolbar = appArea.querySelector("header");
+        const toolbarTitle = toolbar?.querySelector("h2");
+        const toolbarHeading = toolbarTitle?.parentElement;
+        const toolbarActions = toolbar?.lastElementChild;
+        toolbar?.classList.add("read-for-speed-toolbar");
+        toolbarHeading?.classList.add("read-for-speed-heading");
+        toolbarTitle?.classList.remove("truncate");
+        toolbarTitle?.classList.add("read-for-speed-title");
+        toolbarActions?.classList.add("read-for-speed-actions");
+        document.getElementById("rfsLine").value = String(articleLineHeight); document.getElementById("rfsWidth").value = String(articleContentWidth);
+        document.getElementById("rfsSettings")?.setAttribute("aria-expanded", "false");
+        document.querySelectorAll("#rfsSettingsPanel .rfs-surface").forEach(choice => choice.classList.toggle("is-selected", choice.dataset.surface === articleReadingSurface));
+        enableReadForSpeedWordTokens(document.getElementById("rfsBody"));
+        const choiceById = new Map(article.contentNodes.filter(node => node.type === "binary_choice").map(node => [node.questionId, node]));
+        document.querySelectorAll("#rfsBody .rfs-answer").forEach(button => {
+          const question = choiceById.get(button.dataset.question);
+          if (!question) return;
+          const answer = button.dataset.answer;
+          const selected = progress.selectedAnswers[question.questionId] ?? null;
+          const status = readForSpeedQuestionStatus(question, progress.selectedAnswers);
+          const isCorrectOption = answer === String(question.correctOption || "").toUpperCase();
+          const isSelectedWrong = status === "wrong" && selected === answer;
+          const optionText = answer === "A" ? question.optionA : question.optionB;
+          const icon = progress.checked && isCorrectOption ? "✓ " : progress.checked && isSelectedWrong ? "✕ " : "";
+          button.textContent = `${icon}${answer} · ${optionText}`;
+          button.classList.toggle("rfs-blank-correct", progress.checked && status === "blank" && isCorrectOption);
+          button.setAttribute("aria-label", progress.checked
+            ? `${answer} seçeneği ${optionText}, ${isCorrectOption ? (status === "blank" ? "doğru cevap; soru boş bırakıldı" : "doğru cevap") : isSelectedWrong ? "seçtiğiniz yanlış cevap" : "doğru cevap değil"}`
+            : `${answer} seçeneği ${optionText}${selected === answer ? ", seçili" : ""}`);
+          const group = button.closest("span[id^=rfs-question-]");
+          if (!group) return;
+          group.classList.add("rfs-choice-group");
+          const number = group.querySelector("b");
+          if (number && progress.checked && !number.querySelector(".rfs-question-status")) {
+            const indicator = document.createElement("span");
+            indicator.className = `rfs-question-status is-${status}`;
+            indicator.setAttribute("aria-label", `Soru ${question.displayNumber}, ${status === "correct" ? "doğru" : status === "wrong" ? "yanlış" : "boş"}`);
+            indicator.textContent = status === "correct" ? "✓" : status === "wrong" ? "✕" : "Boş";
+            number.append(" ", indicator);
+          }
+        });
+        const readingBody = document.getElementById("rfsBody");
+        if (!progress.checked && article.pendingCheckConfirmation && readingBody) {
+          const blankCount = article.contentNodes.filter(node => node.type === "binary_choice" && readForSpeedQuestionStatus(node, progress.selectedAnswers) === "blank").length;
+          readingBody.insertAdjacentHTML("beforebegin", `<section class="rfs-check-confirm"><b>${blankCount} soru boş.</b> Yine de cevapları kontrol etmek istiyor musun?<div class="mt-3 flex flex-wrap gap-2"><button id="rfsBlank" class="rounded-xl border px-3 py-2 text-sm font-black">Boşlara Dön</button><button id="rfsConfirmCheck" class="rounded-xl bg-blue-600 px-3 py-2 text-sm font-black text-white">Yine de Kontrol Et</button></div></section>`);
+        }
+        const resultPanel = document.getElementById("rfsResult");
+        if (resultPanel && readingBody) {
+          const answered = stats.total - stats.blank;
+          const outcome = stats.wrong === 0 && stats.blank === 0
+            ? "Tüm cevapların doğru."
+            : stats.wrong === 0
+              ? (answered ? `Cevapladığın ${answered} sorunun tamamı doğru. · ${stats.blank} soru boş.` : `${stats.blank} soru boş.`)
+              : "";
+          resultPanel.classList.add("rfs-result-bar");
+          resultPanel.innerHTML = `<div class="flex flex-wrap gap-3 text-sm"><b>Toplam ${stats.total}</b><b>Cevaplanan ${answered}</b><b class="text-emerald-700">Doğru ${stats.correct}</b><b class="text-red-700">Yanlış ${stats.wrong}</b><b class="text-orange-700">Boş ${stats.blank}</b><b>Başarı %${stats.percent}</b></div><div class="flex flex-wrap items-center gap-2"><button id="rfsRetry" class="rounded-xl border px-3 py-2 text-sm font-black">Tekrar Çöz</button>${stats.blank ? '<button id="rfsBlank" class="rounded-xl border px-3 py-2 text-sm font-black">İlk Boş Soruya Git</button>' : ""}<button id="rfsWrong" ${stats.wrong ? "" : "disabled"} class="rounded-xl border px-3 py-2 text-sm font-black disabled:opacity-40">${stats.wrong ? "Yanlışlara Git" : "Yanlış cevap bulunmuyor."}</button>${outcome ? `<span class="text-xs font-bold" style="color:var(--text-secondary)">${outcome}</span>` : ""}</div>`;
+          readingBody.before(resultPanel);
+        }
+        const persist = () => { progress.elapsedMs += Date.now() - progress.startedAt; progress.startedAt = Date.now(); saveReadForSpeedArticles(); };
+        document.getElementById("rfsBack").onclick = () => { persist(); setReadForSpeedFocusMode(false); readForSpeedMode = "list"; readForSpeedActiveArticle = null; renderReadForSpeedPage(); };
+        document.querySelectorAll(".rfs-answer").forEach(button => button.onclick = () => { progress.selectedAnswers[button.dataset.question] = button.dataset.answer; persist(); renderReadForSpeedPage(); });
+        const check = () => { progress.checked = true; progress.completed = true; const next = summary(article); progress.correctCount = next.correct; progress.incorrectCount = next.wrong; progress.blankCount = next.blank; progress.score = next.percent; progress.updatedAt = new Date().toISOString(); persist(); renderReadForSpeedPage(); };
+        document.getElementById("rfsCheck").onclick = check;
+        document.getElementById("rfsClean").onclick = () => { article.cleanReading = !clean; saveReadForSpeedArticles(); renderReadForSpeedPage(); }; document.getElementById("rfsFocus").onclick = () => { article.focusMode = !article.focusMode; saveReadForSpeedArticles(); renderReadForSpeedPage(); }; document.getElementById("rfsSettings").onclick = () => { const panel = document.getElementById("rfsSettingsPanel"); panel.hidden = !panel.hidden; };
+        if (!window.__rfsEscapeBound) { window.__rfsEscapeBound = true; window.addEventListener("keydown", event => { if (event.key === "Escape" && readForSpeedMode === "reader" && readForSpeedActiveArticle?.focusMode) { readForSpeedActiveArticle.focusMode = false; saveReadForSpeedArticles(); renderReadForSpeedPage(); } }); }
+        const body = document.getElementById("rfsBody"); document.getElementById("rfsLine").value = String(articleLineHeight); document.getElementById("rfsWidth").value = String(articleContentWidth); document.getElementById("rfsFont").oninput = event => { articleFontSize = Number(event.target.value); localStorage.setItem("yds-article-font-size-v1", String(articleFontSize)); body.style.setProperty("--article-font-size", articleFontSize + "px"); document.getElementById("rfsFontValue").textContent = articleFontSize + " px"; }; document.getElementById("rfsLine").onchange = event => { articleLineHeight = Number(event.target.value); localStorage.setItem("yds-article-line-height-v1", String(articleLineHeight)); body.style.setProperty("--article-line-height", String(articleLineHeight)); }; document.getElementById("rfsWidth").onchange = event => { articleContentWidth = Number(event.target.value); localStorage.setItem("yds-article-content-width-v1", String(articleContentWidth)); body.style.maxWidth = articleContentWidth + "px"; }; document.querySelectorAll(".rfs-surface").forEach(button => button.onclick = () => { articleReadingSurface = button.dataset.surface; localStorage.setItem("yds-article-reading-surface-v1", articleReadingSurface); renderReadForSpeedPage(); });
+        document.getElementById("rfsWrong")?.addEventListener("click", () => { const wrong = article.contentNodes.find(node => node.type === "binary_choice" && progress.selectedAnswers[node.questionId] && progress.selectedAnswers[node.questionId] !== node.correctOption); document.getElementById(`rfs-question-${wrong?.questionId}`)?.scrollIntoView({ behavior: "smooth", block: "center" }); }); document.getElementById("rfsRetry")?.addEventListener("click", () => { article.progress = null; article.cleanReading = false; saveReadForSpeedArticles(); renderReadForSpeedPage(); }); document.getElementById("rfsCleanResult")?.addEventListener("click", () => { article.cleanReading = true; renderReadForSpeedPage(); }); document.getElementById("rfsListResult")?.addEventListener("click", () => document.getElementById("rfsBack").click());
+        return;
+      }
+      if (readForSpeedMode === "list") {
+        const totals = readForSpeedArticles.reduce((acc, item) => { const s = summary(item); acc.questions += s.total; acc.completed += Number(!!item.progress?.completed); acc.correct += s.correct; acc.wrong += s.wrong; return acc; }, { questions: 0, completed: 0, correct: 0, wrong: 0 });
+        appArea.innerHTML = `<section class="rounded-2xl border p-5" style="border-color:var(--border-color);background:var(--bg-surface)"><div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"><div><p class="text-sm font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h2 class="text-2xl font-black">Read for Speed</h2><p class="mt-1 font-semibold" style="color:var(--text-secondary)">${readForSpeedArticles.length} metin · ${totals.questions} soru · ${totals.completed} tamamlandı</p></div><button id="rfsNewBtn" class="rounded-xl bg-blue-600 px-4 py-2.5 font-black text-white">Yeni Metin Ekle</button></div><div class="mt-4 grid gap-3 md:grid-cols-2">${readForSpeedArticles.map(article => { const s = summary(article), label = article.progress?.completed ? "Sonuçları Gör" : Object.keys(article.progress?.selectedAnswers || {}).length ? "Devam Et" : "Başla"; return `<article class="rounded-2xl border p-4" style="border-color:var(--border-color);background:var(--bg-surface-secondary)"><div class="flex items-start justify-between"><div><span class="text-xs font-black uppercase text-blue-600">${article.progress?.completed ? "tamamlandı" : Object.keys(article.progress?.selectedAnswers || {}).length ? "devam ediyor" : "yeni"}</span><h3 class="mt-2 text-lg font-black">${escapeHtml(article.title)}</h3><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">${s.total} soru · Doğru ${s.correct} · Yanlış ${s.wrong} · Boş ${s.blank}</p></div><button class="rfs-reset text-lg" data-id="${escapeHtml(article.id)}">⋯</button></div><div class="mt-4 h-1.5 rounded bg-slate-200"><span class="block h-full rounded bg-blue-600" style="width:${s.total ? Math.round((s.total - s.blank) / s.total * 100) : 0}%"></span></div><button class="rfs-open mt-4 rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white" data-id="${escapeHtml(article.id)}">${label}</button></article>`; }).join("") || `<div class="rounded-2xl border border-dashed p-10 text-center">Henüz kayıt yok.</div>`}</div></section>`;
+        document.getElementById("rfsNewBtn").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); }; document.querySelectorAll(".rfs-open").forEach(button => button.onclick = () => { readForSpeedActiveArticle = readForSpeedArticles.find(item => item.id === button.dataset.id); readForSpeedMode = "reader"; renderReadForSpeedPage(); }); document.querySelectorAll(".rfs-reset").forEach(button => button.onclick = () => { const article = readForSpeedArticles.find(item => item.id === button.dataset.id); if (!article) return; const action = prompt("İşlem seçin: d = düzenle, s = sil, r = sıfırla", "r"); if (action === "d") { const title = prompt("Yeni başlık", article.title); if (title?.trim()) { article.title = title.trim(); saveReadForSpeedArticles(); renderReadForSpeedPage(); } } else if (action === "s") { if (confirm("Bu Read for Speed metni silinsin mi?")) { readForSpeedArticles = readForSpeedArticles.filter(item => item.id !== article.id); saveReadForSpeedArticles(); renderReadForSpeedPage(); } } else if (action === "r" && confirm("Bu çalışmanın ilerlemesi sıfırlansın mı?")) { article.progress = null; saveReadForSpeedArticles(); renderReadForSpeedPage(); } }); return;
+      }
+      if (readForSpeedMode === "form") { appArea.innerHTML = `<section class="rounded-2xl border p-5" style="border-color:var(--border-color);background:var(--bg-surface)"><h2 class="text-2xl font-black">Yeni Metin Ekle</h2><p class="mt-1 font-semibold" style="color:var(--text-secondary)">Önerilen biçim: {{1|Even if|Unless|A}}</p><label class="mt-5 block font-black">Başlık<input id="rfsTitle" class="mt-1 w-full rounded-xl border p-3" value="${escapeHtml(readForSpeedDraft.title || "")}" /></label><label class="mt-4 block font-black">Ham metin<textarea id="rfsRaw" class="mt-1 min-h-80 w-full rounded-xl border p-3">${escapeHtml(readForSpeedDraft.rawText || "")}</textarea></label><div class="mt-4 flex gap-2"><button id="rfsPreview" class="rounded-xl bg-blue-600 px-4 py-2.5 font-black text-white">Ön İzle</button><button id="rfsCancel" class="rounded-xl border px-4 py-2.5 font-black">İptal</button></div></section>`; document.getElementById("rfsPreview").onclick = () => { readForSpeedDraft.title = document.getElementById("rfsTitle").value; readForSpeedDraft.rawText = document.getElementById("rfsRaw").value; readForSpeedMode = "preview"; renderReadForSpeedPage(); }; document.getElementById("rfsCancel").onclick = () => { resetDraft(); renderReadForSpeedPage(); }; return; }
+      const parsed = parseReadForSpeed(readForSpeedDraft.rawText, ""); if (parsed.legacyDetected) { appArea.innerHTML = `<section class="rounded-2xl border border-amber-300 bg-amber-50 p-5"><p class="font-black">Bu metindeki seçenek sınırları kesin olarak belirlenemiyor. Güvenli biçim: {{numara|A|B|doğru seçenek}}</p><button id="rfsEdit" class="mt-3 rounded-xl bg-blue-600 px-3 py-2 font-black text-white">Metni Düzenlemeye Dön</button></section>`; document.getElementById("rfsEdit").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); }; return; }
+      const valid = parsed.questions.length && !parsed.errors.length; appArea.innerHTML = `<section class="rounded-2xl border p-5" style="border-color:var(--border-color);background:var(--bg-surface)"><h2 class="text-2xl font-black">İçe Aktarma Ön İzlemesi</h2><p class="mt-1 font-semibold">Bulunan seçim: ${parsed.questions.length} · Geçerli seçim: ${valid ? parsed.questions.length : 0}</p>${parsed.errors.length ? `<ul class="mt-3 list-disc text-red-700">${parsed.errors.map(error => `<li>${escapeHtml(error)}</li>`).join("")}</ul>` : ""}<div class="mt-4 rounded-xl border p-4" style="white-space:pre-wrap">${parsed.nodes.map(node => node.type === "text" ? escapeHtml(node.content) : `<span class="mx-1 inline-flex gap-2 rounded border px-2 py-1">(${node.displayNumber}) [A: ${escapeHtml(node.optionA)}] [B: ${escapeHtml(node.optionB)}]</span>`).join("")}</div><div class="mt-4 flex gap-2"><button id="rfsSave" ${valid ? "" : "disabled"} class="rounded-xl bg-blue-600 px-4 py-2.5 font-black text-white">Yerel Olarak Kaydet</button><button id="rfsBackForm" class="rounded-xl border px-4 py-2.5 font-black">Geri Dön</button></div></section>`; document.getElementById("rfsBackForm").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); }; document.getElementById("rfsSave").onclick = () => { if (!valid) return; const id = `read-for-speed-${Date.now()}`, now = new Date(), article = { id, title: readForSpeedDraft.title.trim() || "Başlıksız çalışma", source: null, articleNumber: null, difficulty: null, rawText: readForSpeedDraft.rawText, contentNodes: parsed.nodes.map(node => node.type === "binary_choice" ? { ...node, questionId: `${id}:${node.questionKey}` } : node), questionCount: parsed.questions.length, createdAt: now.toISOString(), updatedAt: now.toISOString() }; readForSpeedArticles.push(article); saveReadForSpeedArticles(); readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); };
+    }
+
     function setView(view) {
       activeView = view;
+      if (view !== "read-for-speed") setReadForSpeedFocusMode(false);
       if (view !== "articles") {
         articleSavedPanelOpen = false;
         setArticleFocusMode(false);
@@ -2251,6 +3052,7 @@
       if (view === "solve") renderQuestion();
       if (view === "upload") renderUploadPage();
       if (view === "articles") renderArticlesPage();
+      if (view === "read-for-speed") renderReadForSpeedPage();
       if (view === "words") renderWordbook();
       if (view === "notes") renderNotebook();
       if (view === "study") renderWordStudy();
@@ -2273,6 +3075,7 @@
         { id: "exams", title: "Denemeler", icon: "✎", count: uploadedDocuments.length + " kaynak", items: uploadedDocuments },
         { id: "wrong", title: "Yanlış Sorular", icon: "↻", count: wrongQuestions().length + " soru", items: [] },
         { id: "articles", title: "Okuma Merkezi", icon: "▰", count: articles.length + " içerik", items: articles },
+        { id: "read-for-speed", title: "Read for Speed", icon: "◴", count: readForSpeedArticles.length + " metin", items: [] },
         { id: "words", title: "Kelime Defteri", icon: "▣", count: wordbook.length + " kelime", items: [] },
         { id: "notes", title: "Not Defteri", icon: "▧", count: notes.length + " not", items: [] },
       ];
@@ -2293,7 +3096,7 @@
               countHtml +
             '</button>' +
           '</div>' +
-          (expanded && module.id !== "words" && module.id !== "notes" && module.id !== "articles" && module.id !== "yds" && module.id !== "exams" && module.id !== "wrong" ? '<div class="mx-2 mb-2 space-y-1 rounded-xl border border-blue-100 bg-blue-50/70 p-2" data-module-items="' + module.id + '"></div>' : "");
+          (expanded && module.id !== "words" && module.id !== "notes" && module.id !== "articles" && module.id !== "read-for-speed" && module.id !== "yds" && module.id !== "exams" && module.id !== "wrong" ? '<div class="mx-2 mb-2 space-y-1 rounded-xl border border-blue-100 bg-blue-50/70 p-2" data-module-items="' + module.id + '"></div>' : "");
         categoryMenu.appendChild(wrapper);
         const itemsContainer = wrapper.querySelector("[data-module-items]");
         if (itemsContainer) renderModuleItems(itemsContainer, module);
@@ -2308,6 +3111,7 @@
             activeArticleId = "__list__";
             setView("articles");
           }
+          else if (id === "read-for-speed") setView("read-for-speed");
           else if (id === "words") setView("words");
           else setView(id);
         });
@@ -2321,6 +3125,7 @@
             activeArticleId = "__list__";
             setView("articles");
           }
+          else if (id === "read-for-speed") setView("read-for-speed");
           else if (id === "words") setView("words");
           else setView(id);
         });
@@ -2360,6 +3165,8 @@
       stats.correct = 0;
       stats.wrong = 0;
       solveMode = "document";
+      questionSolvingSessionId = createActivitySession("question-solving");
+      localStorage.setItem(STORAGE_QUESTION_SESSION, questionSolvingSessionId);
       wrongReviewIds = [];
       activeView = "solve";
       updateViewButtons();
@@ -2414,90 +3221,89 @@
       return !!item && (item.needsReview || item.lastRating === "hard" || item.lastRating === "again" || wordStatus(item).key === "review");
     }
 
+    function isMediumOrHardPoolWord(item) {
+      const difficulty = String(item?.difficulty || "").trim().toLocaleLowerCase("tr-TR");
+      if (["medium", "hard", "orta", "zor"].includes(difficulty)) return true;
+      return ["Orta", "Zor"].includes(dailyWordDifficulty(item).label);
+    }
+
+    function dailyWordPool() {
+      const stored = loadJson(STORAGE_DAILY_WORD_POOL, null);
+      const byId = new Map(wordbook.map(item => [item.id, item]));
+      const eligibleIds = wordbook.filter(isMediumOrHardPoolWord).map(item => item.id);
+      const eligibleSet = new Set(eligibleIds);
+      const existingIds = Array.isArray(stored?.wordIds) ? stored.wordIds.filter(id => eligibleSet.has(id) && byId.has(id)) : [];
+      const wordIds = [...existingIds, ...eligibleIds.filter(id => !existingIds.includes(id))];
+      const previousIndex = Array.isArray(stored?.wordIds) ? stored.wordIds.indexOf(stored.currentWordId) : 0;
+      const currentWordId = eligibleSet.has(stored?.currentWordId) ? stored.currentWordId : wordIds[Math.min(Math.max(previousIndex, 0), Math.max(wordIds.length - 1, 0))] || null;
+      const pool = { wordIds, currentWordId, currentIndex: Math.max(0, wordIds.indexOf(currentWordId)), updatedAt: new Date().toISOString() };
+      saveJson(STORAGE_DAILY_WORD_POOL, pool);
+      return pool;
+    }
+
     function dailyWordItems() {
-      const date = todayKey();
-      const dailyLimit = 3;
-      const hardWords = wordbook.filter(isHardDailyWord);
-      const hardById = new Map(hardWords.map(item => [item.id, item]));
-      const stored = loadJson(STORAGE_DAILY_HARD_WORDS, null);
-      if (stored?.date === date) {
-        const existing = (stored.wordIds || []).map(id => hardById.get(id)).filter(Boolean).slice(0, dailyLimit);
-        if (existing.length || !hardWords.length) return existing;
-      }
-      if (!hardWords.length) {
-        saveJson(STORAGE_DAILY_HARD_WORDS, { date, wordIds: [], completedIds: [], shownAt: stored?.shownAt || {} });
-        return [];
-      }
-      const shownAt = { ...(stored?.shownAt || {}) };
-      const previousIds = new Set(stored?.wordIds || []);
-      const sorted = [...hardWords].sort((a, b) => {
-        const aShown = shownAt[a.id] || "";
-        const bShown = shownAt[b.id] || "";
-        if (aShown !== bShown) return aShown.localeCompare(bShown);
-        return new Date(a.dueAt || a.updatedAt || a.createdAt || 0) - new Date(b.dueAt || b.updatedAt || b.createdAt || 0) ||
-          String(a.word || "").localeCompare(String(b.word || ""), "tr");
-      });
-      const nonRepeats = sorted.filter(item => !previousIds.has(item.id));
-      const source = nonRepeats.length >= Math.min(dailyLimit, hardWords.length) ? nonRepeats : sorted;
-      const selected = source.slice(0, Math.min(dailyLimit, hardWords.length));
-      selected.forEach(item => { shownAt[item.id] = date; });
-      saveJson(STORAGE_DAILY_HARD_WORDS, {
-        date,
-        wordIds: selected.map(item => item.id),
-        completedIds: [],
-        shownAt,
-      });
-      return selected;
+      const pool = dailyWordPool();
+      const byId = new Map(wordbook.map(item => [item.id, item]));
+      return pool.wordIds.map(id => byId.get(id)).filter(Boolean);
+    }
+
+    function saveDailyWordPool(pool) {
+      pool.updatedAt = new Date().toISOString();
+      saveJson(STORAGE_DAILY_WORD_POOL, pool);
     }
 
     function renderDailyWordPanel() {
+      const pool = dailyWordPool();
       const words = dailyWordItems();
       if (!words.length) {
         return '<section class="mb-4 rounded-2xl border border-dashed border-blue-200 bg-blue-50/60 p-4">' +
           '<div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">' +
             '<div>' +
-              '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Günün Kelimeleri</p>' +
-              '<h4 class="mt-1 text-xl font-black text-slate-950">Bugün tekrar bekleyen zor kelime yok.</h4>' +
-              '<p class="mt-1 text-sm font-semibold text-slate-500">Zor olarak işaretlediğin kelimeler burada günlük tekrar listesine alınacak.</p>' +
+              '<p class="text-sm font-black text-slate-600">Orta veya zor olarak işaretlenmiş kelime bulunmuyor.</p>' +
             '</div>' +
-            '<button id="dailyWordListBtn" class="rounded-xl border border-blue-200 bg-white px-3 py-2 text-sm font-black text-blue-700 hover:bg-blue-50">Kelime Defterine Git</button>' +
           '</div>' +
         '</section>';
       }
-      return '<section class="mb-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
-        '<div class="mb-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">' +
+      const index = Math.max(0, words.findIndex(word => word.id === pool.currentWordId));
+      const item = words[index];
+      const itemDifficulty = dailyWordDifficulty(item);
+      const synonymText = wordMeaningNote(item);
+      const example = wordExample(item);
+      return '<section class="mb-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm" aria-labelledby="dailyWordPoolTitle">' +
+        '<div class="mb-2 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">' +
           '<div>' +
-            '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Günün Kelimeleri</p>' +
-            '<h4 class="mt-1 text-xl font-black text-slate-950">Bugün tekrar edeceğin ' + words.length + ' kelime</h4>' +
-            '<p class="mt-1 text-sm font-semibold text-slate-500">Daha önce zor olarak işaretlediğin kelimelerden seçildi.</p>' +
+            '<h4 id="dailyWordPoolTitle" class="text-xs font-black uppercase tracking-wide text-blue-500">Günün Kelimeleri</h4>' +
           '</div>' +
           '<div class="flex flex-wrap items-center gap-2">' +
-            '<button id="dailyWordListBtn" class="rounded-xl px-3 py-2 text-sm font-black text-slate-600 hover:bg-slate-100">Kelime Defteri</button>' +
+            '<span class="rounded-full border border-slate-200 bg-white px-2 py-1 text-xs font-black text-slate-500">' + (index + 1) + ' / ' + words.length + '</span>' +
+            '<button id="dailyWordShuffleBtn" class="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs font-black text-slate-600 hover:border-blue-300 hover:text-blue-700">↻ Karıştır</button>' +
           '</div>' +
         '</div>' +
-        '<div class="grid gap-3 md:grid-cols-3">' + words.map(item => {
-          const itemDifficulty = dailyWordDifficulty(item);
-          const synonymText = wordMeaningNote(item);
-          return '<article class="rounded-xl border border-slate-200 bg-slate-50 p-3">' +
-            '<div class="mb-2 flex items-center justify-between gap-2">' +
-              '<span class="rounded-full border px-2 py-0.5 text-[11px] font-black ' + itemDifficulty.className + '">' + itemDifficulty.label + '</span>' +
-              '<span class="text-[11px] font-black uppercase tracking-wide text-slate-400">Kelime</span>' +
-            '</div>' +
-            '<h5 class="truncate text-lg font-black text-slate-950">' + escapeHtml(item.word) + '</h5>' +
-            '<div class="mt-2 space-y-1.5">' +
-              '<p class="line-clamp-2 text-sm font-black text-blue-700">' + escapeHtml(wordTurkish(item) || "Anlam eklenmemiş") + '</p>' +
-              (synonymText ? '<p class="line-clamp-1 text-xs font-bold text-slate-600" title="' + escapeHtml(synonymText) + '">Yakın anlamlılar: ' + escapeHtml(synonymText) + '</p>' : '') +
-            '</div>' +
-          '</article>';
-        }).join("") + '</div>' +
+        '<div class="daily-word-carousel-stage">' +
+          '<button id="dailyWordPrevBtn" aria-label="Önceki kelime" class="daily-word-arrow daily-word-arrow--previous z-10 rounded-full border border-slate-300 bg-white text-2xl leading-none text-blue-700">‹</button>' +
+          '<article class="daily-word-card min-w-0 w-full rounded-xl border border-slate-200 bg-slate-50 p-4"><div class="flex h-full min-w-0 flex-col justify-center">' +
+            '<div class="flex items-center gap-2"><div class="flex flex-wrap gap-1.5"><span class="rounded-full border px-2 py-0.5 text-[10px] font-black ' + itemDifficulty.className + '">' + itemDifficulty.label + '</span>' + (item.wordType || item.partOfSpeech ? '<span class="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-black text-slate-500">' + escapeHtml(item.wordType || item.partOfSpeech) + '</span>' : '') + '</div></div>' +
+            '<h5 class="mt-2 text-[32px] font-extrabold tracking-tight text-slate-950">' + escapeHtml(item.word) + '</h5><p class="mt-0.5 line-clamp-2 text-[20px] font-bold text-blue-700">' + escapeHtml(wordTurkish(item) || "") + '</p>' +
+            (example ? '<div class="mt-2 border-l-[3px] border-blue-500 pl-2.5"><p class="line-clamp-3 text-[15px] font-bold leading-6 text-slate-700">' + escapeHtml(example) + '</p>' + (item.contextTranslation ? '<p class="mt-1 text-xs font-semibold text-slate-500">' + escapeHtml(item.contextTranslation) + '</p>' : '') + '</div>' : '') +
+            (synonymText ? '<p class="daily-word-synonyms mt-2 line-clamp-2 text-xs font-medium text-slate-700"><span class="daily-word-synonyms-label font-semibold text-slate-800">Yakın anlamlılar:</span> ' + escapeHtml(synonymText) + '</p>' : '') +
+          '</div></article>' +
+          '<button id="dailyWordNextBtn" aria-label="Sonraki kelime" class="daily-word-arrow daily-word-arrow--next z-10 rounded-full border border-slate-300 bg-white text-2xl leading-none text-blue-700">›</button>' +
+        '</div>' +
       '</section>';
     }
 
     function bindDailyWordPanel() {
-      const addButton = document.getElementById("dailyWordAddBtn");
-      const listButton = document.getElementById("dailyWordListBtn");
-      if (addButton) addButton.addEventListener("click", openBlankWordModal);
-      if (listButton) listButton.addEventListener("click", () => setView("words"));
+      const change = direction => {
+        const pool = dailyWordPool();
+        if (!pool.wordIds.length) return;
+        const currentIndex = pool.wordIds.indexOf(pool.currentWordId);
+        pool.currentIndex = ((currentIndex < 0 ? 0 : currentIndex) + direction + pool.wordIds.length) % pool.wordIds.length;
+        pool.currentWordId = pool.wordIds[pool.currentIndex];
+        saveDailyWordPool(pool); renderHomePage();
+      };
+      document.getElementById("dailyWordPrevBtn")?.addEventListener("click", () => change(-1));
+      document.getElementById("dailyWordNextBtn")?.addEventListener("click", () => change(1));
+      document.getElementById("dailyWordShuffleBtn")?.addEventListener("click", () => { const pool = dailyWordPool(); const activeId = pool.currentWordId; const rest = pool.wordIds.filter(id => id !== activeId).sort(() => Math.random() - .5); pool.wordIds = activeId ? [activeId, ...rest] : rest; pool.currentWordId = activeId || pool.wordIds[0] || null; pool.currentIndex = Math.max(0, pool.wordIds.indexOf(pool.currentWordId)); saveDailyWordPool(pool); renderHomePage(); });
     }
 
     function startDailyWordStudy() {
@@ -2516,6 +3322,10 @@
       wordStudyIndex = 0;
       wordCardRevealed = false;
       wordQuizQuestion = null;
+      if (fresh || !wordStudySessionId) {
+        wordStudySessionId = createActivitySession("word-study");
+        localStorage.setItem(STORAGE_WORD_STUDY_SESSION, wordStudySessionId);
+      }
       setView("study");
     }
 
@@ -2528,7 +3338,7 @@
     }
 
     function dailyTaskActionLabel(key, task, count) {
-      if (task?.completed || count >= Number(task?.target || 0)) return "Tamamlandı ✓";
+      if (task?.completed || count >= Number(task?.target || 0)) return "";
       if (key === "pastExamReading") return count > 0 ? "Devam Et" : "Parça Seç";
       if (key === "externalReading") return count > 0 ? "Devam Et" : "Metin Seç";
       return count > 0 ? "Devam Et" : "Başla";
@@ -2575,7 +3385,7 @@
                 '</div>' +
                 '<div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full ' + (completed ? 'bg-emerald-600' : 'bg-blue-600') + '" style="width:' + percent + '%"></div></div>' +
               '</div>' +
-              '<button class="daily-task-start daily-task-action ' + (completed ? 'border border-emerald-200 bg-white text-emerald-700' : 'bg-blue-600 text-white hover:bg-blue-500') + '" data-task="' + key + '">' + dailyTaskActionLabel(key, task, count) + '</button>' +
+              (completed ? '' : '<button class="daily-task-start daily-task-action bg-blue-600 text-white hover:bg-blue-500" data-task="' + key + '">' + dailyTaskActionLabel(key, task, count) + '</button>') +
             '</div>' +
           '</article>';
         }).join("") + '</div>' +
@@ -2583,29 +3393,34 @@
     }
 
     function weeklySummary() {
-      const rows = [dailyProgress, ...dailyHistory].filter(Boolean);
-      const cutoff = new Date(todayKey() + "T12:00:00");
-      cutoff.setDate(cutoff.getDate() - 6);
-      const recent = rows.filter(item => new Date(item.date + "T12:00:00") >= cutoff);
+      const today = new Date(todayKey() + "T12:00:00");
+      const day = today.getDay() || 7; // Monday is 1, Sunday is 7.
+      const monday = new Date(today);
+      monday.setDate(today.getDate() - day + 1);
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      const start = localDateKey(monday);
+      const end = localDateKey(sunday);
+      const recent = weeklyActivity.filter(item => item.date >= start && item.date <= end);
       return {
-        words: recent.reduce((sum, item) => sum + taskProgressCount(item.flashcards || {}), 0),
-        questions: recent.reduce((sum, item) => sum + taskProgressCount(item.multipleChoice || {}) + taskProgressCount(item.difficultWords || {}), 0),
-        readings: recent.reduce((sum, item) => sum + taskProgressCount(item.pastExamReading || {}) + taskProgressCount(item.externalReading || {}), 0),
-        activeDays: recent.filter(item => taskCompletionRatio(item) > 0).length,
+        words: recent.filter(item => item.category === "word").length,
+        questions: recent.filter(item => item.category === "question").length,
+        readings: recent.filter(item => item.category === "reading").length,
+        activeDays: new Set(recent.map(item => item.date)).size,
       };
     }
 
     function renderWeeklySummaryPanel() {
       const summary = weeklySummary();
-      const rowsByDate = new Map([dailyProgress, ...dailyHistory].filter(Boolean).map(item => [item.date, item]));
+      const activeDates = new Set(weeklyActivity.map(item => item.date));
       const dots = Array.from({ length: 7 }, (_, index) => {
-        const date = new Date(todayKey() + "T12:00:00");
-        date.setDate(date.getDate() - (6 - index));
-        const key = date.toISOString().slice(0, 10);
-        const row = rowsByDate.get(key);
-        const ratio = row ? taskCompletionRatio(row) : 0;
-        const color = ratio >= 100 ? "bg-emerald-500" : ratio > 0 ? "bg-blue-500" : "bg-slate-300";
-        return '<span class="h-2.5 w-2.5 rounded-full ' + color + '" title="' + escapeHtml(formatTurkishDate(key)) + ' · %' + ratio + '"></span>';
+        const today = new Date(todayKey() + "T12:00:00");
+        const day = today.getDay() || 7;
+        const date = new Date(today);
+        date.setDate(today.getDate() - day + 1 + index);
+        const key = localDateKey(date);
+        const active = activeDates.has(key);
+        return '<span class="h-2.5 w-2.5 rounded-full ' + (active ? "bg-blue-500" : "bg-slate-300") + '" title="' + escapeHtml(formatTurkishDate(key)) + (active ? ' · aktif' : ' · çalışma yok') + '"></span>';
       }).join("");
       const cards = [
         ["Çalışılan kelime", summary.words],
@@ -2742,6 +3557,7 @@
 
     function renderResourceHub(moduleId) {
       const meta = moduleMeta(moduleId);
+      const sortedItems = sortedSourceDocuments(meta.items);
       pageTitle.textContent = meta.title;
       renderMenu();
       renderStats();
@@ -2750,24 +3566,23 @@
             '<div class="mb-3 flex items-center justify-between gap-3">' +
               '<div class="flex items-center gap-2">' +
                 '<h3 class="text-base font-black text-slate-950">Kaynaklar</h3>' +
-                '<span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-black text-slate-500">' + meta.items.length + ' kayıt</span>' +
+                '<span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-black text-slate-500">' + sortedItems.length + ' kayıt</span>' +
               '</div>' +
               '<div class="flex shrink-0 gap-2">' +
                 '<button id="hubAddBtn" class="rounded-xl border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-black text-blue-700 hover:bg-blue-100">' + meta.primaryLabel + '</button>' +
               '</div>' +
             '</div>' +
             '<div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">' +
-              (meta.items.length ? meta.items.map(item => {
-                const solvedCount = documentSolvedCount(item);
-                const isComplete = item.questionCount > 0 && solvedCount >= item.questionCount;
-                const actionLabel = isComplete ? "Sonuçları Gör" : solvedCount > 0 ? "Devam Et" : "Başla";
-                return '<article class="rounded-xl border p-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ' + (isComplete ? 'border-emerald-200 bg-emerald-50/50 hover:border-emerald-300' : 'border-slate-200 bg-slate-50 hover:border-blue-300 hover:bg-white') + '">' +
+              (sortedItems.length ? sortedItems.map(({ item, progress }) => {
+                const actionLabel = progress.isCompleted ? "Sonuçları Gör" : progress.answeredCount > 0 ? "Devam Et" : "Başla";
+                return '<article class="rounded-xl border p-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ' + (progress.isCompleted ? 'border-emerald-200 bg-emerald-50/50 hover:border-emerald-300' : 'border-slate-200 bg-slate-50 hover:border-blue-300 hover:bg-white') + '">' +
                   '<div class="flex items-start justify-between gap-3">' +
                     '<button class="hub-document-card min-w-0 flex-1 text-left" data-id="' + escapeHtml(item.id) + '"><span class="block truncate text-base font-extrabold text-slate-950">' + escapeHtml(documentDisplayTitle(item)) + '</span></button>' +
-                    (item.builtIn ? '' : '<div class="document-menu relative shrink-0"><button class="document-menu-toggle flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-xl font-black text-slate-500 hover:bg-slate-50" aria-label="' + escapeHtml(documentDisplayTitle(item)) + ' işlemleri" data-id="' + escapeHtml(item.id) + '">⋯</button><div class="document-action-menu absolute right-0 top-10 z-10 min-w-32 rounded-xl border border-slate-200 bg-white p-1 shadow-xl shadow-slate-200"><button class="edit-document block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50" data-id="' + escapeHtml(item.id) + '">Düzenle</button><button class="delete-uploaded-pdf block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-red-700 hover:bg-red-50" data-id="' + escapeHtml(item.id) + '">Sil</button></div></div>') +
+                    '<div class="document-menu relative shrink-0"><button class="document-menu-toggle flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-xl font-black text-slate-500 hover:bg-slate-50" aria-label="' + escapeHtml(documentDisplayTitle(item)) + ' işlemleri" data-id="' + escapeHtml(item.id) + '">⋯</button><div class="document-action-menu absolute right-0 top-10 z-10 min-w-52 rounded-xl border border-slate-200 bg-white p-1 shadow-xl shadow-slate-200"><button class="toggle-document-completion block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50" data-id="' + escapeHtml(item.id) + '">' + (progress.isCompleted ? 'Aktife Geri Al' : 'Tamamlandı Olarak İşaretle') + '</button>' + (item.builtIn ? '' : '<button class="edit-document block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50" data-id="' + escapeHtml(item.id) + '">Düzenle</button><button class="delete-uploaded-pdf block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-red-700 hover:bg-red-50" data-id="' + escapeHtml(item.id) + '">Sil</button>') + '</div></div>' +
                   '</div>' +
-                  (isComplete ? '<span class="mt-3 inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700">Tamamlandı</span>' : '') +
-                  '<div class="mt-3 space-y-1 text-sm font-semibold text-slate-500"><p>Eklendi: ' + escapeHtml(documentAddedAtLabel(item)) + '</p><p>İlerleme: ' + solvedCount + ' / ' + item.questionCount + ' soru</p></div>' +
+                  (progress.isCompleted ? '<span class="mt-3 inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700">Tamamlandı</span>' : '') +
+                  '<div class="mt-3 space-y-1 text-sm font-semibold text-slate-500"><p>Eklendi: ' + escapeHtml(documentAddedAtLabel(item)) + '</p><p>İlerleme: ' + progress.answeredCount + ' / ' + progress.totalCount + ' soru · %' + progress.progressPercent + '</p></div>' +
+                  '<div class="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-200"><span class="block h-full rounded-full ' + (progress.isCompleted ? 'bg-emerald-500' : 'bg-blue-600') + '" style="width:' + progress.progressPercent + '%"></span></div>' +
                   '<div class="mt-3 border-t border-slate-200 pt-3"><button class="hub-document-card rounded-lg bg-blue-600 px-3 py-2 text-xs font-black text-white hover:bg-blue-500" data-id="' + escapeHtml(item.id) + '">' + actionLabel + '</button></div>' +
                 '</article>';
               }).join("") : '<div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center md:col-span-2 xl:col-span-3"><p class="text-base font-extrabold text-slate-700">' + escapeHtml(meta.empty) + '</p><p class="mt-2 text-sm font-medium text-slate-500">Kaynaklar başlığının sağındaki ekleme düğmesiyle yeni kaynak ekleyebilirsin.</p></div>') +
@@ -2783,6 +3598,22 @@
             if (menu !== button.nextElementSibling) menu.classList.remove("is-open");
           });
           button.nextElementSibling.classList.toggle("is-open");
+        });
+      });
+      document.querySelectorAll(".toggle-document-completion").forEach(button => {
+        button.addEventListener("click", event => {
+          event.stopPropagation();
+          const documentInfo = documents.find(item => item.id === button.dataset.id);
+          if (!documentInfo) return;
+          const progress = sourceProgressForDocument(documentInfo);
+          if (progress.isCompleted) {
+            setDocumentManualCompletion(documentInfo, false);
+          } else {
+            const blank = progress.totalCount - progress.answeredCount;
+            if (blank && !confirm("Bu kaynakta " + blank + " cevaplanmamış soru bulunuyor. Yine de tamamlandı olarak işaretlemek istiyor musunuz?")) return;
+            setDocumentManualCompletion(documentInfo, true);
+          }
+          renderResourceHub(moduleId);
         });
       });
       document.querySelectorAll(".edit-document").forEach(button => {
@@ -2847,9 +3678,11 @@
           articles,
           notes,
           wrongQuestionIds,
+          examProgress,
           dailyGoals,
           dailyProgress,
           dailyHistory,
+          weeklyActivity,
           dailyHardWords: loadJson(STORAGE_DAILY_HARD_WORDS, null),
           preferences: {
             theme: localStorage.getItem(STORAGE_THEME) || "light",
@@ -2858,6 +3691,24 @@
           },
         },
       };
+    }
+
+    function latestLocalUpdatedAt() {
+      const values = [
+        dailyProgress?.updatedAt,
+        ...dailyHistory.map(item => item?.updatedAt || item?.archivedAt),
+        ...weeklyActivity.map(item => item?.updatedAt || item?.completedAt),
+        ...wordbook.map(item => item?.updatedAt || item?.createdAt),
+        ...articles.map(item => item?.updatedAt || item?.createdAt),
+        ...Object.values(examProgress?.exams || {}).map(item => item?.updatedAt),
+      ].map(value => Date.parse(value || 0) || 0);
+      return Math.max(0, ...values);
+    }
+
+    function backupHasStudyData(payload) {
+      const data = payload?.data || payload || {};
+      return [data.wordbook, data.articles, data.weeklyActivity, data.dailyHistory, data.wrongQuestionIds]
+        .some(value => Array.isArray(value) && value.length) || Object.keys(data.examProgress?.exams || {}).length > 0;
     }
 
     function downloadBackupJson() {
@@ -2884,9 +3735,11 @@
         articles: Array.isArray(data.articles) ? data.articles : [],
         notes: Array.isArray(data.notes) ? data.notes.map(normalizeNote) : [],
         wrongQuestionIds: Array.isArray(data.wrongQuestionIds) ? data.wrongQuestionIds : [],
+        examProgress: normalizeExamProgress(data.examProgress || {}),
         dailyGoals: normalizeDailyGoals(data.dailyGoals || {}),
         dailyProgress: data.dailyProgress || null,
         dailyHistory: Array.isArray(data.dailyHistory) ? data.dailyHistory : [],
+        weeklyActivity: normalizeWeeklyActivity(data.weeklyActivity || []),
         dailyHardWords: data.dailyHardWords || null,
         preferences: data.preferences || {},
       };
@@ -2901,9 +3754,12 @@
       articles = normalized.articles.map(normalizeArticleRecord);
       notes = normalized.notes;
       wrongQuestionIds = normalized.wrongQuestionIds;
+      examProgress = normalized.examProgress;
       dailyGoals = normalizeDailyGoals(normalized.dailyGoals);
       dailyHistory = normalized.dailyHistory;
       dailyProgress = normalizeDailyProgress(normalized.dailyProgress);
+      weeklyActivity = normalized.weeklyActivity;
+      migrateLegacyWeeklyActivity();
       if (normalized.preferences.theme) localStorage.setItem(STORAGE_THEME, normalized.preferences.theme);
       if (normalized.preferences.wordSessionSize) {
         wordSessionSize = normalized.preferences.wordSessionSize;
@@ -2920,6 +3776,8 @@
       saveJson(STORAGE_DAILY_GOALS, dailyGoals);
       saveJson(STORAGE_DAILY_PROGRESS, dailyProgress);
       saveJson(STORAGE_DAILY_HISTORY, dailyHistory);
+      saveWeeklyActivity(false);
+      saveExamProgress();
       if (normalized.dailyHardWords) saveJson(STORAGE_DAILY_HARD_WORDS, normalized.dailyHardWords);
       saveWrongQuestions();
       rebuildBank();
@@ -3053,6 +3911,16 @@
         if (!response.ok) throw new Error(await response.text() || "Bulut yedeği okunamadı.");
         const rows = await response.json();
         if (!rows.length || !rows[0].payload) throw new Error("Bu eşitleme koduyla kayıtlı bulut yedeği bulunamadı.");
+        if (!backupHasStudyData(rows[0].payload) && latestLocalUpdatedAt() > 0) {
+          supabaseStatus("Boş bulut kaydı yereldeki çalışma verilerinin üzerine yazılmadı.", "success");
+          return;
+        }
+        const cloudUpdatedAt = Date.parse(rows[0].updated_at || rows[0].payload?.exportedAt || 0) || 0;
+        const localUpdatedAt = latestLocalUpdatedAt();
+        if (localUpdatedAt > cloudUpdatedAt) {
+          supabaseStatus("Yerel kayıt bulut yedeğinden daha yeni; eski/boş bulut kaydı çalışma verilerinin üzerine yazılmadı.", "success");
+          return;
+        }
         restoreBackupPayload(rows[0].payload);
       } catch (error) {
         supabaseStatus(error.message || "Bulut yedeği geri yüklenemedi.", "error");
@@ -3234,6 +4102,7 @@
       documentProgress = {};
       dailyHistory = [];
       dailyProgress = createDailyProgress();
+      weeklyActivity = [];
       wordbook = wordbook.map(item => ({
         ...item,
         seen: 0,
@@ -3265,6 +4134,7 @@
       saveJson(STORAGE_DOCUMENT_PROGRESS, documentProgress);
       saveJson(STORAGE_DAILY_HISTORY, dailyHistory);
       saveJson(STORAGE_DAILY_PROGRESS, dailyProgress);
+      saveWeeklyActivity(false);
       saveJson(STORAGE_WORDS, wordbook);
       saveJson(STORAGE_ARTICLES, articles);
       saveJson("yds-word-session-ids-v1", wordSessionIds);
@@ -3279,6 +4149,8 @@
       if (!items.length) return;
       wrongReviewIds = items.map(item => item.id);
       solveMode = "wrong";
+      questionSolvingSessionId = createActivitySession("question-solving");
+      localStorage.setItem(STORAGE_QUESTION_SESSION, questionSolvingSessionId);
       currentIndex = 0;
       answered = false;
       stats.correct = 0;
@@ -3371,6 +4243,17 @@
       else if (activeView === "words") bankInfo.textContent = wordbook.length + " kayıtlı kelime";
       else if (activeView === "study") bankInfo.textContent = "Aktif çalışma oturumu · " + activeWordSessionSize(studyWords().length) + " kelime";
       else if (activeView === "articles") bankInfo.textContent = articles.length + " içerik";
+      else if (activeView === "read-for-speed") {
+        const summaries = readForSpeedArticles.map(readForSpeedArticleSummary);
+        const totalChoices = summaries.reduce((sum, item) => sum + item.questionCount, 0);
+        const completed = summaries.filter(item => item.completed);
+        const correct = completed.reduce((sum, item) => sum + item.correctCount, 0);
+        const wrong = completed.reduce((sum, item) => sum + item.incorrectCount, 0);
+        const rate = correct + wrong ? Math.round(correct / (correct + wrong) * 100) : 0;
+        bankInfo.textContent = `${summaries.length} metin · ${totalChoices} seçim · ${completed.length} tamamlandı`;
+        headerStats.className = "grid grid-cols-3 gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm";
+        headerStats.innerHTML = statCard("Doğru", correct, "green") + statCard("Yanlış", wrong, "red") + statCard("Başarı", "%" + rate, "blue");
+      }
       else if (activeView === "notes") bankInfo.textContent = notes.length + " not";
       else if (["yds", "eyds", "yokdil", "exams"].includes(activeView)) bankInfo.textContent = moduleMeta(activeView).description;
       else bankInfo.textContent = documents.length + " bölüm · " + questionBank.length + " soru · " + wordbook.length + " kelime kartı";
@@ -3391,6 +4274,8 @@
       } else if (["articles", "notes"].includes(activeView)) {
         headerStats.className = "hidden";
         headerStats.innerHTML = "";
+      } else if (activeView === "read-for-speed") {
+        // Read for Speed header statistics were calculated from its local attempts above.
       } else {
         headerStats.className = "grid grid-cols-3 gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm";
         headerStats.innerHTML =
@@ -4009,6 +4894,7 @@
       const hadAnswer = isAnswerKey(selectedAnswerForQuestion(question));
       saveSelectedAnswer(question, selectedKey);
       answered = true;
+      recordWeeklyActivity("question", "question-solving:" + (questionSolvingSessionId || "legacy") + ":" + question.id);
       if (!hadAnswer) markDailyTaskItem("difficultWords", question.id);
       if (question.correctAnswer) {
         if (selectedKey === question.correctAnswer) removeWrongQuestion(question.id);
@@ -4060,6 +4946,8 @@
     function restartCategory() {
       currentIndex = 0;
       answered = false;
+      questionSolvingSessionId = createActivitySession("question-solving");
+      localStorage.setItem(STORAGE_QUESTION_SESSION, questionSolvingSessionId);
       renderQuestion();
     }
 
@@ -4068,9 +4956,9 @@
       const existing = wordbook.find(item => item.word.toLowerCase() === pendingWord.word.toLowerCase());
       wordModalTitle.textContent = pendingWord.word || "Yeni kelime";
       wordInput.value = existing?.word || pendingWord.word;
-      turkishInput.value = existing?.turkish || existing?.meaning || suggested?.turkish || "";
-      meaningInput.value = existing?.meaningNote || suggested?.meaningNote || "";
-      exampleInput.value = wordExample(existing) || suggested?.example || suggested?.exampleSentence || suggested?.sentence || (Array.isArray(suggested?.examples) ? suggested.examples[0] : "") || "";
+      turkishInput.value = "";
+      meaningInput.value = "";
+      exampleInput.value = "";
       wordModal.classList.remove("hidden");
       wordModal.classList.add("flex");
       turkishInput.focus();
@@ -4086,9 +4974,14 @@
       wordModal.classList.add("hidden");
       wordModal.classList.remove("flex");
       pendingWord = null;
+      wordInput.value = "";
+      turkishInput.value = "";
+      meaningInput.value = "";
+      exampleInput.value = "";
     }
 
     function saveWord() {
+      const pending = pendingWord;
       const word = normalizeWord(wordInput.value);
       const turkish = turkishInput.value.trim();
       const meaningNote = meaningInput.value.trim();
@@ -4112,10 +5005,27 @@
       };
       if (existingIndex >= 0) wordbook[existingIndex] = record;
       else wordbook.unshift(record);
+      if (pending?.article && pending?.sourceLocator) {
+        const article = pending.article;
+        const source = {
+          ...pending.sourceLocator,
+          contentId: article.id,
+          contentType: articleContentType(article),
+          contentTitle: articleDisplayTitle(article),
+          selectedText: word,
+          savedAt: new Date().toISOString(),
+        };
+        addSourceToWord(record, source);
+        article.savedWords = Array.isArray(article.savedWords) ? article.savedWords : [];
+        if (!article.savedWords.includes(record.id)) article.savedWords.push(record.id);
+        article.updatedAt = new Date().toISOString();
+        saveArticles();
+      }
       saveJson(STORAGE_WORDS, wordbook);
       queueSupabaseAutoBackup();
       closeWordModal();
       renderStats();
+      showToast("Kelime defterine eklendi.");
       if (activeView === "words") renderWordbook();
       if (activeView === "study") renderWordStudy();
     }
@@ -4225,6 +5135,7 @@
       return {
         id: text(note.id) || createNoteId(),
         content: text(note.content) || legacyContent,
+        pinned: Boolean(note.pinned),
         sourceType: validSourceTypes.includes(note.sourceType) ? note.sourceType : "manual",
         sourceId: text(note.sourceId) || null,
         sourceTitle: text(note.sourceTitle) || null,
@@ -4263,6 +5174,7 @@
       return notes
         .filter(note => !query || normalizeLookup(note.content).includes(query) || normalizeLookup(note.sourceTitle).includes(query) || normalizeLookup(String(note.questionNumber || "")).includes(query))
         .sort((a, b) => {
+          if (Boolean(a.pinned) !== Boolean(b.pinned)) return a.pinned ? -1 : 1;
           if (noteSortMode === "oldest") return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
           if (noteSortMode === "source") return String(a.sourceTitle || "").localeCompare(String(b.sourceTitle || ""), "tr");
           return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
@@ -4383,15 +5295,19 @@
       const preview = notePreview(note);
       const hasSource = note.sourceType !== "manual";
       const sourceExists = noteSourceExists(note);
-      return '<article class="note-card relative flex min-h-[180px] cursor-pointer flex-col rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-blue-200" data-note-open="' + escapeHtml(note.id) + '">' +
+      const sourceName = note.sourceTitle || "Kaynak";
+      const sourceSection = note.sourceType === "reading" ? "Okuma Merkezi" : note.sourceType === "question" ? "Çıkmış Sorular" : "";
+      return '<article class="note-card relative flex min-h-[220px] min-w-0 cursor-pointer flex-col rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-sm transition duration-150 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800" data-note-open="' + escapeHtml(note.id) + '">' +
         '<div class="flex items-start justify-between gap-3"><p class="text-xs font-bold text-slate-500">' + escapeHtml(formatNoteDate(note.createdAt)) + '</p>' +
         '<button class="note-menu-toggle flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-lg font-black text-slate-500 hover:bg-slate-100 hover:text-blue-700" data-note-id="' + escapeHtml(note.id) + '" aria-label="Not işlemleri">…</button></div>' +
-        '<h3 class="mt-3 line-clamp-2 break-words text-[26px] font-bold leading-[1.25] text-blue-700">' + escapeHtml(noteTitle(note)) + '</h3>' +
-        (preview ? '<p class="mt-3 whitespace-pre-wrap line-clamp-6 text-[19px] font-medium leading-relaxed text-slate-700">' + escapeHtml(preview) + '</p>' : "") +
-        (hasSource ? '<div class="mt-auto pt-5 text-sm font-bold">' + (sourceExists ? '<button class="note-source-link inline-flex items-center gap-2 text-left text-blue-700 hover:text-blue-800 hover:underline" data-note-source="' + escapeHtml(note.id) + '">' + (note.sourceType === "reading" ? "Metne Git" : "Kaynağa Git") + (source ? '<span class="font-medium text-slate-600">' + escapeHtml(source) + '</span>' : "") + '</button>' : '<span class="text-slate-400">Kaynak bulunamadı</span>') + '</div>' : "") +
+        '<h3 class="mt-3 line-clamp-2 break-words text-xl font-bold leading-[1.3] text-blue-700">' + escapeHtml(noteTitle(note)) + '</h3>' +
+        (preview ? '<p class="mt-2 whitespace-pre-wrap line-clamp-3 text-sm font-medium leading-relaxed text-slate-700 dark:text-slate-300">' + escapeHtml(preview) + '</p>' : "") +
+        (hasSource ? '<div class="mt-auto pt-4 text-xs">' + (sourceExists ? '<button class="note-source-link inline-flex flex-wrap items-baseline gap-x-2 gap-y-1 text-left text-blue-700 hover:text-blue-800" data-note-source="' + escapeHtml(note.id) + '"><strong class="text-[13px] font-bold underline decoration-1 underline-offset-4">' + (note.sourceType === "reading" ? "Metne Git" : "Kaynağa Git") + '</strong><span class="font-medium text-slate-600 dark:text-slate-300">' + escapeHtml(sourceName) + '</span>' + (sourceSection || note.questionNumber ? '<em class="not-italic font-medium text-slate-500">' + escapeHtml(sourceSection + (note.questionNumber ? (sourceSection ? " · " : "") + "Soru " + note.questionNumber : "")) + '</em>' : "") + '</button>' : '<span class="text-slate-400">Kaynak bulunamadı</span>') + '</div>' : "") +
         '<div class="note-action-menu hidden absolute right-4 top-14 z-10 w-48 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl" data-note-menu="' + escapeHtml(note.id) + '">' +
           '<button data-note-action="edit" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50">Düzenle</button>' +
+          '<button data-note-action="pin" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50">' + (note.pinned ? "Sabitlemeyi kaldır" : "Sabitle") + '</button>' +
           '<button data-note-action="copy" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50">Kopyala</button>' +
+          (sourceExists ? '<button data-note-action="source" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50">Kaynağa Git</button>' : "") +
           '<button data-note-action="delete" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-rose-600 hover:bg-rose-50">Sil</button>' +
         '</div>' +
       '</article>';
@@ -4413,7 +5329,7 @@
             '<select id="noteSortSelect" class="h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:bg-white"><option value="newest"' + (noteSortMode === "newest" ? " selected" : "") + '>Son eklenen</option><option value="oldest"' + (noteSortMode === "oldest" ? " selected" : "") + '>En eski</option><option value="source"' + (noteSortMode === "source" ? " selected" : "") + '>Kaynak adına göre</option></select>' +
           '</div>' +
         '</section>' +
-        (visibleNotes.length ? '<section class="mt-4 grid items-start gap-4" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),420px))">' + visibleNotes.map(noteCardHtml).join("") + '</section>' :
+        (visibleNotes.length ? '<section class="mt-4 grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">' + visibleNotes.map(noteCardHtml).join("") + '</section>' :
           '<section class="mt-4 rounded-2xl border border-slate-200 bg-white px-6 py-14 text-center shadow-sm"><h2 class="text-xl font-black text-slate-950">Henüz not eklemedin.</h2><p class="mx-auto mt-2 max-w-md text-sm font-medium text-slate-500">Pratik gramer, kalıp ve çalışma notlarını burada biriktirebilirsin.</p><button id="firstNoteBtn" class="mt-5 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-lg shadow-blue-200 hover:bg-blue-500">İlk Notunu Ekle</button></section>');
       document.getElementById("newNoteBtn")?.addEventListener("click", () => openQuickNoteDrawer());
       document.getElementById("firstNoteBtn")?.addEventListener("click", () => openQuickNoteDrawer());
@@ -4438,6 +5354,8 @@
         if (index < 0) return;
         const action = button.dataset.noteAction;
         if (action === "edit") return openQuickNoteDrawer({ note: notes[index] });
+        if (action === "pin") notes[index].pinned = !notes[index].pinned;
+        if (action === "source") return goToNoteSource(notes[index]);
         if (action === "copy") {
           void copyNoteContent(notes[index]);
           appArea.querySelectorAll(".note-action-menu").forEach(item => item.classList.add("hidden"));
@@ -4697,6 +5615,7 @@
       };
       saveJson("yds-word-quiz-session-results-v1", wordQuizSessionResults);
       markDailyTaskItem("multipleChoice", wordId);
+      recordWeeklyActivity("word", "multiple-choice:" + (wordStudySessionId || "legacy") + ":" + wordId);
     }
 
     function wordQuizSessionSummary(words) {
@@ -4738,6 +5657,7 @@
       saveJson(STORAGE_WORDS, wordbook);
       if (source === "flashcards") {
         markDailyTaskItem("flashcards", id);
+        recordWeeklyActivity("word", "word-card:" + (wordStudySessionId || "legacy") + ":" + id);
       }
     }
 
@@ -4846,6 +5766,8 @@
         wordStudyIndex = 0;
         wordCardRevealed = false;
         wordQuizQuestion = null;
+        wordStudySessionId = createActivitySession("word-study");
+        localStorage.setItem(STORAGE_WORD_STUDY_SESSION, wordStudySessionId);
         if (wordStudyMode === "quiz") resetWordQuizSessionResults();
         buildWordSession(true, wordStudyMode);
         renderWordStudy();
@@ -5585,6 +6507,9 @@
       const kind = articleKind(article);
       const taskKey = kind === "yds" ? "pastExamReading" : "externalReading";
       markDailyTaskItem(taskKey, article.id);
+      // Opening a text does nothing; only this existing completion path writes
+      // an activity. A completed article has one stable completion key.
+      recordWeeklyActivity("reading", "reading:article:" + article.id);
     }
 
     function isYdsArticleWorkComplete(article) {
@@ -5807,7 +6732,7 @@
           }
           const suggested = vocabMap[button.dataset.vocabKey] || null;
           const locator = articleLocatorFromToken(button, article);
-          openArticleWordPopover(button, button.dataset.word, article, suggested, locator);
+          openArticleWordModal(button, button.dataset.word, article, suggested, locator);
         });
       });
       const savedWordsButton = document.getElementById("articleSavedWordsBtn");
@@ -6035,7 +6960,7 @@
           if (!locator || normalizeLookup(locator.selectedText).length < 2) return;
           const target = event.target?.closest?.(".word-token") || body;
           const key = normalizeLookup(locator.selectedText.split(/\s+/)[0] || locator.selectedText);
-          openArticleWordPopover(target, locator.selectedText, article, vocabMap[key] || null, locator);
+          openArticleWordModal(target, locator.selectedText, article, vocabMap[key] || null, locator);
         }, 0);
       };
       body.addEventListener("mouseup", openFromSelection);
@@ -6381,6 +7306,22 @@
       });
     }
 
+    // Okuma Merkezi de Read for Speed ile aynı kelime ekleme modalını kullanır.
+    function openArticleWordModal(anchor, rawWord, article, suggested = null, locator = null) {
+      const word = normalizeWord(locator?.selectedText || rawWord);
+      if (!word) return;
+      const normalizedText = normalizeArticleTextForReading(article?.text || "");
+      const safeLocator = locator || makeArticleSourceLocator(
+        article,
+        word,
+        Number(anchor?.dataset?.start || 0),
+        Number(anchor?.dataset?.end || 0),
+        normalizedText
+      );
+      openWordModal(word, { id: article.id });
+      pendingWord = { ...pendingWord, article, sourceLocator: safeLocator };
+    }
+
     function openArticleWordPopover(anchor, rawWord, article, suggested = null, locator = null) {
       closeArticleWordPopover();
       const selectedText = normalizeWord(locator?.selectedText || rawWord);
@@ -6505,7 +7446,7 @@
           block = { id: "block-" + range[1] + "-" + range[2], type, title: heading, startQuestion: Number(range[1]), endQuestion: Number(range[2]), sharedText: "" };
           return;
         }
-        const questionHeader = heading.match(/^soru\s+(\d+)\s*$/i);
+        const questionHeader = heading.match(/^(?:soru\s+)?(\d+)\s*[.)]?\s*$/i);
         if (questionHeader) {
           closeQuestion();
           const number = Number(questionHeader[1]);
@@ -6517,10 +7458,12 @@
         if (block && !question && /^(metin|pasaj)\s*:/i.test(line)) { readingShared = true; add(block, "sharedText", line.replace(/^(metin|pasaj)\s*:\s*/i, "")); return; }
         if (block && !question && readingShared) { add(block, "sharedText", line); return; }
         if (!question) return;
-        const answer = line.match(/^doğru\s*cevap\s*:\s*([A-E])\s*$/i);
-        if (answer) { question.correctAnswer = answer[1].toUpperCase(); return; }
-        const option = line.match(/^\*?\s*([A-E])\s*(?:\)|\.|-)\s*(.*)$/i);
+        const answer = line.match(/(?:^|\s)doğru\s*cevap\s*:\s*([A-E])\s*$/i);
+        const content = answer ? line.slice(0, answer.index).trim() : line;
+        if (answer) question.correctAnswer = answer[1].toUpperCase();
+        const option = content.match(/^\*?\s*([A-E])\s*(?:\)|\.|-)\s*(.*)$/i);
         if (option) { part = option[1].toUpperCase(); question.options[part] = option[2].trim(); return; }
+        if (answer) return;
         if (part === "stem") add(question, "question", line.replace(/^soru\s*kökü\s*:\s*/i, ""));
         else add(question.options, part, line);
       });
@@ -7220,6 +8163,11 @@
           return;
         }
       }
+      if (!typing && activeView === "home" && document.getElementById("dailyWordPoolTitle")) {
+        const clickDailyWordAction = id => document.getElementById(id)?.click();
+        if (event.key === "ArrowLeft") { event.preventDefault(); clickDailyWordAction("dailyWordPrevBtn"); return; }
+        if (event.key === "ArrowRight") { event.preventDefault(); clickDailyWordAction("dailyWordNextBtn"); return; }
+      }
       if (typing || activeView !== "study") return;
       if (event.code === "Space" && wordStudyMode === "cards") {
         event.preventDefault();
@@ -7261,6 +8209,9 @@
     document.getElementById("saveWordBtn").addEventListener("click", saveWord);
     wordModal.addEventListener("click", event => {
       if (event.target === wordModal) closeWordModal();
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && !wordModal.classList.contains("hidden")) closeWordModal();
     });
 
     removeBundledVocabularyOnce();
