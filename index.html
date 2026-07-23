@@ -621,6 +621,16 @@
       outline-offset: 2px;
     }
 
+    /* The fifth daily task keeps the desktop plan balanced without changing
+       the single-column mobile layout. */
+    .daily-tasks-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .75rem;
+    }
+
+    .question-task-card { grid-column: 1 / -1; }
+
     @media (max-width: 1023px) {
       .daily-task-action {
         flex-basis: 104px !important;
@@ -630,6 +640,9 @@
     }
 
     @media (max-width: 639px) {
+      .daily-tasks-grid { grid-template-columns: 1fr; }
+      .question-task-card { grid-column: auto; }
+
       .daily-task-card > div {
         flex-wrap: nowrap;
       }
@@ -1527,24 +1540,32 @@
     .rfs-result-bar > div:first-of-type { display: flex; flex-wrap: wrap; gap: .3rem .75rem; margin: 0 !important; }
     .rfs-result-bar > div:last-of-type { margin: 0 0 0 auto !important; }
     .rfs-check-confirm { max-width: 1220px; margin: 1rem auto 0; padding: .8rem 1rem; border: 1px solid #fdba74; border-radius: 1rem; background: #fff7ed; color: #9a3412; }
-    .rfs-card-menu { position: absolute; top: 2.25rem; right: 0; z-index: 25; min-width: 11.5rem; padding: .3rem; border: 1px solid var(--border-color); border-radius: .85rem; background: var(--bg-surface); box-shadow: 0 14px 30px rgb(15 23 42 / 18%); }
-    .rfs-card-menu button { display: block; width: 100%; padding: .55rem .7rem; border-radius: .55rem; text-align: left; font-size: .82rem; font-weight: 800; }
+    .rfs-card-menu { position: absolute; right: 0; bottom: calc(100% + .4rem); z-index: 25; min-width: 13.75rem; padding: .3rem; border: 1px solid var(--border-color); border-radius: .85rem; background: var(--bg-surface); box-shadow: 0 18px 42px rgb(15 23 42 / 18%); }
+    .rfs-card-menu button { display: block; width: 100%; min-height: 36px; padding: .55rem .7rem; border-radius: .55rem; text-align: left; font-size: .82rem; font-weight: 800; }
     .rfs-card-menu button:hover { background: var(--bg-surface-secondary); }
     .rfs-card-menu .rfs-menu-delete { color: #dc2626; }
     .rfs-list-heading { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
     .rfs-list-grid { display:grid; grid-template-columns:repeat(1, minmax(0, 1fr)); gap:1rem; }
-    .read-for-speed-card { display:flex; flex-direction:column; min-height:215px; padding:22px; border:1px solid var(--border-color); border-radius:1rem; background:var(--bg-surface-secondary); }
-    .read-for-speed-card.is-completed { background:color-mix(in srgb, #ecfdf5 55%, var(--bg-surface-secondary)); }
+    .rfs-list-filters { display:grid; grid-template-columns:minmax(220px,1fr) minmax(180px,.45fr) minmax(210px,.55fr); gap:.75rem; margin-top:1rem; }
+    .rfs-list-filters input, .rfs-list-filters select { min-height:44px; border:1px solid var(--border-color); border-radius:.75rem; padding:.65rem .75rem; background:var(--bg-surface-secondary); color:var(--text-primary); font-size:.875rem; font-weight:700; }
+    .read-for-speed-card { display:flex; flex-direction:column; min-height:250px; padding:18px; border:1px solid var(--border-color); border-radius:1rem; background:var(--bg-surface); box-shadow:0 12px 28px rgb(15 23 42 / 8%); transition:transform .14s ease,border-color .14s ease,box-shadow .14s ease; }
+    .read-for-speed-card:hover { transform:translateY(-1px); border-color:#cbd5e1; box-shadow:0 8px 18px rgb(15 23 42 / 8%); }
+    .read-for-speed-card.is-completed { background:color-mix(in srgb, #ecfdf5 20%, var(--bg-surface)); }
     .rfs-card-status { display:inline-flex; align-items:center; width:max-content; border-radius:999px; padding:4px 9px; font-size:.72rem; font-weight:900; letter-spacing:.03em; }
     .rfs-status-new { background:#eff6ff; color:#2563eb; }
     .rfs-status-progress { background:#dbeafe; color:#1d4ed8; }
     .rfs-status-completed { background:#ecfdf5; color:#047857; }
-    .read-for-speed-card-title { display:-webkit-box; margin-top:16px; overflow:hidden; -webkit-box-orient:vertical; -webkit-line-clamp:3; font-size:1.15rem; font-weight:900; line-height:1.25; }
-    .rfs-card-detail { margin-top:10px; font-size:.9rem; font-weight:700; color:var(--text-secondary); }
-    .rfs-card-progress { height:6px; margin-top:14px; overflow:hidden; border-radius:999px; background:var(--border-color); }
+    .read-for-speed-card-title { display:-webkit-box; min-height:47px; margin-top:14px; overflow:hidden; -webkit-box-orient:vertical; -webkit-line-clamp:2; font-size:1.15rem; font-weight:900; line-height:1.25; }
+    .rfs-card-detail { min-height:22px; margin-top:7px; font-size:.9rem; font-weight:700; color:var(--text-secondary); }
+    .rfs-card-progress-label { display:flex; justify-content:space-between; margin-top:auto; color:var(--text-secondary); font-size:.69rem; font-weight:900; letter-spacing:.08em; }
+    .rfs-card-progress { height:8px; margin-top:7px; overflow:hidden; border-radius:999px; background:var(--border-color); }
     .rfs-card-progress span { display:block; height:100%; border-radius:inherit; background:#2563eb; }
     .rfs-card-progress span.is-completed { background:#059669; }
-    .rfs-open { border-radius:.75rem; background:#2563eb; padding:.55rem 1rem; color:white; font-size:.9rem; font-weight:900; }
+    .rfs-open { min-height:40px; border-radius:.75rem; background:#2563eb; padding:.55rem 1rem; color:white; font-size:.9rem; font-weight:900; }
+    .rfs-reset { display:grid; width:40px; min-width:40px; min-height:40px; place-items:center; border:1px solid var(--border-color); border-radius:.75rem; background:var(--bg-surface); color:var(--text-secondary); font-size:1rem; font-weight:900; letter-spacing:1px; }
+    .rfs-reset:hover, .rfs-reset[aria-expanded="true"] { border-color:#cbd5e1; background:var(--bg-surface-secondary); color:var(--text-primary); }
+    .rfs-card-actions { position:relative; display:flex; align-items:center; justify-content:space-between; gap:.75rem; margin-top:18px; }
+    .rfs-card-menu .rfs-menu-delete { margin-top:.3rem; padding-top:.7rem; border-top:1px solid var(--border-color); }
     .read-for-speed-toolbar { display: grid !important; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 16px; }
     .read-for-speed-heading { min-width: 0; }
     .read-for-speed-title { margin-top: 2px; font-size: clamp(24px, 2vw, 28px); font-weight: 800; line-height: 1.2; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; overflow-wrap: anywhere; }
@@ -1563,6 +1584,7 @@
       .read-for-speed-actions { justify-content: flex-start; }
       .read-for-speed-title { font-size: 23px; }
       .rfs-list-heading { align-items:stretch; flex-direction:column; }
+      .rfs-list-filters { grid-template-columns:1fr; }
       .rfs-list-heading #rfsNewBtn { width:100%; }
     }
     .rfs-answer:disabled { cursor: default; }
@@ -1632,11 +1654,12 @@
     <div class="my-auto max-h-[calc(100vh-32px)] w-full max-w-lg overflow-y-auto rounded-3xl border p-6 shadow-2xl" style="border-color:var(--border-color);background:var(--bg-surface);color:var(--text-primary)">
       <div class="mb-5 flex items-start justify-between gap-4">
         <div>
-          <p class="text-sm font-semibold uppercase tracking-wider text-blue-500">SÖZLÜĞE EKLE</p>
+          <p id="wordModalEyebrow" class="text-sm font-semibold uppercase tracking-wider text-blue-500">SÖZLÜĞE EKLE</p>
           <h3 id="wordModalTitle" class="mt-1 text-2xl font-bold"></h3>
         </div>
         <button id="closeWordModal" class="rounded-xl border px-3 py-2 text-sm font-semibold hover:bg-slate-100" style="border-color:var(--border-color)">Kapat</button>
       </div>
+      <div id="wordFormFields">
       <label class="mb-2 block text-sm font-black" for="wordInput">Kelime</label>
       <input id="wordInput" class="mb-4 w-full rounded-2xl border px-4 py-3 text-base font-semibold outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="Örn: memory" />
       <label class="mb-2 block text-sm font-black" for="turkishInput">Türkçe Anlamı</label>
@@ -1645,7 +1668,9 @@
       <textarea id="meaningInput" class="mb-4 min-h-20 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="Örn: leave, desert, give up"></textarea>
       <label class="mb-2 block text-sm font-black" for="exampleInput">Örnek Cümle</label>
       <textarea id="exampleInput" class="mb-5 min-h-20 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="Örnek cümleyi kendin yazabilirsin."></textarea>
-      <button id="saveWordBtn" class="w-full rounded-2xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-950/40 hover:bg-blue-500">Kelime Defterine Ekle</button>
+      </div>
+      <div id="wordViewFields" class="mb-5 hidden"></div>
+      <div id="wordModalActions" class="flex gap-2"><button id="saveWordBtn" class="w-full rounded-2xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-950/40 hover:bg-blue-500">Kelime Defterine Ekle</button><button id="editWordBtn" class="hidden w-full rounded-2xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-950/40 hover:bg-blue-500">Düzenle</button></div>
     </div>
   </div>
 
@@ -1662,6 +1687,7 @@
     const STORAGE_READ_FOR_SPEED = "yds-read-for-speed-v1";
     const STORAGE_THEME = "yds-theme-v1";
     const STORAGE_WRONG_QUESTIONS = "yds-wrong-questions-v1";
+    const STORAGE_WRONG_REVIEW_SESSION = "yds-wrong-question-review-session-v1";
     const STORAGE_WORD_SEED_VERSION = "yds-word-seed-version-v1";
     const STORAGE_REMOVE_BUILTIN_SEEDS = "yds-remove-builtin-seeds-v1";
     const STORAGE_DAILY_HARD_WORDS = "yds-daily-hard-words-v1";
@@ -1673,6 +1699,7 @@
     // display counters. Each key is a completed item in one concrete session.
     const STORAGE_WEEKLY_ACTIVITY = "yds-weekly-activity-v2";
     const STORAGE_WORD_STUDY_SESSION = "yds-word-study-session-v2";
+    const STORAGE_DAILY_WORD_CARD_SESSION = "yds-daily-word-card-session-v1";
     const STORAGE_QUESTION_SESSION = "yds-question-solving-session-v2";
     const STORAGE_SUPABASE_CONFIG = "yds-supabase-config-v1";
     const STORAGE_DOCUMENT_PROGRESS = "yds-document-progress-v1";
@@ -1689,6 +1716,7 @@
     let articles = loadJson(STORAGE_ARTICLES, []);
     let readForSpeedArticles = loadJson(STORAGE_READ_FOR_SPEED, []);
     let wrongQuestionIds = loadJson(STORAGE_WRONG_QUESTIONS, []);
+    let wrongReviewSession = normalizeWrongReviewSession(loadJson(STORAGE_WRONG_REVIEW_SESSION, null));
     let documentProgress = loadJson(STORAGE_DOCUMENT_PROGRESS, {});
     let examProgress = normalizeExamProgress(loadJson(STORAGE_EXAM_PROGRESS, { version: 1, exams: {} }));
     let notes = loadJson(STORAGE_NOTES, []);
@@ -1708,6 +1736,8 @@
     let solveMode = "document";
     let wrongReviewIds = [];
     let pendingWord = null;
+    let wordModalMode = "create";
+    let selectedWordId = null;
     let wordStudyMode = "cards";
     let wordStudyScopeIds = null;
     let wordStudyScopeLabel = "";
@@ -1719,6 +1749,7 @@
     let wordQuizQuestion = null;
     let wordQuizSessionResults = loadJson("yds-word-quiz-session-results-v1", {});
     let wordStudySessionId = localStorage.getItem(STORAGE_WORD_STUDY_SESSION) || "";
+    let dailyWordCardSession = loadJson(STORAGE_DAILY_WORD_CARD_SESSION, null);
     let questionSolvingSessionId = localStorage.getItem(STORAGE_QUESTION_SESSION) || "";
     let weeklyActivity = [];
     let dailyGoals = null;
@@ -1803,6 +1834,37 @@
       return value === "A" || value === "B" || value === "C" || value === "D" || value === "E";
     }
 
+    // This state is intentionally independent from document/exam progress.
+    // A wrong-review may use the same question ids, but never the answers of
+    // the prior attempt that put them in the wrong-question pool.
+    function normalizeWrongReviewSession(value) {
+      if (!value || typeof value !== "object") return null;
+      const questionIds = [...new Set((Array.isArray(value.questionIds) ? value.questionIds : []).filter(id => typeof id === "string"))];
+      const answers = {};
+      const rawAnswers = value.answers && typeof value.answers === "object" ? value.answers : {};
+      questionIds.forEach(id => { if (isAnswerKey(rawAnswers[id])) answers[id] = rawAnswers[id]; });
+      return {
+        id: typeof value.id === "string" ? value.id : "wrong-review-" + Date.now(),
+        questionIds,
+        answers,
+        currentIndex: Math.min(Math.max(Number.isInteger(value.currentIndex) ? value.currentIndex : 0, 0), Math.max(questionIds.length - 1, 0)),
+        completed: value.completed === true,
+        startedAt: typeof value.startedAt === "string" ? value.startedAt : new Date().toISOString(),
+        updatedAt: typeof value.updatedAt === "string" ? value.updatedAt : new Date().toISOString(),
+      };
+    }
+
+    function saveWrongReviewSession(session) {
+      wrongReviewSession = session;
+      saveJson(STORAGE_WRONG_REVIEW_SESSION, session);
+      queueSupabaseAutoBackup();
+    }
+
+    function createWrongReviewSession(questionIds) {
+      const now = new Date().toISOString();
+      return { id: "wrong-review-" + Date.now(), questionIds: [...new Set(questionIds)], answers: {}, currentIndex: 0, completed: false, startedAt: now, updatedAt: now };
+    }
+
     function normalizeExamProgress(value) {
       const raw = value && typeof value === "object" ? value : {};
       const exams = raw.exams && typeof raw.exams === "object" ? raw.exams : {};
@@ -1835,6 +1897,10 @@
     }
 
     function selectedAnswerForQuestion(question) {
+      if (solveMode === "wrong" && wrongReviewSession) {
+        const answer = wrongReviewSession.answers?.[question?.id];
+        return isAnswerKey(answer) ? answer : null;
+      }
       const value = progressForQuestion(question)?.answers?.[question?.id];
       return isAnswerKey(value) ? value : null;
     }
@@ -1846,6 +1912,11 @@
 
     function rememberCurrentQuestion(question) {
       if (!question?.id) return;
+      if (solveMode === "wrong" && wrongReviewSession) {
+        if (wrongReviewSession.currentIndex === currentIndex) return;
+        saveWrongReviewSession({ ...wrongReviewSession, currentIndex, updatedAt: new Date().toISOString() });
+        return;
+      }
       const progress = progressForQuestion(question, true);
       if (progress.currentQuestionId === question.id) return;
       progress.currentQuestionId = question.id;
@@ -1855,6 +1926,10 @@
 
     function saveSelectedAnswer(question, selectedKey) {
       if (!question?.id || !isAnswerKey(selectedKey)) return;
+      if (solveMode === "wrong" && wrongReviewSession) {
+        saveWrongReviewSession({ ...wrongReviewSession, answers: { ...wrongReviewSession.answers, [question.id]: selectedKey }, updatedAt: new Date().toISOString() });
+        return;
+      }
       const progress = progressForQuestion(question, true);
       progress.answers = { ...(progress.answers || {}), [question.id]: selectedKey };
       progress.updatedAt = new Date().toISOString();
@@ -2035,6 +2110,11 @@
         wrongQuestionIds = validWrongIds;
         saveJson(STORAGE_WRONG_QUESTIONS, wrongQuestionIds);
       }
+      if (wrongReviewSession) {
+        const review = normalizeWrongReviewSession({ ...wrongReviewSession, questionIds: wrongReviewSession.questionIds.filter(id => validQuestionIds.has(id)) });
+        wrongReviewSession = review.questionIds.length ? review : null;
+        saveJson(STORAGE_WRONG_REVIEW_SESSION, wrongReviewSession);
+      }
       if (!activeDocumentId || !documents.some(doc => doc.id === activeDocumentId)) {
         activeDocumentId = documents[0]?.id || "";
       }
@@ -2047,7 +2127,7 @@
     function getCategoryQuestions() {
       if (solveMode === "wrong") {
         const byId = new Map(questionBank.map(item => [item.id, item]));
-        const sourceIds = wrongReviewIds.length ? wrongReviewIds : wrongQuestionIds;
+        const sourceIds = wrongReviewSession?.questionIds?.length ? wrongReviewSession.questionIds : (wrongReviewIds.length ? wrongReviewIds : wrongQuestionIds);
         return sourceIds.map(id => byId.get(id)).filter(Boolean);
       }
       return questionBank.filter(item => item.documentId === activeDocumentId);
@@ -2085,11 +2165,16 @@
     }
 
     function normalizeWord(value) {
-      return String(value || "").trim().replace(/^['"“”‘’.,;:!?()[\]{}]+|['"“”‘’.,;:!?()[\]{}]+$/g, "");
+      return String(value || "").trim().replace(/[’‘‛`]/g, "'").replace(/[‐‑‒–—―]/g, "-").replace(/^["“”']+|["“”']+$/g, "").replace(/[.,:;!?]+$/g, "").replace(/^["“”']+|["“”']+$/g, "").trim();
     }
 
     function normalizeLookup(value) {
-      return normalizeWord(value).toLowerCase();
+      return normalizeWord(value).toLocaleLowerCase("en-US");
+    }
+
+    function findDictionaryWord(clickedText) {
+      const key = normalizeLookup(clickedText);
+      return key ? wordbook.find(item => normalizeLookup(item.word) === key) : null;
     }
 
     function todayKey() {
@@ -2141,7 +2226,7 @@
     // Legacy rows did not have sessions, so their original date and item id form
     // a stable migration key. Re-running this migration is idempotent.
     function migrateLegacyWeeklyActivity() {
-      const taskCategories = { flashcards: "word", multipleChoice: "word", difficultWords: "question", pastExamReading: "reading", externalReading: "reading" };
+      const taskCategories = { flashcards: "word", multipleChoice: "word", difficultWords: "question", pastExamReading: "reading", externalReading: "reading", readForSpeed: "reading" };
       [dailyProgress, ...dailyHistory].filter(Boolean).forEach(row => {
         Object.entries(taskCategories).forEach(([taskKey, category]) => {
           const task = row[taskKey] || {};
@@ -2159,6 +2244,7 @@
         multipleChoice: 50,
         pastExamReading: 1,
         externalReading: 1,
+        readForSpeed: 1,
         difficultWords: 25,
         streakMode: "all",
       };
@@ -2176,6 +2262,7 @@
         multipleChoice: clamp(value.multipleChoice, 10, 200, base.multipleChoice),
         pastExamReading: clamp(value.pastExamReading, 0, 5, base.pastExamReading),
         externalReading: clamp(value.externalReading, 0, 5, base.externalReading),
+        readForSpeed: clamp(value.readForSpeed, 0, 3, base.readForSpeed),
         difficultWords: clamp(value.difficultWords, 1, 200, base.difficultWords),
         streakMode: value.streakMode === "80" ? "80" : "all",
       };
@@ -2186,8 +2273,54 @@
         flashcards: { icon: "K", title: "Kelime Kartları", action: "Devam Et", view: "flashcards" },
         multipleChoice: { icon: "T", title: "Çoktan Seçmeli", action: "Devam Et", view: "quiz" },
         pastExamReading: { icon: "Y", title: "Okuma", action: "Parça Seç", view: "yds-reading" },
+        readForSpeed: { icon: "R", title: "Read for Speed", action: "Metin Seç", view: "read-for-speed" },
         difficultWords: { icon: "S", title: "Soru Çözümü", action: "Devam Et", view: "question-solving" },
       };
+    }
+
+    function activeDailyWordCardSession() {
+      const session = dailyWordCardSession;
+      return session && session.dateKey === todayKey() && !session.completed ? session : null;
+    }
+
+    function saveDailyWordCardSession() {
+      if (!dailyWordCardSession) return;
+      dailyWordCardSession.updatedAt = new Date().toISOString();
+      saveJson(STORAGE_DAILY_WORD_CARD_SESSION, dailyWordCardSession);
+      queueSupabaseAutoBackup();
+    }
+
+    function startOrResumeDailyWordCards() {
+      const active = activeDailyWordCardSession();
+      if (active) {
+        wordStudyMode = "cards";
+        wordSessionIds = active.wordIds;
+        wordStudyIndex = active.currentIndex;
+        wordCardRevealed = false;
+        setView("study");
+        return;
+      }
+      const wordIds = shuffleArray(allStudyWords()).slice(0, Number(dailyGoals.flashcards || 0)).map(item => item.id);
+      const now = new Date().toISOString();
+      dailyWordCardSession = { id: "daily-word-cards-" + Date.now(), dateKey: todayKey(), wordIds, currentWordId: wordIds[0] || null, currentIndex: 0, completedWordIds: [], reviewedCount: 0, targetCount: wordIds.length, completed: false, startedAt: now, updatedAt: now };
+      saveDailyWordCardSession();
+      wordStudyMode = "cards";
+      wordSessionIds = wordIds;
+      saveJson("yds-word-session-ids-v1", wordSessionIds);
+      wordStudyIndex = 0;
+      wordCardRevealed = false;
+      setView("study");
+    }
+
+    function persistDailyWordCardProgress(wordId, nextIndex, completed) {
+      const session = activeDailyWordCardSession();
+      if (!session) return;
+      if (wordId && !session.completedWordIds.includes(wordId)) session.completedWordIds.push(wordId);
+      session.reviewedCount = session.completedWordIds.length;
+      session.currentIndex = nextIndex;
+      session.currentWordId = completed ? null : session.wordIds[nextIndex] || null;
+      session.completed = completed;
+      saveDailyWordCardSession();
     }
 
     function createDailyTaskProgress(key, target) {
@@ -2210,6 +2343,7 @@
         multipleChoice: createDailyTaskProgress("multipleChoice", dailyGoals.multipleChoice),
         pastExamReading: createDailyTaskProgress("pastExamReading", dailyGoals.pastExamReading),
         externalReading: createDailyTaskProgress("externalReading", dailyGoals.externalReading),
+        readForSpeed: createDailyTaskProgress("readForSpeed", dailyGoals.readForSpeed),
         difficultWords: createDailyTaskProgress("difficultWords", dailyGoals.difficultWords),
         updatedAt: new Date().toISOString(),
       };
@@ -2240,6 +2374,7 @@
         multipleChoice: normalizeDailyTask(value.multipleChoice, "multipleChoice"),
         pastExamReading: normalizeDailyTask(value.pastExamReading, "pastExamReading"),
         externalReading: normalizeDailyTask(value.externalReading, "externalReading"),
+        readForSpeed: normalizeDailyTask(value.readForSpeed, "readForSpeed"),
         difficultWords: normalizeDailyTask(value.difficultWords, "difficultWords"),
         updatedAt: value.updatedAt || new Date().toISOString(),
       };
@@ -2254,6 +2389,7 @@
         multipleChoice: progress.multipleChoice || createDailyTaskProgress("multipleChoice", 0),
         pastExamReading: progress.pastExamReading || createDailyTaskProgress("pastExamReading", 0),
         externalReading: progress.externalReading || createDailyTaskProgress("externalReading", 0),
+        readForSpeed: progress.readForSpeed || createDailyTaskProgress("readForSpeed", 0),
         difficultWords: progress.difficultWords || createDailyTaskProgress("difficultWords", 0),
         archivedAt: new Date().toISOString(),
       };
@@ -2280,7 +2416,8 @@
     function ensureDailyProgress() {
       const previousDate = dailyProgress?.date || "";
       dailyProgress = normalizeDailyProgress(dailyProgress);
-      if (previousDate !== dailyProgress.date) saveDailyProgress(false);
+      const readForSpeedChanged = syncReadForSpeedDailyProgress();
+      if (previousDate !== dailyProgress.date || readForSpeedChanged) saveDailyProgress(false);
       return dailyProgress;
     }
 
@@ -2699,7 +2836,64 @@
       });
     }
 
-    function saveReadForSpeedArticles() { saveJson(STORAGE_READ_FOR_SPEED, readForSpeedArticles); }
+    // Completion is an immutable, small ledger on the article.  The active
+    // progress can safely be reset/retried without losing today's completion.
+    function readForSpeedCompletionAttempts(article) {
+      const saved = Array.isArray(article?.completedAttempts) ? article.completedAttempts : [];
+      const attempts = saved.filter(attempt => attempt && attempt.completed === true && attempt.articleId === article.id && typeof attempt.completedAt === "string");
+      const progress = article?.progress;
+      if (progress?.completed === true || progress?.checked === true) {
+        const completedAt = progress.completedAt || progress.checkedAt || progress.updatedAt || article.updatedAt;
+        if (completedAt && !attempts.some(attempt => attempt.completedAt === completedAt)) {
+          attempts.push({ id: `rfs-legacy:${article.id}:${completedAt}`, articleId: article.id, completed: true, completedAt, dateKey: localDateKey(completedAt) });
+        }
+      }
+      return attempts;
+    }
+
+    function dailyReadForSpeedCompletedArticleIds(date = todayKey()) {
+      return new Set(readForSpeedArticles.filter(article => readForSpeedCompletionAttempts(article)
+        .some(attempt => (attempt.dateKey || localDateKey(attempt.completedAt)) === date)).map(article => String(article.id)));
+    }
+
+    function syncReadForSpeedDailyProgress() {
+      if (!dailyProgress?.readForSpeed) return false;
+      const task = dailyProgress.readForSpeed;
+      const completedIds = [...dailyReadForSpeedCompletedArticleIds(dailyProgress.date)].sort();
+      const changed = task.completedIds.length !== completedIds.length || task.completedIds.some((id, index) => id !== completedIds[index]);
+      task.completedIds = completedIds;
+      task.count = completedIds.length;
+      task.completed = Number(task.target || 0) === 0 || task.count >= Number(task.target || 0);
+      return changed;
+    }
+
+    function activeReadForSpeedArticle() {
+      return readForSpeedArticles
+        .filter(article => article?.progress && article.progress.completed !== true && article.progress.checked !== true)
+        .sort((a, b) => Date.parse(b.progress?.updatedAt || b.updatedAt || 0) - Date.parse(a.progress?.updatedAt || a.updatedAt || 0))[0] || null;
+    }
+
+    function recordReadForSpeedCompletion(article, progress) {
+      if (!article?.id || !progress || progress.completed !== true) return;
+      const completedAt = progress.completedAt || new Date().toISOString();
+      progress.completedAt = completedAt;
+      progress.checkedAt = progress.checkedAt || completedAt;
+      progress.dateKey = localDateKey(completedAt);
+      const attempts = Array.isArray(article.completedAttempts) ? article.completedAttempts : [];
+      // A new check creates an attempt, but the daily task deduplicates it by articleId.
+      if (!attempts.some(attempt => attempt?.completed === true && attempt.completedAt === completedAt)) {
+        attempts.push({ id: `rfs-attempt:${article.id}:${Date.parse(completedAt) || Date.now()}`, articleId: article.id, completed: true, completedAt, dateKey: progress.dateKey });
+      }
+      article.completedAttempts = attempts;
+      recordWeeklyActivity("reading", "reading:read-for-speed:" + article.id, completedAt);
+      if (syncReadForSpeedDailyProgress()) saveDailyProgress(false);
+    }
+
+    function saveReadForSpeedArticles() {
+      saveJson(STORAGE_READ_FOR_SPEED, readForSpeedArticles);
+      if (dailyProgress && syncReadForSpeedDailyProgress()) saveDailyProgress(false);
+      queueSupabaseAutoBackup();
+    }
 
     function setReadForSpeedFocusMode(enabled) {
       document.body.classList.toggle("read-for-speed-focus-mode", !!enabled && activeView === "read-for-speed" && readForSpeedMode === "reader");
@@ -2730,24 +2924,40 @@
       }).join("");
     }
 
+    let rfsListQuery = "", rfsListStatus = "all", rfsListSort = "recent";
+
     function renderReadForSpeedList() {
       const statusOrder = { inProgress: 0, new: 1, completed: 2 };
-      const items = readForSpeedArticles.map(article => ({ article, summary: readForSpeedArticleSummary(article) })).sort((a, b) => statusOrder[a.summary.status] - statusOrder[b.summary.status] || new Date(b.summary.updatedAt || 0) - new Date(a.summary.updatedAt || 0));
+      const allItems = readForSpeedArticles.map(article => ({ article, summary: readForSpeedArticleSummary(article) }));
+      const items = allItems.filter(({ article, summary }) => (rfsListStatus === "all" || summary.status === rfsListStatus) && (!rfsListQuery.trim() || String(article.title || "").toLocaleLowerCase("tr-TR").includes(rfsListQuery.trim().toLocaleLowerCase("tr-TR")))).sort((a, b) => {
+        if (rfsListSort === "title") return String(a.article.title || "").localeCompare(String(b.article.title || ""), "tr");
+        if (rfsListSort === "countAsc") return a.summary.questionCount - b.summary.questionCount;
+        if (rfsListSort === "countDesc") return b.summary.questionCount - a.summary.questionCount;
+        if (rfsListSort === "progress") return (b.summary.questionCount ? b.summary.answeredCount / b.summary.questionCount : 0) - (a.summary.questionCount ? a.summary.answeredCount / a.summary.questionCount : 0) || new Date(b.summary.updatedAt || 0) - new Date(a.summary.updatedAt || 0);
+        return new Date(b.article.createdAt || 0) - new Date(a.article.createdAt || 0);
+      });
       const totalQuestions = items.reduce((sum, item) => sum + item.summary.questionCount, 0);
-      const completedCount = items.filter(item => item.summary.completed).length;
-      bankInfo.textContent = `${items.length} metin · ${totalQuestions} seçim · ${completedCount} tamamlandı`;
+      const completedCount = allItems.filter(item => item.summary.completed).length;
+      const inProgressCount = allItems.filter(item => item.summary.status === "inProgress").length;
+      bankInfo.textContent = `${allItems.length} metin · ${allItems.reduce((sum, item) => sum + item.summary.questionCount, 0)} seçim · ${completedCount} tamamlandı`;
       const badge = { new: ["YENİ", "rfs-status-new"], inProgress: ["DEVAM EDİYOR", "rfs-status-progress"], completed: ["TAMAMLANDI ✓", "rfs-status-completed"] };
       const cards = items.map(({ article, summary }) => {
         const [statusLabel, statusClass] = badge[summary.status];
         const title = readForSpeedDisplayTitle(article.title);
-        const details = summary.status === "new" ? `${summary.questionCount} seçim` : summary.status === "inProgress" ? `${summary.answeredCount} / ${summary.questionCount} seçim cevaplandı · %${summary.questionCount ? Math.round(summary.answeredCount / summary.questionCount * 100) : 0}` : `${summary.correctCount} doğru · ${summary.incorrectCount} yanlış${summary.blankCount ? ` · ${summary.blankCount} boş` : ""} · Başarı %${summary.score}`;
-        const action = summary.status === "new" ? "Başla" : summary.status === "inProgress" ? "Devam Et" : "Sonuçları Gör";
-        const progress = summary.status === "new" ? "" : `<div class="rfs-card-progress"><span class="${summary.status === "completed" ? "is-completed" : ""}" style="width:${summary.status === "completed" ? 100 : Math.round(summary.answeredCount / summary.questionCount * 100)}%"></span></div>`;
-        return `<article class="read-for-speed-card ${summary.status === "completed" ? "is-completed" : ""}"><div class="relative flex items-start justify-between gap-3"><span class="rfs-card-status ${statusClass}">${statusLabel}</span><button class="rfs-reset" data-id="${escapeHtml(article.id)}" aria-label="Metin işlemleri: ${escapeHtml(title)}">⋯</button></div><h3 class="read-for-speed-card-title" title="${escapeHtml(article.title)}">${escapeHtml(title)}</h3><p class="rfs-card-detail">${details}</p>${progress}<div class="mt-auto pt-4"><button class="rfs-open" data-id="${escapeHtml(article.id)}" aria-label="${escapeHtml(title)} çalışmasına ${summary.status === "new" ? "başla" : summary.status === "inProgress" ? "devam et" : "sonuçlarını görüntüle"}">${action}</button></div></article>`;
+        const details = summary.status === "new" ? `${summary.questionCount} seçim` : summary.status === "inProgress" ? `${summary.answeredCount} / ${summary.questionCount} seçim cevaplandı` : `${summary.correctCount} doğru · ${summary.incorrectCount} yanlış · Başarı %${summary.score}`;
+        const action = summary.status === "new" ? "Başla" : summary.status === "inProgress" ? "Devam Et" : "Tekrar Çöz";
+        const progressPercent = summary.status === "completed" ? 100 : summary.questionCount ? Math.round(summary.answeredCount / summary.questionCount * 100) : 0;
+        const rawDifficulty = String(article.difficulty || "");
+        const difficulty = ({ easy: "Kolay", medium: "Orta", hard: "Zor" })[rawDifficulty.toLowerCase()] || (["Kolay", "Orta", "Zor"].includes(rawDifficulty) ? rawDifficulty : "");
+        return `<article class="read-for-speed-card ${summary.status === "completed" ? "is-completed" : ""}"><div class="flex items-start justify-between gap-3"><div class="flex flex-wrap gap-2"><span class="rfs-card-status rfs-status-new">READ FOR SPEED</span>${difficulty ? `<span class="rfs-card-status rfs-status-new">${difficulty}</span>` : ""}</div><span class="rfs-card-status ${statusClass}">${statusLabel}</span></div><h3 class="read-for-speed-card-title" title="${escapeHtml(article.title)}">${escapeHtml(title)}</h3><p class="rfs-card-detail">${details}</p><div class="rfs-card-progress-label"><span>ÇALIŞMA İLERLEMESİ</span><span>%${progressPercent}</span></div><div class="rfs-card-progress"><span class="${summary.status === "completed" ? "is-completed" : ""}" style="width:${progressPercent}%"></span></div><div class="rfs-card-actions"><button class="rfs-open" data-id="${escapeHtml(article.id)}" aria-label="${escapeHtml(title)} çalışmasına ${summary.status === "new" ? "başla" : summary.status === "inProgress" ? "devam et" : "sonuçlarını görüntüle"}">${action}</button><button class="rfs-reset" data-id="${escapeHtml(article.id)}" aria-label="${escapeHtml(title)} metin işlemleri" aria-expanded="false">⋯</button></div></article>`;
       }).join("");
-      appArea.innerHTML = `<section class="rounded-2xl border p-5" style="border-color:var(--border-color);background:var(--bg-surface)"><div class="rfs-list-heading"><p class="text-sm font-black">Metinler · ${items.length} kayıt</p><button id="rfsNewBtn" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white">Yeni Metin Ekle</button></div><div class="rfs-list-grid mt-4">${cards || `<div class="col-span-full rounded-2xl border border-dashed p-10 text-center">Henüz çalışma eklenmedi.</div>`}</div></section>`;
+      appArea.innerHTML = `<section class="rounded-2xl border p-5 shadow-sm" style="border-color:var(--border-color);background:var(--bg-surface)"><div class="rfs-list-heading"><div><p class="text-sm font-black uppercase tracking-wide text-blue-500">READ FOR SPEED</p><h2 class="mt-1 text-2xl font-black">Read for Speed</h2><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">İki seçenekli hızlı okuma parçalarını çöz, kontrol et ve ilerlemeni takip et.</p><div class="mt-3 flex flex-wrap gap-2" aria-label="Read for Speed özeti"><span class="rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color:var(--border-color);color:var(--text-secondary);background:var(--bg-surface-secondary)">${allItems.length} metin</span><span class="rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color:color-mix(in srgb,#059669 28%,var(--border-color));background:color-mix(in srgb,#059669 8%,var(--bg-surface))">${completedCount} tamamlandı</span><span class="rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color:color-mix(in srgb,#2563eb 28%,var(--border-color));background:color-mix(in srgb,#2563eb 8%,var(--bg-surface))">${inProgressCount} devam ediyor</span></div></div><button id="rfsNewBtn" class="shrink-0 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white">Yeni Metin Ekle</button></div><div class="rfs-list-filters"><input id="rfsListSearch" aria-label="Metin ara" placeholder="Metin ara" value="${escapeHtml(rfsListQuery)}"><select id="rfsListStatus" aria-label="Çalışma durumu"><option value="all">Tüm durumlar</option><option value="new">Yeni</option><option value="inProgress">Devam Ediyor</option><option value="completed">Tamamlandı</option></select><select id="rfsListSort" aria-label="Sıralama"><option value="recent">Son eklenen</option><option value="title">Başlığa göre A-Z</option><option value="countAsc">Seçim sayısı artan</option><option value="countDesc">Seçim sayısı azalan</option><option value="progress">İlerleme yüksekten düşüğe</option></select></div><div class="rfs-list-grid mt-4">${cards || `<div class="col-span-full rounded-2xl border border-dashed p-10 text-center">Bu filtrede metin bulunamadı.</div>`}</div></section>`;
       document.getElementById("rfsNewBtn").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); };
-      document.querySelectorAll(".rfs-open").forEach(button => button.onclick = () => { readForSpeedActiveArticle = readForSpeedArticles.find(article => article.id === button.dataset.id); readForSpeedMode = "reader"; renderReadForSpeedPage(); });
+      document.getElementById("rfsListStatus").value = rfsListStatus; document.getElementById("rfsListSort").value = rfsListSort;
+      document.getElementById("rfsListSearch").oninput = event => { rfsListQuery = event.target.value; renderReadForSpeedList(); };
+      document.getElementById("rfsListStatus").onchange = event => { rfsListStatus = event.target.value; renderReadForSpeedList(); };
+      document.getElementById("rfsListSort").onchange = event => { rfsListSort = event.target.value; renderReadForSpeedList(); };
+      document.querySelectorAll(".rfs-open").forEach(button => button.onclick = () => { const article = readForSpeedArticles.find(item => item.id === button.dataset.id); if (!article) return; if (readForSpeedArticleSummary(article).completed) { article.progress = null; article.cleanReading = false; article.focusMode = false; saveReadForSpeedArticles(); } readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); });
     }
 
     // Inline action bridge: keeps essential reader actions independent from optional settings bindings.
@@ -2774,6 +2984,7 @@
         progress.incorrectCount = choices.filter(node => readForSpeedQuestionStatus(node, progress.selectedAnswers) === "wrong").length;
         progress.blankCount = choices.filter(node => readForSpeedQuestionStatus(node, progress.selectedAnswers) === "blank").length;
         progress.score = choices.length ? Math.round(progress.correctCount / choices.length * 100) : 0;
+        recordReadForSpeedCompletion(article, progress);
       } else if (action === "clean") article.cleanReading = !article.cleanReading;
       else if (action === "focus") {
         article.focusMode = !article.focusMode;
@@ -2881,9 +3092,9 @@
     // Match the document cards: the three-dot control opens visible actions, not a typed browser prompt.
     if (!window.__rfsCardMenuEventsBound) {
       window.__rfsCardMenuEventsBound = true;
-      const closeReadForSpeedCardMenus = () => document.querySelectorAll(".rfs-card-menu").forEach(menu => menu.remove());
+      const closeReadForSpeedCardMenus = () => { document.querySelectorAll(".rfs-card-menu").forEach(menu => menu.remove()); document.querySelectorAll(".rfs-reset[aria-expanded='true']").forEach(button => button.setAttribute("aria-expanded", "false")); };
       document.addEventListener("click", event => {
-        const target = event.target instanceof Element ? event.target.closest(".rfs-reset, .rfs-menu-open, .rfs-menu-retry, .rfs-menu-edit, .rfs-menu-reset, .rfs-menu-delete") : null;
+        const target = event.target instanceof Element ? event.target.closest(".rfs-reset, .rfs-menu-open, .rfs-menu-retry, .rfs-menu-rename, .rfs-menu-edit, .rfs-menu-answer-key, .rfs-menu-reset, .rfs-menu-delete") : null;
         if (!target) { closeReadForSpeedCardMenus(); return; }
         event.preventDefault();
         event.stopImmediatePropagation();
@@ -2897,17 +3108,32 @@
           const menu = document.createElement("div");
           menu.className = "rfs-card-menu";
           const summary = readForSpeedArticleSummary(article);
-          menu.innerHTML = `${summary.completed ? `<button class="rfs-menu-open" data-id="${escapeHtml(article.id)}">Sonuçları Gör</button><button class="rfs-menu-retry" data-id="${escapeHtml(article.id)}">Tekrar Çöz</button>` : ""}<button class="rfs-menu-edit" data-id="${escapeHtml(article.id)}">Başlığı Düzenle</button>${summary.status === "inProgress" ? `<button class="rfs-menu-reset" data-id="${escapeHtml(article.id)}">İlerlemeyi Sıfırla</button>` : ""}<button class="rfs-menu-delete" data-id="${escapeHtml(article.id)}">Sil</button>`;
+          menu.setAttribute("role", "menu");
+          menu.innerHTML = `<button class="rfs-menu-rename" data-id="${escapeHtml(article.id)}" role="menuitem">Başlığı Düzenle</button>${summary.status !== "new" ? `<button class="rfs-menu-reset" data-id="${escapeHtml(article.id)}" role="menuitem">İlerlemeyi Sıfırla</button>` : ""}<button class="rfs-menu-delete" data-id="${escapeHtml(article.id)}" role="menuitem">Sil</button>`;
           target.parentElement?.classList.add("relative");
           target.parentElement?.append(menu);
+          target.setAttribute("aria-expanded", "true");
           return;
         }
         closeReadForSpeedCardMenus();
         if (target.classList.contains("rfs-menu-open")) { readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); return; }
         if (target.classList.contains("rfs-menu-retry")) { article.progress = null; article.cleanReading = false; saveReadForSpeedArticles(); readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); return; }
-        if (target.classList.contains("rfs-menu-edit")) {
+        if (target.classList.contains("rfs-menu-rename")) {
           const title = prompt("Yeni başlık", article.title);
           if (title?.trim()) { article.title = title.trim(); article.updatedAt = new Date().toISOString(); saveReadForSpeedArticles(); renderReadForSpeedPage(); }
+          return;
+        }
+        if (target.classList.contains("rfs-menu-edit") || target.classList.contains("rfs-menu-answer-key")) {
+          const rawText = prompt(target.classList.contains("rfs-menu-answer-key") ? "Cevap anahtarını token içindeki A/B değerleriyle düzenle" : "Ham metni düzenle", article.rawText || "");
+          if (rawText === null || rawText === article.rawText) return;
+          const parsed = parseReadForSpeed(rawText, "");
+          if (!parsed.questions.length || parsed.errors.length) { alert(`Metin kaydedilmedi:\n${parsed.errors.join("\n") || "En az bir geçerli seçim gerekli."}`); return; }
+          const existingIds = new Map((article.contentNodes || []).filter(node => node.type === "binary_choice").map(node => [String(node.questionKey || node.displayNumber).toUpperCase(), node.questionId]));
+          article.rawText = rawText;
+          article.contentNodes = parsed.nodes.map(node => node.type === "binary_choice" ? { ...node, questionId: existingIds.get(String(node.questionKey || node.displayNumber).toUpperCase()) || `${article.id}:${node.questionKey}` } : node);
+          article.questionCount = parsed.questions.length;
+          article.updatedAt = new Date().toISOString();
+          saveReadForSpeedArticles(); renderReadForSpeedPage();
           return;
         }
         if (target.classList.contains("rfs-menu-reset")) {
@@ -2920,6 +3146,7 @@
           renderReadForSpeedPage();
         }
       }, true);
+      document.addEventListener("keydown", event => { if (event.key === "Escape") closeReadForSpeedCardMenus(); });
     }
 
     if (!window.__rfsWordEventsBound) {
@@ -3010,7 +3237,7 @@
         const persist = () => { progress.elapsedMs += Date.now() - progress.startedAt; progress.startedAt = Date.now(); saveReadForSpeedArticles(); };
         document.getElementById("rfsBack").onclick = () => { persist(); setReadForSpeedFocusMode(false); readForSpeedMode = "list"; readForSpeedActiveArticle = null; renderReadForSpeedPage(); };
         document.querySelectorAll(".rfs-answer").forEach(button => button.onclick = () => { progress.selectedAnswers[button.dataset.question] = button.dataset.answer; persist(); renderReadForSpeedPage(); });
-        const check = () => { progress.checked = true; progress.completed = true; const next = summary(article); progress.correctCount = next.correct; progress.incorrectCount = next.wrong; progress.blankCount = next.blank; progress.score = next.percent; progress.updatedAt = new Date().toISOString(); persist(); renderReadForSpeedPage(); };
+        const check = () => { progress.checked = true; progress.completed = true; const next = summary(article); progress.correctCount = next.correct; progress.incorrectCount = next.wrong; progress.blankCount = next.blank; progress.score = next.percent; progress.updatedAt = new Date().toISOString(); recordReadForSpeedCompletion(article, progress); persist(); renderReadForSpeedPage(); };
         document.getElementById("rfsCheck").onclick = check;
         document.getElementById("rfsClean").onclick = () => { article.cleanReading = !clean; saveReadForSpeedArticles(); renderReadForSpeedPage(); }; document.getElementById("rfsFocus").onclick = () => { article.focusMode = !article.focusMode; saveReadForSpeedArticles(); renderReadForSpeedPage(); }; document.getElementById("rfsSettings").onclick = () => { const panel = document.getElementById("rfsSettingsPanel"); panel.hidden = !panel.hidden; };
         if (!window.__rfsEscapeBound) { window.__rfsEscapeBound = true; window.addEventListener("keydown", event => { if (event.key === "Escape" && readForSpeedMode === "reader" && readForSpeedActiveArticle?.focusMode) { readForSpeedActiveArticle.focusMode = false; saveReadForSpeedArticles(); renderReadForSpeedPage(); } }); }
@@ -3338,9 +3565,11 @@
     }
 
     function dailyTaskActionLabel(key, task, count) {
+      if (key === "flashcards") return activeDailyWordCardSession() ? "Devam Et" : "Başla";
       if (task?.completed || count >= Number(task?.target || 0)) return "";
       if (key === "pastExamReading") return count > 0 ? "Devam Et" : "Parça Seç";
       if (key === "externalReading") return count > 0 ? "Devam Et" : "Metin Seç";
+      if (key === "readForSpeed") return activeReadForSpeedArticle() ? "Devam Et" : "Metin Seç";
       return count > 0 ? "Devam Et" : "Başla";
     }
 
@@ -3370,13 +3599,17 @@
           '<button id="dailyGoalSettingsBtn" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-600 hover:bg-slate-50">Hedefleri Düzenle</button>' +
         '</div>' +
         '<div class="mb-4 h-2 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full bg-blue-600" style="width:' + summary.percent + '%"></div></div>' +
-        '<div class="grid gap-3 lg:grid-cols-2">' + Object.entries(labels).map(([key, meta]) => {
-          const task = dailyProgress[key];
+        '<div class="daily-tasks-grid">' + Object.entries(labels).map(([key, meta]) => {
+          const session = key === "flashcards" ? (activeDailyWordCardSession() || (dailyWordCardSession?.dateKey === todayKey() ? dailyWordCardSession : null)) : null;
+          const task = session ? { ...dailyProgress[key], count: session.reviewedCount, target: session.targetCount, completed: session.completed } : dailyProgress[key];
           if (!task || Number(task.target || 0) <= 0) return "";
           const count = Math.min(taskProgressCount(task), task.target);
           const percent = task.target ? Math.min(100, Math.round((count / task.target) * 100)) : 100;
           const completed = task.completed || count >= task.target;
-          return '<article class="daily-task-card rounded-xl border p-3 ' + (completed ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-slate-50') + '">' +
+          const completedButton = key === "readForSpeed" && completed
+            ? '<button class="daily-task-action border border-emerald-600 bg-emerald-600 text-white" disabled>Tamamlandı ✓</button>'
+            : '';
+          return '<article class="daily-task-card ' + (key === "difficultWords" ? "question-task-card " : "") + 'rounded-xl border p-3 ' + (completed ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-slate-50') + '">' +
             '<div class="flex items-center gap-3">' +
               '<div class="min-w-0 flex-1">' +
                 '<div class="flex flex-wrap items-center justify-between gap-2">' +
@@ -3385,7 +3618,7 @@
                 '</div>' +
                 '<div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full ' + (completed ? 'bg-emerald-600' : 'bg-blue-600') + '" style="width:' + percent + '%"></div></div>' +
               '</div>' +
-              (completed ? '' : '<button class="daily-task-start daily-task-action bg-blue-600 text-white hover:bg-blue-500" data-task="' + key + '">' + dailyTaskActionLabel(key, task, count) + '</button>') +
+              (completed ? completedButton : '<button class="daily-task-start daily-task-action bg-blue-600 text-white hover:bg-blue-500" data-task="' + key + '">' + dailyTaskActionLabel(key, task, count) + '</button>') +
             '</div>' +
           '</article>';
         }).join("") + '</div>' +
@@ -3448,9 +3681,7 @@
           const currentTask = dailyProgress?.[task];
           if (currentTask?.completed || taskProgressCount(currentTask || {}) >= Number(currentTask?.target || 0)) return;
           if (task === "flashcards") {
-            wordSessionSize = String(dailyGoals.flashcards);
-            localStorage.setItem("yds-word-session-size-v1", wordSessionSize);
-            startWordStudy("cards", true);
+            startOrResumeDailyWordCards();
           }
           if (task === "multipleChoice") {
             wordSessionSize = String(dailyGoals.multipleChoice);
@@ -3464,6 +3695,12 @@
           if (task === "externalReading") {
             activeArticleId = "__list__";
             setView("articles");
+          }
+          if (task === "readForSpeed") {
+            const active = activeReadForSpeedArticle();
+            readForSpeedActiveArticle = active;
+            readForSpeedMode = active ? "reader" : "list";
+            setView("read-for-speed");
           }
           if (task === "difficultWords") startQuestionSolvingTask();
         });
@@ -3642,7 +3879,7 @@
               '<p class="mt-1 text-sm font-semibold text-slate-500">Yanlış çözdüğün sorular burada birikir; istediğin zaman tekrar çözebilirsin.</p>' +
             '</div>' +
             '<button id="startWrongReviewBtn" ' + (items.length ? "" : "disabled ") + 'class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white shadow-sm hover:bg-blue-500 disabled:bg-slate-300 disabled:text-slate-500">' +
-              'Yanlışları Çöz' +
+              ((wrongReviewSession && !wrongReviewSession.completed) ? 'Devam Et' : 'Yanlışları Çöz') +
             '</button>' +
           '</div>' +
           (items.length
@@ -3666,31 +3903,70 @@
       if (startButton) startButton.addEventListener("click", startWrongQuestionReview);
     }
 
+    const BACKUP_SCHEMA_VERSION = 2;
+
+    function safeBackupClone(value) {
+      const seen = new WeakSet();
+      return JSON.parse(JSON.stringify(value, (_key, current) => {
+        if (typeof current === "undefined" || typeof current === "function" || typeof current === "symbol") return undefined;
+        if (current instanceof Date) return current.toISOString();
+        if (current instanceof Map) return Object.fromEntries(current);
+        if (current instanceof Set) return [...current];
+        if (current && typeof current === "object") {
+          if (seen.has(current)) throw new Error("Yedeklenemeyen döngüsel veri bulundu.");
+          seen.add(current);
+        }
+        return current;
+      }));
+    }
+
+    function maxUpdatedAt(items) {
+      const values = (Array.isArray(items) ? items : [items]).flat().map(item => Date.parse(item?.updatedAt || item?.createdAt || 0) || 0);
+      const latest = Math.max(0, ...values);
+      return latest ? new Date(latest).toISOString() : null;
+    }
+
+    function readForSpeedBackupModule(source = readForSpeedArticles) {
+      const articles = (Array.isArray(source) ? source : []).map(article => {
+        const { progress, ...articleWithoutProgress } = article || {};
+        return articleWithoutProgress;
+      });
+      const attempts = (Array.isArray(source) ? source : []).flatMap(article => article?.progress
+        ? [{ id: `rfs-attempt:${article.id}`, articleId: article.id, ...article.progress, updatedAt: article.progress.updatedAt || article.updatedAt || null }]
+        : []);
+      return { articles, attempts, updatedAt: maxUpdatedAt([...articles, ...attempts]) };
+    }
+
+    // v1 used several names while Read for Speed was being introduced.  Keep all
+    // compatibility here so old cloud and JSON backups remain recoverable.
+    function normalizeReadForSpeedBackup(payload) {
+      const root = payload || {};
+      const data = root.data || root;
+      const module = root.modules?.readForSpeed || data.modules?.readForSpeed || {};
+      const articles = module.articles ?? root.readForSpeedArticles ?? data.readForSpeedArticles ?? root.read_for_speed_articles ?? data.read_for_speed_articles ?? root.readForSpeed?.articles ?? data.readForSpeed?.articles ?? root.read_for_speed?.articles ?? data.read_for_speed?.articles ?? [];
+      const attempts = module.attempts ?? root.readForSpeedAttempts ?? data.readForSpeedAttempts ?? root.read_for_speed_attempts ?? data.read_for_speed_attempts ?? root.readForSpeed?.attempts ?? data.readForSpeed?.attempts ?? root.read_for_speed?.attempts ?? data.read_for_speed?.attempts ?? [];
+      return { articles: Array.isArray(articles) ? articles : [], attempts: Array.isArray(attempts) ? attempts : [], updatedAt: module.updatedAt || maxUpdatedAt([articles, attempts]) };
+    }
+
     function backupPayload() {
-      return {
+      const now = new Date().toISOString();
+      return safeBackupClone({
         app: "YDS Çalışma",
         owner: "Hakan Erdoğan",
-        version: 1,
-        exportedAt: new Date().toISOString(),
-        data: {
-          uploadedBank,
-          wordbook,
-          articles,
-          notes,
-          wrongQuestionIds,
-          examProgress,
-          dailyGoals,
-          dailyProgress,
-          dailyHistory,
-          weeklyActivity,
-          dailyHardWords: loadJson(STORAGE_DAILY_HARD_WORDS, null),
-          preferences: {
-            theme: localStorage.getItem(STORAGE_THEME) || "light",
-            wordSessionSize,
-            wordCustomSessionSize,
-          },
+        schemaVersion: BACKUP_SCHEMA_VERSION,
+        createdAt: now,
+        exportedAt: now,
+        modules: {
+          questionSources: { records: uploadedBank, updatedAt: maxUpdatedAt([...(uploadedBank.documents || []), ...(uploadedBank.questions || [])]) },
+          words: { records: wordbook, updatedAt: maxUpdatedAt(wordbook) },
+          readingCenter: { records: articles, updatedAt: maxUpdatedAt(articles) },
+          readForSpeed: readForSpeedBackupModule(),
+          notes: { records: notes, updatedAt: maxUpdatedAt(notes) },
+          wrongQuestions: { records: wrongQuestionIds, updatedAt: null },
+          studyStatistics: { records: { examProgress, dailyGoals, dailyProgress, dailyHistory, weeklyActivity, dailyHardWords: loadJson(STORAGE_DAILY_HARD_WORDS, null) }, updatedAt: maxUpdatedAt([dailyProgress, ...dailyHistory, ...weeklyActivity, ...Object.values(examProgress?.exams || {})]) },
+          preferences: { records: { theme: localStorage.getItem(STORAGE_THEME) || "light", wordSessionSize, wordCustomSessionSize }, updatedAt: now },
         },
-      };
+      });
     }
 
     function latestLocalUpdatedAt() {
@@ -3700,6 +3976,7 @@
         ...weeklyActivity.map(item => item?.updatedAt || item?.completedAt),
         ...wordbook.map(item => item?.updatedAt || item?.createdAt),
         ...articles.map(item => item?.updatedAt || item?.createdAt),
+        ...readForSpeedArticles.map(item => item?.progress?.updatedAt || item?.updatedAt || item?.createdAt),
         ...Object.values(examProgress?.exams || {}).map(item => item?.updatedAt),
       ].map(value => Date.parse(value || 0) || 0);
       return Math.max(0, ...values);
@@ -3707,7 +3984,8 @@
 
     function backupHasStudyData(payload) {
       const data = payload?.data || payload || {};
-      return [data.wordbook, data.articles, data.weeklyActivity, data.dailyHistory, data.wrongQuestionIds]
+      const readForSpeed = normalizeReadForSpeedBackup(payload);
+      return [data.wordbook, data.articles, data.weeklyActivity, data.dailyHistory, data.wrongQuestionIds, readForSpeed.articles]
         .some(value => Array.isArray(value) && value.length) || Object.keys(data.examProgress?.exams || {}).length > 0;
     }
 
@@ -3729,20 +4007,138 @@
 
     function normalizeBackupPayload(payload) {
       const data = payload?.data || payload || {};
+      const modules = payload?.modules || data.modules || {};
+      const readForSpeed = normalizeReadForSpeedBackup(payload);
       return {
-        uploadedBank: data.uploadedBank || data.uploads || { documents: [], questions: [] },
-        wordbook: Array.isArray(data.wordbook) ? data.wordbook : [],
-        articles: Array.isArray(data.articles) ? data.articles : [],
-        notes: Array.isArray(data.notes) ? data.notes.map(normalizeNote) : [],
-        wrongQuestionIds: Array.isArray(data.wrongQuestionIds) ? data.wrongQuestionIds : [],
-        examProgress: normalizeExamProgress(data.examProgress || {}),
-        dailyGoals: normalizeDailyGoals(data.dailyGoals || {}),
-        dailyProgress: data.dailyProgress || null,
-        dailyHistory: Array.isArray(data.dailyHistory) ? data.dailyHistory : [],
-        weeklyActivity: normalizeWeeklyActivity(data.weeklyActivity || []),
-        dailyHardWords: data.dailyHardWords || null,
-        preferences: data.preferences || {},
+        schemaVersion: Number(payload?.schemaVersion || payload?.version || 1),
+        createdAt: payload?.createdAt || payload?.exportedAt || null,
+        uploadedBank: modules.questionSources?.records || data.uploadedBank || data.uploads || { documents: [], questions: [] },
+        wordbook: Array.isArray(modules.words?.records) ? modules.words.records : Array.isArray(data.wordbook) ? data.wordbook : [],
+        articles: Array.isArray(modules.readingCenter?.records) ? modules.readingCenter.records : Array.isArray(data.articles) ? data.articles : [],
+        readForSpeed,
+        notes: (Array.isArray(modules.notes?.records) ? modules.notes.records : Array.isArray(data.notes) ? data.notes : []).map(normalizeNote),
+        wrongQuestionIds: Array.isArray(modules.wrongQuestions?.records) ? modules.wrongQuestions.records : Array.isArray(data.wrongQuestionIds) ? data.wrongQuestionIds : [],
+        examProgress: normalizeExamProgress(modules.studyStatistics?.records?.examProgress || data.examProgress || {}),
+        dailyGoals: normalizeDailyGoals(modules.studyStatistics?.records?.dailyGoals || data.dailyGoals || {}),
+        dailyProgress: modules.studyStatistics?.records?.dailyProgress || data.dailyProgress || null,
+        dailyHistory: Array.isArray(modules.studyStatistics?.records?.dailyHistory) ? modules.studyStatistics.records.dailyHistory : Array.isArray(data.dailyHistory) ? data.dailyHistory : [],
+        weeklyActivity: normalizeWeeklyActivity(modules.studyStatistics?.records?.weeklyActivity || data.weeklyActivity || []),
+        dailyHardWords: modules.studyStatistics?.records?.dailyHardWords || data.dailyHardWords || null,
+        preferences: modules.preferences?.records || data.preferences || {},
       };
+    }
+
+    function readForSpeedIdentity(article) {
+      if (article?.id) return `id:${article.id}`;
+      return `content:${String(article?.title || "").trim().toLocaleLowerCase()}::${String(article?.articleNumber || "").trim()}::${String(article?.rawText || "").slice(0, 240).trim()}`;
+    }
+
+    function readForSpeedWithAttempts(module) {
+      const attemptsByArticle = new Map();
+      (module.attempts || []).forEach(attempt => {
+        const articleId = attempt?.articleId || attempt?.id?.replace(/^rfs-attempt:/, "");
+        if (!articleId) return;
+        const prior = attemptsByArticle.get(articleId);
+        if (!prior || (Date.parse(attempt?.updatedAt || 0) || 0) >= (Date.parse(prior?.updatedAt || 0) || 0)) attemptsByArticle.set(articleId, attempt);
+      });
+      return (module.articles || []).map(article => {
+        const embedded = article?.progress;
+        const attempt = attemptsByArticle.get(article.id);
+        const { progress: _ignored, ...cleanArticle } = article || {};
+        return attempt || embedded ? { ...cleanArticle, progress: { ...(embedded || {}), ...(attempt || {}), articleId: undefined, id: undefined } } : cleanArticle;
+      });
+    }
+
+    function mergeReadForSpeed(localModule, cloudModule, replace = false) {
+      const local = readForSpeedWithAttempts(localModule);
+      const cloud = readForSpeedWithAttempts(cloudModule);
+      if (replace) return { articles: cloud, restored: cloud.length, merged: 0, preserved: 0, warnings: [] };
+      const output = new Map(local.map(article => [readForSpeedIdentity(article), article]));
+      let restored = 0, merged = 0, preserved = 0;
+      const warnings = [];
+      cloud.forEach(cloudArticle => {
+        const key = readForSpeedIdentity(cloudArticle);
+        const localArticle = output.get(key);
+        if (!localArticle) { output.set(key, cloudArticle); restored += 1; return; }
+        const localTime = Date.parse(localArticle.updatedAt || localArticle.progress?.updatedAt || 0) || 0;
+        const cloudTime = Date.parse(cloudArticle.updatedAt || cloudArticle.progress?.updatedAt || 0) || 0;
+        if (!localTime || !cloudTime) { preserved += 1; warnings.push(`Read for Speed: “${cloudArticle.title || "başlıksız"}” için tarih yok; yerel kayıt korundu.`); return; }
+        if (cloudTime > localTime) { output.set(key, cloudArticle); merged += 1; }
+        else preserved += 1;
+      });
+      return { articles: [...output.values()], restored, merged, preserved, warnings };
+    }
+
+    function persistReadForSpeedArticles(nextArticles) {
+      saveJson(STORAGE_READ_FOR_SPEED, nextArticles);
+      const verified = loadJson(STORAGE_READ_FOR_SPEED, []);
+      if (!Array.isArray(verified) || verified.length !== nextArticles.length) throw new Error("Read for Speed verileri yerel depoya doğrulanarak yazılamadı.");
+      readForSpeedArticles = verified;
+      readForSpeedActiveArticle = null;
+      return verified;
+    }
+
+    function mergeRecords(localRecords, cloudRecords, identity) {
+      const output = new Map((localRecords || []).map(record => [identity(record), record]));
+      let restored = 0, merged = 0, preserved = 0;
+      const warnings = [];
+      (cloudRecords || []).forEach(cloudRecord => {
+        const key = identity(cloudRecord);
+        const localRecord = output.get(key);
+        if (!localRecord) { output.set(key, cloudRecord); restored += 1; return; }
+        const localTime = Date.parse(localRecord?.updatedAt || localRecord?.createdAt || 0) || 0;
+        const cloudTime = Date.parse(cloudRecord?.updatedAt || cloudRecord?.createdAt || 0) || 0;
+        if (!localTime || !cloudTime) { preserved += 1; warnings.push("Tarih bilgisi olmayan kayıt yerelde korundu."); return; }
+        if (cloudTime > localTime) { output.set(key, cloudRecord); merged += 1; } else preserved += 1;
+      });
+      return { records: [...output.values()], restored, merged, preserved, warnings };
+    }
+
+    function safeRestoreCloudBackup(payload, replace = false) {
+      const cloud = normalizeBackupPayload(payload);
+      const localRfs = readForSpeedBackupModule();
+      const mergedRfs = mergeReadForSpeed(localRfs, cloud.readForSpeed, replace);
+      const wordResult = mergeRecords(wordbook, cloud.wordbook, record => String(record?.wordId || record?.word || record?.id || ""));
+      const articleResult = mergeRecords(articles, cloud.articles, record => String(record?.id || record?.url || record?.title || ""));
+      const noteResult = mergeRecords(notes, cloud.notes, record => String(record?.id || ""));
+      const documentResult = mergeRecords(uploadedBank.documents || [], cloud.uploadedBank?.documents || [], record => String(record?.id || ""));
+      const questionResult = mergeRecords(uploadedBank.questions || [], cloud.uploadedBank?.questions || [], record => String(record?.id || ""));
+      const nextWords = replace ? cloud.wordbook : wordResult.records;
+      const nextArticles = replace ? cloud.articles : articleResult.records;
+      const nextNotes = replace ? cloud.notes : noteResult.records;
+      const nextBank = replace ? cloud.uploadedBank : { ...uploadedBank, documents: documentResult.records, questions: questionResult.records };
+
+      uploadedBank = nextBank;
+      wordbook = nextWords;
+      articles = nextArticles.map(normalizeArticleRecord);
+      notes = nextNotes.map(normalizeNote);
+      if (replace) {
+        wrongQuestionIds = cloud.wrongQuestionIds;
+        examProgress = cloud.examProgress;
+        dailyGoals = normalizeDailyGoals(cloud.dailyGoals);
+        dailyProgress = normalizeDailyProgress(cloud.dailyProgress);
+        dailyHistory = cloud.dailyHistory;
+        weeklyActivity = cloud.weeklyActivity;
+      } else {
+        wrongQuestionIds = [...new Set([...wrongQuestionIds, ...cloud.wrongQuestionIds])];
+      }
+      saveJson(STORAGE_UPLOADS, uploadedBank);
+      saveJson(STORAGE_WORDS, wordbook);
+      saveJson(STORAGE_ARTICLES, articles);
+      saveNotes();
+      saveWrongQuestions();
+      if (replace) {
+        saveExamProgress(); saveJson(STORAGE_DAILY_GOALS, dailyGoals); saveJson(STORAGE_DAILY_PROGRESS, dailyProgress);
+        saveJson(STORAGE_DAILY_HISTORY, dailyHistory); saveWeeklyActivity(false);
+        if (cloud.dailyHardWords) saveJson(STORAGE_DAILY_HARD_WORDS, cloud.dailyHardWords);
+      }
+      persistReadForSpeedArticles(mergedRfs.articles);
+      if (syncReadForSpeedDailyProgress()) saveDailyProgress(false);
+      rebuildBank();
+      renderMenu(); renderStats();
+      const rfsText = `Read for Speed: ${mergedRfs.restored + mergedRfs.merged} metin geri yüklendi, ${mergedRfs.preserved} yerel metin korundu`;
+      const attemptCount = readForSpeedBackupModule(readForSpeedArticles).attempts.length;
+      return { message: `${rfsText} · Read for Speed attempts: ${attemptCount} çalışma yerel depoda doğrulandı · Kelime Defteri: ${wordResult.restored + wordResult.merged} kayıt işlendi · Not Defteri: ${noteResult.restored + noteResult.merged} kayıt işlendi`, warnings: mergedRfs.warnings };
     }
 
     function restoreBackupPayload(payload) {
@@ -3759,6 +4155,8 @@
       dailyHistory = normalized.dailyHistory;
       dailyProgress = normalizeDailyProgress(normalized.dailyProgress);
       weeklyActivity = normalized.weeklyActivity;
+      persistReadForSpeedArticles(readForSpeedWithAttempts(normalized.readForSpeed));
+      syncReadForSpeedDailyProgress();
       migrateLegacyWeeklyActivity();
       if (normalized.preferences.theme) localStorage.setItem(STORAGE_THEME, normalized.preferences.theme);
       if (normalized.preferences.wordSessionSize) {
@@ -3885,17 +4283,39 @@
       try {
         const config = validateSupabaseConfig(silent ? loadSupabaseConfig() : currentSupabaseFormConfig());
         if (!silent) supabaseStatus("Veriler buluta yedekleniyor...");
+        const payload = backupPayload();
+        const localRfsCount = payload.modules.readForSpeed.articles.length;
+        const existingResponse = await fetch(config.url + "/rest/v1/yds_cloud_backups?sync_id=eq." + encodeURIComponent(config.syncId) + "&select=payload&limit=1", { headers: supabaseHeaders(config) });
+        if (!existingResponse.ok) throw new Error(await existingResponse.text() || "Mevcut bulut yedeği okunamadı.");
+        const existingRows = await existingResponse.json();
+        const cloudRfsCount = existingRows[0]?.payload ? normalizeReadForSpeedBackup(existingRows[0].payload).articles.length : 0;
+        if (localRfsCount === 0 && cloudRfsCount > 0) {
+          const warning = `Yerel Read for Speed bölümünde kayıt bulunmuyor; bulutta ${cloudRfsCount} metin var. Buluttaki Read for Speed verileri silinebilir. Devam edilsin mi?`;
+          if (silent || !window.confirm(warning)) {
+            if (!silent) supabaseStatus("Bulut yedeği korunarak işlem iptal edildi.", "info");
+            return;
+          }
+        }
         const response = await fetch(config.url + "/rest/v1/yds_cloud_backups?on_conflict=sync_id", {
           method: "POST",
           headers: supabaseHeaders(config, { Prefer: "resolution=merge-duplicates,return=representation" }),
           body: JSON.stringify([{
             sync_id: config.syncId,
-            payload: backupPayload(),
+            payload,
             updated_at: new Date().toISOString(),
           }]),
         });
         if (!response.ok) throw new Error(await response.text() || "Buluta yedek alınamadı.");
-        if (!silent) supabaseStatus("Bulut yedeği güncellendi.", "success");
+        // Do not trust a successful upsert alone: JSONB payload must round-trip intact.
+        const verifyResponse = await fetch(config.url + "/rest/v1/yds_cloud_backups?sync_id=eq." + encodeURIComponent(config.syncId) + "&select=payload&limit=1", { headers: supabaseHeaders(config) });
+        if (!verifyResponse.ok) throw new Error("Bulut yedeği yazıldı ancak doğrulama için tekrar okunamadı.");
+        const verifyRows = await verifyResponse.json();
+        const verifiedRfsCount = normalizeReadForSpeedBackup(verifyRows[0]?.payload).articles.length;
+        if (verifiedRfsCount !== localRfsCount) throw new Error("Read for Speed verileri yedek paketine eklenemedi. Yedekleme tamamlanmadı.");
+        if (!silent) {
+          const attempts = payload.modules.readForSpeed.attempts.length;
+          supabaseStatus(`Bulut yedeği oluşturuldu: ${(payload.modules.questionSources.records.documents || []).length} soru kaynağı · ${(payload.modules.readingCenter.records || []).length} okuma metni · ${localRfsCount} Read for Speed metni · ${attempts} Read for Speed çalışma kaydı · ${(payload.modules.words.records || []).length} kelime · ${(payload.modules.notes.records || []).length} not.`, "success");
+        }
       } catch (error) {
         if (!silent) supabaseStatus(error.message || "Buluta yedek alınamadı.", "error");
       }
@@ -3911,17 +4331,18 @@
         if (!response.ok) throw new Error(await response.text() || "Bulut yedeği okunamadı.");
         const rows = await response.json();
         if (!rows.length || !rows[0].payload) throw new Error("Bu eşitleme koduyla kayıtlı bulut yedeği bulunamadı.");
-        if (!backupHasStudyData(rows[0].payload) && latestLocalUpdatedAt() > 0) {
-          supabaseStatus("Boş bulut kaydı yereldeki çalışma verilerinin üzerine yazılmadı.", "success");
-          return;
+        const cloud = normalizeBackupPayload(rows[0].payload);
+        const cloudRfsCount = cloud.readForSpeed.articles.length;
+        const localRfsCount = readForSpeedArticles.length;
+        const backupDate = new Date(rows[0].updated_at || cloud.createdAt || Date.now()).toLocaleString("tr-TR");
+        const preview = `Bulut yedeği:\n- Yedek tarihi: ${backupDate}\n- Read for Speed: ${cloudRfsCount} metin\n- Yerel Read for Speed: ${localRfsCount} metin\n\nTamam = Güvenli Birleştir\nİptal = Bulut yedeğini tamamen kullan seçeneğini gör`;
+        let replace = false;
+        if (!window.confirm(preview)) {
+          replace = window.confirm("Bulut yedeğini tamamen kullanmak yerel kayıtların üzerine yazabilir ve geri alınamaz. Tamamen kullanılsın mı?");
+          if (!replace) { supabaseStatus("Geri yükleme iptal edildi.", "info"); return; }
         }
-        const cloudUpdatedAt = Date.parse(rows[0].updated_at || rows[0].payload?.exportedAt || 0) || 0;
-        const localUpdatedAt = latestLocalUpdatedAt();
-        if (localUpdatedAt > cloudUpdatedAt) {
-          supabaseStatus("Yerel kayıt bulut yedeğinden daha yeni; eski/boş bulut kaydı çalışma verilerinin üzerine yazılmadı.", "success");
-          return;
-        }
-        restoreBackupPayload(rows[0].payload);
+        const result = safeRestoreCloudBackup(rows[0].payload, replace);
+        supabaseStatus(result.message + (result.warnings.length ? " Uyarı: " + result.warnings[0] : ""), "success");
       } catch (error) {
         supabaseStatus(error.message || "Bulut yedeği geri yüklenemedi.", "error");
       }
@@ -3977,10 +4398,11 @@
               '</div>' +
               '<button id="saveDailyGoalsBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white shadow-sm hover:bg-blue-500">Hedefleri Kaydet</button>' +
             '</div>' +
-            '<div class="mt-4 grid gap-3 md:grid-cols-3 xl:grid-cols-5">' +
+            '<div class="mt-4 grid gap-3 md:grid-cols-3 xl:grid-cols-6">' +
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Kelime Kartları</span><input id="goalFlashcardsInput" type="number" min="10" max="200" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500" value="' + dailyGoals.flashcards + '" /></label>' +
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Çoktan seçmeli</span><input id="goalMultipleChoiceInput" type="number" min="10" max="200" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500" value="' + dailyGoals.multipleChoice + '" /></label>' +
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Okuma</span><input id="goalPastExamInput" type="number" min="0" max="5" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500" value="' + dailyGoals.pastExamReading + '" /></label>' +
+              '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Read for Speed</span><select id="goalReadForSpeedInput" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500"><option value="0" ' + (dailyGoals.readForSpeed === 0 ? "selected" : "") + '>Kapalı</option><option value="1" ' + (dailyGoals.readForSpeed === 1 ? "selected" : "") + '>1 metin</option><option value="2" ' + (dailyGoals.readForSpeed === 2 ? "selected" : "") + '>2 metin</option><option value="3" ' + (dailyGoals.readForSpeed === 3 ? "selected" : "") + '>3 metin</option></select></label>' +
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Soru çözümü</span><input id="goalDifficultInput" type="number" min="1" max="200" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500" value="' + dailyGoals.difficultWords + '" /></label>' +
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Seri koşulu</span><select id="goalStreakModeInput" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500"><option value="all" ' + (dailyGoals.streakMode === "all" ? "selected" : "") + '>Tüm görevler</option><option value="80" ' + (dailyGoals.streakMode === "80" ? "selected" : "") + '>%80 yeterli</option></select></label>' +
             '</div>' +
@@ -4057,6 +4479,7 @@
           multipleChoice: document.getElementById("goalMultipleChoiceInput").value,
           pastExamReading: document.getElementById("goalPastExamInput").value,
           externalReading: dailyGoals.externalReading,
+          readForSpeed: document.getElementById("goalReadForSpeedInput").value,
           difficultWords: document.getElementById("goalDifficultInput").value,
           streakMode: document.getElementById("goalStreakModeInput").value,
         });
@@ -4115,6 +4538,8 @@
         ...article,
         status: "new",
         readingProgress: 0,
+        completed: false,
+        completedAt: null,
         lastReadAt: "",
         lastStudiedAt: "",
         userAnswers: {},
@@ -4145,13 +4570,17 @@
     }
 
     function startWrongQuestionReview() {
-      const items = wrongQuestions();
-      if (!items.length) return;
-      wrongReviewIds = items.map(item => item.id);
+      const resumable = wrongReviewSession && !wrongReviewSession.completed && wrongReviewSession.questionIds.length;
+      if (!resumable) {
+        const items = wrongQuestions();
+        if (!items.length) return;
+        saveWrongReviewSession(createWrongReviewSession(items.map(item => item.id)));
+      }
+      wrongReviewIds = wrongReviewSession.questionIds;
       solveMode = "wrong";
       questionSolvingSessionId = createActivitySession("question-solving");
       localStorage.setItem(STORAGE_QUESTION_SESSION, questionSolvingSessionId);
-      currentIndex = 0;
+      currentIndex = wrongReviewSession.currentIndex;
       answered = false;
       stats.correct = 0;
       stats.wrong = 0;
@@ -4474,9 +4903,25 @@
     }
 
     function articleReadingStatus(article) {
-      if (article?.status === "completed" || Number(article?.readingProgress || 0) >= 98) return { key: "completed", label: "Tamamlandı" };
-      if (article?.status === "reading" || Number(article?.readingProgress || 0) > 0) return { key: "reading", label: "Okunuyor" };
+      if (article?.completed === true || article?.status === "completed" || Number(article?.readingProgress || 0) >= 100) return { key: "completed", label: "Tamamlandı" };
+      if (Number(article?.readingProgress || 0) > 0 && Number(article?.readingProgress || 0) < 100) return { key: "reading", label: "Okunuyor" };
       return { key: "new", label: "Yeni" };
+    }
+
+    function getReadingCenterSummary(articleRecords = articles) {
+      const uniqueArticles = new Map();
+      (Array.isArray(articleRecords) ? articleRecords : []).forEach(article => {
+        if (article?.id) uniqueArticles.set(String(article.id), article);
+      });
+      let completedCount = 0;
+      let inProgressCount = 0;
+      uniqueArticles.forEach(article => {
+        const progress = Math.max(0, Math.min(100, Number(article?.readingProgress || 0)));
+        const completed = article?.completed === true || article?.status === "completed" || Boolean(article?.completedAt) || progress >= 100;
+        if (completed) completedCount += 1;
+        else if (progress > 0 && progress < 100) inProgressCount += 1;
+      });
+      return { totalCount: uniqueArticles.size, completedCount, inProgressCount };
     }
 
     function articleContentType(article) {
@@ -4758,6 +5203,11 @@
       const questions = getCategoryQuestions();
       const question = questions[currentIndex];
       const documentInfo = question ? (documents.find(item => item.id === question.documentId) || activeDocument()) : activeDocument();
+      if (solveMode === "wrong") {
+        const result = selectedAnswerSummary(questions);
+        stats.correct = result.correct;
+        stats.wrong = result.wrong;
+      }
       renderMenu();
       renderStats();
       document.body.classList.toggle("question-focus-mode", questionFocusMode && activeView === "solve");
@@ -4892,11 +5342,12 @@
       const selectedKey = selectedButton.dataset.key;
       if (!isAnswerKey(selectedKey)) return;
       const hadAnswer = isAnswerKey(selectedAnswerForQuestion(question));
+      if (solveMode === "wrong" && hadAnswer) return;
       saveSelectedAnswer(question, selectedKey);
       answered = true;
       recordWeeklyActivity("question", "question-solving:" + (questionSolvingSessionId || "legacy") + ":" + question.id);
       if (!hadAnswer) markDailyTaskItem("difficultWords", question.id);
-      if (question.correctAnswer) {
+      if (solveMode !== "wrong" && question.correctAnswer) {
         if (selectedKey === question.correctAnswer) removeWrongQuestion(question.id);
         else if (selectedKey !== question.correctAnswer) addWrongQuestion(question.id);
       }
@@ -4921,7 +5372,20 @@
       });
     }
 
+    function finalizeWrongReviewSession() {
+      if (!wrongReviewSession || wrongReviewSession.completed) return;
+      wrongReviewSession.questionIds.forEach(questionId => {
+        const question = questionBank.find(item => item.id === questionId);
+        const selectedKey = wrongReviewSession.answers?.[questionId];
+        if (!question || !isAnswerKey(selectedKey) || !question.correctAnswer) return;
+        if (selectedKey === question.correctAnswer) removeWrongQuestion(questionId);
+        else addWrongQuestion(questionId);
+      });
+      saveWrongReviewSession({ ...wrongReviewSession, completed: true, updatedAt: new Date().toISOString() });
+    }
+
     function renderFinishScreen() {
+      if (solveMode === "wrong") finalizeWrongReviewSession();
       const documentInfo = solveMode === "wrong" ? { title: "Yanlış Sorular" } : activeDocument();
       const result = selectedAnswerSummary();
       stats.correct = result.correct;
@@ -4944,6 +5408,12 @@
     }
 
     function restartCategory() {
+      if (solveMode === "wrong") {
+        wrongReviewSession = null;
+        saveJson(STORAGE_WRONG_REVIEW_SESSION, null);
+        startWrongQuestionReview();
+        return;
+      }
       currentIndex = 0;
       answered = false;
       questionSolvingSessionId = createActivitySession("question-solving");
@@ -4951,17 +5421,30 @@
       renderQuestion();
     }
 
-    function openWordModal(word, question, suggested = null) {
-      pendingWord = { word: normalizeWord(word), questionId: question?.id || null };
-      const existing = wordbook.find(item => item.word.toLowerCase() === pendingWord.word.toLowerCase());
-      wordModalTitle.textContent = pendingWord.word || "Yeni kelime";
-      wordInput.value = existing?.word || pendingWord.word;
-      turkishInput.value = "";
-      meaningInput.value = "";
-      exampleInput.value = "";
+    function openWordModal(word, question, suggested = null, options = {}) {
+      const requestedMode = options.mode || null;
+      const existing = options.wordId ? wordbook.find(item => item.id === options.wordId) : findDictionaryWord(word);
+      wordModalMode = requestedMode || (existing ? "view" : "create");
+      selectedWordId = existing?.id || null;
+      pendingWord = { word: normalizeWord(word || existing?.word), questionId: question?.id || existing?.questionId || null, ...(options.pending || {}) };
+      const record = existing || {};
+      wordModalTitle.textContent = record.word || pendingWord.word || "Yeni kelime";
+      wordModalEyebrow.textContent = wordModalMode === "edit" ? "KELİMEYİ DÜZENLE" : wordModalMode === "view" ? "KELİME DEFTERİNDE" : "SÖZLÜĞE EKLE";
+      wordInput.value = record.word || pendingWord.word;
+      turkishInput.value = record.turkish || record.meaning || "";
+      meaningInput.value = record.meaningNote || "";
+      exampleInput.value = record.example || "";
+      const viewRows = [["Türkçe anlamı", record.turkish || record.meaning], ["Yakın anlamlılar", record.meaningNote], ["Örnek cümle", record.example], ["Kelime türü", record.wordType], ["Kaynak", record.source || record.sourceArticle]].filter(([, value]) => String(value || "").trim());
+      wordViewFields.innerHTML = '<p class="mb-4 text-sm font-black text-emerald-600">✓ Kelime Defterinde</p>' + viewRows.map(([label, value]) => '<div class="mb-3 border-b pb-3" style="border-color:var(--border-color)"><p class="text-xs font-black uppercase tracking-wide" style="color:var(--text-secondary)">' + escapeHtml(label) + '</p><p class="mt-1 whitespace-pre-wrap font-semibold">' + escapeHtml(value) + '</p></div>').join("");
+      const viewing = wordModalMode === "view";
+      wordFormFields.classList.toggle("hidden", viewing);
+      wordViewFields.classList.toggle("hidden", !viewing);
+      saveWordBtn.classList.toggle("hidden", viewing);
+      editWordBtn.classList.toggle("hidden", !viewing);
+      saveWordBtn.textContent = wordModalMode === "edit" ? "Değişiklikleri Kaydet" : "Kelime Defterine Ekle";
       wordModal.classList.remove("hidden");
       wordModal.classList.add("flex");
-      turkishInput.focus();
+      (viewing ? editWordBtn : (wordModalMode === "create" && !wordInput.value ? wordInput : turkishInput)).focus();
     }
 
     function openBlankWordModal() {
@@ -4974,6 +5457,8 @@
       wordModal.classList.add("hidden");
       wordModal.classList.remove("flex");
       pendingWord = null;
+      selectedWordId = null;
+      wordModalMode = "create";
       wordInput.value = "";
       turkishInput.value = "";
       meaningInput.value = "";
@@ -4982,13 +5467,25 @@
 
     function saveWord() {
       const pending = pendingWord;
+      const editing = wordModalMode === "edit";
       const word = normalizeWord(wordInput.value);
       const turkish = turkishInput.value.trim();
       const meaningNote = meaningInput.value.trim();
       const example = exampleInput.value.trim();
       if (!word || !turkish) return;
-      const existingIndex = wordbook.findIndex(item => item.word.toLowerCase() === word.toLowerCase());
-      const existing = existingIndex >= 0 ? wordbook[existingIndex] : null;
+      const selectedIndex = selectedWordId ? wordbook.findIndex(item => item.id === selectedWordId) : -1;
+      const duplicate = wordbook.find(item => item.id !== selectedWordId && normalizeLookup(item.word) === normalizeLookup(word));
+      if (wordModalMode === "create" && duplicate) {
+        showToast("Bu kelime zaten Kelime Defterinde bulunuyor.");
+        openWordModal(duplicate.word, null, null, { mode: "view", wordId: duplicate.id });
+        return;
+      }
+      if (wordModalMode === "edit" && duplicate) {
+        showToast("Bu kelime zaten Kelime Defterinde bulunuyor.");
+        openWordModal(duplicate.word, null, null, { mode: "view", wordId: duplicate.id });
+        return;
+      }
+      const existing = selectedIndex >= 0 ? wordbook[selectedIndex] : null;
       const record = {
         ...(existing || {}),
         id: existing ? existing.id : "word-" + Date.now(),
@@ -5003,7 +5500,7 @@
         seen: existing ? existing.seen || 0 : 0,
         needsReview: existing ? !!existing.needsReview : false,
       };
-      if (existingIndex >= 0) wordbook[existingIndex] = record;
+      if (selectedIndex >= 0) wordbook[selectedIndex] = record;
       else wordbook.unshift(record);
       if (pending?.article && pending?.sourceLocator) {
         const article = pending.article;
@@ -5025,7 +5522,7 @@
       queueSupabaseAutoBackup();
       closeWordModal();
       renderStats();
-      showToast("Kelime defterine eklendi.");
+      showToast(editing ? "Kelime güncellendi." : "Kelime defterine eklendi.");
       if (activeView === "words") renderWordbook();
       if (activeView === "study") renderWordStudy();
     }
@@ -5174,9 +5671,9 @@
       return notes
         .filter(note => !query || normalizeLookup(note.content).includes(query) || normalizeLookup(note.sourceTitle).includes(query) || normalizeLookup(String(note.questionNumber || "")).includes(query))
         .sort((a, b) => {
-          if (Boolean(a.pinned) !== Boolean(b.pinned)) return a.pinned ? -1 : 1;
           if (noteSortMode === "oldest") return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
-          if (noteSortMode === "source") return String(a.sourceTitle || "").localeCompare(String(b.sourceTitle || ""), "tr");
+          if (noteSortMode === "title-asc") return noteTitle(a).localeCompare(noteTitle(b), "tr");
+          if (noteSortMode === "title-desc") return noteTitle(b).localeCompare(noteTitle(a), "tr");
           return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
         });
     }
@@ -5291,48 +5788,47 @@
     }
 
     function noteCardHtml(note) {
-      const source = noteSourceLabel(note);
       const preview = notePreview(note);
-      const hasSource = note.sourceType !== "manual";
+      const hasSource = note.sourceType !== "manual" && Boolean(note.sourceId || note.questionId);
       const sourceExists = noteSourceExists(note);
-      const sourceName = note.sourceTitle || "Kaynak";
+      const sourceName = note.sourceTitle || "Kaynak başlığı eklenmedi";
       const sourceSection = note.sourceType === "reading" ? "Okuma Merkezi" : note.sourceType === "question" ? "Çıkmış Sorular" : "";
-      return '<article class="note-card relative flex min-h-[220px] min-w-0 cursor-pointer flex-col rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-sm transition duration-150 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800" data-note-open="' + escapeHtml(note.id) + '">' +
+      const sourceStatus = !hasSource ? "Serbest not" : !sourceExists ? "Kaynak artık mevcut değil" : "";
+      return '<article class="note-card relative flex min-h-[220px] min-w-0 cursor-pointer flex-col rounded-2xl border border-slate-200 bg-slate-50 p-[22px] shadow-sm transition duration-150 hover:border-slate-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800" data-note-open="' + escapeHtml(note.id) + '">' +
         '<div class="flex items-start justify-between gap-3"><p class="text-xs font-bold text-slate-500">' + escapeHtml(formatNoteDate(note.createdAt)) + '</p>' +
-        '<button class="note-menu-toggle flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-lg font-black text-slate-500 hover:bg-slate-100 hover:text-blue-700" data-note-id="' + escapeHtml(note.id) + '" aria-label="Not işlemleri">…</button></div>' +
-        '<h3 class="mt-3 line-clamp-2 break-words text-xl font-bold leading-[1.3] text-blue-700">' + escapeHtml(noteTitle(note)) + '</h3>' +
-        (preview ? '<p class="mt-2 whitespace-pre-wrap line-clamp-3 text-sm font-medium leading-relaxed text-slate-700 dark:text-slate-300">' + escapeHtml(preview) + '</p>' : "") +
-        (hasSource ? '<div class="mt-auto pt-4 text-xs">' + (sourceExists ? '<button class="note-source-link inline-flex flex-wrap items-baseline gap-x-2 gap-y-1 text-left text-blue-700 hover:text-blue-800" data-note-source="' + escapeHtml(note.id) + '"><strong class="text-[13px] font-bold underline decoration-1 underline-offset-4">' + (note.sourceType === "reading" ? "Metne Git" : "Kaynağa Git") + '</strong><span class="font-medium text-slate-600 dark:text-slate-300">' + escapeHtml(sourceName) + '</span>' + (sourceSection || note.questionNumber ? '<em class="not-italic font-medium text-slate-500">' + escapeHtml(sourceSection + (note.questionNumber ? (sourceSection ? " · " : "") + "Soru " + note.questionNumber : "")) + '</em>' : "") + '</button>' : '<span class="text-slate-400">Kaynak bulunamadı</span>') + '</div>' : "") +
+        '<button class="note-menu-toggle flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-lg font-black text-slate-500 hover:bg-slate-100 hover:text-blue-700 dark:border-slate-700 dark:bg-slate-900" data-note-id="' + escapeHtml(note.id) + '" aria-label="' + escapeHtml(noteTitle(note)) + ' not işlemleri" aria-expanded="false">…</button></div>' +
+        '<h3 class="mt-4 line-clamp-3 break-words text-[clamp(20px,1.55vw,23px)] font-bold leading-[1.28] text-blue-700">' + escapeHtml(noteTitle(note)) + '</h3>' +
+        (preview ? '<p class="mt-2 whitespace-pre-wrap line-clamp-3 text-base font-medium leading-relaxed text-slate-700 dark:text-slate-300">' + escapeHtml(preview) + '</p>' : "") +
+        '<div class="mt-auto flex min-w-0 items-center gap-2 border-t border-slate-200 pt-4 text-xs dark:border-slate-700">' + (sourceExists ? '<button class="note-source-link flex min-w-0 items-center gap-2 text-left font-semibold text-slate-600 hover:text-slate-800 dark:text-slate-300" data-note-source="' + escapeHtml(note.id) + '" aria-label="' + escapeHtml(sourceName) + ' metnine git" title="' + escapeHtml(sourceName) + '">' + (sourceSection ? '<span class="shrink-0 max-w-[46%] truncate rounded-full border border-slate-200 px-2 py-0.5 text-[11px] font-bold text-slate-500 dark:border-slate-700">' + escapeHtml(sourceSection + (note.questionNumber ? " · Soru " + note.questionNumber : "")) + '</span>' : "") + '<span class="line-clamp-2">' + escapeHtml(sourceName) + '</span><b aria-hidden="true" class="ml-auto shrink-0 text-base text-blue-700">→</b></button>' : '<span class="' + (hasSource ? "font-medium text-slate-500" : "rounded-full border border-slate-200 px-2 py-0.5 font-bold text-slate-500 dark:border-slate-700") + '">' + sourceStatus + '</span>') + '</div>' +
         '<div class="note-action-menu hidden absolute right-4 top-14 z-10 w-48 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl" data-note-menu="' + escapeHtml(note.id) + '">' +
           '<button data-note-action="edit" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50">Düzenle</button>' +
-          '<button data-note-action="pin" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50">' + (note.pinned ? "Sabitlemeyi kaldır" : "Sabitle") + '</button>' +
-          '<button data-note-action="copy" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50">Kopyala</button>' +
           (sourceExists ? '<button data-note-action="source" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50">Kaynağa Git</button>' : "") +
-          '<button data-note-action="delete" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-rose-600 hover:bg-rose-50">Sil</button>' +
+          '<div class="mt-1 border-t border-slate-200 pt-1"><button data-note-action="delete" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-rose-600 hover:bg-rose-50">Sil</button></div>' +
         '</div>' +
       '</article>';
     }
 
     function renderNotebook() {
-      pageTitle.textContent = "YDS Hazırlık";
+      pageTitle.textContent = "Not Defteri";
       renderMenu();
       renderStats();
       const visibleNotes = filteredNotes();
       appArea.innerHTML =
-        '<section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">' +
-          '<div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">' +
-            '<div><h1 class="text-2xl font-black text-slate-950">Not Defteri</h1><p class="mt-1 text-sm font-medium text-slate-500">Pratik gramer, kalıp ve çalışma notlarını tek yerde tut.</p></div>' +
-            '<div class="flex items-center gap-3"><span class="whitespace-nowrap text-sm font-black text-slate-600">' + notes.length + ' not</span><button id="newNoteBtn" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-sm hover:bg-blue-500">+ Yeni Not</button></div>' +
+        '<section class="rounded-2xl border border-slate-200 bg-white px-5 py-[22px] shadow-sm sm:px-6">' +
+          '<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">' +
+            '<p class="text-sm font-medium text-slate-500">Pratik gramer, kalıp ve çalışma notlarını tek yerde tut.</p>' +
+            '<div class="flex items-center justify-between gap-3"><button id="newNoteBtn" aria-label="Yeni not oluştur" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-sm hover:bg-blue-500">+ Yeni Not</button></div>' +
           '</div>' +
           '<div class="mt-4 grid gap-2 sm:grid-cols-[minmax(0,1fr)_190px]">' +
             '<input id="noteSearchInput" class="h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white" placeholder="Notlarda ara..." value="' + escapeHtml(noteSearchQuery) + '">' +
-            '<select id="noteSortSelect" class="h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:bg-white"><option value="newest"' + (noteSortMode === "newest" ? " selected" : "") + '>Son eklenen</option><option value="oldest"' + (noteSortMode === "oldest" ? " selected" : "") + '>En eski</option><option value="source"' + (noteSortMode === "source" ? " selected" : "") + '>Kaynak adına göre</option></select>' +
+            '<select id="noteSortSelect" class="h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:bg-white"><option value="newest"' + (noteSortMode === "newest" ? " selected" : "") + '>Son eklenen</option><option value="oldest"' + (noteSortMode === "oldest" ? " selected" : "") + '>İlk eklenen</option><option value="title-asc"' + (noteSortMode === "title-asc" ? " selected" : "") + '>A–Z</option><option value="title-desc"' + (noteSortMode === "title-desc" ? " selected" : "") + '>Z–A</option></select>' +
           '</div>' +
         '</section>' +
         (visibleNotes.length ? '<section class="mt-4 grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">' + visibleNotes.map(noteCardHtml).join("") + '</section>' :
-          '<section class="mt-4 rounded-2xl border border-slate-200 bg-white px-6 py-14 text-center shadow-sm"><h2 class="text-xl font-black text-slate-950">Henüz not eklemedin.</h2><p class="mx-auto mt-2 max-w-md text-sm font-medium text-slate-500">Pratik gramer, kalıp ve çalışma notlarını burada biriktirebilirsin.</p><button id="firstNoteBtn" class="mt-5 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-lg shadow-blue-200 hover:bg-blue-500">İlk Notunu Ekle</button></section>');
+          '<section class="mt-4 rounded-2xl border border-slate-200 bg-white px-6 py-14 text-center shadow-sm">' + (notes.length ? '<h2 class="text-xl font-black text-slate-950">Aramanla eşleşen not bulunamadı.</h2><button id="clearNoteSearchBtn" class="mt-5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-black text-slate-700 hover:bg-slate-50">Aramayı Temizle</button>' : '<h2 class="text-xl font-black text-slate-950">Henüz not eklenmedi.</h2><p class="mx-auto mt-2 max-w-md text-sm font-medium text-slate-500">Okuma veya soru çözümü sırasında dikkatini çeken yapıları buraya kaydedebilirsin.</p><button id="firstNoteBtn" class="mt-5 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-lg shadow-blue-200">+ Yeni Not</button>') + '</section>');
       document.getElementById("newNoteBtn")?.addEventListener("click", () => openQuickNoteDrawer());
       document.getElementById("firstNoteBtn")?.addEventListener("click", () => openQuickNoteDrawer());
+      document.getElementById("clearNoteSearchBtn")?.addEventListener("click", () => { noteSearchQuery = ""; renderNotebook(); });
       document.getElementById("noteSearchInput")?.addEventListener("input", event => {
         noteSearchQuery = event.target.value;
         clearTimeout(noteSearchTimer);
@@ -5347,20 +5843,15 @@
         const menu = appArea.querySelector('[data-note-menu="' + button.dataset.noteId + '"]');
         const shouldOpen = menu?.classList.contains("hidden");
         appArea.querySelectorAll(".note-action-menu").forEach(item => item.classList.add("hidden"));
-        if (shouldOpen) menu?.classList.remove("hidden");
+        if (shouldOpen) { menu?.classList.remove("hidden"); button.setAttribute("aria-expanded", "true"); }
       }));
       appArea.querySelectorAll("[data-note-action]").forEach(button => button.addEventListener("click", () => {
         const index = notes.findIndex(note => note.id === button.dataset.noteId);
         if (index < 0) return;
         const action = button.dataset.noteAction;
         if (action === "edit") return openQuickNoteDrawer({ note: notes[index] });
-        if (action === "pin") notes[index].pinned = !notes[index].pinned;
         if (action === "source") return goToNoteSource(notes[index]);
-        if (action === "copy") {
-          void copyNoteContent(notes[index]);
-          appArea.querySelectorAll(".note-action-menu").forEach(item => item.classList.add("hidden"));
-          return;
-        } else if (action === "delete") {
+        if (action === "delete") {
           if (!window.confirm('"' + noteTitle(notes[index]) + '" notunu silmek istediğine emin misin?')) return;
           notes.splice(index, 1);
         }
@@ -5492,7 +5983,7 @@
         button.addEventListener("click", event => {
           event.stopPropagation();
           const item = wordbook.find(word => word.id === button.dataset.id);
-          if (item) openWordModal(item.word, { id: item.questionId || null });
+          if (item) openWordModal(item.word, { id: item.questionId || null }, null, { mode: "edit", wordId: item.id });
         });
       });
       document.querySelectorAll(".delete-word").forEach(button => {
@@ -5855,6 +6346,7 @@
         if (!wordCardRevealed) return;
         applySrsRating(item.id, "hard", "flashcards");
         wordStudyIndex++;
+        persistDailyWordCardProgress(item.id, wordStudyIndex, wordStudyIndex >= words.length);
         wordCardRevealed = false;
         renderStats();
         renderWordStudy();
@@ -5863,6 +6355,7 @@
         button.addEventListener("click", () => {
           applySrsRating(item.id, button.dataset.rating, "flashcards");
           wordStudyIndex++;
+          persistDailyWordCardProgress(item.id, wordStudyIndex, wordStudyIndex >= words.length);
           wordCardRevealed = false;
           renderStats();
           renderWordStudy();
@@ -6180,6 +6673,7 @@
           '<button class="article-card-translation block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100" data-id="' + escapeHtml(article.id) + '">' + (articleHasTranslation(article) ? 'Türkçe Çeviriyi Düzenle' : 'Türkçe Çeviri Ekle') + '</button>' +
           '<button class="article-card-change-kind block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100" data-id="' + escapeHtml(article.id) + '" data-kind="' + (kind === "yds" ? "external" : "yds") + '">Türü değiştir</button>' +
           '<button class="article-card-mark-read block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100" data-id="' + escapeHtml(article.id) + '">Okundu olarak işaretle</button>' +
+          (status.key !== "new" ? '<button class="article-card-restart block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100" data-id="' + escapeHtml(article.id) + '">Okumayı yeniden başlat</button>' : '') +
           '<button class="article-card-delete block w-full rounded-lg px-3 py-2 text-left text-red-600 hover:bg-red-50" data-id="' + escapeHtml(article.id) + '">Sil</button>' +
         '</div>' +
       '</article>';
@@ -6195,7 +6689,7 @@
       const filtered = sortedFilteredArticles();
       const count = document.getElementById("articleResultCount");
       const results = document.getElementById("articleResults");
-      if (count) count.textContent = filtered.length + " içerik";
+      if (count) count.textContent = getReadingCenterSummary(articles).totalCount + " içerik";
       if (results) {
         results.innerHTML = renderArticleResultsHtml(filtered);
         bindArticleResultControls();
@@ -6208,6 +6702,7 @@
       renderStats();
       const activeArticle = activeArticleId === "__list__" ? null : (articles.find(item => item.id === activeArticleId) || null);
       const filtered = sortedFilteredArticles();
+      const readingSummary = getReadingCenterSummary(articles);
       appArea.innerHTML =
         '<div class="grid gap-4">' +
           (activeArticle ? '' : '<section class="rounded-2xl border p-4 shadow-sm" style="border-color: var(--border-color); background: var(--bg-surface)">' +
@@ -6222,7 +6717,11 @@
             renderArticleCreatePanel() +
               '<div class="mt-4">' +
               '<div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">' +
-                '<span id="articleResultCount" class="rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color: var(--border-color); color: var(--text-secondary); background: var(--bg-surface-secondary)">' + filtered.length + ' içerik</span>' +
+                '<div class="flex flex-wrap gap-2" aria-label="Okuma Merkezi özeti">' +
+                  '<span id="articleResultCount" class="rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color: var(--border-color); color: var(--text-secondary); background: var(--bg-surface-secondary)">' + readingSummary.totalCount + ' içerik</span>' +
+                  '<span class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color: color-mix(in srgb, #059669 28%, var(--border-color)); color: var(--text-primary); background: color-mix(in srgb, #059669 8%, var(--bg-surface))"><i class="h-1.5 w-1.5 rounded-full bg-emerald-600"></i>' + readingSummary.completedCount + ' okundu</span>' +
+                  '<span class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color: color-mix(in srgb, #2563eb 28%, var(--border-color)); color: var(--text-primary); background: color-mix(in srgb, #2563eb 8%, var(--bg-surface))"><i class="h-1.5 w-1.5 rounded-full bg-blue-600"></i>' + readingSummary.inProgressCount + ' okunuyor</span>' +
+                '</div>' +
               '</div>' +
               '<div class="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-5">' +
                 '<input id="articleSearchInput" class="rounded-xl border px-3 py-2 text-sm font-semibold outline-none focus:border-blue-500" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)" placeholder="Metin ara" value="' + escapeHtml(articleSearchQuery) + '" />' +
@@ -6313,7 +6812,6 @@
           articleLanguageView = "en";
           const article = articles.find(item => item.id === activeArticleId);
           if (article) {
-            if (articleReadingStatus(article).key === "new") article.status = "reading";
             if (articleKind(article) === "yds") article.lastStudiedAt = new Date().toISOString();
             else article.lastReadAt = new Date().toISOString();
             saveArticles();
@@ -6368,10 +6866,25 @@
           if (!article) return;
           article.status = "completed";
           article.readingProgress = 100;
+          article.completed = true;
+          article.completedAt = article.completedAt || new Date().toISOString();
           if (articleKind(article) === "external" || isYdsArticleWorkComplete(article)) markArticleDailyCompletion(article);
           article.updatedAt = new Date().toISOString();
           saveArticles();
           renderMenu();
+          renderArticlesPage();
+        });
+      });
+      document.querySelectorAll(".article-card-restart").forEach(button => {
+        button.addEventListener("click", () => {
+          const article = articles.find(item => item.id === button.dataset.id);
+          if (!article) return;
+          article.status = "new";
+          article.completed = false;
+          article.completedAt = null;
+          article.readingProgress = 0;
+          article.updatedAt = new Date().toISOString();
+          saveArticles();
           renderArticlesPage();
         });
       });
@@ -6633,6 +7146,16 @@
       };
       const onScroll = () => {
         if (!frame) frame = window.requestAnimationFrame(update);
+        const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        const nextProgress = Math.max(0, Math.min(100, Math.round((Math.max(0, window.scrollY) / maxScroll) * 100)));
+        if (nextProgress !== Number(article.readingProgress || 0)) {
+          article.readingProgress = nextProgress;
+          article.status = nextProgress >= 100 ? "completed" : nextProgress > 0 ? "reading" : "new";
+          article.completed = nextProgress >= 100;
+          article.completedAt = nextProgress >= 100 ? (article.completedAt || new Date().toISOString()) : null;
+          article.updatedAt = new Date().toISOString();
+          saveArticles();
+        }
         if (saveTimer) window.clearTimeout(saveTimer);
         saveTimer = window.setTimeout(() => localStorage.setItem(storageKey, String(Math.round(window.scrollY))), 160);
       };
@@ -6868,6 +7391,8 @@
       document.getElementById("markArticleReadBtn").addEventListener("click", () => {
         article.status = "completed";
         article.readingProgress = 100;
+        article.completed = true;
+        article.completedAt = article.completedAt || new Date().toISOString();
         if (articleKind(article) === "external" || isYdsArticleWorkComplete(article)) markArticleDailyCompletion(article);
         saveArticles();
         renderArticlesPage();
@@ -6884,6 +7409,8 @@
       if (completeArticleReadingButton) completeArticleReadingButton.addEventListener("click", () => {
         article.status = "completed";
         article.readingProgress = 100;
+        article.completed = true;
+        article.completedAt = article.completedAt || new Date().toISOString();
         markArticleDailyCompletion(article);
         saveArticles();
         renderArticlesPage();
@@ -8088,6 +8615,10 @@
       if (!event.target.closest(".word-menu-toggle") && !event.target.closest(".word-action-menu")) {
         document.querySelectorAll(".word-action-menu.is-open").forEach(menu => menu.classList.remove("is-open"));
       }
+      if (!event.target.closest(".note-menu-toggle") && !event.target.closest(".note-action-menu")) {
+        document.querySelectorAll(".note-action-menu").forEach(menu => menu.classList.add("hidden"));
+        document.querySelectorAll(".note-menu-toggle").forEach(button => button.setAttribute("aria-expanded", "false"));
+      }
       if (!event.target.closest("#articleWordPopover") && !event.target.closest(".word-token")) {
         closeArticleWordPopover();
       }
@@ -8095,6 +8626,8 @@
     document.addEventListener("keydown", event => {
       const typing = event.target.closest("input, textarea, select, [contenteditable='true']");
       if (event.key === "Escape") {
+        document.querySelectorAll(".note-action-menu").forEach(menu => menu.classList.add("hidden"));
+        document.querySelectorAll(".note-menu-toggle").forEach(button => button.setAttribute("aria-expanded", "false"));
         closeArticleWordPopover();
         closeSentencePanel();
         closeArticleEditModal();
@@ -8207,6 +8740,10 @@
     });
     document.getElementById("closeWordModal").addEventListener("click", closeWordModal);
     document.getElementById("saveWordBtn").addEventListener("click", saveWord);
+    document.getElementById("editWordBtn").addEventListener("click", () => {
+      const item = selectedWordId ? wordbook.find(word => word.id === selectedWordId) : null;
+      if (item) openWordModal(item.word, { id: item.questionId || null }, null, { mode: "edit", wordId: item.id });
+    });
     wordModal.addEventListener("click", event => {
       if (event.target === wordModal) closeWordModal();
     });
