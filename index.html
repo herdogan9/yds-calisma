@@ -52,6 +52,9 @@
   --danger-surface: #fee2e2;
   --danger-text: #991b1b;
   --danger-border: #fca5a5;
+  --success-soft-bg: #ecfdf5;
+  --success-text: #047857;
+  --success-border: #a7f3d0;
 }
 
 /* Ana sayfa: kartlar ayni dilde, ancak islevlerine gore hafif ton farklariyla ayrilir. */
@@ -134,6 +137,9 @@
   --danger-surface: #461a1d;
   --danger-text: #fecaca;
   --danger-border: #b91c1c;
+  --success-soft-bg: #123c2d;
+  --success-text: #6ee7b7;
+  --success-border: #2f855a;
 }
 
     html {
@@ -1012,6 +1018,16 @@
       line-height: inherit;
       vertical-align: baseline;
       cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .question-text {
+      white-space: pre-line;
+      word-break: normal;
+      overflow-wrap: break-word;
+      hyphens: none;
+      line-break: auto;
+      text-wrap: pretty;
     }
 
     .word-token:hover {
@@ -1140,9 +1156,10 @@
       letter-spacing: normal;
       hyphens: none;
       overflow-wrap: break-word;
-      color: #172033;
-      font-size: clamp(20px, 2vw, var(--article-font-size, 25px));
-      line-height: var(--article-line-height, 1.7);
+      background: var(--bg-surface-secondary);
+      color: var(--text-primary);
+      font-size: var(--study-content-font-size, 24px);
+      line-height: 1.6;
     }
 
     .article-body p {
@@ -1164,15 +1181,10 @@
     .article-bilingual-pair:hover, .article-bilingual-pair:focus-within { background: color-mix(in srgb, #dbeafe 22%, transparent); }
     .article-bilingual-copy { min-width: 0; padding-right: 1.15rem; transition: background-color .15s ease; }
     .article-bilingual-copy + .article-bilingual-copy { padding-right: 0; padding-left: 1.15rem; border-left: 1px solid color-mix(in srgb, var(--border-color) 84%, transparent); }
-    .article-bilingual-copy p { margin: .4rem 0 0; font-size: clamp(22px, calc(var(--article-font-size, 25px) - 1px), 27px); line-height: var(--article-line-height, 1.7); }
+    .article-bilingual-copy p { margin: .4rem 0 0; font-size: max(18px, calc(var(--study-content-font-size, 24px) - 1px)); line-height: 1.6; }
     .article-bilingual-label { font-size: .7rem; font-weight: 900; letter-spacing: .08em; color: #2563eb; }
     .article-bilingual-copy:not(.article-bilingual-tr) { color: #172033; font-weight: 500; }
     .article-bilingual-tr { color: #4b5b73; font-weight: 400; }
-    .article-surface-dark .article-bilingual-pair + .article-bilingual-pair { border-color: #506176; }
-    .article-surface-dark .article-bilingual-copy + .article-bilingual-copy { border-color: #506176; }
-    .article-surface-dark .article-bilingual-pair:hover, .article-surface-dark .article-bilingual-pair:focus-within { background: rgba(96, 165, 250, .12); }
-    .article-surface-dark .article-bilingual-copy:not(.article-bilingual-tr) { color: #f8fafc; }
-    .article-surface-dark .article-bilingual-tr { color: #e5edf9; }
     .article-translation-editor { position: fixed; top: 0; right: 0; bottom: 0; z-index: 90; width: min(48rem, 92vw); overflow-y: auto; border-left: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-primary); box-shadow: -18px 0 42px rgb(15 23 42 / 20%); }
     .translation-editor-pair { border-color: var(--border-color); background: var(--bg-surface-secondary); }
 
@@ -1212,11 +1224,11 @@
       align-items: stretch;
       justify-content: flex-start;
       align-content: start;
-      gap: .625rem;
+      gap: .5rem;
       height: auto;
       min-height: 0;
-      margin: .5rem auto 1rem;
-      padding: 1.25rem;
+      margin: .35rem auto .75rem;
+      padding: .875rem 1rem;
       border: 1px solid var(--border-color);
       border-radius: 1rem;
       background: var(--bg-surface);
@@ -1229,6 +1241,11 @@
     .article-reader-toolbar.is-compact {
       box-shadow: 0 5px 14px rgb(15 23 42 / 10%);
       background: var(--bg-surface);
+    }
+
+    .article-reader-surface.is-focus-mode .article-reader-toolbar {
+      padding-block: .75rem;
+      margin-bottom: .65rem;
     }
 
     .article-reader-toolbar.is-compact .article-reader-heading {
@@ -1262,9 +1279,9 @@
 
     .article-toolbar-toprow {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
-      gap: .75rem;
+      gap: 1rem;
     }
 
     .article-reader-actions {
@@ -1274,6 +1291,7 @@
       align-items: center;
       justify-content: flex-end;
       gap: .5rem;
+      flex: 0 0 auto;
     }
 
     .article-reader-toolbar .article-toolbar-btn {
@@ -1281,6 +1299,13 @@
       height: 44px;
       padding-inline: .75rem;
     }
+
+    .study-text-size-controls { display: inline-flex; flex: 0 0 auto; gap: 0; overflow: hidden; border: 1px solid var(--border-color); border-radius: .75rem; background: var(--bg-surface); }
+    .study-text-size-controls button { display: grid; width: 44px; min-width: 40px; height: 44px; min-height: 44px; place-items: center; padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--text-primary); font-size: .92rem; font-weight: 900; line-height: 1; }
+    .study-text-size-controls button + button { border-left: 1px solid var(--border-color); }
+    .study-text-size-controls button:hover:not(:disabled) { background: #eff6ff; color: #1d4ed8; }
+    .study-text-size-controls button:focus-visible { position: relative; z-index: 1; outline: 3px solid rgb(37 99 235 / 38%); outline-offset: -3px; }
+    .study-text-size-controls button:disabled { cursor: not-allowed; opacity: .45; }
 
     .article-reader-toolbar .article-icon-btn {
       width: 44px;
@@ -1314,38 +1339,7 @@
       max-width: 100%;
     }
 
-    .article-reader-heading + .article-reader-actions { display: contents; }
-
-    .article-settings-panel {
-      position: absolute;
-      top: calc(100% + .5rem);
-      right: 0;
-      z-index: 40;
-      width: min(22rem, calc(100vw - 2rem));
-      padding: 1rem;
-      border: 1px solid var(--border-color);
-      border-radius: 1rem;
-      background: var(--bg-surface);
-      color: var(--text-primary);
-      box-shadow: 0 18px 42px rgb(15 23 42 / 18%);
-    }
-
-    .article-settings-panel[hidden] {
-      display: none;
-    }
-
-    .article-surface-white { background: #fff !important; color: #172033 !important; }
-    .article-surface-neutral { background: #f3f4f6 !important; color: #172033 !important; }
-    .article-surface-warm { background: #fff8eb !important; color: #2c2419 !important; }
-    .article-surface-dark { background: #182235 !important; color: #f8fafc !important; border-color: #506176 !important; }
-    /* The app's light-theme token rule is intentionally more specific, so restate
-       the reader palette here to keep every word readable on the dark surface. */
-    .article-body.article-surface-dark,
-    .article-body.article-surface-dark p { color: #f8fafc !important; }
-    .article-body.article-surface-dark .word-token,
-    .article-body.article-surface-dark .word-token[data-vocab-key] { color: #e5edf9 !important; }
-    .article-body.article-surface-dark .article-saved-highlight { color: #fde68a !important; }
-    .article-body.article-surface-dark .word-token:hover { color: #93c5fd !important; }
+    .article-language-choice:disabled { cursor: not-allowed; opacity: .62; text-decoration: line-through; text-decoration-thickness: 1px; }
 
     @media (max-width: 640px) {
       .article-reader-surface { padding: .75rem !important; }
@@ -1364,7 +1358,7 @@
       .article-toolbar-toprow { display: contents; }
       .article-toolbar-toprow > #articleBackBtn { order: 1; justify-self: start; }
       .article-reader-heading { order: 2; width: 100%; max-width: none; }
-      .article-reader-actions { order: 3; gap: .35rem; justify-content: flex-start; }
+      .article-reader-actions { order: 3; width: 100%; gap: .35rem; justify-content: flex-start; }
 
       .article-reader-title { font-size: clamp(28px, 8vw, 36px); line-height: 1.14; }
 
@@ -1374,8 +1368,8 @@
 
       .article-body {
         padding: 1.25rem !important;
-        font-size: min(22px, var(--article-font-size, 25px));
-        line-height: 1.68;
+        font-size: var(--study-content-font-size, 24px);
+        line-height: 1.6;
       }
 
       .article-body p { margin-bottom: 1.5rem; }
@@ -1388,16 +1382,6 @@
       .article-bilingual-copy + .article-bilingual-copy { padding-left: 0; border-left: 0; }
       .article-translation-editor { width: 100%; }
 
-      .article-settings-panel {
-        position: fixed;
-        top: auto;
-        right: .75rem;
-        bottom: .75rem;
-        left: .75rem;
-        width: auto;
-        max-height: 72vh;
-        overflow-y: auto;
-      }
     }
 
     .article-reader-surface.is-focus-mode,
@@ -1523,10 +1507,6 @@
     body.read-for-speed-focus-mode #appArea { width: 100%; max-width: none; }
     body.read-for-speed-focus-mode .rfs-focus { max-width: min(100%, 1440px) !important; min-height: calc(100vh - 2.5rem); margin: 0 auto; }
     body.read-for-speed-focus-mode .rfs-focus #rfsBody { max-width: min(100%, 1220px) !important; }
-    /* The Read for Speed controls share the Reading Center's popover treatment. */
-    #rfsSettingsPanel { position: fixed; top: 5.5rem; right: 1.25rem; z-index: 60; width: min(22rem, calc(100vw - 2rem)); padding: 1rem; border: 1px solid var(--border-color); border-radius: 1rem; background: var(--bg-surface); color: var(--text-primary); box-shadow: 0 18px 42px rgb(15 23 42 / 18%); }
-    #rfsSettingsPanel[hidden] { display: none; }
-    #rfsSettingsPanel .rfs-surface.is-selected { outline: 2px solid #60a5fa; outline-offset: 1px; }
     #rfsBody .rfs-choice-group { display: inline-flex; align-items: center; gap: 6px; vertical-align: baseline; flex-wrap: wrap; max-width: 100%; }
     #rfsBody .rfs-answer { min-height: 36px; padding: 6px 10px; border-radius: 10px; font-size: .86em; line-height: 1.2; white-space: normal; }
     #rfsBody .rfs-question-status { margin-left: 4px; font-size: .76em; font-weight: 900; white-space: nowrap; }
@@ -1554,7 +1534,8 @@
     .rfs-card-status { display:inline-flex; align-items:center; width:max-content; border-radius:999px; padding:4px 9px; font-size:.72rem; font-weight:900; letter-spacing:.03em; }
     .rfs-status-new { background:#eff6ff; color:#2563eb; }
     .rfs-status-progress { background:#dbeafe; color:#1d4ed8; }
-    .rfs-status-completed { background:#ecfdf5; color:#047857; }
+    .rfs-status-completed { background:var(--success-soft-bg); color:var(--success-text); border:1px solid var(--success-border); }
+    .article-status-badge.article-status-completed { background:var(--success-soft-bg) !important; color:var(--success-text) !important; border-color:var(--success-border) !important; }
     .read-for-speed-card-title { display:-webkit-box; min-height:47px; margin-top:14px; overflow:hidden; -webkit-box-orient:vertical; -webkit-line-clamp:2; font-size:1.15rem; font-weight:900; line-height:1.25; }
     .rfs-card-detail { min-height:22px; margin-top:7px; font-size:.9rem; font-weight:700; color:var(--text-secondary); }
     .rfs-card-progress-label { display:flex; justify-content:space-between; margin-top:auto; color:var(--text-secondary); font-size:.69rem; font-weight:900; letter-spacing:.08em; }
@@ -1566,21 +1547,26 @@
     .rfs-reset:hover, .rfs-reset[aria-expanded="true"] { border-color:#cbd5e1; background:var(--bg-surface-secondary); color:var(--text-primary); }
     .rfs-card-actions { position:relative; display:flex; align-items:center; justify-content:space-between; gap:.75rem; margin-top:18px; }
     .rfs-card-menu .rfs-menu-delete { margin-top:.3rem; padding-top:.7rem; border-top:1px solid var(--border-color); }
-    .read-for-speed-toolbar { display: grid !important; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 16px; }
+    .read-for-speed-toolbar { display: flex !important; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px 16px; }
+    .read-for-speed-toolbar__title { display: flex; min-width: 0; flex: 1 1 320px; align-items: center; gap: 12px; }
     .read-for-speed-heading { min-width: 0; }
-    .read-for-speed-title { margin-top: 2px; font-size: clamp(24px, 2vw, 28px); font-weight: 800; line-height: 1.2; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; overflow-wrap: anywhere; }
-    .read-for-speed-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+    .read-for-speed-title { margin-top: 2px; display: -webkit-box; overflow: hidden !important; font-size: clamp(24px, 2vw, 28px); font-weight: 800; line-height: 1.15; text-overflow: clip !important; overflow-wrap: break-word; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+    .read-for-speed-actions { display: flex; min-width: 0; flex: 0 1 auto; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+    .read-for-speed-actions > button, .read-for-speed-actions .review-status-badge, .read-for-speed-actions .study-text-size-controls { min-height: 44px; height: 44px; white-space: nowrap; }
+    .read-for-speed-actions > button { display: inline-flex; align-items: center; justify-content: center; padding-inline: 12px; }
+    .read-for-speed-actions .important-structures-button { flex: 0 0 auto; white-space: nowrap; }
+    .read-for-speed-actions .study-text-size-controls { border-radius: .75rem; }
+    .read-for-speed-actions .study-text-size-controls button { width: 48px; min-width: 48px; height: 44px; white-space: nowrap; }
+    .review-status-badge { display: inline-flex; flex: 0 0 auto; align-items: center; padding: 0 14px; border: 1px solid #bfdbfe; border-radius: .75rem; background: #eff6ff; color: #2563eb; font-size: .75rem; font-weight: 850; white-space: nowrap; }
     @media (min-width: 1024px) {
       #appArea:has(.rfs-open) > section > .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .rfs-list-grid { grid-template-columns:repeat(3, minmax(0, 1fr)); }
     }
     @media (min-width: 761px) and (max-width: 1023px) { .rfs-list-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); } }
-    @media (max-width: 1250px) and (min-width: 761px) {
-      .read-for-speed-toolbar { grid-template-columns: auto minmax(0, 1fr); }
-      .read-for-speed-actions { grid-column: 1 / -1; justify-content: flex-end; }
-    }
+    @media (max-width: 1250px) and (min-width: 761px) { .read-for-speed-actions { flex-basis: 100%; justify-content: flex-end; } }
     @media (max-width: 760px) {
-      .read-for-speed-toolbar { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+      .read-for-speed-toolbar { gap: 10px; }
+      .read-for-speed-toolbar__title { flex-basis: 100%; }
       .read-for-speed-actions { justify-content: flex-start; }
       .read-for-speed-title { font-size: 23px; }
       .rfs-list-heading { align-items:stretch; flex-direction:column; }
@@ -1588,7 +1574,27 @@
       .rfs-list-heading #rfsNewBtn { width:100%; }
     }
     .rfs-answer:disabled { cursor: default; }
-    @media (max-width: 760px) { .rfs-focus { padding: 12px; } #rfsSettingsPanel { top: auto; right: .75rem; bottom: .75rem; left: .75rem; width: auto; max-height: 72vh; overflow-y: auto; } #rfsBody .rfs-choice-group { display: inline-flex; width: 100%; margin: .15rem 0; } .rfs-result-bar > div:last-of-type { margin-left: 0 !important; } }
+    @media (max-width: 760px) { .rfs-focus { padding: 12px; } #rfsBody .rfs-choice-group { display: inline-flex; width: 100%; margin: .15rem 0; } .rfs-result-bar > div:last-of-type { margin-left: 0 !important; } }
+    /* Shared Important Structures reader panel. */
+    .important-structures-panel { position: fixed; top: var(--important-structures-top, 88px); right: 18px; z-index: 50; width: min(350px, calc(100vw - 36px)); max-height: calc(100vh - var(--important-structures-top, 88px) - 18px); overflow: auto; border: 1px solid var(--border-color); border-radius: 1rem; padding: 16px; background: var(--bg-surface); color: var(--text-primary); box-shadow: 0 16px 36px rgb(15 23 42 / 18%); animation: importantStructuresIn 160ms ease-out both; }
+    .important-structures-layout { position: relative; width: 100%; }
+    @keyframes importantStructuresIn { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
+    @media (prefers-reduced-motion: reduce) { .important-structures-panel { animation: none; } }
+    .important-panel-header { position: sticky; top: -16px; z-index: 2; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin: -16px -16px 10px; padding: 16px 16px 10px; border-bottom: 1px solid var(--border-color); background: var(--bg-surface); }
+    .important-panel-header-actions { display: flex; align-items: center; gap: 6px; }
+    .important-structure-add { min-height: 36px; padding: 7px 10px; border: 1px solid var(--border-color); border-radius: .7rem; background: var(--bg-surface-secondary); color: var(--text-primary); font-size: 12px; font-weight: 800; white-space: nowrap; }
+    .important-structure-card { border: 1px solid var(--border-color); border-radius: .85rem; padding: 12px 14px; background: var(--bg-surface-secondary); }
+    .important-structure-card.is-active { border-color: #60a5fa; background: color-mix(in srgb, #dbeafe 38%, var(--bg-surface-secondary)); box-shadow: none; }
+    .important-structure-text { color: #2563eb; font-size: 15px; font-weight: 750; line-height: 1.3; overflow-wrap: anywhere; }
+    .important-structure-meaning { margin-top: 4px; color: var(--text-secondary); font-size: 14px; font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; }
+    .important-structures-list { display: grid; gap: 9px; }
+    .important-structure-highlight { border-radius: .25rem; background: color-mix(in srgb, #fbbf24 22%, transparent); box-decoration-break: clone; -webkit-box-decoration-break: clone; cursor: pointer; }
+    .important-structure-highlight.is-flashing { animation: importantStructureFlash 1.4s ease; }
+    @keyframes importantStructureFlash { 40% { background: color-mix(in srgb, #f59e0b 58%, transparent); outline: 3px solid rgb(245 158 11 / 32%); } }
+    .important-structure-selection { position: fixed; z-index: 100; border: 1px solid var(--border-color); border-radius: .75rem; padding: .55rem .75rem; background: var(--bg-surface); color: var(--text-primary); box-shadow: 0 12px 28px rgb(15 23 42 / 20%); font-size: .8rem; font-weight: 800; }
+    .important-structure-modal { position: fixed; inset: 0; z-index: 110; display: grid; place-items: center; padding: 1rem; background: rgb(15 23 42 / 48%); }
+    .important-structure-modal > form { width: min(440px, 100%); border: 1px solid var(--border-color); border-radius: 1rem; padding: 1rem; background: var(--bg-surface); color: var(--text-primary); box-shadow: 0 18px 48px rgb(15 23 42 / 28%); }
+    @media (max-width: 768px) { .important-structures-panel { inset: auto 0 0 0; width: 100%; max-height: 80vh; border-radius: 1.25rem 1.25rem 0 0; box-shadow: 0 -12px 36px rgb(15 23 42 / 22%); animation-name: importantStructuresUp; } @keyframes importantStructuresUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } } }
   </style>
 </head>
 <body class="light-theme min-h-screen bg-slate-100 text-slate-900">
@@ -1705,6 +1711,9 @@
     const STORAGE_DOCUMENT_PROGRESS = "yds-document-progress-v1";
     const STORAGE_NOTES = "yds-notebook-notes-v1";
     const STORAGE_EXAM_PROGRESS = "yds-exam-progress-v1";
+    const STORAGE_CLOUD_HISTORY = "yds-cloud-backup-history-v1";
+    const DEPLOY_DB_NAME = "yds-calisma-deploy-db";
+    const DEPLOY_DB_VERSION = 1;
     const VOCABULARY_SEED_VERSION = baseBank.vocabularySeedVersion || "2026-07-13-vocabulary";
     const vocabularySeed = baseBank.vocabularySeed || [];
 
@@ -1760,14 +1769,38 @@
     let wordSearchQuery = "";
     let wordStatusFilter = "all";
     let wordSortMode = "az";
-    let wordSearchTimer = null;
     let noteSearchQuery = "";
     let noteSearchTimer = null;
     let noteSortMode = "newest";
-    let articleFontSize = Number(localStorage.getItem("yds-article-font-size-v1") || 25);
-    let articleLineHeight = Number(localStorage.getItem("yds-article-line-height-v1") || 1.7);
-    let articleContentWidth = Number(localStorage.getItem("yds-article-content-width-v1") || 940);
-    let articleReadingSurface = localStorage.getItem("yds-article-reading-surface-v1") || "neutral";
+    const STUDY_CONTENT_FONT_SIZES = [18, 20, 22, 24, 26, 28, 30, 32];
+    const STUDY_CONTENT_FONT_SIZE_KEY = "studyContentFontSize";
+    function closestStudyContentFontSize(value) {
+      const numeric = Number(value);
+      return STUDY_CONTENT_FONT_SIZES.reduce((closest, size) => Math.abs(size - numeric) < Math.abs(closest - numeric) ? size : closest, 24);
+    }
+    function loadStudyContentFontSize() {
+      const stored = localStorage.getItem(STUDY_CONTENT_FONT_SIZE_KEY);
+      const legacy = stored ?? localStorage.getItem("readingFontSize") ?? localStorage.getItem("questionFontSize") ?? localStorage.getItem("readForSpeedFontSize") ?? localStorage.getItem("textSize") ?? localStorage.getItem("yds-article-font-size-v1") ?? localStorage.getItem("yds-question-font-size-v1");
+      const next = closestStudyContentFontSize(legacy ?? 24);
+      localStorage.setItem(STUDY_CONTENT_FONT_SIZE_KEY, String(next));
+      return next;
+    }
+    let studyContentFontSize = loadStudyContentFontSize();
+    function setStudyContentFontSize(value) {
+      studyContentFontSize = closestStudyContentFontSize(value);
+      localStorage.setItem(STUDY_CONTENT_FONT_SIZE_KEY, String(studyContentFontSize));
+    }
+    function changeStudyContentFontSize(direction) {
+      const index = STUDY_CONTENT_FONT_SIZES.indexOf(closestStudyContentFontSize(studyContentFontSize));
+      const nextIndex = Math.max(0, Math.min(STUDY_CONTENT_FONT_SIZES.length - 1, index + direction));
+      setStudyContentFontSize(STUDY_CONTENT_FONT_SIZES[nextIndex]);
+    }
+    function TextSizeControls(prefix = "study") {
+      const index = STUDY_CONTENT_FONT_SIZES.indexOf(studyContentFontSize);
+      const downDisabled = index <= 0 ? " disabled aria-disabled=\"true\"" : "";
+      const upDisabled = index >= STUDY_CONTENT_FONT_SIZES.length - 1 ? " disabled aria-disabled=\"true\"" : "";
+      return `<div class="study-text-size-controls" role="group" aria-label="Metin yazı boyutu"><button type="button" id="${prefix}FontDownBtn" data-study-font-action="decrease" title="Yazıyı küçült" aria-label="Yazı boyutunu küçült"${downDisabled}>A−</button><button type="button" id="${prefix}FontUpBtn" data-study-font-action="increase" title="Yazıyı büyüt" aria-label="Yazı boyutunu büyüt"${upDisabled}>A+</button></div>`;
+    }
     let articleReadingScrollCleanup = null;
     let articleFocusMode = localStorage.getItem("yds-article-focus-v1") === "1";
     let articleSearchQuery = "";
@@ -1782,7 +1815,6 @@
     let articleHighlightsVisible = localStorage.getItem("yds-article-highlights-visible-v1") !== "0";
     let articleLanguageView = "en";
     let activeTranslationDraft = null;
-    let questionFontSize = Number(localStorage.getItem("yds-question-font-size-v1") || 19);
     let questionFocusMode = localStorage.getItem("yds-question-focus-v1") === "1";
     let activeArticlePopover = null;
     let activeSentencePanel = null;
@@ -1828,6 +1860,68 @@
 
     function saveJson(key, value) {
       localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    // Uploaded sources are large (raw text plus hundreds of questions). They
+    // must not share localStorage's small synchronous quota with preferences.
+    function openDeployDb() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DEPLOY_DB_NAME, DEPLOY_DB_VERSION);
+        request.onupgradeneeded = () => {
+          const database = request.result;
+          if (!database.objectStoreNames.contains("sources")) database.createObjectStore("sources", { keyPath: "id" });
+          if (!database.objectStoreNames.contains("questions")) database.createObjectStore("questions", { keyPath: "id" });
+          if (!database.objectStoreNames.contains("meta")) database.createObjectStore("meta", { keyPath: "key" });
+        };
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+      });
+    }
+
+    function idbGetAll(database, storeName) {
+      return new Promise((resolve, reject) => {
+        const request = database.transaction(storeName, "readonly").objectStore(storeName).getAll();
+        request.onerror = () => reject(request.error); request.onsuccess = () => resolve(request.result || []);
+      });
+    }
+
+    async function saveUploadedBank(bank) {
+      const database = await openDeployDb();
+      const documents = Array.isArray(bank?.documents) ? bank.documents : [];
+      const questions = Array.isArray(bank?.questions) ? bank.questions : [];
+      await new Promise((resolve, reject) => {
+        const tx = database.transaction(["sources", "questions"], "readwrite");
+        const sourceStore = tx.objectStore("sources");
+        const questionStore = tx.objectStore("questions");
+        sourceStore.clear(); questionStore.clear();
+        documents.forEach(item => sourceStore.put(item));
+        questions.forEach(item => questionStore.put(item));
+        tx.oncomplete = resolve; tx.onerror = () => reject(tx.error); tx.onabort = () => reject(tx.error);
+      });
+      // Verify before removing the legacy snapshot; never discard user data on
+      // a failed or partial migration.
+      const [verifiedDocuments, verifiedQuestions] = await Promise.all([idbGetAll(database, "sources"), idbGetAll(database, "questions")]);
+      if (verifiedDocuments.length !== documents.length || verifiedQuestions.length !== questions.length) throw new Error("IndexedDB doğrulaması başarısız");
+    }
+
+    async function hydrateUploadedBank() {
+      try {
+        const legacy = uploadedBank;
+        const database = await openDeployDb();
+        let [storedDocuments, storedQuestions] = await Promise.all([idbGetAll(database, "sources"), idbGetAll(database, "questions")]);
+        if (!storedDocuments.length && !storedQuestions.length && ((legacy.documents || []).length || (legacy.questions || []).length)) {
+          await saveUploadedBank(legacy);
+          [storedDocuments, storedQuestions] = await Promise.all([idbGetAll(database, "sources"), idbGetAll(database, "questions")]);
+          if (storedDocuments.length === (legacy.documents || []).length && storedQuestions.length === (legacy.questions || []).length) localStorage.removeItem(STORAGE_UPLOADS);
+        }
+        if (storedDocuments.length || storedQuestions.length) {
+          uploadedBank = { documents: storedDocuments, questions: storedQuestions };
+          rebuildBank(); renderMenu();
+          if (activeView === "home") renderHomePage();
+        }
+      } catch (error) {
+        console.error("IndexedDB kaynak geçişi başarısız; eski veri korunuyor.", error);
+      }
     }
 
     function isAnswerKey(value) {
@@ -1942,18 +2036,37 @@
       const sourceId = String(documentInfo?.id || "");
       const questions = questionBank.filter(question => question.documentId === sourceId);
       const stored = examProgress.exams["document:" + sourceId] || {};
-      const answers = stored.answers && typeof stored.answers === "object" ? stored.answers : {};
-      const answeredCount = questions.filter(question => isAnswerKey(answers[question.id])).length;
-      const totalCount = questions.length;
+      const summary = getProgressSummary({ sourceId, questions, storedProgress: stored });
+      const answeredCount = summary.solved;
+      const totalCount = summary.total;
       const isCompleted = stored.manuallyCompleted === true || (totalCount > 0 && answeredCount === totalCount);
       return {
         answeredCount,
         totalCount,
-        progressPercent: totalCount ? Math.round(answeredCount / totalCount * 100) : 0,
+        progressPercent: summary.percent,
+        correct: summary.correct,
+        wrong: summary.wrong,
         status: isCompleted ? "completed" : answeredCount ? "inProgress" : "notStarted",
         isCompleted,
         manuallyCompleted: stored.manuallyCompleted === true,
       };
+    }
+
+    // Shared summary used by both Çıkmış Sorular and Denemeler cards.
+    function getProgressSummary({ sourceId, questions = [], storedProgress = null }) {
+      const answers = storedProgress?.answers && typeof storedProgress.answers === "object" ? storedProgress.answers : {};
+      const sourceQuestions = questions.filter(question => question.documentId === sourceId);
+      let correct = 0;
+      let wrong = 0;
+      sourceQuestions.forEach(question => {
+        const selectedKey = answers[question.id];
+        if (!isAnswerKey(selectedKey)) return;
+        if (selectedKey === (question.correctAnswer ?? question.answer)) correct++;
+        else wrong++;
+      });
+      const solved = correct + wrong;
+      const total = sourceQuestions.length;
+      return { solved, total, percent: total ? Math.round(solved / total * 100) : 0, correct, wrong };
     }
 
     function setDocumentManualCompletion(documentInfo, completed) {
@@ -2169,7 +2282,7 @@
     }
 
     function normalizeLookup(value) {
-      return normalizeWord(value).toLocaleLowerCase("en-US");
+      return normalizeWord(value).normalize("NFKC").toLocaleLowerCase("en-US");
     }
 
     function findDictionaryWord(clickedText) {
@@ -2650,7 +2763,7 @@
         const solvedCount = documentSolvedCount(doc);
         documentProgress = { ...documentProgress, [doc.id]: Math.min(solvedCount, parsedQuestions.length) };
         saveJson(STORAGE_DOCUMENT_PROGRESS, documentProgress);
-        saveJson(STORAGE_UPLOADS, uploadedBank);
+        void saveUploadedBank(uploadedBank);
         rebuildBank();
         closeDocumentEditModal();
         renderHub(activeView);
@@ -2763,15 +2876,9 @@
       const reset = () => { readForSpeedDraft = { title: "", rawText: "" }; readForSpeedMode = "list"; };
       if (readForSpeedMode === "reader" && readForSpeedActiveArticle) {
         const article = readForSpeedActiveArticle;
-        appArea.innerHTML = `<section class="mx-auto max-w-6xl"><header class="sticky top-0 z-20 flex flex-col gap-3 border-b py-3 md:flex-row md:items-center md:justify-between" style="border-color:var(--border-color);background:var(--bg-page)"><button id="rfsBackToList" class="rounded-xl border px-3 py-2 text-sm font-black" style="border-color:var(--border-color)">← Listeye dön</button><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h2 class="text-xl font-black">${escapeHtml(article.title)}</h2></div><div class="flex gap-2"><button id="rfsSettingsBtn" class="rounded-xl border px-3 py-2 text-sm font-black" style="border-color:var(--border-color)">Okuma Ayarları</button><button id="rfsFocusBtn" class="rounded-xl border px-3 py-2 text-sm font-black" style="border-color:var(--border-color)">Odak Modu</button></div></header><section id="rfsSettingsPanel" hidden class="mt-3 grid gap-3 rounded-2xl border p-4 md:grid-cols-4" style="border-color:var(--border-color);background:var(--bg-surface)"><label class="text-xs font-black">Yazı boyutu<input id="rfsFontSize" class="mt-2 w-full" type="range" min="20" max="30" value="25" /></label><label class="text-xs font-black">Satır aralığı<select id="rfsLineHeight" class="mt-2 w-full rounded-lg border p-2"><option value="1.6">Sıkı</option><option value="1.7" selected>Dengeli</option><option value="1.85">Geniş</option></select></label><label class="text-xs font-black">Metin genişliği<select id="rfsWidth" class="mt-2 w-full rounded-lg border p-2"><option value="760">Dar</option><option value="940" selected>Dengeli</option><option value="1080">Geniş</option></select></label><label class="text-xs font-black">Okuma yüzeyi<select id="rfsSurface" class="mt-2 w-full rounded-lg border p-2"><option value="#eef4fb">Yumuşak nötr</option><option value="#ffffff">Beyaz</option><option value="#fff8eb">Sıcak</option><option value="#182235">Koyu</option></select></label></section><article id="rfsReadingBody" class="mx-auto mt-4 rounded-2xl border p-5 text-[25px] leading-[1.7]" style="max-width:940px;border-color:var(--border-color);background:#eef4fb;color:var(--text-primary);white-space:pre-wrap">${article.contentNodes.map((node, index) => node.type === "text" ? escapeHtml(node.content) : `<span class="mx-1 inline-flex flex-wrap items-center gap-2 align-middle"><b>(${node.displayNumber})</b><button class="rfs-choice rounded-lg border px-2 py-1 text-sm font-black" data-choice="${node.questionId}" data-answer="A">A · ${escapeHtml(node.optionA)}</button><button class="rfs-choice rounded-lg border px-2 py-1 text-sm font-black" data-choice="${node.questionId}" data-answer="B">B · ${escapeHtml(node.optionB)}</button></span>`).join("")}</article></section>`;
-        const body = document.getElementById("rfsReadingBody"), panel = document.getElementById("rfsSettingsPanel");
+        appArea.innerHTML = `<section class="mx-auto max-w-6xl"><header class="sticky top-0 z-20 flex flex-col gap-3 border-b py-3 md:flex-row md:items-center md:justify-between" style="border-color:var(--border-color);background:var(--bg-page)"><button id="rfsBackToList" class="rounded-xl border px-3 py-2 text-sm font-black" style="border-color:var(--border-color)">← Listeye dön</button><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h2 class="text-xl font-black">${escapeHtml(article.title)}</h2></div><div class="flex gap-2">${TextSizeControls("legacyRfs")}<button id="rfsFocusBtn" class="rounded-xl border px-3 py-2 text-sm font-black" style="border-color:var(--border-color)">Odak Modu</button></div></header><article id="rfsReadingBody" data-study-content class="article-body mx-auto mt-4 rounded-2xl border p-5" style="max-width:940px;--study-content-font-size:${studyContentFontSize}px;border-color:var(--border-color);white-space:pre-wrap">${article.contentNodes.map((node, index) => node.type === "text" ? escapeHtml(node.content) : `<span class="mx-1 inline-flex flex-wrap items-center gap-2 align-middle"><b>(${node.displayNumber})</b><button class="rfs-choice rounded-lg border px-2 py-1 text-sm font-black" data-choice="${node.questionId}" data-answer="A">A · ${escapeHtml(node.optionA)}</button><button class="rfs-choice rounded-lg border px-2 py-1 text-sm font-black" data-choice="${node.questionId}" data-answer="B">B · ${escapeHtml(node.optionB)}</button></span>`).join("")}</article></section>`;
         document.getElementById("rfsBackToList").onclick = () => { readForSpeedMode = "list"; readForSpeedActiveArticle = null; renderReadForSpeedPage(); };
-        document.getElementById("rfsSettingsBtn").onclick = () => panel.hidden = !panel.hidden;
         document.getElementById("rfsFocusBtn").onclick = () => document.body.classList.toggle("rfs-focus-mode");
-        document.getElementById("rfsFontSize").oninput = event => body.style.fontSize = event.target.value + "px";
-        document.getElementById("rfsLineHeight").onchange = event => body.style.lineHeight = event.target.value;
-        document.getElementById("rfsWidth").onchange = event => body.style.maxWidth = event.target.value + "px";
-        document.getElementById("rfsSurface").onchange = event => { body.style.background = event.target.value; body.style.color = event.target.value === "#182235" ? "#f8fafc" : "var(--text-primary)"; };
         document.querySelectorAll(".rfs-choice").forEach(button => button.onclick = () => { document.querySelectorAll(`.rfs-choice[data-choice="${button.dataset.choice}"]`).forEach(item => item.classList.remove("border-blue-600", "bg-blue-100", "text-blue-700")); button.classList.add("border-blue-600", "bg-blue-100", "text-blue-700"); });
         return;
       }
@@ -2796,10 +2903,35 @@
       document.getElementById("rfsSave").onclick = () => { if (!canSave) return; const id = `read-for-speed-${Date.now()}`, now = new Date().toISOString(); const article = { id, title: readForSpeedDraft.title.trim() || "Başlıksız çalışma", source: null, articleNumber: null, difficulty: null, rawText: readForSpeedDraft.rawText, contentNodes: parsed.nodes.map(node => node.type === "binary_choice" ? { ...node, questionId: `${id}:${node.questionKey}` } : node), questionCount: parsed.questions.length, createdAt: now, updatedAt: now }; readForSpeedArticles.push(article); saveJson(STORAGE_READ_FOR_SPEED, readForSpeedArticles); readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); };
     }
 
-    function readForSpeedProgress(article) {
-      const base = article.progress && typeof article.progress === "object" ? article.progress : {};
-      article.progress = { selectedAnswers: base.selectedAnswers || {}, checked: !!base.checked, completed: !!base.completed, startedAt: base.startedAt || Date.now(), elapsedMs: Number(base.elapsedMs || 0), lastPosition: Number(base.lastPosition || 0) };
-      return article.progress;
+    let readForSpeedReviewAttemptId = null;
+    let readForSpeedReviewWrongIndex = 0;
+
+    function readForSpeedAttempts(article) {
+      const legacy = article.progress && typeof article.progress === "object" ? article.progress : null;
+      const attempts = Array.isArray(article.attempts) ? article.attempts : [];
+      if (!attempts.length && legacy) attempts.push({ ...legacy, id: legacy.id || `rfs-attempt:${article.id}:${legacy.completedAt || legacy.updatedAt || Date.now()}`, articleId: article.id });
+      article.attempts = attempts.map(attempt => ({ ...attempt, id: attempt.id || `rfs-attempt:${article.id}:${Date.now()}`, articleId: article.id, selectedAnswers: attempt.selectedAnswers || {}, checked: !!attempt.checked, completed: !!attempt.completed, startedAt: attempt.startedAt || Date.now(), elapsedMs: Number(attempt.elapsedMs || 0), lastPosition: Number(attempt.lastPosition || 0) }));
+      return article.attempts;
+    }
+
+    function activeReadForSpeedAttempt(article) {
+      const attempts = readForSpeedAttempts(article);
+      let active = attempts.find(attempt => attempt.id === article.activeAttemptId);
+      if (!active || active.completed || active.checked) active = attempts.filter(attempt => !attempt.completed && !attempt.checked).sort((a, b) => Number(b.startedAt || 0) - Number(a.startedAt || 0))[0] || null;
+      if (!active) { active = { id: `rfs-attempt:${article.id}:${Date.now()}`, articleId: article.id, selectedAnswers: {}, checked: false, completed: false, startedAt: Date.now(), elapsedMs: 0, lastPosition: 0, updatedAt: new Date().toISOString() }; attempts.push(active); }
+      article.activeAttemptId = active.id; article.progress = active;
+      return active;
+    }
+
+    function latestCompletedReadForSpeedAttempt(article) {
+      return readForSpeedAttempts(article).filter(attempt => attempt.completed || attempt.checked).sort((a, b) => Date.parse(b.completedAt || b.updatedAt || 0) - Date.parse(a.completedAt || a.updatedAt || 0))[0] || null;
+    }
+
+    function readForSpeedProgress(article) { return activeReadForSpeedAttempt(article); }
+
+    function startNewReadForSpeedAttempt(article) {
+      const attempt = { id: `rfs-attempt:${article.id}:${Date.now()}`, articleId: article.id, selectedAnswers: {}, checked: false, completed: false, startedAt: Date.now(), elapsedMs: 0, lastPosition: 0, updatedAt: new Date().toISOString() };
+      readForSpeedAttempts(article).push(attempt); article.activeAttemptId = attempt.id; article.progress = attempt; article.cleanReading = false; readForSpeedReviewAttemptId = null; return attempt;
     }
 
     function readForSpeedQuestionStatus(question, answers) {
@@ -2813,7 +2945,7 @@
       body.dataset.wordTokensBound = "true";
       const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, {
         acceptNode(node) {
-          return node.parentElement?.closest("button, script, style") || !/[A-Za-z]/.test(node.nodeValue || "")
+          return node.parentElement?.closest("button, script, style") || !/\p{L}/u.test(node.nodeValue || "")
             ? NodeFilter.FILTER_REJECT
             : NodeFilter.FILTER_ACCEPT;
         }
@@ -2822,8 +2954,8 @@
       while (walker.nextNode()) textNodes.push(walker.currentNode);
       textNodes.forEach(node => {
         const fragment = document.createDocumentFragment();
-        String(node.nodeValue || "").split(/([A-Za-z]+(?:['’\-][A-Za-z]+)*)/g).forEach(part => {
-          if (/^[A-Za-z]+(?:['’\-][A-Za-z]+)*$/.test(part)) {
+        String(node.nodeValue || "").split(/(\p{L}[\p{L}\p{M}]*(?:['’\-\u2011]\p{L}[\p{L}\p{M}]*)*)/gu).forEach(part => {
+          if (/^\p{L}[\p{L}\p{M}]*(?:['’\-\u2011]\p{L}[\p{L}\p{M}]*)*$/u.test(part)) {
             const button = document.createElement("button");
             button.type = "button";
             button.className = "word-token";
@@ -2841,6 +2973,9 @@
     function readForSpeedCompletionAttempts(article) {
       const saved = Array.isArray(article?.completedAttempts) ? article.completedAttempts : [];
       const attempts = saved.filter(attempt => attempt && attempt.completed === true && attempt.articleId === article.id && typeof attempt.completedAt === "string");
+      (Array.isArray(article?.attempts) ? article.attempts : []).filter(attempt => attempt?.completed === true && typeof attempt.completedAt === "string").forEach(attempt => {
+        if (!attempts.some(item => item.id === attempt.id)) attempts.push(attempt);
+      });
       const progress = article?.progress;
       if (progress?.completed === true || progress?.checked === true) {
         const completedAt = progress.completedAt || progress.checkedAt || progress.updatedAt || article.updatedAt;
@@ -2885,6 +3020,10 @@
         attempts.push({ id: `rfs-attempt:${article.id}:${Date.parse(completedAt) || Date.now()}`, articleId: article.id, completed: true, completedAt, dateKey: progress.dateKey });
       }
       article.completedAttempts = attempts;
+      const allAttempts = readForSpeedAttempts(article);
+      const current = allAttempts.find(attempt => attempt.id === progress.id) || progress;
+      Object.assign(current, { ...progress, completed: true, checked: true, completedAt, updatedAt: new Date().toISOString() });
+      article.activeAttemptId = current.id;
       recordWeeklyActivity("reading", "reading:read-for-speed:" + article.id, completedAt);
       if (syncReadForSpeedDailyProgress()) saveDailyProgress(false);
     }
@@ -2901,15 +3040,22 @@
 
     function readForSpeedArticleSummary(article) {
       const questions = (article.contentNodes || []).filter(node => node.type === "binary_choice");
-      const answers = article.progress?.selectedAnswers || {};
+      const activeDraft = readForSpeedAttempts(article).filter(attempt => !attempt.completed && !attempt.checked).sort((a, b) => Date.parse(b.updatedAt || 0) - Date.parse(a.updatedAt || 0))[0] || null;
+      const activeAnswerCount = Object.values(activeDraft?.selectedAnswers || {}).filter(answer => ["A", "B"].includes(answer)).length;
+      // A blank draft may be created by a cancelled/new flow. It must never
+      // hide a real completed attempt in the card list.
+      const active = activeDraft && activeAnswerCount > 0 ? activeDraft : null;
+      const completedAttempt = latestCompletedReadForSpeedAttempt(article);
+      const display = active || completedAttempt || activeDraft || article.progress || {};
+      const answers = display.selectedAnswers || {};
       const questionIds = new Set(questions.map(question => question.questionId));
       const answeredCount = new Set(Object.keys(answers).filter(id => questionIds.has(id) && ["A", "B"].includes(answers[id]))).size;
-      const completed = article.progress?.completed === true || article.progress?.checked === true;
+      const completed = !active && Boolean(completedAttempt || display.completed === true || display.checked === true);
       const correctCount = completed ? questions.filter(question => answers[question.questionId] === String(question.correctOption || "").toUpperCase()).length : 0;
       const incorrectCount = completed ? questions.filter(question => answers[question.questionId] && answers[question.questionId] !== String(question.correctOption || "").toUpperCase()).length : 0;
       const blankCount = questions.length - answeredCount;
       const status = completed ? "completed" : answeredCount ? "inProgress" : "new";
-      return { articleId: article.id, questionCount: questions.length || Number(article.questionCount || 0), answeredCount, correctCount, incorrectCount, blankCount, score: completed && questions.length ? Math.round(correctCount / questions.length * 100) : 0, completed, status, updatedAt: article.progress?.updatedAt || article.updatedAt || null };
+      return { articleId: article.id, questionCount: questions.length || Number(article.questionCount || 0), answeredCount, correctCount, incorrectCount, blankCount, score: completed && questions.length ? Math.round(correctCount / questions.length * 100) : 0, completed, status, updatedAt: display.updatedAt || article.updatedAt || null };
     }
 
     function readForSpeedDisplayTitle(title) {
@@ -2944,12 +3090,13 @@
       const cards = items.map(({ article, summary }) => {
         const [statusLabel, statusClass] = badge[summary.status];
         const title = readForSpeedDisplayTitle(article.title);
-        const details = summary.status === "new" ? `${summary.questionCount} seçim` : summary.status === "inProgress" ? `${summary.answeredCount} / ${summary.questionCount} seçim cevaplandı` : `${summary.correctCount} doğru · ${summary.incorrectCount} yanlış · Başarı %${summary.score}`;
-        const action = summary.status === "new" ? "Başla" : summary.status === "inProgress" ? "Devam Et" : "Tekrar Çöz";
+        const details = summary.status === "new" ? `${summary.questionCount} seçim` : summary.status === "inProgress" ? `${summary.answeredCount} / ${summary.questionCount} seçim cevaplandı` : `<span class="text-emerald-700">${summary.correctCount}D</span> · <span class="text-red-700">${summary.incorrectCount}Y</span> · <span style="color:var(--text-primary)">%${summary.score}</span>`;
+        const action = summary.status === "new" ? "Başla" : summary.status === "inProgress" ? "Devam Et" : "Gözden Geç";
         const progressPercent = summary.status === "completed" ? 100 : summary.questionCount ? Math.round(summary.answeredCount / summary.questionCount * 100) : 0;
         const rawDifficulty = String(article.difficulty || "");
         const difficulty = ({ easy: "Kolay", medium: "Orta", hard: "Zor" })[rawDifficulty.toLowerCase()] || (["Kolay", "Orta", "Zor"].includes(rawDifficulty) ? rawDifficulty : "");
-        return `<article class="read-for-speed-card ${summary.status === "completed" ? "is-completed" : ""}"><div class="flex items-start justify-between gap-3"><div class="flex flex-wrap gap-2"><span class="rfs-card-status rfs-status-new">READ FOR SPEED</span>${difficulty ? `<span class="rfs-card-status rfs-status-new">${difficulty}</span>` : ""}</div><span class="rfs-card-status ${statusClass}">${statusLabel}</span></div><h3 class="read-for-speed-card-title" title="${escapeHtml(article.title)}">${escapeHtml(title)}</h3><p class="rfs-card-detail">${details}</p><div class="rfs-card-progress-label"><span>ÇALIŞMA İLERLEMESİ</span><span>%${progressPercent}</span></div><div class="rfs-card-progress"><span class="${summary.status === "completed" ? "is-completed" : ""}" style="width:${progressPercent}%"></span></div><div class="rfs-card-actions"><button class="rfs-open" data-id="${escapeHtml(article.id)}" aria-label="${escapeHtml(title)} çalışmasına ${summary.status === "new" ? "başla" : summary.status === "inProgress" ? "devam et" : "sonuçlarını görüntüle"}">${action}</button><button class="rfs-reset" data-id="${escapeHtml(article.id)}" aria-label="${escapeHtml(title)} metin işlemleri" aria-expanded="false">⋯</button></div></article>`;
+        const completedActions = summary.status === "completed" ? `<button class="rfs-open" data-id="${escapeHtml(article.id)}" data-mode="review" aria-label="${escapeHtml(title)} çalışmasını gözden geçir">Gözden Geç</button><button class="rfs-retry-card rounded-xl border px-4 py-2 text-sm font-black" style="border-color:var(--border-color)" data-id="${escapeHtml(article.id)}">Tekrar Çöz</button>` : `<button class="rfs-open" data-id="${escapeHtml(article.id)}" aria-label="${escapeHtml(title)} çalışmasına ${summary.status === "new" ? "başla" : "devam et"}">${action}</button>`;
+        return `<article class="read-for-speed-card ${summary.status === "completed" ? "is-completed" : ""}"><div class="flex items-start justify-between gap-3"><div class="flex flex-wrap gap-2"><span class="rfs-card-status rfs-status-new">READ FOR SPEED</span>${difficulty ? `<span class="rfs-card-status rfs-status-new">${difficulty}</span>` : ""}</div><span class="rfs-card-status ${statusClass}">${statusLabel}</span></div><h3 class="read-for-speed-card-title" title="${escapeHtml(article.title)}">${escapeHtml(title)}</h3><p class="rfs-card-detail"${summary.status === "completed" ? ` aria-label="${summary.correctCount} doğru, ${summary.incorrectCount} yanlış, yüzde ${summary.score} başarı"` : ""}>${details}</p><div class="rfs-card-progress-label"><span>ÇALIŞMA İLERLEMESİ</span><span>%${progressPercent}</span></div><div class="rfs-card-progress"><span class="${summary.status === "completed" ? "is-completed" : ""}" style="width:${progressPercent}%"></span></div><div class="rfs-card-actions">${completedActions}<button class="rfs-reset" data-id="${escapeHtml(article.id)}" aria-label="${escapeHtml(title)} metin işlemleri" aria-expanded="false">⋯</button></div></article>`;
       }).join("");
       appArea.innerHTML = `<section class="rounded-2xl border p-5 shadow-sm" style="border-color:var(--border-color);background:var(--bg-surface)"><div class="rfs-list-heading"><div><p class="text-sm font-black uppercase tracking-wide text-blue-500">READ FOR SPEED</p><h2 class="mt-1 text-2xl font-black">Read for Speed</h2><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">İki seçenekli hızlı okuma parçalarını çöz, kontrol et ve ilerlemeni takip et.</p><div class="mt-3 flex flex-wrap gap-2" aria-label="Read for Speed özeti"><span class="rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color:var(--border-color);color:var(--text-secondary);background:var(--bg-surface-secondary)">${allItems.length} metin</span><span class="rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color:color-mix(in srgb,#059669 28%,var(--border-color));background:color-mix(in srgb,#059669 8%,var(--bg-surface))">${completedCount} tamamlandı</span><span class="rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color:color-mix(in srgb,#2563eb 28%,var(--border-color));background:color-mix(in srgb,#2563eb 8%,var(--bg-surface))">${inProgressCount} devam ediyor</span></div></div><button id="rfsNewBtn" class="shrink-0 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white">Yeni Metin Ekle</button></div><div class="rfs-list-filters"><input id="rfsListSearch" aria-label="Metin ara" placeholder="Metin ara" value="${escapeHtml(rfsListQuery)}"><select id="rfsListStatus" aria-label="Çalışma durumu"><option value="all">Tüm durumlar</option><option value="new">Yeni</option><option value="inProgress">Devam Ediyor</option><option value="completed">Tamamlandı</option></select><select id="rfsListSort" aria-label="Sıralama"><option value="recent">Son eklenen</option><option value="title">Başlığa göre A-Z</option><option value="countAsc">Seçim sayısı artan</option><option value="countDesc">Seçim sayısı azalan</option><option value="progress">İlerleme yüksekten düşüğe</option></select></div><div class="rfs-list-grid mt-4">${cards || `<div class="col-span-full rounded-2xl border border-dashed p-10 text-center">Bu filtrede metin bulunamadı.</div>`}</div></section>`;
       document.getElementById("rfsNewBtn").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); };
@@ -2957,13 +3104,37 @@
       document.getElementById("rfsListSearch").oninput = event => { rfsListQuery = event.target.value; renderReadForSpeedList(); };
       document.getElementById("rfsListStatus").onchange = event => { rfsListStatus = event.target.value; renderReadForSpeedList(); };
       document.getElementById("rfsListSort").onchange = event => { rfsListSort = event.target.value; renderReadForSpeedList(); };
-      document.querySelectorAll(".rfs-open").forEach(button => button.onclick = () => { const article = readForSpeedArticles.find(item => item.id === button.dataset.id); if (!article) return; if (readForSpeedArticleSummary(article).completed) { article.progress = null; article.cleanReading = false; article.focusMode = false; saveReadForSpeedArticles(); } readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); });
+      document.querySelectorAll(".rfs-open").forEach(button => button.onclick = () => { const article = readForSpeedArticles.find(item => item.id === button.dataset.id); if (!article) return; readForSpeedReviewAttemptId = button.dataset.mode === "review" ? latestCompletedReadForSpeedAttempt(article)?.id || null : null; readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); });
+      document.querySelectorAll(".rfs-retry-card").forEach(button => button.onclick = () => { const article = readForSpeedArticles.find(item => item.id === button.dataset.id); if (!article || !window.confirm("Bu makaleyi yeniden çözmek için yeni bir çalışma başlatılacak. Önceki sonuçların korunacak.")) return; startNewReadForSpeedAttempt(article); readForSpeedReviewAttemptId = null; readForSpeedActiveArticle = article; readForSpeedMode = "reader"; saveReadForSpeedArticles(); renderReadForSpeedPage(); });
     }
 
     // Inline action bridge: keeps essential reader actions independent from optional settings bindings.
     window.rfsAction = (action, questionId, option) => {
       const article = readForSpeedActiveArticle;
       if (!article) return;
+      if (readForSpeedReviewAttemptId) {
+        // Review is strictly read-only: delegated events must never create,
+        // reset, or persist an attempt while a completed attempt is displayed.
+        if (action === "clean") {
+          article.cleanReading = !article.cleanReading;
+          saveReadForSpeedArticles();
+          renderReadForSpeedPage();
+          return;
+        }
+        if (action === "focus") {
+          article.focusMode = !article.focusMode;
+          setReadForSpeedFocusMode(article.focusMode);
+          saveReadForSpeedArticles();
+          renderReadForSpeedPage();
+          return;
+        }
+        if (action === "blank") {
+          const review = readForSpeedAttempts(article).find(attempt => attempt.id === readForSpeedReviewAttemptId);
+          const wrong = article.contentNodes.find(node => node.type === "binary_choice" && review?.selectedAnswers?.[node.questionId] && review.selectedAnswers[node.questionId] !== node.correctOption);
+          document.getElementById(`rfs-question-${wrong?.questionId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        return;
+      }
       const progress = readForSpeedProgress(article);
       if (action === "answer" && !progress.checked) {
         progress.selectedAnswers[questionId] = option;
@@ -2990,23 +3161,14 @@
         article.focusMode = !article.focusMode;
         setReadForSpeedFocusMode(article.focusMode);
       }
-      else if (action === "settings") {
-        const panel = document.getElementById("rfsSettingsPanel");
-        const button = document.getElementById("rfsSettings");
-        if (panel) {
-          const willOpen = panel.hidden;
-          panel.hidden = !willOpen;
-          button?.setAttribute("aria-expanded", String(willOpen));
-        }
-        return;
-      }
       else if (action === "blank") {
         const firstBlank = article.contentNodes.find(node => node.type === "binary_choice" && readForSpeedQuestionStatus(node, progress.selectedAnswers) === "blank");
         document.getElementById(`rfs-question-${firstBlank?.questionId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
         return;
       }
       else if (action === "retry") {
-        article.progress = null;
+        if (!window.confirm("Bu makaleyi yeniden çözmek için yeni bir çalışma başlatılacak. Önceki sonuçların korunacak.")) return;
+        startNewReadForSpeedAttempt(article);
         article.cleanReading = false;
         article.focusMode = false;
         article.pendingCheckConfirmation = false;
@@ -3030,7 +3192,7 @@
       window.__rfsReaderEventsBound = true;
       document.addEventListener("click", event => {
         const target = event.target instanceof Element
-          ? event.target.closest("#rfsCheck, #rfsConfirmCheck, #rfsBlank, #rfsClean, #rfsFocus, #rfsSettings, #rfsRetry, #rfsCleanResult, .rfs-answer, .rfs-surface")
+          ? event.target.closest("#rfsCheck, #rfsConfirmCheck, #rfsBlank, #rfsClean, #rfsFocus, #rfsRetry, #rfsCleanResult, .rfs-answer")
           : null;
         if (!target) return;
         event.preventDefault();
@@ -3040,46 +3202,8 @@
         if (target.id === "rfsBlank") return window.rfsAction("blank");
         if (target.id === "rfsClean" || target.id === "rfsCleanResult") return window.rfsAction("clean");
         if (target.id === "rfsFocus") return window.rfsAction("focus");
-        if (target.id === "rfsSettings") return window.rfsAction("settings");
         if (target.id === "rfsRetry") return window.rfsAction("retry");
         if (target.classList.contains("rfs-answer")) return window.rfsAction("answer", target.dataset.question, target.dataset.answer);
-        if (target.classList.contains("rfs-surface")) {
-          const nextSurface = target.dataset.surface || "neutral";
-          if (!["white", "neutral", "warm", "dark"].includes(nextSurface)) return;
-          articleReadingSurface = nextSurface;
-          localStorage.setItem("yds-article-reading-surface-v1", articleReadingSurface);
-          const body = document.getElementById("rfsBody");
-          if (body) {
-            body.classList.remove("article-surface-white", "article-surface-neutral", "article-surface-warm", "article-surface-dark");
-            body.classList.add(`article-surface-${articleReadingSurface}`);
-          }
-          document.querySelectorAll("#rfsSettingsPanel .rfs-surface").forEach(choice => choice.classList.toggle("is-selected", choice.dataset.surface === articleReadingSurface));
-          return;
-        }
-      }, true);
-      document.addEventListener("input", event => {
-        const target = event.target;
-        if (!(target instanceof HTMLInputElement) || target.id !== "rfsFont") return;
-        articleFontSize = Number(target.value);
-        localStorage.setItem("yds-article-font-size-v1", String(articleFontSize));
-        const body = document.getElementById("rfsBody");
-        if (body) body.style.setProperty("--article-font-size", `${articleFontSize}px`);
-        const value = document.getElementById("rfsFontValue");
-        if (value) value.textContent = `${articleFontSize} px`;
-      }, true);
-      document.addEventListener("change", event => {
-        const target = event.target;
-        if (!(target instanceof HTMLSelectElement)) return;
-        const body = document.getElementById("rfsBody");
-        if (target.id === "rfsLine") {
-          articleLineHeight = [1.65, 1.7, 1.75].includes(Number(target.value)) ? Number(target.value) : 1.7;
-          localStorage.setItem("yds-article-line-height-v1", articleLineHeight);
-          if (body) body.style.setProperty("--article-line-height", String(articleLineHeight));
-        } else if (target.id === "rfsWidth") {
-          articleContentWidth = [920, 940, 960, 980].includes(Number(target.value)) ? Number(target.value) : 940;
-          localStorage.setItem("yds-article-content-width-v1", articleContentWidth);
-          if (body) body.style.maxWidth = `${articleContentWidth}px`;
-        } else return;
       }, true);
       window.addEventListener("keydown", event => {
         if (event.key === "Escape" && readForSpeedMode === "reader" && readForSpeedActiveArticle?.focusMode) {
@@ -3117,7 +3241,7 @@
         }
         closeReadForSpeedCardMenus();
         if (target.classList.contains("rfs-menu-open")) { readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); return; }
-        if (target.classList.contains("rfs-menu-retry")) { article.progress = null; article.cleanReading = false; saveReadForSpeedArticles(); readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); return; }
+        if (target.classList.contains("rfs-menu-retry")) { if (!confirm("Bu makaleyi yeniden çözmek için yeni bir çalışma başlatılacak. Önceki sonuçların korunacak.")) return; startNewReadForSpeedAttempt(article); article.cleanReading = false; saveReadForSpeedArticles(); readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); return; }
         if (target.classList.contains("rfs-menu-rename")) {
           const title = prompt("Yeni başlık", article.title);
           if (title?.trim()) { article.title = title.trim(); article.updatedAt = new Date().toISOString(); saveReadForSpeedArticles(); renderReadForSpeedPage(); }
@@ -3137,7 +3261,7 @@
           return;
         }
         if (target.classList.contains("rfs-menu-reset")) {
-          if (confirm("Bu çalışmanın ilerlemesi sıfırlansın mı?")) { article.progress = null; saveReadForSpeedArticles(); renderReadForSpeedPage(); }
+          if (confirm("Bu makaleyi yeniden çözmek için yeni bir çalışma başlatılacak. Önceki sonuçların korunacak.")) { startNewReadForSpeedAttempt(article); saveReadForSpeedArticles(); renderReadForSpeedPage(); }
           return;
         }
         if (target.classList.contains("rfs-menu-delete") && confirm("Bu Read for Speed metni silinsin mi?")) {
@@ -3172,10 +3296,13 @@
         const recovered = parseReadForSpeed(article.rawText || "", "");
         const recoveredAnswers = new Map(recovered.questions.map(question => [question.displayNumber, question.correctOption]));
         article.contentNodes.forEach(node => { if (node.type === "binary_choice" && !node.correctOption && recoveredAnswers.has(node.displayNumber)) node.correctOption = recoveredAnswers.get(node.displayNumber); });
-        const progress = readForSpeedProgress(article), stats = summary(article), clean = !!article.cleanReading;
+        const isReview = Boolean(readForSpeedReviewAttemptId);
+        const progress = isReview ? (readForSpeedAttempts(article).find(attempt => attempt.id === readForSpeedReviewAttemptId) || latestCompletedReadForSpeedAttempt(article)) : readForSpeedProgress(article);
+        const stats = (() => { const nodes = article.contentNodes.filter(node => node.type === "binary_choice"); const answers = progress.selectedAnswers || {}; const correct = nodes.filter(node => answers[node.questionId] === String(node.correctOption || "").toUpperCase()).length; const wrong = nodes.filter(node => answers[node.questionId] && answers[node.questionId] !== String(node.correctOption || "").toUpperCase()).length; const blank = nodes.length - Object.keys(answers).filter(id => ["A", "B"].includes(answers[id])).length; return { total: nodes.length, correct, wrong, blank, percent: nodes.length ? Math.round(correct / nodes.length * 100) : 0 }; })();
+        const clean = !!article.cleanReading;
         const readerNodes = clean ? article.contentNodes.map(node => node.type === "text" ? node : { type: "text", content: node.correctOption === "A" ? node.optionA : node.optionB }) : article.contentNodes;
-        const prefs = { fontSize: articleFontSize, lineHeight: articleLineHeight, width: articleContentWidth, surface: articleReadingSurface };
-        appArea.innerHTML = `<section class="mx-auto max-w-6xl ${article.focusMode ? "rfs-focus" : ""}"><header class="sticky top-0 z-20 flex flex-col gap-2 border-b py-2 md:flex-row md:items-center md:justify-between" style="border-color:var(--border-color);background:var(--bg-page)"><button id="rfsBack" class="rounded-xl border px-3 py-2 text-sm font-black" style="border-color:var(--border-color)">← Listeye dön</button><div class="min-w-0"><p class="text-xs font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h2 class="truncate text-xl font-black">${escapeHtml(article.title)}</h2></div><div class="flex flex-wrap gap-2"><button id="rfsCheck" ${progress.checked ? "disabled" : ""} class="rounded-xl bg-blue-600 px-3 py-2 text-sm font-black text-white disabled:opacity-50">${progress.checked ? "Kontrol Edildi ✓" : "Kontrol Et"}</button><button id="rfsClean" class="rounded-xl border px-3 py-2 text-sm font-black">${clean ? "Çalışma Modu" : "Temiz Oku"}</button><button id="rfsFocus" class="rounded-xl border px-3 py-2 text-sm font-black">${article.focusMode ? "Odaktan Çık" : "Odak Modu"}</button><button id="rfsSettings" class="rounded-xl border px-3 py-2 text-sm font-black">Okuma Ayarları</button></div></header><section id="rfsSettingsPanel" hidden class="article-settings-panel" aria-label="Okuma ayarları"><div class="mb-3 flex items-center justify-between"><h4 class="text-sm font-black">Okuma Ayarları</h4><span id="rfsFontValue" class="text-xs font-bold">${prefs.fontSize} px</span></div><label class="block text-xs font-black">Yazı boyutu<input id="rfsFont" class="mt-2 w-full" type="range" min="22" max="28" value="${prefs.fontSize}" /></label><label class="mt-3 block text-xs font-black">Satır aralığı<select id="rfsLine" class="mt-2 w-full rounded-xl border p-2"><option value="1.65">Sıkı</option><option value="1.7">Dengeli</option><option value="1.75">Geniş</option></select></label><label class="mt-3 block text-xs font-black">Metin genişliği<select id="rfsWidth" class="mt-2 w-full rounded-xl border p-2"><option value="920">Dar</option><option value="940">Dengeli</option><option value="980">Geniş</option></select></label><fieldset class="mt-3"><legend class="text-xs font-black">Okuma yüzeyi</legend><div class="mt-2 grid grid-cols-2 gap-2">${["white", "neutral", "warm", "dark"].map(surface => `<button class="rfs-surface rounded-xl border px-2 py-2 text-xs font-black" data-surface="${surface}">${({ white: "Beyaz", neutral: "Yumuşak nötr", warm: "Sıcak", dark: "Koyu" })[surface]}</button>`).join("")}</div></fieldset></section><article id="rfsBody" class="article-body article-surface-${prefs.surface} mx-auto mt-4 rounded-2xl border p-5" style="max-width:${prefs.width}px;--article-font-size:${prefs.fontSize}px;--article-line-height:${prefs.lineHeight};border-color:var(--border-color);white-space:pre-wrap">${readerNodes.map((node, index) => node.type === "text" ? escapeHtml(node.content) : `<span id="rfs-question-${node.questionId}" class="mx-1 inline-flex flex-wrap items-center gap-2 align-middle"><b>(${node.displayNumber})</b>${["A", "B"].map(key => { const selected = progress.selectedAnswers[node.questionId] === key, correct = String(node.correctOption || "").toUpperCase() === key, checked = progress.checked; const color = checked ? (correct ? "border-emerald-600 bg-emerald-100 text-emerald-800" : selected ? "border-red-600 bg-red-100 text-red-800" : "opacity-45") : selected ? "border-blue-600 bg-blue-100 text-blue-800" : ""; const label = checked && correct ? ` ✓ Doğru cevap${!selected ? " · Boş" : ""}` : checked && selected ? " ✕ Yanlış" : ""; return `<button class="rfs-answer rounded-lg border px-2 py-1 text-sm font-black ${color}" data-question="${node.questionId}" data-answer="${key}" ${checked ? "disabled" : ""}>${key} · ${escapeHtml(key === "A" ? node.optionA : node.optionB)}${label}</button>`; }).join("")}</span>`).join("")}</article>${progress.checked ? `<section id="rfsResult" class="mx-auto mt-4 max-w-3xl rounded-2xl border p-4" style="border-color:var(--border-color);background:var(--bg-surface)"><h3 class="text-lg font-black">Sonuç Özeti</h3><div class="mt-3 grid grid-cols-2 gap-2 text-sm md:grid-cols-5"><b>Toplam ${stats.total}</b><b class="text-emerald-700">Doğru ${stats.correct}</b><b class="text-red-700">Yanlış ${stats.wrong}</b><b>Boş ${stats.blank}</b><b>Başarı %${stats.percent}</b></div><p class="mt-2 text-sm">Geçen süre: ${Math.floor((progress.elapsedMs + Date.now() - progress.startedAt) / 60)} sn</p><div class="mt-3 flex flex-wrap gap-2"><button id="rfsWrong" ${stats.wrong ? "" : "disabled"} class="rounded-xl border px-3 py-2 text-sm font-black disabled:opacity-40">${stats.wrong ? "Yanlışlara Git" : "Tüm cevapların doğru."}</button><button id="rfsRetry" class="rounded-xl border px-3 py-2 text-sm font-black">Tekrar Çöz</button><button id="rfsCleanResult" class="rounded-xl border px-3 py-2 text-sm font-black">Temiz Oku</button><button id="rfsListResult" class="rounded-xl border px-3 py-2 text-sm font-black">Listeye Dön</button></div></section>` : ""}</section>`;
+        const importantContext = { sourceModule: "read_for_speed", sourceId: article.id, sourceTitle: article.title || "Read for Speed", rerender: () => renderReadForSpeedPage() };
+        appArea.innerHTML = `<section class="mx-auto max-w-6xl ${article.focusMode ? "rfs-focus" : ""}"><header class="sticky top-0 z-20 flex flex-col gap-2 border-b py-2 md:flex-row md:items-center md:justify-between" style="border-color:var(--border-color);background:var(--bg-page)"><button id="rfsBack" class="rounded-xl border px-3 py-2 text-sm font-black" style="border-color:var(--border-color)">← Listeye dön</button><div class="min-w-0"><p class="text-xs font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h2 class="truncate text-xl font-black">${escapeHtml(article.title)}</h2></div><div class="flex flex-wrap gap-2"><button id="rfsCheck" ${progress.checked ? "disabled" : ""} class="rounded-xl bg-blue-600 px-3 py-2 text-sm font-black text-white disabled:opacity-50">${progress.checked ? "Kontrol Edildi ✓" : "Kontrol Et"}</button><button id="rfsClean" class="rounded-xl border px-3 py-2 text-sm font-black">${clean ? "Çalışma Modu" : "Temiz Oku"}</button><button id="rfsFocus" class="rounded-xl border px-3 py-2 text-sm font-black">${article.focusMode ? "Odaktan Çık" : "Odak Modu"}</button>${TextSizeControls("rfs")}</div></header><article id="rfsBody" data-study-content class="article-body mx-auto mt-4 rounded-2xl border p-5" style="max-width:940px;--study-content-font-size:${studyContentFontSize}px;border-color:var(--border-color);white-space:pre-wrap">${readerNodes.map((node, index) => node.type === "text" ? escapeHtml(node.content) : `<span id="rfs-question-${node.questionId}" class="mx-1 inline-flex flex-wrap items-center gap-2 align-middle"><b>(${node.displayNumber})</b>${["A", "B"].map(key => { const selected = progress.selectedAnswers[node.questionId] === key, correct = String(node.correctOption || "").toUpperCase() === key, checked = progress.checked; const color = checked ? (correct ? "border-emerald-600 bg-emerald-100 text-emerald-800" : selected ? "border-red-600 bg-red-100 text-red-800" : "opacity-45") : selected ? "border-blue-600 bg-blue-100 text-blue-800" : ""; const label = checked && correct ? ` ✓ Doğru cevap${!selected ? " · Boş" : ""}` : checked && selected ? " ✕ Yanlış" : ""; return `<button class="rfs-answer rounded-lg border px-2 py-1 text-sm font-black ${color}" data-question="${node.questionId}" data-answer="${key}" ${checked ? "disabled" : ""}>${key} · ${escapeHtml(key === "A" ? node.optionA : node.optionB)}${label}</button>`; }).join("")}</span>`).join("")}</article>${progress.checked ? `<section id="rfsResult" class="mx-auto mt-4 max-w-3xl rounded-2xl border p-4" style="border-color:var(--border-color);background:var(--bg-surface)"><h3 class="text-lg font-black">Sonuç Özeti</h3><div class="mt-3 grid grid-cols-2 gap-2 text-sm md:grid-cols-5"><b>Toplam ${stats.total}</b><b class="text-emerald-700">Doğru ${stats.correct}</b><b class="text-red-700">Yanlış ${stats.wrong}</b><b>Boş ${stats.blank}</b><b>Başarı %${stats.percent}</b></div><p class="mt-2 text-sm">Geçen süre: ${Math.floor((progress.elapsedMs + Date.now() - progress.startedAt) / 60)} sn</p></section>` : ""}</section>`;
         const toolbar = appArea.querySelector("header");
         const toolbarTitle = toolbar?.querySelector("h2");
         const toolbarHeading = toolbarTitle?.parentElement;
@@ -3185,9 +3312,16 @@
         toolbarTitle?.classList.remove("truncate");
         toolbarTitle?.classList.add("read-for-speed-title");
         toolbarActions?.classList.add("read-for-speed-actions");
-        document.getElementById("rfsLine").value = String(articleLineHeight); document.getElementById("rfsWidth").value = String(articleContentWidth);
-        document.getElementById("rfsSettings")?.setAttribute("aria-expanded", "false");
-        document.querySelectorAll("#rfsSettingsPanel .rfs-surface").forEach(choice => choice.classList.toggle("is-selected", choice.dataset.surface === articleReadingSurface));
+        const backButton = document.getElementById("rfsBack");
+        if (toolbar && toolbarHeading && backButton && !toolbar.querySelector(".read-for-speed-toolbar__title")) {
+          const titleGroup = document.createElement("div"); titleGroup.className = "read-for-speed-toolbar__title";
+          toolbar.prepend(titleGroup); titleGroup.append(backButton, toolbarHeading);
+        }
+        if (isReview) {
+          document.getElementById("rfsCheck")?.remove();
+          const badge = document.createElement("span"); badge.className = "review-status-badge"; badge.textContent = `GÖZDEN GEÇİRİLİYOR · ${stats.correct}D · ${stats.wrong}Y · %${stats.percent}`;
+          document.getElementById("rfsClean")?.before(badge);
+        }
         enableReadForSpeedWordTokens(document.getElementById("rfsBody"));
         const choiceById = new Map(article.contentNodes.filter(node => node.type === "binary_choice").map(node => [node.questionId, node]));
         document.querySelectorAll("#rfsBody .rfs-answer").forEach(button => {
@@ -3209,7 +3343,7 @@
           if (!group) return;
           group.classList.add("rfs-choice-group");
           const number = group.querySelector("b");
-          if (number && progress.checked && !number.querySelector(".rfs-question-status")) {
+          if (number && progress.checked && !isReview && !number.querySelector(".rfs-question-status")) {
             const indicator = document.createElement("span");
             indicator.className = `rfs-question-status is-${status}`;
             indicator.setAttribute("aria-label", `Soru ${question.displayNumber}, ${status === "correct" ? "doğru" : status === "wrong" ? "yanlış" : "boş"}`);
@@ -3218,6 +3352,19 @@
           }
         });
         const readingBody = document.getElementById("rfsBody");
+        if (readingBody) {
+          readingBody.dataset.structureParagraph = "0";
+          const layout = document.createElement("div"); layout.className = "important-structures-layout";
+          readingBody.before(layout); layout.append(readingBody);
+          layout.insertAdjacentHTML("beforeend", importantStructuresPanelHtml(importantContext));
+          applyImportantStructureHighlights(readingBody, importantContext);
+          bindImportantStructures(importantContext, appArea);
+        }
+        const importantButton = document.createElement("button");
+        importantButton.id = "rfsImportantStructures"; importantButton.dataset.importantStructuresTrigger = ""; importantButton.className = "important-structures-button rounded-xl border px-3 py-2 text-sm font-black" + (importantStructuresPanelOpen ? " border-blue-500 bg-blue-50 text-blue-700" : ""); importantButton.setAttribute("aria-controls", "important-structures-drawer"); importantButton.setAttribute("aria-expanded", String(importantStructuresPanelOpen));
+        importantButton.textContent = "Önemli Yapılar (" + importantStructureNotes(importantContext).length + ")";
+        importantButton.onclick = () => { importantStructuresPanelOpen = !importantStructuresPanelOpen; document.querySelector(".important-structure-selection")?.remove(); localStorage.setItem("yds-important-structures-panel-open-v1", importantStructuresPanelOpen ? "1" : "0"); renderReadForSpeedPage(); };
+        document.getElementById("rfsFontDownBtn")?.closest(".study-text-size-controls")?.before(importantButton);
         if (!progress.checked && article.pendingCheckConfirmation && readingBody) {
           const blankCount = article.contentNodes.filter(node => node.type === "binary_choice" && readForSpeedQuestionStatus(node, progress.selectedAnswers) === "blank").length;
           readingBody.insertAdjacentHTML("beforebegin", `<section class="rfs-check-confirm"><b>${blankCount} soru boş.</b> Yine de cevapları kontrol etmek istiyor musun?<div class="mt-3 flex flex-wrap gap-2"><button id="rfsBlank" class="rounded-xl border px-3 py-2 text-sm font-black">Boşlara Dön</button><button id="rfsConfirmCheck" class="rounded-xl bg-blue-600 px-3 py-2 text-sm font-black text-white">Yine de Kontrol Et</button></div></section>`);
@@ -3232,23 +3379,42 @@
               : "";
           resultPanel.classList.add("rfs-result-bar");
           resultPanel.innerHTML = `<div class="flex flex-wrap gap-3 text-sm"><b>Toplam ${stats.total}</b><b>Cevaplanan ${answered}</b><b class="text-emerald-700">Doğru ${stats.correct}</b><b class="text-red-700">Yanlış ${stats.wrong}</b><b class="text-orange-700">Boş ${stats.blank}</b><b>Başarı %${stats.percent}</b></div><div class="flex flex-wrap items-center gap-2"><button id="rfsRetry" class="rounded-xl border px-3 py-2 text-sm font-black">Tekrar Çöz</button>${stats.blank ? '<button id="rfsBlank" class="rounded-xl border px-3 py-2 text-sm font-black">İlk Boş Soruya Git</button>' : ""}<button id="rfsWrong" ${stats.wrong ? "" : "disabled"} class="rounded-xl border px-3 py-2 text-sm font-black disabled:opacity-40">${stats.wrong ? "Yanlışlara Git" : "Yanlış cevap bulunmuyor."}</button>${outcome ? `<span class="text-xs font-bold" style="color:var(--text-secondary)">${outcome}</span>` : ""}</div>`;
-          readingBody.before(resultPanel);
+          // Review actions already live in the completed card; keep this bar informational.
+          resultPanel.querySelector("div:last-child")?.remove();
+          if (isReview && stats.blank === 0) resultPanel.remove();
+          else {
+            resultPanel.innerHTML = '<div class="text-sm font-bold" style="color:var(--text-secondary)">Toplam ' + stats.total + ' · Boş ' + stats.blank + '</div>';
+            readingBody.before(resultPanel);
+          }
         }
-        const persist = () => { progress.elapsedMs += Date.now() - progress.startedAt; progress.startedAt = Date.now(); saveReadForSpeedArticles(); };
-        document.getElementById("rfsBack").onclick = () => { persist(); setReadForSpeedFocusMode(false); readForSpeedMode = "list"; readForSpeedActiveArticle = null; renderReadForSpeedPage(); };
+        const persist = () => { if (isReview) return; progress.elapsedMs += Date.now() - progress.startedAt; progress.startedAt = Date.now(); progress.updatedAt = new Date().toISOString(); saveReadForSpeedArticles(); };
+        document.getElementById("rfsBack").onclick = () => { persist(); readForSpeedReviewAttemptId = null; setReadForSpeedFocusMode(false); readForSpeedMode = "list"; readForSpeedActiveArticle = null; renderReadForSpeedPage(); };
         document.querySelectorAll(".rfs-answer").forEach(button => button.onclick = () => { progress.selectedAnswers[button.dataset.question] = button.dataset.answer; persist(); renderReadForSpeedPage(); });
         const check = () => { progress.checked = true; progress.completed = true; const next = summary(article); progress.correctCount = next.correct; progress.incorrectCount = next.wrong; progress.blankCount = next.blank; progress.score = next.percent; progress.updatedAt = new Date().toISOString(); recordReadForSpeedCompletion(article, progress); persist(); renderReadForSpeedPage(); };
         document.getElementById("rfsCheck").onclick = check;
-        document.getElementById("rfsClean").onclick = () => { article.cleanReading = !clean; saveReadForSpeedArticles(); renderReadForSpeedPage(); }; document.getElementById("rfsFocus").onclick = () => { article.focusMode = !article.focusMode; saveReadForSpeedArticles(); renderReadForSpeedPage(); }; document.getElementById("rfsSettings").onclick = () => { const panel = document.getElementById("rfsSettingsPanel"); panel.hidden = !panel.hidden; };
+        document.getElementById("rfsClean").onclick = () => { article.cleanReading = !clean; saveReadForSpeedArticles(); renderReadForSpeedPage(); }; document.getElementById("rfsFocus").onclick = () => { article.focusMode = !article.focusMode; saveReadForSpeedArticles(); renderReadForSpeedPage(); };
         if (!window.__rfsEscapeBound) { window.__rfsEscapeBound = true; window.addEventListener("keydown", event => { if (event.key === "Escape" && readForSpeedMode === "reader" && readForSpeedActiveArticle?.focusMode) { readForSpeedActiveArticle.focusMode = false; saveReadForSpeedArticles(); renderReadForSpeedPage(); } }); }
-        const body = document.getElementById("rfsBody"); document.getElementById("rfsLine").value = String(articleLineHeight); document.getElementById("rfsWidth").value = String(articleContentWidth); document.getElementById("rfsFont").oninput = event => { articleFontSize = Number(event.target.value); localStorage.setItem("yds-article-font-size-v1", String(articleFontSize)); body.style.setProperty("--article-font-size", articleFontSize + "px"); document.getElementById("rfsFontValue").textContent = articleFontSize + " px"; }; document.getElementById("rfsLine").onchange = event => { articleLineHeight = Number(event.target.value); localStorage.setItem("yds-article-line-height-v1", String(articleLineHeight)); body.style.setProperty("--article-line-height", String(articleLineHeight)); }; document.getElementById("rfsWidth").onchange = event => { articleContentWidth = Number(event.target.value); localStorage.setItem("yds-article-content-width-v1", String(articleContentWidth)); body.style.maxWidth = articleContentWidth + "px"; }; document.querySelectorAll(".rfs-surface").forEach(button => button.onclick = () => { articleReadingSurface = button.dataset.surface; localStorage.setItem("yds-article-reading-surface-v1", articleReadingSurface); renderReadForSpeedPage(); });
-        document.getElementById("rfsWrong")?.addEventListener("click", () => { const wrong = article.contentNodes.find(node => node.type === "binary_choice" && progress.selectedAnswers[node.questionId] && progress.selectedAnswers[node.questionId] !== node.correctOption); document.getElementById(`rfs-question-${wrong?.questionId}`)?.scrollIntoView({ behavior: "smooth", block: "center" }); }); document.getElementById("rfsRetry")?.addEventListener("click", () => { article.progress = null; article.cleanReading = false; saveReadForSpeedArticles(); renderReadForSpeedPage(); }); document.getElementById("rfsCleanResult")?.addEventListener("click", () => { article.cleanReading = true; renderReadForSpeedPage(); }); document.getElementById("rfsListResult")?.addEventListener("click", () => document.getElementById("rfsBack").click());
+        document.getElementById("rfsWrong")?.addEventListener("click", () => { const wrongs = article.contentNodes.filter(node => node.type === "binary_choice" && progress.selectedAnswers[node.questionId] && progress.selectedAnswers[node.questionId] !== node.correctOption); const wrong = wrongs[readForSpeedReviewWrongIndex++ % Math.max(1, wrongs.length)]; const element = document.getElementById(`rfs-question-${wrong?.questionId}`); element?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" }); element?.classList.add("is-flashing"); window.setTimeout(() => element?.classList.remove("is-flashing"), 1400); }); document.getElementById("rfsRetry")?.addEventListener("click", () => { if (!window.confirm("Bu makaleyi yeniden çözmek için yeni bir çalışma başlatılacak. Önceki sonuçların korunacak.")) return; startNewReadForSpeedAttempt(article); article.cleanReading = false; saveReadForSpeedArticles(); renderReadForSpeedPage(); }); document.getElementById("rfsCleanResult")?.addEventListener("click", () => { article.cleanReading = true; renderReadForSpeedPage(); }); document.getElementById("rfsListResult")?.addEventListener("click", () => document.getElementById("rfsBack").click());
         return;
       }
       if (readForSpeedMode === "list") {
         const totals = readForSpeedArticles.reduce((acc, item) => { const s = summary(item); acc.questions += s.total; acc.completed += Number(!!item.progress?.completed); acc.correct += s.correct; acc.wrong += s.wrong; return acc; }, { questions: 0, completed: 0, correct: 0, wrong: 0 });
         appArea.innerHTML = `<section class="rounded-2xl border p-5" style="border-color:var(--border-color);background:var(--bg-surface)"><div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"><div><p class="text-sm font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h2 class="text-2xl font-black">Read for Speed</h2><p class="mt-1 font-semibold" style="color:var(--text-secondary)">${readForSpeedArticles.length} metin · ${totals.questions} soru · ${totals.completed} tamamlandı</p></div><button id="rfsNewBtn" class="rounded-xl bg-blue-600 px-4 py-2.5 font-black text-white">Yeni Metin Ekle</button></div><div class="mt-4 grid gap-3 md:grid-cols-2">${readForSpeedArticles.map(article => { const s = summary(article), label = article.progress?.completed ? "Sonuçları Gör" : Object.keys(article.progress?.selectedAnswers || {}).length ? "Devam Et" : "Başla"; return `<article class="rounded-2xl border p-4" style="border-color:var(--border-color);background:var(--bg-surface-secondary)"><div class="flex items-start justify-between"><div><span class="text-xs font-black uppercase text-blue-600">${article.progress?.completed ? "tamamlandı" : Object.keys(article.progress?.selectedAnswers || {}).length ? "devam ediyor" : "yeni"}</span><h3 class="mt-2 text-lg font-black">${escapeHtml(article.title)}</h3><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">${s.total} soru · Doğru ${s.correct} · Yanlış ${s.wrong} · Boş ${s.blank}</p></div><button class="rfs-reset text-lg" data-id="${escapeHtml(article.id)}">⋯</button></div><div class="mt-4 h-1.5 rounded bg-slate-200"><span class="block h-full rounded bg-blue-600" style="width:${s.total ? Math.round((s.total - s.blank) / s.total * 100) : 0}%"></span></div><button class="rfs-open mt-4 rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white" data-id="${escapeHtml(article.id)}">${label}</button></article>`; }).join("") || `<div class="rounded-2xl border border-dashed p-10 text-center">Henüz kayıt yok.</div>`}</div></section>`;
-        document.getElementById("rfsNewBtn").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); }; document.querySelectorAll(".rfs-open").forEach(button => button.onclick = () => { readForSpeedActiveArticle = readForSpeedArticles.find(item => item.id === button.dataset.id); readForSpeedMode = "reader"; renderReadForSpeedPage(); }); document.querySelectorAll(".rfs-reset").forEach(button => button.onclick = () => { const article = readForSpeedArticles.find(item => item.id === button.dataset.id); if (!article) return; const action = prompt("İşlem seçin: d = düzenle, s = sil, r = sıfırla", "r"); if (action === "d") { const title = prompt("Yeni başlık", article.title); if (title?.trim()) { article.title = title.trim(); saveReadForSpeedArticles(); renderReadForSpeedPage(); } } else if (action === "s") { if (confirm("Bu Read for Speed metni silinsin mi?")) { readForSpeedArticles = readForSpeedArticles.filter(item => item.id !== article.id); saveReadForSpeedArticles(); renderReadForSpeedPage(); } } else if (action === "r" && confirm("Bu çalışmanın ilerlemesi sıfırlansın mı?")) { article.progress = null; saveReadForSpeedArticles(); renderReadForSpeedPage(); } }); return;
+        document.querySelectorAll(".rfs-open").forEach(button => {
+          const article = readForSpeedArticles.find(item => item.id === button.dataset.id); const completed = article && latestCompletedReadForSpeedAttempt(article);
+          if (!completed) return;
+          const card = button.closest("article");
+          const progressBar = card?.querySelector("div.mt-4 span"); if (progressBar) { progressBar.classList.remove("bg-blue-600"); progressBar.classList.add("bg-emerald-600"); progressBar.style.width = "100%"; }
+          const questions = article.contentNodes.filter(node => node.type === "binary_choice"), answers = completed.selectedAnswers || {}; const correct = Number.isFinite(Number(completed.correctCount)) ? Number(completed.correctCount) : questions.filter(node => answers[node.questionId] === String(node.correctOption || "").toUpperCase()).length; const incorrect = Number.isFinite(Number(completed.incorrectCount)) ? Number(completed.incorrectCount) : questions.filter(node => answers[node.questionId] && answers[node.questionId] !== String(node.correctOption || "").toUpperCase()).length; const score = Number.isFinite(Number(completed.score)) ? Number(completed.score) : (questions.length ? Math.round(correct / questions.length * 100) : 0);
+          const summary = '<p class="mt-1 text-sm font-black" aria-label="' + correct + ' doğru, ' + incorrect + ' yanlış, yüzde ' + score + ' başarı"><span class="text-emerald-700">' + correct + 'D</span> · <span class="text-red-700">' + incorrect + 'Y</span> · <span style="color:var(--text-primary)">%' + score + '</span></p>';
+          card?.querySelector("p.mt-1")?.replaceWith(Object.assign(document.createElement("div"), { innerHTML: summary }).firstChild);
+          const actions = document.createElement("div"); actions.className = "mt-4 grid gap-2 sm:grid-cols-2";
+          actions.innerHTML = '<button class="rfs-review rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white" data-id="' + escapeHtml(article.id) + '">Gözden Geç</button><button class="rfs-retry rounded-xl border px-4 py-2 text-sm font-black" style="border-color:var(--border-color)" data-id="' + escapeHtml(article.id) + '">Tekrar Çöz</button>';
+          button.replaceWith(actions);
+        });
+        document.querySelectorAll(".rfs-review").forEach(button => button.onclick = () => { const article = readForSpeedArticles.find(item => item.id === button.dataset.id); if (!article) return; readForSpeedReviewAttemptId = latestCompletedReadForSpeedAttempt(article)?.id || null; readForSpeedReviewWrongIndex = 0; readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); });
+        document.querySelectorAll(".rfs-retry").forEach(button => button.onclick = () => { const article = readForSpeedArticles.find(item => item.id === button.dataset.id); if (!article || !window.confirm("Bu makaleyi yeniden çözmek için yeni bir çalışma başlatılacak. Önceki sonuçların korunacak.")) return; startNewReadForSpeedAttempt(article); readForSpeedActiveArticle = article; readForSpeedMode = "reader"; saveReadForSpeedArticles(); renderReadForSpeedPage(); });
+        document.getElementById("rfsNewBtn").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); }; document.querySelectorAll(".rfs-open").forEach(button => button.onclick = () => { readForSpeedReviewAttemptId = null; readForSpeedActiveArticle = readForSpeedArticles.find(item => item.id === button.dataset.id); readForSpeedMode = "reader"; renderReadForSpeedPage(); }); document.querySelectorAll(".rfs-reset").forEach(button => button.onclick = () => { const article = readForSpeedArticles.find(item => item.id === button.dataset.id); if (!article) return; const action = prompt("İşlem seçin: d = düzenle, s = sil, r = sıfırla", "r"); if (action === "d") { const title = prompt("Yeni başlık", article.title); if (title?.trim()) { article.title = title.trim(); saveReadForSpeedArticles(); renderReadForSpeedPage(); } } else if (action === "s") { if (confirm("Bu Read for Speed metni silinsin mi?")) { readForSpeedArticles = readForSpeedArticles.filter(item => item.id !== article.id); saveReadForSpeedArticles(); renderReadForSpeedPage(); } } else if (action === "r" && confirm("Bu makaleyi yeniden çözmek için yeni bir çalışma başlatılacak. Önceki sonuçların korunacak.")) { startNewReadForSpeedAttempt(article); saveReadForSpeedArticles(); renderReadForSpeedPage(); } }); return;
       }
       if (readForSpeedMode === "form") { appArea.innerHTML = `<section class="rounded-2xl border p-5" style="border-color:var(--border-color);background:var(--bg-surface)"><h2 class="text-2xl font-black">Yeni Metin Ekle</h2><p class="mt-1 font-semibold" style="color:var(--text-secondary)">Önerilen biçim: {{1|Even if|Unless|A}}</p><label class="mt-5 block font-black">Başlık<input id="rfsTitle" class="mt-1 w-full rounded-xl border p-3" value="${escapeHtml(readForSpeedDraft.title || "")}" /></label><label class="mt-4 block font-black">Ham metin<textarea id="rfsRaw" class="mt-1 min-h-80 w-full rounded-xl border p-3">${escapeHtml(readForSpeedDraft.rawText || "")}</textarea></label><div class="mt-4 flex gap-2"><button id="rfsPreview" class="rounded-xl bg-blue-600 px-4 py-2.5 font-black text-white">Ön İzle</button><button id="rfsCancel" class="rounded-xl border px-4 py-2.5 font-black">İptal</button></div></section>`; document.getElementById("rfsPreview").onclick = () => { readForSpeedDraft.title = document.getElementById("rfsTitle").value; readForSpeedDraft.rawText = document.getElementById("rfsRaw").value; readForSpeedMode = "preview"; renderReadForSpeedPage(); }; document.getElementById("rfsCancel").onclick = () => { resetDraft(); renderReadForSpeedPage(); }; return; }
       const parsed = parseReadForSpeed(readForSpeedDraft.rawText, ""); if (parsed.legacyDetected) { appArea.innerHTML = `<section class="rounded-2xl border border-amber-300 bg-amber-50 p-5"><p class="font-black">Bu metindeki seçenek sınırları kesin olarak belirlenemiyor. Güvenli biçim: {{numara|A|B|doğru seçenek}}</p><button id="rfsEdit" class="mt-3 rounded-xl bg-blue-600 px-3 py-2 font-black text-white">Metni Düzenlemeye Dön</button></section>`; document.getElementById("rfsEdit").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); }; return; }
@@ -3448,16 +3614,16 @@
       return !!item && (item.needsReview || item.lastRating === "hard" || item.lastRating === "again" || wordStatus(item).key === "review");
     }
 
-    function isMediumOrHardPoolWord(item) {
+    function isHardPoolWord(item) {
       const difficulty = String(item?.difficulty || "").trim().toLocaleLowerCase("tr-TR");
-      if (["medium", "hard", "orta", "zor"].includes(difficulty)) return true;
-      return ["Orta", "Zor"].includes(dailyWordDifficulty(item).label);
+      if (["hard", "zor"].includes(difficulty)) return true;
+      return dailyWordDifficulty(item).label === "Zor";
     }
 
     function dailyWordPool() {
       const stored = loadJson(STORAGE_DAILY_WORD_POOL, null);
       const byId = new Map(wordbook.map(item => [item.id, item]));
-      const eligibleIds = wordbook.filter(isMediumOrHardPoolWord).map(item => item.id);
+      const eligibleIds = wordbook.filter(isHardPoolWord).map(item => item.id);
       const eligibleSet = new Set(eligibleIds);
       const existingIds = Array.isArray(stored?.wordIds) ? stored.wordIds.filter(id => eligibleSet.has(id) && byId.has(id)) : [];
       const wordIds = [...existingIds, ...eligibleIds.filter(id => !existingIds.includes(id))];
@@ -3486,7 +3652,7 @@
         return '<section class="mb-4 rounded-2xl border border-dashed border-blue-200 bg-blue-50/60 p-4">' +
           '<div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">' +
             '<div>' +
-              '<p class="text-sm font-black text-slate-600">Orta veya zor olarak işaretlenmiş kelime bulunmuyor.</p>' +
+              '<p class="text-sm font-black text-slate-600">Zor olarak işaretlenmiş kelime bulunmuyor.</p>' +
             '</div>' +
           '</div>' +
         '</section>';
@@ -3510,9 +3676,9 @@
           '<button id="dailyWordPrevBtn" aria-label="Önceki kelime" class="daily-word-arrow daily-word-arrow--previous z-10 rounded-full border border-slate-300 bg-white text-2xl leading-none text-blue-700">‹</button>' +
           '<article class="daily-word-card min-w-0 w-full rounded-xl border border-slate-200 bg-slate-50 p-4"><div class="flex h-full min-w-0 flex-col justify-center">' +
             '<div class="flex items-center gap-2"><div class="flex flex-wrap gap-1.5"><span class="rounded-full border px-2 py-0.5 text-[10px] font-black ' + itemDifficulty.className + '">' + itemDifficulty.label + '</span>' + (item.wordType || item.partOfSpeech ? '<span class="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-black text-slate-500">' + escapeHtml(item.wordType || item.partOfSpeech) + '</span>' : '') + '</div></div>' +
-            '<h5 class="mt-2 text-[32px] font-extrabold tracking-tight text-slate-950">' + escapeHtml(item.word) + '</h5><p class="mt-0.5 line-clamp-2 text-[20px] font-bold text-blue-700">' + escapeHtml(wordTurkish(item) || "") + '</p>' +
-            (example ? '<div class="mt-2 border-l-[3px] border-blue-500 pl-2.5"><p class="line-clamp-3 text-[15px] font-bold leading-6 text-slate-700">' + escapeHtml(example) + '</p>' + (item.contextTranslation ? '<p class="mt-1 text-xs font-semibold text-slate-500">' + escapeHtml(item.contextTranslation) + '</p>' : '') + '</div>' : '') +
-            (synonymText ? '<p class="daily-word-synonyms mt-2 line-clamp-2 text-xs font-medium text-slate-700"><span class="daily-word-synonyms-label font-semibold text-slate-800">Yakın anlamlılar:</span> ' + escapeHtml(synonymText) + '</p>' : '') +
+            '<h5 class="mt-2 text-[28px] font-extrabold leading-[1.14] tracking-tight text-slate-950">' + escapeHtml(item.word) + '</h5><p class="mt-0.5 line-clamp-2 text-[18px] font-bold leading-[1.3] text-blue-700">' + escapeHtml(wordTurkish(item) || "") + '</p>' +
+            (example ? '<div class="mt-2 border-l-[3px] border-blue-500 pl-2.5"><p class="line-clamp-3 text-[14px] font-bold leading-[1.5] text-slate-700">' + escapeHtml(example) + '</p>' + (item.contextTranslation ? '<p class="mt-1 text-xs font-semibold text-slate-500">' + escapeHtml(item.contextTranslation) + '</p>' : '') + '</div>' : '') +
+            (synonymText ? '<p class="daily-word-synonyms mt-2 line-clamp-2 text-[12px] font-medium leading-[1.35] text-slate-700"><span class="daily-word-synonyms-label font-semibold text-slate-800">Yakın anlamlılar:</span> ' + escapeHtml(synonymText) + '</p>' : '') +
           '</div></article>' +
           '<button id="dailyWordNextBtn" aria-label="Sonraki kelime" class="daily-word-arrow daily-word-arrow--next z-10 rounded-full border border-slate-300 bg-white text-2xl leading-none text-blue-700">›</button>' +
         '</div>' +
@@ -3606,19 +3772,23 @@
           const count = Math.min(taskProgressCount(task), task.target);
           const percent = task.target ? Math.min(100, Math.round((count / task.target) * 100)) : 100;
           const completed = task.completed || count >= task.target;
-          const completedButton = key === "readForSpeed" && completed
-            ? '<button class="daily-task-action border border-emerald-600 bg-emerald-600 text-white" disabled>Tamamlandı ✓</button>'
-            : '';
-          return '<article class="daily-task-card ' + (key === "difficultWords" ? "question-task-card " : "") + 'rounded-xl border p-3 ' + (completed ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-slate-50') + '">' +
+          const cardStateClass = completed ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-slate-50';
+          const statusClass = completed ? 'text-emerald-700' : 'text-slate-500';
+          const statusLabel = completed ? '✓ Tamamlandı' : count + ' / ' + task.target;
+          const progressClass = completed ? 'bg-emerald-600' : 'bg-blue-600';
+          const action = completed
+            ? ''
+            : '<button class="daily-task-start daily-task-action bg-blue-600 text-white hover:bg-blue-500" data-task="' + key + '">' + dailyTaskActionLabel(key, task, count) + '</button>';
+          return '<article class="daily-task-card ' + (key === "difficultWords" ? "question-task-card " : "") + 'rounded-xl border p-3 ' + cardStateClass + '">' +
             '<div class="flex items-center gap-3">' +
               '<div class="min-w-0 flex-1">' +
                 '<div class="flex flex-wrap items-center justify-between gap-2">' +
                   '<h4 class="truncate text-sm font-black text-slate-950">' + meta.title + '</h4>' +
-                  '<span class="text-xs font-black ' + (completed ? 'text-emerald-700' : 'text-slate-500') + '">' + (completed ? '✓ Tamamlandı' : count + ' / ' + task.target) + '</span>' +
+                  '<span class="text-xs font-black ' + statusClass + '">' + statusLabel + '</span>' +
                 '</div>' +
-                '<div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full ' + (completed ? 'bg-emerald-600' : 'bg-blue-600') + '" style="width:' + percent + '%"></div></div>' +
+                '<div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full ' + progressClass + '" style="width:' + percent + '%"></div></div>' +
               '</div>' +
-              (completed ? completedButton : '<button class="daily-task-start daily-task-action bg-blue-600 text-white hover:bg-blue-500" data-task="' + key + '">' + dailyTaskActionLabel(key, task, count) + '</button>') +
+              action +
             '</div>' +
           '</article>';
         }).join("") + '</div>' +
@@ -3818,7 +3988,7 @@
                     '<div class="document-menu relative shrink-0"><button class="document-menu-toggle flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-xl font-black text-slate-500 hover:bg-slate-50" aria-label="' + escapeHtml(documentDisplayTitle(item)) + ' işlemleri" data-id="' + escapeHtml(item.id) + '">⋯</button><div class="document-action-menu absolute right-0 top-10 z-10 min-w-52 rounded-xl border border-slate-200 bg-white p-1 shadow-xl shadow-slate-200"><button class="toggle-document-completion block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50" data-id="' + escapeHtml(item.id) + '">' + (progress.isCompleted ? 'Aktife Geri Al' : 'Tamamlandı Olarak İşaretle') + '</button>' + (item.builtIn ? '' : '<button class="edit-document block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50" data-id="' + escapeHtml(item.id) + '">Düzenle</button><button class="delete-uploaded-pdf block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-red-700 hover:bg-red-50" data-id="' + escapeHtml(item.id) + '">Sil</button>') + '</div></div>' +
                   '</div>' +
                   (progress.isCompleted ? '<span class="mt-3 inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700">Tamamlandı</span>' : '') +
-                  '<div class="mt-3 space-y-1 text-sm font-semibold text-slate-500"><p>Eklendi: ' + escapeHtml(documentAddedAtLabel(item)) + '</p><p>İlerleme: ' + progress.answeredCount + ' / ' + progress.totalCount + ' soru · %' + progress.progressPercent + '</p></div>' +
+                  '<div class="mt-3 space-y-1 text-sm font-semibold text-slate-500"><p>Eklendi: ' + escapeHtml(documentAddedAtLabel(item)) + '</p><p>İlerleme: ' + progress.answeredCount + ' / ' + progress.totalCount + ' soru · %' + progress.progressPercent + '</p>' + (progress.answeredCount ? '<p class="text-sm font-bold">Sonuç: <span class="text-emerald-700">' + progress.correct + 'D</span><span class="text-slate-400"> · </span><span class="text-rose-700">' + progress.wrong + 'Y</span></p>' : '') + '</div>' +
                   '<div class="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-200"><span class="block h-full rounded-full ' + (progress.isCompleted ? 'bg-emerald-500' : 'bg-blue-600') + '" style="width:' + progress.progressPercent + '%"></span></div>' +
                   '<div class="mt-3 border-t border-slate-200 pt-3"><button class="hub-document-card rounded-lg bg-blue-600 px-3 py-2 text-xs font-black text-white hover:bg-blue-500" data-id="' + escapeHtml(item.id) + '">' + actionLabel + '</button></div>' +
                 '</article>';
@@ -3903,7 +4073,9 @@
       if (startButton) startButton.addEventListener("click", startWrongQuestionReview);
     }
 
-    const BACKUP_SCHEMA_VERSION = 2;
+    // v3 makes question work first-class backup data.  v2 kept it only inside
+    // studyStatistics.examProgress, which was too easy for a restore path to skip.
+    const BACKUP_SCHEMA_VERSION = 3;
 
     function safeBackupClone(value) {
       const seen = new WeakSet();
@@ -3926,14 +4098,70 @@
       return latest ? new Date(latest).toISOString() : null;
     }
 
+    function questionBackupRecords(progress = examProgress) {
+      const records = [];
+      Object.values(progress?.exams || {}).forEach(source => {
+        Object.entries(source?.answers || {}).forEach(([questionId, selectedKey]) => {
+          if (!isAnswerKey(selectedKey)) return;
+          records.push({
+            id: String(source.examId || "") + ":" + questionId,
+            questionId,
+            sourceId: String(source.examId || ""),
+            examId: String(source.examId || ""),
+            selectedKey,
+            correct: null,
+            updatedAt: source.updatedAt || null,
+          });
+        });
+      });
+      return records;
+    }
+
+    function backupSummary(payload) {
+      const normalized = payload?.examProgress ? payload : normalizeBackupPayload(payload);
+      const questionsById = new Map([...(typeof baseBank !== "undefined" ? baseBank.questions || [] : []), ...((normalized.uploadedBank?.questions) || [])].map(question => [question.id, question]));
+      const answers = questionBackupRecords(normalized.examProgress);
+      let correct = 0, wrong = 0;
+      answers.forEach(answer => {
+        const question = questionsById.get(answer.questionId);
+        if (!question?.correctAnswer) return;
+        if (answer.selectedKey === question.correctAnswer) correct++; else wrong++;
+      });
+      return {
+        sources: (normalized.uploadedBank?.documents || []).length,
+        answers: answers.length,
+        correct,
+        wrong,
+        attempts: (normalized.questionAttempts || answers).length,
+        words: (normalized.wordbook || []).length,
+        updatedAt: normalized.createdAt || null,
+      };
+    }
+
+    // Save the live reader position before taking a snapshot.  This deliberately
+    // reads the durable local stores again below; React/DOM cache is never used
+    // as the cloud source of truth.
+    function flushActiveQuestionWork() {
+      if (typeof getCategoryQuestions !== "function") return;
+      const question = getCategoryQuestions()[currentIndex];
+      if (question && solveMode !== "wrong") {
+        const progress = progressForQuestion(question, true);
+        progress.currentQuestionId = question.id;
+        progress.updatedAt = new Date().toISOString();
+        saveJson(STORAGE_EXAM_PROGRESS, examProgress);
+      }
+      if (solveMode === "wrong" && wrongReviewSession) saveJson(STORAGE_WRONG_REVIEW_SESSION, wrongReviewSession);
+    }
+
     function readForSpeedBackupModule(source = readForSpeedArticles) {
       const articles = (Array.isArray(source) ? source : []).map(article => {
-        const { progress, ...articleWithoutProgress } = article || {};
+        const { progress, attempts: _attempts, ...articleWithoutProgress } = article || {};
         return articleWithoutProgress;
       });
-      const attempts = (Array.isArray(source) ? source : []).flatMap(article => article?.progress
-        ? [{ id: `rfs-attempt:${article.id}`, articleId: article.id, ...article.progress, updatedAt: article.progress.updatedAt || article.updatedAt || null }]
-        : []);
+      const attempts = (Array.isArray(source) ? source : []).flatMap(article => {
+        const records = Array.isArray(article?.attempts) && article.attempts.length ? article.attempts : (article?.progress ? [article.progress] : []);
+        return records.map((attempt, index) => ({ id: attempt.id || `rfs-attempt:${article.id}:${index}`, articleId: article.id, ...attempt, updatedAt: attempt.updatedAt || article.updatedAt || null }));
+      });
       return { articles, attempts, updatedAt: maxUpdatedAt([...articles, ...attempts]) };
     }
 
@@ -3949,6 +4177,13 @@
     }
 
     function backupPayload() {
+      flushActiveQuestionWork();
+      // Re-read every persisted record after the active state has been flushed.
+      const persistedBank = loadJson(STORAGE_UPLOADS, uploadedBank);
+      const persistedProgress = normalizeExamProgress(loadJson(STORAGE_EXAM_PROGRESS, examProgress));
+      const persistedWrong = loadJson(STORAGE_WRONG_QUESTIONS, wrongQuestionIds);
+      const persistedReview = normalizeWrongReviewSession(loadJson(STORAGE_WRONG_REVIEW_SESSION, wrongReviewSession));
+      const questionAnswers = questionBackupRecords(persistedProgress);
       const now = new Date().toISOString();
       return safeBackupClone({
         app: "YDS Çalışma",
@@ -3957,13 +4192,21 @@
         createdAt: now,
         exportedAt: now,
         modules: {
-          questionSources: { records: uploadedBank, updatedAt: maxUpdatedAt([...(uploadedBank.documents || []), ...(uploadedBank.questions || [])]) },
+          questionSources: { records: persistedBank, updatedAt: maxUpdatedAt([...(persistedBank.documents || []), ...(persistedBank.questions || [])]) },
+          // Canonical, explicit solution records. IDs are copied verbatim; no
+          // restore path creates new source/question/attempt IDs.
+          questionAnswers: { records: questionAnswers, updatedAt: maxUpdatedAt(questionAnswers) },
+          questionAttempts: { records: questionAnswers.map(answer => ({ ...answer, attemptId: answer.id })), updatedAt: maxUpdatedAt(questionAnswers) },
+          sourceProgress: { records: JSON.parse(JSON.stringify(persistedProgress.exams || {})), updatedAt: maxUpdatedAt(Object.values(persistedProgress.exams || {})) },
+          currentQuestionPositions: { records: Object.fromEntries(Object.entries(persistedProgress.exams || {}).map(([key, value]) => [key, value.currentQuestionId || null])), updatedAt: maxUpdatedAt(Object.values(persistedProgress.exams || {})) },
           words: { records: wordbook, updatedAt: maxUpdatedAt(wordbook) },
           readingCenter: { records: articles, updatedAt: maxUpdatedAt(articles) },
           readForSpeed: readForSpeedBackupModule(),
           notes: { records: notes, updatedAt: maxUpdatedAt(notes) },
-          wrongQuestions: { records: wrongQuestionIds, updatedAt: null },
-          studyStatistics: { records: { examProgress, dailyGoals, dailyProgress, dailyHistory, weeklyActivity, dailyHardWords: loadJson(STORAGE_DAILY_HARD_WORDS, null) }, updatedAt: maxUpdatedAt([dailyProgress, ...dailyHistory, ...weeklyActivity, ...Object.values(examProgress?.exams || {})]) },
+          wrongQuestions: { records: persistedWrong, updatedAt: null },
+          reviewLaterQuestions: { records: persistedReview?.questionIds || [], updatedAt: persistedReview?.updatedAt || null },
+          completedSources: { records: Object.values(persistedProgress.exams || {}).filter(item => item.manuallyCompleted || item.completedAt).map(item => item.examId), updatedAt: maxUpdatedAt(Object.values(persistedProgress.exams || {})) },
+          studyStatistics: { records: { examProgress: persistedProgress, dailyGoals, dailyProgress, dailyHistory, weeklyActivity, dailyHardWords: loadJson(STORAGE_DAILY_HARD_WORDS, null) }, updatedAt: maxUpdatedAt([dailyProgress, ...dailyHistory, ...weeklyActivity, ...Object.values(persistedProgress?.exams || {})]) },
           preferences: { records: { theme: localStorage.getItem(STORAGE_THEME) || "light", wordSessionSize, wordCustomSessionSize }, updatedAt: now },
         },
       });
@@ -4018,7 +4261,9 @@
         readForSpeed,
         notes: (Array.isArray(modules.notes?.records) ? modules.notes.records : Array.isArray(data.notes) ? data.notes : []).map(normalizeNote),
         wrongQuestionIds: Array.isArray(modules.wrongQuestions?.records) ? modules.wrongQuestions.records : Array.isArray(data.wrongQuestionIds) ? data.wrongQuestionIds : [],
-        examProgress: normalizeExamProgress(modules.studyStatistics?.records?.examProgress || data.examProgress || {}),
+        examProgress: normalizeExamProgress(modules.studyStatistics?.records?.examProgress || data.examProgress || { version: 2, exams: modules.sourceProgress?.records || {} }),
+        questionAnswers: Array.isArray(modules.questionAnswers?.records) ? modules.questionAnswers.records : Array.isArray(data.questionAnswers) ? data.questionAnswers : [],
+        questionAttempts: Array.isArray(modules.questionAttempts?.records) ? modules.questionAttempts.records : Array.isArray(data.questionAttempts) ? data.questionAttempts : [],
         dailyGoals: normalizeDailyGoals(modules.studyStatistics?.records?.dailyGoals || data.dailyGoals || {}),
         dailyProgress: modules.studyStatistics?.records?.dailyProgress || data.dailyProgress || null,
         dailyHistory: Array.isArray(modules.studyStatistics?.records?.dailyHistory) ? modules.studyStatistics.records.dailyHistory : Array.isArray(data.dailyHistory) ? data.dailyHistory : [],
@@ -4038,14 +4283,17 @@
       (module.attempts || []).forEach(attempt => {
         const articleId = attempt?.articleId || attempt?.id?.replace(/^rfs-attempt:/, "");
         if (!articleId) return;
-        const prior = attemptsByArticle.get(articleId);
-        if (!prior || (Date.parse(attempt?.updatedAt || 0) || 0) >= (Date.parse(prior?.updatedAt || 0) || 0)) attemptsByArticle.set(articleId, attempt);
+        const records = attemptsByArticle.get(articleId) || [];
+        if (!records.some(item => item.id === attempt.id)) records.push(attempt);
+        attemptsByArticle.set(articleId, records);
       });
       return (module.articles || []).map(article => {
         const embedded = article?.progress;
-        const attempt = attemptsByArticle.get(article.id);
+        const attempts = attemptsByArticle.get(article.id) || (Array.isArray(article?.attempts) ? article.attempts : []);
         const { progress: _ignored, ...cleanArticle } = article || {};
-        return attempt || embedded ? { ...cleanArticle, progress: { ...(embedded || {}), ...(attempt || {}), articleId: undefined, id: undefined } } : cleanArticle;
+        const records = attempts.length ? attempts : (embedded ? [embedded] : []);
+        const active = records.find(attempt => attempt.id === cleanArticle.activeAttemptId) || records.filter(attempt => !attempt.completed && !attempt.checked)[0] || records[records.length - 1] || null;
+        return records.length ? { ...cleanArticle, attempts: records, activeAttemptId: active?.id || null, progress: active ? { ...active } : undefined } : cleanArticle;
       });
     }
 
@@ -4094,6 +4342,58 @@
       return { records: [...output.values()], restored, merged, preserved, warnings };
     }
 
+    function mergeExamProgress(localValue, cloudValue, replace = false) {
+      const local = normalizeExamProgress(localValue);
+      const cloud = normalizeExamProgress(cloudValue);
+      if (replace) return cloud;
+      const exams = { ...local.exams };
+      Object.entries(cloud.exams || {}).forEach(([key, cloudSource]) => {
+        const localSource = exams[key];
+        if (!localSource) { exams[key] = cloudSource; return; }
+        const localTime = Date.parse(localSource.updatedAt || 0) || 0;
+        const cloudTime = Date.parse(cloudSource.updatedAt || 0) || 0;
+        // A source contains a map of answers, so union first. A newer source
+        // wins only conflicts; an empty cloud map can never erase local answers.
+        const answers = { ...(localSource.answers || {}) };
+        Object.entries(cloudSource.answers || {}).forEach(([questionId, selectedKey]) => {
+          if (!isAnswerKey(selectedKey)) return;
+          if (!isAnswerKey(answers[questionId]) || cloudTime > localTime) answers[questionId] = selectedKey;
+        });
+        exams[key] = {
+          ...localSource,
+          ...(cloudTime > localTime ? cloudSource : {}),
+          examId: localSource.examId || cloudSource.examId,
+          answers,
+          currentQuestionId: cloudTime > localTime && cloudSource.currentQuestionId ? cloudSource.currentQuestionId : localSource.currentQuestionId || cloudSource.currentQuestionId || null,
+          manuallyCompleted: localSource.manuallyCompleted || cloudSource.manuallyCompleted,
+          completedAt: localSource.completedAt || cloudSource.completedAt || null,
+          updatedAt: new Date(Math.max(localTime, cloudTime) || Date.now()).toISOString(),
+        };
+      });
+      return normalizeExamProgress({ version: 2, exams });
+    }
+
+    function backupPreviewText(localSummary, cloudSummary, backupDate) {
+      const format = (title, value) => `${title}:\n- ${value.sources} kaynak\n- ${value.answers} cevaplanmış soru\n- ${value.correct} doğru\n- ${value.wrong} yanlış\n- ${value.attempts} attempt\n- ${value.words} kelime`;
+      return `${format("Yerel kayıt", localSummary)}\n\n${format("Bulut kaydı", cloudSummary)}\n- Son güncelleme: ${backupDate}\n\nİşlem seçin: B = Güvenli Birleştir (varsayılan), K = Yerel Veriyi Koru, D = Bulut Sürümüyle Değiştir`;
+    }
+
+    function diagnoseRecoverableQuestionData() {
+      // Read-only inspection: do not migrate, clear, or overwrite anything.
+      const candidateKeys = [STORAGE_EXAM_PROGRESS, STORAGE_DOCUMENT_PROGRESS, STORAGE_QUESTION_SESSION, STORAGE_WRONG_QUESTIONS, STORAGE_WRONG_REVIEW_SESSION, "questionAnswers", "questionAttempts", "sourceProgress", "activeAttempt"];
+      const found = candidateKeys.map(key => ({ key, value: loadJson(key, null) })).filter(item => item.value !== null);
+      const progressCandidates = found.filter(item => /progress|answers|attempt/i.test(item.key)).map(item => item.value);
+      const combined = progressCandidates.find(value => value?.exams) || examProgress;
+      const summary = backupSummary({ uploadedBank, examProgress: normalizeExamProgress(combined), wordbook, questionAttempts: questionBackupRecords(normalizeExamProgress(combined)) });
+      return { found, summary };
+    }
+
+    function showRecoveryDiagnostics() {
+      const result = diagnoseRecoverableQuestionData();
+      const keys = result.found.map(item => item.key).join(", ") || "bulunamadı";
+      supabaseStatus(`Kurtarılabilir veriler bulundu: ${result.summary.answers} cevap · ${result.summary.correct} doğru · ${result.summary.wrong} yanlış · ${Object.keys(examProgress.exams || {}).length} kaynak ilerlemesi. İncelenen depolar: ${keys}. Hiçbir kayıt değiştirilmedi.`, "info");
+    }
+
     function safeRestoreCloudBackup(payload, replace = false) {
       const cloud = normalizeBackupPayload(payload);
       const localRfs = readForSpeedBackupModule();
@@ -4112,23 +4412,28 @@
       wordbook = nextWords;
       articles = nextArticles.map(normalizeArticleRecord);
       notes = nextNotes.map(normalizeNote);
+      const mergedProgress = mergeExamProgress(examProgress, cloud.examProgress, replace);
       if (replace) {
         wrongQuestionIds = cloud.wrongQuestionIds;
-        examProgress = cloud.examProgress;
+        examProgress = mergedProgress;
         dailyGoals = normalizeDailyGoals(cloud.dailyGoals);
         dailyProgress = normalizeDailyProgress(cloud.dailyProgress);
         dailyHistory = cloud.dailyHistory;
         weeklyActivity = cloud.weeklyActivity;
       } else {
         wrongQuestionIds = [...new Set([...wrongQuestionIds, ...cloud.wrongQuestionIds])];
+        examProgress = mergedProgress;
       }
-      saveJson(STORAGE_UPLOADS, uploadedBank);
+      void saveUploadedBank(uploadedBank);
       saveJson(STORAGE_WORDS, wordbook);
       saveJson(STORAGE_ARTICLES, articles);
       saveNotes();
       saveWrongQuestions();
+      // Always persist merged question progress. Previously this ran only for
+      // replace=true, leaving the default safe merge with zero restored answers.
+      saveJson(STORAGE_EXAM_PROGRESS, examProgress);
       if (replace) {
-        saveExamProgress(); saveJson(STORAGE_DAILY_GOALS, dailyGoals); saveJson(STORAGE_DAILY_PROGRESS, dailyProgress);
+        saveJson(STORAGE_DAILY_GOALS, dailyGoals); saveJson(STORAGE_DAILY_PROGRESS, dailyProgress);
         saveJson(STORAGE_DAILY_HISTORY, dailyHistory); saveWeeklyActivity(false);
         if (cloud.dailyHardWords) saveJson(STORAGE_DAILY_HARD_WORDS, cloud.dailyHardWords);
       }
@@ -4138,7 +4443,8 @@
       renderMenu(); renderStats();
       const rfsText = `Read for Speed: ${mergedRfs.restored + mergedRfs.merged} metin geri yüklendi, ${mergedRfs.preserved} yerel metin korundu`;
       const attemptCount = readForSpeedBackupModule(readForSpeedArticles).attempts.length;
-      return { message: `${rfsText} · Read for Speed attempts: ${attemptCount} çalışma yerel depoda doğrulandı · Kelime Defteri: ${wordResult.restored + wordResult.merged} kayıt işlendi · Not Defteri: ${noteResult.restored + noteResult.merged} kayıt işlendi`, warnings: mergedRfs.warnings };
+      const progressSummary = backupSummary({ uploadedBank, examProgress, wordbook, questionAttempts: questionBackupRecords(examProgress) });
+      return { message: `${rfsText} · ${progressSummary.answers} soru cevabı (${progressSummary.correct} doğru · ${progressSummary.wrong} yanlış) ve ${progressSummary.attempts} attempt yerel depoda doğrulandı · Kelime Defteri: ${wordResult.restored + wordResult.merged} kayıt işlendi · Not Defteri: ${noteResult.restored + noteResult.merged} kayıt işlendi`, warnings: mergedRfs.warnings };
     }
 
     function restoreBackupPayload(payload) {
@@ -4167,7 +4473,7 @@
         wordCustomSessionSize = Number(normalized.preferences.wordCustomSessionSize) || 20;
         localStorage.setItem("yds-word-custom-session-size-v1", String(wordCustomSessionSize));
       }
-      saveJson(STORAGE_UPLOADS, uploadedBank);
+      void saveUploadedBank(uploadedBank);
       saveJson(STORAGE_WORDS, wordbook);
       saveJson(STORAGE_ARTICLES, articles);
       saveNotes();
@@ -4284,13 +4590,17 @@
         const config = validateSupabaseConfig(silent ? loadSupabaseConfig() : currentSupabaseFormConfig());
         if (!silent) supabaseStatus("Veriler buluta yedekleniyor...");
         const payload = backupPayload();
+        const localSummary = backupSummary(normalizeBackupPayload(payload));
         const localRfsCount = payload.modules.readForSpeed.articles.length;
         const existingResponse = await fetch(config.url + "/rest/v1/yds_cloud_backups?sync_id=eq." + encodeURIComponent(config.syncId) + "&select=payload&limit=1", { headers: supabaseHeaders(config) });
         if (!existingResponse.ok) throw new Error(await existingResponse.text() || "Mevcut bulut yedeği okunamadı.");
         const existingRows = await existingResponse.json();
         const cloudRfsCount = existingRows[0]?.payload ? normalizeReadForSpeedBackup(existingRows[0].payload).articles.length : 0;
-        if (localRfsCount === 0 && cloudRfsCount > 0) {
-          const warning = `Yerel Read for Speed bölümünde kayıt bulunmuyor; bulutta ${cloudRfsCount} metin var. Buluttaki Read for Speed verileri silinebilir. Devam edilsin mi?`;
+        const cloudSummary = existingRows[0]?.payload ? backupSummary(normalizeBackupPayload(existingRows[0].payload)) : null;
+        if ((localRfsCount === 0 && cloudRfsCount > 0) || (localSummary.answers === 0 && cloudSummary?.answers > 0)) {
+          const warning = localSummary.answers === 0 && cloudSummary?.answers > 0
+            ? `Yerelde 0 soru cevabı, bulutta ${cloudSummary.answers} cevap var. Boş cihaz verisi buluttaki ilerlemenin üzerine yazılamaz.`
+            : `Yerel Read for Speed bölümünde kayıt bulunmuyor; bulutta ${cloudRfsCount} metin var. Buluttaki veriler silinebilir.`;
           if (silent || !window.confirm(warning)) {
             if (!silent) supabaseStatus("Bulut yedeği korunarak işlem iptal edildi.", "info");
             return;
@@ -4310,11 +4620,20 @@
         const verifyResponse = await fetch(config.url + "/rest/v1/yds_cloud_backups?sync_id=eq." + encodeURIComponent(config.syncId) + "&select=payload&limit=1", { headers: supabaseHeaders(config) });
         if (!verifyResponse.ok) throw new Error("Bulut yedeği yazıldı ancak doğrulama için tekrar okunamadı.");
         const verifyRows = await verifyResponse.json();
-        const verifiedRfsCount = normalizeReadForSpeedBackup(verifyRows[0]?.payload).articles.length;
-        if (verifiedRfsCount !== localRfsCount) throw new Error("Read for Speed verileri yedek paketine eklenemedi. Yedekleme tamamlanmadı.");
+        const verified = backupSummary(normalizeBackupPayload(verifyRows[0]?.payload));
+        if (normalizeReadForSpeedBackup(verifyRows[0]?.payload).articles.length !== localRfsCount || verified.sources !== localSummary.sources || verified.answers !== localSummary.answers || verified.correct !== localSummary.correct || verified.wrong !== localSummary.wrong || verified.attempts !== localSummary.attempts || verified.words !== localSummary.words) throw new Error("Bulut kaydı yerel soru çözüm sayılarıyla eşleşmedi. Yedekleme başarılı sayılmadı.");
+        const history = loadJson(STORAGE_CLOUD_HISTORY, []);
+        const entry = { createdAt: payload.createdAt, deviceLabel: navigator.userAgent.slice(0, 80), schemaVersion: payload.schemaVersion, ...localSummary };
+        saveJson(STORAGE_CLOUD_HISTORY, [entry, ...(Array.isArray(history) ? history : [])].slice(0, 5));
+        // History is additive: a failure here never changes the verified current
+        // snapshot, which keeps older Supabase installations compatible.
+        fetch(config.url + "/rest/v1/yds_cloud_backup_history", {
+          method: "POST",
+          headers: supabaseHeaders(config, { Prefer: "return=minimal" }),
+          body: JSON.stringify({ sync_id: config.syncId, payload, device_label: entry.deviceLabel, summary: localSummary }),
+        }).catch(() => {});
         if (!silent) {
-          const attempts = payload.modules.readForSpeed.attempts.length;
-          supabaseStatus(`Bulut yedeği oluşturuldu: ${(payload.modules.questionSources.records.documents || []).length} soru kaynağı · ${(payload.modules.readingCenter.records || []).length} okuma metni · ${localRfsCount} Read for Speed metni · ${attempts} Read for Speed çalışma kaydı · ${(payload.modules.words.records || []).length} kelime · ${(payload.modules.notes.records || []).length} not.`, "success");
+          supabaseStatus(`Buluta yedeklendi: ${localSummary.sources} kaynak · ${localSummary.answers} cevaplanmış soru · ${localSummary.correct} doğru · ${localSummary.wrong} yanlış · ${localSummary.attempts} attempt · ${localSummary.words} kelime.`, "success");
         }
       } catch (error) {
         if (!silent) supabaseStatus(error.message || "Buluta yedek alınamadı.", "error");
@@ -4332,15 +4651,17 @@
         const rows = await response.json();
         if (!rows.length || !rows[0].payload) throw new Error("Bu eşitleme koduyla kayıtlı bulut yedeği bulunamadı.");
         const cloud = normalizeBackupPayload(rows[0].payload);
-        const cloudRfsCount = cloud.readForSpeed.articles.length;
-        const localRfsCount = readForSpeedArticles.length;
         const backupDate = new Date(rows[0].updated_at || cloud.createdAt || Date.now()).toLocaleString("tr-TR");
-        const preview = `Bulut yedeği:\n- Yedek tarihi: ${backupDate}\n- Read for Speed: ${cloudRfsCount} metin\n- Yerel Read for Speed: ${localRfsCount} metin\n\nTamam = Güvenli Birleştir\nİptal = Bulut yedeğini tamamen kullan seçeneğini gör`;
-        let replace = false;
-        if (!window.confirm(preview)) {
-          replace = window.confirm("Bulut yedeğini tamamen kullanmak yerel kayıtların üzerine yazabilir ve geri alınamaz. Tamamen kullanılsın mı?");
-          if (!replace) { supabaseStatus("Geri yükleme iptal edildi.", "info"); return; }
+        const localSummary = backupSummary({ uploadedBank, examProgress, wordbook, questionAttempts: questionBackupRecords(examProgress) });
+        const cloudSummary = backupSummary(cloud);
+        if (cloudSummary.answers === 0 && localSummary.answers > 0) {
+          const protect = window.confirm("Bulut yedeğinde soru çözüm verisi bulunmuyor. Geri yükleme yerel ilerlemelerinizi silebilir. Yerel veriyi korumak için Tamam'a basın.");
+          if (protect) { supabaseStatus("Yerel soru çözüm verileri korundu.", "info"); return; }
         }
+        const choice = String(window.prompt(backupPreviewText(localSummary, cloudSummary, backupDate), "B") || "K").trim().toLocaleUpperCase("tr-TR");
+        if (choice === "K") { supabaseStatus("Yerel veriler korundu.", "info"); return; }
+        if (choice !== "B" && choice !== "D") { supabaseStatus("Geri yükleme iptal edildi.", "info"); return; }
+        const replace = choice === "D";
         const result = safeRestoreCloudBackup(rows[0].payload, replace);
         supabaseStatus(result.message + (result.warnings.length ? " Uyarı: " + result.warnings[0] : ""), "success");
       } catch (error) {
@@ -4375,18 +4696,31 @@
       const totalQuestions = (uploadedBank.questions || []).length;
       const totalSources = (uploadedBank.documents || []).length;
       const supabaseConfig = loadSupabaseConfig();
+      const cloudHistory = Array.isArray(loadJson(STORAGE_CLOUD_HISTORY, [])) ? loadJson(STORAGE_CLOUD_HISTORY, []).slice(0, 5) : [];
       const supabaseSql = "create table if not exists public.yds_cloud_backups (\n" +
         "  sync_id text primary key,\n" +
         "  payload jsonb not null,\n" +
         "  updated_at timestamptz not null default now()\n" +
         ");\n\n" +
+        "create table if not exists public.yds_cloud_backup_history (\n" +
+        "  id bigint generated always as identity primary key,\n" +
+        "  sync_id text not null,\n" +
+        "  payload jsonb not null,\n" +
+        "  device_label text,\n" +
+        "  summary jsonb not null default '{}'::jsonb,\n" +
+        "  created_at timestamptz not null default now()\n" +
+        ");\n" +
+        "create index if not exists yds_cloud_backup_history_sync_created on public.yds_cloud_backup_history (sync_id, created_at desc);\n\n" +
         "alter table public.yds_cloud_backups enable row level security;\n\n" +
         "create policy \"Anon okuyabilir\" on public.yds_cloud_backups\n" +
         "for select to anon using (true);\n\n" +
         "create policy \"Anon ekleyebilir\" on public.yds_cloud_backups\n" +
         "for insert to anon with check (true);\n\n" +
         "create policy \"Anon guncelleyebilir\" on public.yds_cloud_backups\n" +
-        "for update to anon using (true) with check (true);";
+        "for update to anon using (true) with check (true);\n\n" +
+        "alter table public.yds_cloud_backup_history enable row level security;\n" +
+        "create policy \"Anon history okuyabilir\" on public.yds_cloud_backup_history for select to anon using (true);\n" +
+        "create policy \"Anon history ekleyebilir\" on public.yds_cloud_backup_history for insert to anon with check (true);";
       appArea.innerHTML =
         '<div class="grid gap-4">' +
           '<section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
@@ -4464,6 +4798,11 @@
             '<div class="mt-4 flex flex-wrap gap-2">' +
               '<button id="uploadSupabaseBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white shadow-sm hover:bg-blue-500">Buluta Yedekle</button>' +
               '<button id="restoreSupabaseBtn" class="rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-black text-blue-700 hover:bg-blue-100">Buluttan Geri Yükle</button>' +
+              '<button id="diagnoseCloudDataBtn" class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 hover:bg-slate-50">Kurtarılabilir Verileri İncele</button>' +
+            '</div>' +
+            '<div class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold text-slate-600">' +
+              '<p class="font-black text-slate-800">Son 5 yerel yedek özeti</p>' +
+              (cloudHistory.length ? '<div class="mt-2 grid gap-1">' + cloudHistory.map(item => '<p>' + escapeHtml(new Date(item.createdAt || Date.now()).toLocaleString("tr-TR")) + ' · ' + escapeHtml(item.deviceLabel || "cihaz") + ' · ' + Number(item.sources || 0) + ' kaynak · ' + Number(item.answers || 0) + ' cevap · ' + Number(item.correct || 0) + 'D/' + Number(item.wrong || 0) + 'Y · ' + Number(item.words || 0) + ' kelime · şema ' + Number(item.schemaVersion || 1) + '</p>').join("") + '</div>' : '<p class="mt-1">Henüz doğrulanmış bulut yedeği yok.</p>') +
             '</div>' +
             '<details class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold text-slate-600">' +
               '<summary class="cursor-pointer font-black text-slate-800">Supabase tablo kodunu göster</summary>' +
@@ -4513,6 +4852,7 @@
       document.getElementById("testSupabaseBtn").addEventListener("click", testSupabaseConnection);
       document.getElementById("uploadSupabaseBtn").addEventListener("click", uploadSupabaseBackup);
       document.getElementById("restoreSupabaseBtn").addEventListener("click", restoreSupabaseBackup);
+      document.getElementById("diagnoseCloudDataBtn").addEventListener("click", showRecoveryDiagnostics);
     }
 
     function resetAllStatistics() {
@@ -4618,7 +4958,7 @@
       if (!confirmed) return;
       uploadedBank.documents = (uploadedBank.documents || []).filter(item => item.id !== documentId);
       uploadedBank.questions = (uploadedBank.questions || []).filter(question => question.documentId !== documentId);
-      saveJson(STORAGE_UPLOADS, uploadedBank);
+      void saveUploadedBank(uploadedBank);
       queueSupabaseAutoBackup();
       if (activeDocumentId === documentId) {
         activeDocumentId = baseBank.documents[0]?.id || "";
@@ -4715,9 +5055,9 @@
     }
 
     function clickableQuestionText(text, vocabulary = null) {
-      const parts = String(text || "").split(/([A-Za-z][A-Za-z'’-]*)/g);
+      const parts = String(text || "").split(/(\p{L}[\p{L}\p{M}]*(?:['’\-\u2011]\p{L}[\p{L}\p{M}]*)*)/gu);
       return parts.map(part => {
-        if (/^[A-Za-z][A-Za-z'’-]*$/.test(part)) {
+        if (/^\p{L}[\p{L}\p{M}]*(?:['’\-\u2011]\p{L}[\p{L}\p{M}]*)*$/u.test(part)) {
           const word = normalizeWord(part);
           const found = vocabulary && vocabulary[normalizeLookup(word)];
           return '<button type="button" class="word-token" data-word="' + escapeHtml(word) + '"' + (found ? ' data-vocab-key="' + escapeHtml(normalizeLookup(word)) + '"' : '') + (found?.isInWordbook ? ' data-added-word="true"' : '') + '>' + escapeHtml(part) + '</button>';
@@ -4727,12 +5067,12 @@
     }
 
     function renderArticleTokenText(text, baseOffset = 0, vocabulary = null) {
-      const parts = String(text || "").split(/([A-Za-z][A-Za-z'’-]*)/g);
+      const parts = String(text || "").split(/(\p{L}[\p{L}\p{M}]*(?:['’\-\u2011]\p{L}[\p{L}\p{M}]*)*)/gu);
       let cursor = 0;
       return parts.map(part => {
         const start = baseOffset + cursor;
         cursor += part.length;
-        if (/^[A-Za-z][A-Za-z'’-]*$/.test(part)) {
+        if (/^\p{L}[\p{L}\p{M}]*(?:['’\-\u2011]\p{L}[\p{L}\p{M}]*)*$/u.test(part)) {
           const word = normalizeWord(part);
           const key = normalizeLookup(word);
           const found = vocabulary && vocabulary[key];
@@ -4893,7 +5233,7 @@
     }
 
     function articleWordCount(text) {
-      const matches = String(text || "").match(/[A-Za-zÇĞİÖŞÜçğıöşü][A-Za-zÇĞİÖŞÜçğıöşü'’-]*/g);
+      const matches = String(text || "").match(/\p{L}[\p{L}\p{M}]*(?:['’\-\u2011]\p{L}[\p{L}\p{M}]*)*/gu);
       return matches ? matches.length : 0;
     }
 
@@ -4984,9 +5324,9 @@
       if (!query) return [];
       let escaped = query.replace(/[.*+?^()|[\]\\]/g, "\\$&");
       escaped = escaped.replace(/\$/g, "\\$").replace(/\{/g, "\\{").replace(/\}/g, "\\}");
-      const isWordish = /^[A-Za-z][A-Za-z'’ -]*$/.test(query);
-      const pattern = isWordish ? "\\b" + escaped + "\\b" : escaped;
-      const flags = "gi";
+      const isWordish = /^\p{L}[\p{L}\p{M}]*(?:['’\-\u2011 ]\p{L}[\p{L}\p{M}]*)*$/u.test(query);
+      const pattern = isWordish ? "(?<![\\p{L}\\p{M}])" + escaped + "(?![\\p{L}\\p{M}])" : escaped;
+      const flags = "giu";
       const regex = new RegExp(pattern, flags);
       const matches = [];
       let match;
@@ -5153,8 +5493,8 @@
     function renderArticleParagraphs(article, vocabulary = null, entries = null) {
       const { ranges } = articleParagraphRanges(article?.text || "");
       const savedEntries = entries || savedArticleEntries(article);
-      return ranges.map(paragraph =>
-        '<p>' + renderArticleSegmentWithHighlights(paragraph.text, paragraph.start, vocabulary, savedEntries) + '</p>'
+      return ranges.map((paragraph, index) =>
+        '<p data-structure-paragraph="' + index + '">' + renderArticleSegmentWithHighlights(paragraph.text, paragraph.start, vocabulary, savedEntries) + '</p>'
       ).join("");
     }
 
@@ -5218,7 +5558,7 @@
       }
       rememberCurrentQuestion(question);
       const selectedAnswer = selectedAnswerForQuestion(question);
-      const fontSize = Math.max(17, Math.min(23, questionFontSize || 19));
+      const fontSize = studyContentFontSize;
       const questionDocDisplay = documentInfo ? friendlyDocumentDisplay(documentInfo, questions.length) : { title: "Soru" };
 
       appArea.innerHTML =
@@ -5231,21 +5571,20 @@
               '<h3 class="mt-1 text-lg font-semibold" style="color: var(--text-primary)">Soru ' + (currentIndex + 1) + ' / ' + questions.length + '</h3>' +
             '</div>' +
             '<div class="flex flex-wrap items-center justify-end gap-2">' +
-              '<button id="questionFontDownBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-sm font-black" title="Yazı boyutunu azalt" aria-label="Yazı boyutunu azalt">A-</button>' +
-              '<button id="questionFontUpBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-sm font-black" title="Yazı boyutunu artır" aria-label="Yazı boyutunu artır">A+</button>' +
+              TextSizeControls("question") +
               '<button id="questionFocusBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black ' + (questionFocusMode ? 'ring-2 ring-blue-300' : '') + '" title="Odak moduna geç" aria-label="Odak moduna geç">' + (questionFocusMode ? '↔' : '◎') + '</button>' +
               '<button id="questionQuickNoteBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="Bu soru için not ekle" aria-label="Not Ekle">Not Ekle</button>' +
               '<button id="questionBackBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black" title="Kaynaklara dön" aria-label="Kaynaklara dön">←</button>' +
             '</div>' +
           '</div>' +
           (question.passage
-            ? '<section class="mx-auto mb-5 max-w-[900px] rounded-2xl border px-5 py-5 sm:px-7 lg:px-8" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary); font-size: ' + fontSize + 'px; line-height: 1.76;">' +
+            ? '<section class="mx-auto mb-5 max-w-[900px] rounded-2xl border px-5 py-5 sm:px-7 lg:px-8" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary); font-size: ' + fontSize + 'px; line-height: 1.6; overflow-wrap: break-word; word-break: normal; hyphens: none;">' +
                 '<div class="mb-3 text-xs font-bold uppercase tracking-wider text-blue-500">Okuma Parçası</div>' +
-                '<p class="whitespace-pre-line text-left">' + clickableQuestionText(question.passage) + '</p>' +
+                '<p class="question-text text-left">' + clickableQuestionText(question.passage) + '</p>' +
               '</section>'
             : '') +
           '<div class="mx-auto max-w-[900px]">' +
-          '<p id="questionText" class="mb-5 whitespace-pre-line text-left font-medium" style="color: var(--text-primary); font-size: ' + fontSize + 'px; line-height: 1.72;">' + clickableQuestionText(question.question) + '</p>' +
+          '<p id="questionText" data-study-content class="question-text mb-5 text-left font-medium" style="color: var(--text-primary); font-size: ' + fontSize + 'px; line-height: 1.6; overflow-wrap: break-word; word-break: normal; hyphens: none;">' + clickableQuestionText(question.question) + '</p>' +
           '<div id="optionsArea" class="space-y-3">' +
             Object.entries(question.options || {}).map(([key, value]) => {
               const isSelected = selectedAnswer === key;
@@ -5256,20 +5595,18 @@
               const letterColor = isCorrect ? 'bg-emerald-600 text-white' : isWrong ? 'bg-red-600 text-white' : isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white';
               return '<div class="option-btn group flex w-full cursor-pointer items-start gap-3 rounded-2xl border p-3.5 text-left transition hover:border-blue-300 hover:bg-blue-50' + ((isCorrect || isWrong || isSelected) ? ' ring-1' : '') + '" style="border-color: ' + borderColor + '; background: ' + background + '; color: var(--text-primary)" role="button" aria-pressed="' + (isSelected ? 'true' : 'false') + '" data-key="' + escapeHtml(key) + '">' +
                 '<span class="option-letter flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ' + letterColor + ' font-bold">' + escapeHtml(key) + '</span>' +
-                '<span class="block flex-1 pt-1 leading-relaxed" style="font-size: ' + Math.max(16, fontSize - 1) + 'px;">' + clickableQuestionText(value) + '</span>' +
+                '<span class="question-text block flex-1 pt-1" style="font-size: ' + Math.max(16, fontSize - 2) + 'px; line-height: 1.6; overflow-wrap: break-word; word-break: normal; hyphens: none;">' + clickableQuestionText(value) + '</span>' +
               '</div>';
             }).join("") +
           '</div>' +
           '<div id="feedbackArea" class="mt-6"></div>' +
-          '<div id="questionNavArea" class="mt-5 flex justify-end">' + nextButtonHtml() + '</div>' +
+          '<div id="questionNavArea" class="mt-6">' + questionNavigationHtml() + '</div>' +
           '</div>' +
         '</article></div>';
 
       document.querySelectorAll(".question-palette-item").forEach(button => {
         button.addEventListener("click", () => {
-          currentIndex = Number(button.dataset.index || 0);
-          answered = false;
-          renderQuestion();
+          moveToQuestion(Number(button.dataset.index || 0));
         });
       });
 
@@ -5284,16 +5621,6 @@
           event.stopPropagation();
           openWordModal(button.dataset.word, question);
         });
-      });
-      document.getElementById("questionFontDownBtn").addEventListener("click", () => {
-        questionFontSize = Math.max(17, fontSize - 1);
-        localStorage.setItem("yds-question-font-size-v1", String(questionFontSize));
-        renderQuestion();
-      });
-      document.getElementById("questionFontUpBtn").addEventListener("click", () => {
-        questionFontSize = Math.min(23, fontSize + 1);
-        localStorage.setItem("yds-question-font-size-v1", String(questionFontSize));
-        renderQuestion();
       });
       document.getElementById("questionFocusBtn").addEventListener("click", () => {
         setQuestionFocusMode(!questionFocusMode);
@@ -5319,7 +5646,7 @@
         }
         setView(activeDocument()?.builtIn || activeDocument()?.collection === "yds" ? "yds" : "exams");
       });
-      bindNextQuestionButton();
+      bindQuestionNavigation();
     }
 
     function paintButton(button, type) {
@@ -5357,18 +5684,45 @@
       renderQuestion();
     }
 
-    function nextButtonHtml() {
+    function questionNavigationHtml() {
       const questions = getCategoryQuestions();
-      const label = currentIndex + 1 >= questions.length ? "Bölümü Bitir" : "Sonraki Soru";
-      return '<button id="nextQuestionBtn" class="rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg shadow-blue-950/40 transition hover:bg-blue-500">' + label + '</button>';
+      const isFirst = currentIndex === 0;
+      const isLast = currentIndex + 1 >= questions.length;
+      const nextLabel = isLast ? "Bölümü Bitir" : "Sonraki Soru";
+      const sharedButtonClass = "min-w-[150px] rounded-2xl px-5 py-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 sm:px-6";
+      return '<nav class="flex items-center justify-between gap-4" aria-label="Soru gezinme">' +
+        '<button id="previousQuestionBtn" aria-label="Önceki soruya git"' + (isFirst ? ' disabled' : '') + ' class="' + sharedButtonClass + ' border border-slate-300 bg-white text-blue-700 shadow-sm hover:border-blue-300 hover:bg-blue-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400">← <span class="hidden sm:inline">Önceki Soru</span><span class="sm:hidden">Önceki</span></button>' +
+        '<button id="nextQuestionBtn" aria-label="' + (isLast ? "Bölümü bitir" : "Sonraki soruya git") + '" class="' + sharedButtonClass + ' bg-blue-600 text-white shadow-lg shadow-blue-950/40 hover:bg-blue-500"><span class="hidden sm:inline">' + nextLabel + '</span><span class="sm:hidden">' + (isLast ? "Bitir" : "Sonraki") + '</span>' + (isLast ? '' : ' →') + '</button>' +
+      '</nav>';
     }
 
-    function bindNextQuestionButton() {
+    function moveToQuestion(index) {
+      const questions = getCategoryQuestions();
+      if (!Number.isInteger(index) || index < 0 || index >= questions.length) return;
+      currentIndex = index;
+      answered = false;
+      renderQuestion();
+      window.requestAnimationFrame(() => {
+        document.querySelector(".question-reader-surface")?.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          block: "start",
+        });
+      });
+    }
+
+    function bindQuestionNavigation() {
+      const previousButton = document.getElementById("previousQuestionBtn");
       const nextButton = document.getElementById("nextQuestionBtn");
+      previousButton?.addEventListener("click", () => moveToQuestion(currentIndex - 1));
       if (!nextButton) return;
       nextButton.addEventListener("click", () => {
-        currentIndex++;
-        renderQuestion();
+        const questions = getCategoryQuestions();
+        if (currentIndex + 1 >= questions.length) {
+          currentIndex = questions.length;
+          renderQuestion();
+          return;
+        }
+        moveToQuestion(currentIndex + 1);
       });
     }
 
@@ -5639,6 +5993,15 @@
         questionId: text(note.questionId) || null,
         questionNumber: Number.isFinite(questionNumber) && questionNumber > 0 ? questionNumber : null,
         selectedText: text(note.selectedText) || null,
+        noteType: text(note.noteType) || "note",
+        highlightedText: text(note.highlightedText) || text(note.selectedText) || null,
+        meaning: text(note.meaning) || null,
+        sourceModule: text(note.sourceModule) || null,
+        paragraphIndex: Number.isInteger(Number(note.paragraphIndex)) ? Number(note.paragraphIndex) : null,
+        startOffset: Number.isFinite(Number(note.startOffset)) ? Number(note.startOffset) : null,
+        endOffset: Number.isFinite(Number(note.endOffset)) ? Number(note.endOffset) : null,
+        occurrenceIndex: Number.isInteger(Number(note.occurrenceIndex)) ? Number(note.occurrenceIndex) : null,
+        contextText: text(note.contextText) || null,
         createdAt: text(note.createdAt) || now,
         updatedAt: text(note.updatedAt) || now,
       };
@@ -5646,6 +6009,117 @@
 
     function saveNotes() {
       saveJson(STORAGE_NOTES, notes);
+    }
+
+    let importantStructuresPanelOpen = localStorage.getItem("yds-important-structures-panel-open-v1") === "1";
+    let importantStructureActiveId = null;
+    let pendingImportantStructureId = null;
+
+    function importantStructureNotes(context) {
+      return notes.filter(note => note.noteType === "important_structure" && note.sourceModule === context.sourceModule && String(note.sourceId || "") === String(context.sourceId || ""));
+    }
+
+    function importantStructureTextHtml(text, context, paragraphIndex) {
+      const matches = importantStructureNotes(context).filter(note => Number(note.paragraphIndex) === Number(paragraphIndex) && note.highlightedText);
+      if (!matches.length) return escapeHtml(text);
+      let cursor = 0;
+      return matches.sort((a, b) => Number(a.startOffset || 0) - Number(b.startOffset || 0)).map(note => {
+        const start = Math.max(cursor, Number(note.startOffset || 0));
+        const end = Math.min(String(text).length, Number(note.endOffset || start));
+        if (end <= start) return "";
+        const before = escapeHtml(String(text).slice(cursor, start));
+        cursor = end;
+        return before + '<mark class="important-structure-highlight' + (importantStructureActiveId === note.id ? ' is-flashing' : '') + '" data-important-structure-id="' + escapeHtml(note.id) + '">' + escapeHtml(String(text).slice(start, end)) + '</mark>';
+      }).join("") + escapeHtml(String(text).slice(cursor));
+    }
+
+    function importantStructuresPanelHtml(context) {
+      const records = importantStructureNotes(context);
+      if (!importantStructuresPanelOpen) return "";
+      const cards = records.length ? records.map(note => '<article class="important-structure-card' + (importantStructureActiveId === note.id ? ' is-active' : '') + '" data-important-card="' + escapeHtml(note.id) + '"><div class="flex items-start justify-between gap-2"><button class="important-structure-jump text-left" data-important-jump="' + escapeHtml(note.id) + '"><div class="important-structure-text">' + escapeHtml(note.highlightedText || "") + '</div><div class="important-structure-meaning">' + escapeHtml(note.meaning || "") + '</div></button><button class="important-structure-menu-toggle text-lg font-black" data-important-menu="' + escapeHtml(note.id) + '" aria-label="İşlemler">…</button></div><div class="important-structure-menu hidden mt-2 border-t pt-2 text-sm" style="border-color:var(--border-color)" data-important-menu-content="' + escapeHtml(note.id) + '"><button data-important-action="edit" data-important-id="' + escapeHtml(note.id) + '">Düzenle</button><button data-important-action="jump" data-important-id="' + escapeHtml(note.id) + '">Metinde Göster</button><button data-important-action="delete" data-important-id="' + escapeHtml(note.id) + '" class="text-red-600">Sil</button></div></article>').join("") : '<div class="py-6 text-sm leading-6" style="color:var(--text-secondary)">Bu makaleye henüz önemli yapı eklenmedi.<br><br>Metinden bir ifade seçerek veya “Yeni Yapı” butonuyla ekleyebilirsin.</div>';
+      return '<aside id="important-structures-drawer" class="important-structures-panel" aria-label="Önemli Yapılar" tabindex="-1"><div class="important-panel-header"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Önemli Yapılar</p><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">Bu makalede ' + records.length + ' kayıt</p></div><div class="important-panel-header-actions"><button class="important-structure-new important-structure-add" aria-label="Yeni önemli yapı ekle">+ Ekle</button><button class="important-structures-close text-xl font-black" aria-label="Kapat">×</button></div></div><div class="important-structures-list">' + cards + '</div></aside>';
+    }
+
+    function openImportantStructureForm(context, note = null, selection = null) {
+      document.querySelector(".important-structure-modal")?.remove();
+      const overlay = document.createElement("div");
+      overlay.className = "important-structure-modal";
+      overlay.innerHTML = '<form><div class="flex items-center justify-between gap-3"><h3 class="text-lg font-black">' + (note ? 'Yapıyı Düzenle' : 'Önemli Yapı') + '</h3><button type="button" data-important-cancel class="text-xl font-black">×</button></div><label class="mt-4 block text-sm font-black">Önemli Yapı<input name="text" maxlength="120" required class="mt-1 w-full rounded-xl border px-3 py-2" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" value="' + escapeHtml(note?.highlightedText || selection?.text || '') + '"></label><label class="mt-3 block text-sm font-black">Türkçe Anlamı<input name="meaning" maxlength="280" required class="mt-1 w-full rounded-xl border px-3 py-2" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" value="' + escapeHtml(note?.meaning || '') + '"></label><div class="mt-5 flex justify-end gap-2"><button type="button" data-important-cancel class="rounded-xl border px-3 py-2 text-sm font-black" style="border-color:var(--border-color)">İptal</button><button class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white">Kaydet</button></div></form>';
+      document.body.append(overlay);
+      overlay.querySelectorAll("[data-important-cancel]").forEach(button => button.onclick = () => overlay.remove());
+      overlay.querySelector("form").addEventListener("submit", event => {
+        event.preventDefault();
+        const form = new FormData(event.currentTarget);
+        const highlightedText = String(form.get("text") || "").trim();
+        const meaning = String(form.get("meaning") || "").trim();
+        if (!highlightedText || highlightedText.length > 120 || !meaning || meaning.length > 280) return;
+        const now = new Date().toISOString();
+        const record = normalizeNote({ ...(note || {}), id: note?.id || createNoteId(), noteType: "important_structure", content: highlightedText + "\n" + meaning, highlightedText, meaning, selectedText: highlightedText, sourceType: "reading", sourceModule: context.sourceModule, sourceId: context.sourceId, sourceTitle: context.sourceTitle, paragraphIndex: selection?.paragraphIndex ?? note?.paragraphIndex, startOffset: selection?.startOffset ?? note?.startOffset, endOffset: selection?.endOffset ?? note?.endOffset, occurrenceIndex: selection?.occurrenceIndex ?? note?.occurrenceIndex, contextText: selection?.contextText ?? note?.contextText, createdAt: note?.createdAt || now, updatedAt: now });
+        notes = note ? notes.map(item => item.id === note.id ? record : item) : [record, ...notes];
+        importantStructureActiveId = record.id; saveNotes(); queueSupabaseAutoBackup(); overlay.remove(); context.rerender();
+      });
+      overlay.querySelector("input[name=text]")?.focus();
+    }
+
+    function jumpToImportantStructure(note) {
+      importantStructureActiveId = note.id;
+      const element = document.querySelector('[data-important-structure-id="' + CSS.escape(note.id) + '"]');
+      if (element) { element.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" }); element.classList.remove("is-flashing"); void element.offsetWidth; element.classList.add("is-flashing"); }
+      document.querySelectorAll("[data-important-card]").forEach(card => card.classList.toggle("is-active", card.dataset.importantCard === note.id));
+    }
+
+    function bindImportantStructures(context, container) {
+      const closePanel = (returnFocus = false) => { importantStructuresPanelOpen = false; localStorage.setItem("yds-important-structures-panel-open-v1", "0"); context.rerender(); if (returnFocus) window.setTimeout(() => document.querySelector("[data-important-structures-trigger]")?.focus(), 0); };
+      const panel = container?.querySelector("#important-structures-drawer");
+      if (panel) {
+        const toolbar = container.querySelector("header, #articleReaderToolbar");
+        const top = Math.max(72, Math.round((toolbar?.getBoundingClientRect().bottom || 64) + 12));
+        panel.style.setProperty("--important-structures-top", top + "px");
+        window.setTimeout(() => panel.focus(), 0);
+      }
+      window.__importantStructuresClose = () => closePanel(true);
+      if (!window.__importantStructuresEscapeBound) {
+        window.__importantStructuresEscapeBound = true;
+        window.addEventListener("keydown", event => { if (event.key === "Escape" && importantStructuresPanelOpen) { event.preventDefault(); window.__importantStructuresClose?.(); } });
+      }
+      container?.querySelectorAll(".important-structures-close").forEach(button => button.onclick = () => closePanel(true));
+      container?.querySelectorAll(".important-structure-new").forEach(button => button.onclick = () => openImportantStructureForm(context));
+      container?.querySelectorAll(".important-structure-menu-toggle").forEach(button => button.onclick = () => { container.querySelectorAll(".important-structure-menu").forEach(menu => menu.classList.add("hidden")); container.querySelector('[data-important-menu-content="' + button.dataset.importantMenu + '"]')?.classList.toggle("hidden"); });
+      container?.querySelectorAll("[data-important-action], [data-important-jump]").forEach(button => button.onclick = () => { const id = button.dataset.importantId || button.dataset.importantJump; const note = notes.find(item => item.id === id); if (!note) return; const action = button.dataset.importantAction || "jump"; if (action === "delete") { if (!window.confirm('"' + note.highlightedText + '" yapısını silmek istiyor musun?')) return; notes = notes.filter(item => item.id !== note.id); saveNotes(); queueSupabaseAutoBackup(); context.rerender(); } else if (action === "edit") openImportantStructureForm(context, note); else { importantStructuresPanelOpen = false; localStorage.setItem("yds-important-structures-panel-open-v1", "0"); context.rerender(); window.setTimeout(() => jumpToImportantStructure(note), 40); } });
+      container?.querySelectorAll(".important-structure-highlight").forEach(mark => mark.onclick = () => { const note = notes.find(item => item.id === mark.dataset.importantStructureId); if (note) jumpToImportantStructure(note); });
+      if (container?.__importantSelectionBound) return;
+      if (container) container.__importantSelectionBound = true;
+      container?.addEventListener("click", event => {
+        if (!importantStructuresPanelOpen) return;
+        if (event.target.closest("#important-structures-drawer, [data-important-structures-trigger], .important-structure-selection, .important-structure-modal")) return;
+        closePanel(false);
+      });
+      container?.addEventListener("mouseup", event => {
+        if (event.target.closest(".rfs-answer, .important-structures-panel")) return;
+        const selected = window.getSelection(); const text = selected?.toString().replace(/\s+/g, " ").trim() || "";
+        const range = selected?.rangeCount ? selected.getRangeAt(0) : null;
+        const paragraph = range?.commonAncestorContainer?.parentElement?.closest?.("[data-structure-paragraph]");
+        if (!range || !paragraph || !text || text.length > 120 || !/[A-Za-z]/.test(text)) return;
+        const before = range.cloneRange(); before.selectNodeContents(paragraph); before.setEnd(range.startContainer, range.startOffset);
+        const startOffset = before.toString().length; const endOffset = startOffset + text.length;
+        const old = document.querySelector(".important-structure-selection"); old?.remove();
+        const bubble = document.createElement("button"); bubble.className = "important-structure-selection"; bubble.textContent = "Önemli Yapı Olarak Kaydet"; const rect = range.getBoundingClientRect(); bubble.style.left = Math.max(8, rect.left) + "px"; bubble.style.top = Math.max(8, rect.bottom + 8) + "px";
+        bubble.onclick = () => { bubble.remove(); openImportantStructureForm(context, null, { text, paragraphIndex: Number(paragraph.dataset.structureParagraph), startOffset, endOffset, occurrenceIndex: 0, contextText: paragraph.textContent.slice(Math.max(0, startOffset - 45), Math.min(paragraph.textContent.length, endOffset + 45)) }); window.getSelection()?.removeAllRanges(); };
+        document.body.append(bubble); setTimeout(() => bubble.isConnected && bubble.remove(), 7000);
+      });
+    }
+
+    function applyImportantStructureHighlights(container, context) {
+      importantStructureNotes(context).forEach(note => {
+        const paragraph = container?.querySelector('[data-structure-paragraph="' + note.paragraphIndex + '"]');
+        if (!paragraph || paragraph.querySelector('[data-important-structure-id="' + note.id + '"]')) return;
+        const walker = document.createTreeWalker(paragraph, NodeFilter.SHOW_TEXT);
+        let seen = 0, node, target = null;
+        while ((node = walker.nextNode())) { const next = seen + node.nodeValue.length; if (Number(note.startOffset) >= seen && Number(note.endOffset) <= next) { target = { node, start: Number(note.startOffset) - seen, end: Number(note.endOffset) - seen }; break; } seen = next; }
+        if (!target || target.end <= target.start) return;
+        const range = document.createRange(); range.setStart(target.node, target.start); range.setEnd(target.node, target.end);
+        const mark = document.createElement("mark"); mark.className = "important-structure-highlight"; mark.dataset.importantStructureId = note.id; try { range.surroundContents(mark); } catch { return; }
+      });
     }
 
     async function copyNoteContent(note) {
@@ -5669,7 +6143,7 @@
     function filteredNotes() {
       const query = normalizeLookup(noteSearchQuery);
       return notes
-        .filter(note => !query || normalizeLookup(note.content).includes(query) || normalizeLookup(note.sourceTitle).includes(query) || normalizeLookup(String(note.questionNumber || "")).includes(query))
+        .filter(note => !query || normalizeLookup(note.content).includes(query) || normalizeLookup(note.highlightedText).includes(query) || normalizeLookup(note.meaning).includes(query) || normalizeLookup(note.sourceTitle).includes(query) || normalizeLookup(String(note.questionNumber || "")).includes(query))
         .sort((a, b) => {
           if (noteSortMode === "oldest") return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
           if (noteSortMode === "title-asc") return noteTitle(a).localeCompare(noteTitle(b), "tr");
@@ -5684,23 +6158,31 @@
 
     function noteSourceLabel(note) {
       if (!note?.sourceTitle) return "";
-      return note.sourceTitle + (note.questionNumber ? " · Soru " + note.questionNumber : note.sourceType === "reading" ? " · Okuma Merkezi" : "");
+      const moduleLabel = note.sourceModule === "read_for_speed" ? "Read for Speed" : "Okuma Merkezi";
+      return note.sourceTitle + (note.questionNumber ? " · Soru " + note.questionNumber : note.sourceType === "reading" ? " · " + moduleLabel : "");
     }
 
     function noteSourceExists(note) {
       if (note?.sourceType === "question") {
         return questionBank.some(question => question.id === note.questionId || question.documentId === note.sourceId);
       }
-      if (note?.sourceType === "reading") return articles.some(article => article.id === note.sourceId);
+      if (note?.sourceType === "reading") return note.sourceModule === "read_for_speed" ? readForSpeedArticles.some(article => article.id === note.sourceId) : articles.some(article => article.id === note.sourceId);
       return false;
     }
 
     function goToNoteSource(note) {
       if (!noteSourceExists(note)) return;
+      if (note.sourceType === "reading" && note.sourceModule === "read_for_speed") {
+        readForSpeedActiveArticle = readForSpeedArticles.find(article => article.id === note.sourceId) || null;
+        if (!readForSpeedActiveArticle) return;
+        readForSpeedMode = "reader"; importantStructuresPanelOpen = true; pendingImportantStructureId = note.id; setView("read-for-speed");
+        window.setTimeout(() => jumpToImportantStructure(note), 60); return;
+      }
       if (note.sourceType === "reading") {
         activeArticleId = note.sourceId;
-        articleLanguageView = "en";
+        articleLanguageView = "en"; importantStructuresPanelOpen = true; pendingImportantStructureId = note.id;
         setView("articles");
+        window.setTimeout(() => jumpToImportantStructure(note), 60);
         return;
       }
       const question = questionBank.find(item => item.id === note.questionId) || questionBank.find(item => item.documentId === note.sourceId && Number(item.questionNumber) === Number(note.questionNumber)) || questionBank.find(item => item.documentId === note.sourceId);
@@ -5792,7 +6274,7 @@
       const hasSource = note.sourceType !== "manual" && Boolean(note.sourceId || note.questionId);
       const sourceExists = noteSourceExists(note);
       const sourceName = note.sourceTitle || "Kaynak başlığı eklenmedi";
-      const sourceSection = note.sourceType === "reading" ? "Okuma Merkezi" : note.sourceType === "question" ? "Çıkmış Sorular" : "";
+      const sourceSection = note.sourceType === "reading" ? (note.sourceModule === "read_for_speed" ? "Read for Speed" : "Okuma Merkezi") : note.sourceType === "question" ? "Çıkmış Sorular" : "";
       const sourceStatus = !hasSource ? "Serbest not" : !sourceExists ? "Kaynak artık mevcut değil" : "";
       return '<article class="note-card relative flex min-h-[220px] min-w-0 cursor-pointer flex-col rounded-2xl border border-slate-200 bg-slate-50 p-[22px] shadow-sm transition duration-150 hover:border-slate-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800" data-note-open="' + escapeHtml(note.id) + '">' +
         '<div class="flex items-start justify-between gap-3"><p class="text-xs font-bold text-slate-500">' + escapeHtml(formatNoteDate(note.createdAt)) + '</p>' +
@@ -5884,7 +6366,10 @@
         bindWordTabs();
         return;
       }
-      const visibleWords = filteredWordbook();
+      // The toolbar is deliberately rendered only when the view opens. Search,
+      // filters, and sort changes update the existing card nodes below, so the
+      // search input keeps its DOM identity, focus, and caret position.
+      const visibleWords = [...wordbook];
       const canStudy = studyWords().length > 0;
       appArea.innerHTML =
         wordTabsHtml("list") +
@@ -5905,10 +6390,10 @@
               '<option value="created"' + (wordSortMode === "created" ? " selected" : "") + '>Son Eklenen</option>' +
               '<option value="review"' + (wordSortMode === "review" ? " selected" : "") + '>Tekrar Tarihi</option>' +
             '</select>' +
-            '<button id="shuffleWordsBtn" class="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 hover:bg-slate-50">Karıştır</button>' +
-            '<button id="startWordStudyBtn" ' + (canStudy ? "" : "disabled ") + 'class="h-11 rounded-xl bg-blue-600 px-3 text-sm font-black text-white shadow-lg shadow-blue-200 hover:bg-blue-500 disabled:bg-slate-300 disabled:text-slate-500 disabled:shadow-none">Çalışmaya Başla</button>' +
+            '<button id="shuffleWordsBtn" type="button" class="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 hover:bg-slate-50">Karıştır</button>' +
+            '<button id="startWordStudyBtn" type="button" ' + (canStudy ? "" : "disabled ") + 'class="h-11 rounded-xl bg-blue-600 px-3 text-sm font-black text-white shadow-lg shadow-blue-200 hover:bg-blue-500 disabled:bg-slate-300 disabled:text-slate-500 disabled:shadow-none">Çalışmaya Başla</button>' +
           '</div>' +
-          '<p class="mt-2 text-xs font-bold text-slate-500">' + visibleWords.length + ' kelime gösteriliyor</p>' +
+          '<p id="wordbookResultCount" class="mt-2 text-xs font-bold text-slate-500">' + visibleWords.length + ' kelime gösteriliyor</p>' +
         '</section>' +
         (visibleWords.length ? '<div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">' +
           visibleWords.map(item => {
@@ -5938,7 +6423,8 @@
               '</div>' +
             '</article>';
           }).join("") +
-        '</div>' : '<div class="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500"><p class="font-bold">Bu filtreye uygun kelime bulunamadı.</p></div>');
+        '</div>' : '<div class="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500"><p class="font-bold">Bu filtreye uygun kelime bulunamadı.</p></div>') +
+        '<div id="wordbookEmptySearchState" class="hidden rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500"><p class="font-bold">Bu filtreye uygun kelime bulunamadı.</p></div>';
 
       bindWordTabs();
       document.getElementById("startWordStudyBtn").addEventListener("click", () => {
@@ -5946,16 +6432,15 @@
       });
       document.getElementById("wordSearchInput").addEventListener("input", event => {
         wordSearchQuery = event.target.value;
-        clearTimeout(wordSearchTimer);
-        wordSearchTimer = setTimeout(renderWordbook, 220);
+        updateWordbookResults();
       });
       document.getElementById("wordStatusFilter").addEventListener("change", event => {
         wordStatusFilter = event.target.value;
-        renderWordbook();
+        updateWordbookResults();
       });
       document.getElementById("wordSortMode").addEventListener("change", event => {
         wordSortMode = event.target.value;
-        renderWordbook();
+        updateWordbookResults();
       });
       document.querySelectorAll(".word-card").forEach(card => {
         card.addEventListener("click", event => {
@@ -5996,7 +6481,34 @@
       });
       document.getElementById("shuffleWordsBtn").addEventListener("click", () => {
         wordSortMode = "shuffle";
-        renderWordbook();
+        document.getElementById("wordSortMode").value = wordSortMode;
+        updateWordbookResults();
+      });
+      updateWordbookResults();
+    }
+
+    function updateWordbookResults() {
+      const matchingWords = filteredWordbook();
+      const matchingIds = new Set(matchingWords.map(item => item.id));
+      const grid = appArea.querySelector(".word-card")?.parentElement;
+      const count = document.getElementById("wordbookResultCount");
+      const emptyState = document.getElementById("wordbookEmptySearchState");
+
+      if (count) count.textContent = matchingWords.length + " kelime gösteriliyor";
+      if (emptyState) emptyState.classList.toggle("hidden", matchingWords.length > 0);
+      if (!grid) return;
+
+      // appendChild moves existing cards instead of recreating them; card menus
+      // and the toolbar therefore retain their state while sorting changes.
+      matchingWords.forEach(item => {
+        const card = grid.querySelector('.word-card[data-id="' + CSS.escape(item.id) + '"]');
+        if (card) {
+          card.hidden = false;
+          grid.appendChild(card);
+        }
+      });
+      grid.querySelectorAll(".word-card").forEach(card => {
+        if (!matchingIds.has(card.dataset.id)) card.hidden = true;
       });
     }
 
@@ -6654,7 +7166,7 @@
       return '<article class="reading-content-card relative rounded-2xl border p-4 shadow-sm transition hover:border-blue-200 hover:bg-blue-50/40" style="border-color: var(--border-color); background: var(--bg-surface)">' +
         '<div class="mb-3 flex items-start justify-between gap-3">' +
           '<div class="flex flex-wrap gap-2"><span class="rounded-full border px-3 py-1 text-xs font-black text-blue-700" style="border-color: var(--border-color); background: var(--bg-surface-secondary)">' + articleTypeLabel(article) + '</span><span class="rounded-full border px-2.5 py-1 text-xs font-black" style="border-color: var(--border-color); color: var(--text-secondary); background: var(--bg-surface-secondary)" title="Çeviri durumu">' + articleLanguageBadge(article) + '</span></div>' +
-          '<span class="rounded-full border px-3 py-1 text-xs font-black" style="border-color: var(--border-color); color: var(--text-secondary); background: var(--bg-surface-secondary)">' + status.label + '</span>' +
+          '<span class="article-status-badge article-status-' + status.key + ' rounded-full border px-3 py-1 text-xs font-black" style="border-color: var(--border-color); color: var(--text-secondary); background: var(--bg-surface-secondary)">' + status.label + '</span>' +
         '</div>' +
         '<h3 class="line-clamp-2 text-lg font-black" style="color: var(--text-primary)">' + escapeHtml(articleDisplayTitle(article)) + '</h3>' +
         '<p class="mt-2 line-clamp-2 text-sm font-semibold" style="color: var(--text-secondary)">' + escapeHtml(normalizeArticleTextForReading(article.text || "").slice(0, 180)) + (article.text && article.text.length > 180 ? '...' : '') + '</p>' +
@@ -7187,10 +7699,8 @@
       }
       const vocabMap = articleVocabularyMap(article);
       const title = articleDisplayTitle(article);
-      const fontSize = Math.max(22, Math.min(28, articleFontSize || 25));
-      const lineHeight = [1.65, 1.7, 1.75].includes(articleLineHeight) ? articleLineHeight : 1.7;
-      const contentWidth = [920, 940, 960, 980].includes(articleContentWidth) ? articleContentWidth : 940;
-      const surface = ["white", "neutral", "warm", "dark"].includes(articleReadingSurface) ? articleReadingSurface : "neutral";
+      const fontSize = studyContentFontSize;
+      const contentWidth = 940;
       const kind = articleKind(article);
       const savedEntries = savedArticleEntries(article);
       const savedEntryCount = savedEntries.filter(entry => !entry.unresolved).length;
@@ -7199,6 +7709,7 @@
       if (!hasTranslation || articleLanguageView !== "bilingual") articleLanguageView = "en";
       const languageView = articleLanguageView === "bilingual" ? "bilingual" : "en";
       const visibleTitle = title;
+      const importantContext = { sourceModule: "reading_center", sourceId: article.id, sourceTitle: title, rerender: () => renderArticleReader(article) };
       setArticleFocusMode(articleFocusMode);
       reader.innerHTML =
         '<article class="article-reader-surface ' + (articleFocusMode ? 'is-focus-mode ' : '') + 'rounded-2xl border p-4 lg:p-5">' +
@@ -7207,43 +7718,33 @@
             '<div class="article-toolbar-toprow">' +
               '<button id="articleBackBtn" class="article-toolbar-btn flex h-10 shrink-0 items-center justify-center rounded-xl px-3 text-xs font-black" title="Okuma listesine dön" aria-label="Okuma listesine dön">← <span class="article-toolbar-back-copy ml-1">Listeye dön</span></button>' +
               '<div class="article-reader-actions relative">' +
-                '<button id="articleQuickNoteBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="Bu metin için not ekle" aria-label="Not Ekle">Not Ekle</button>' +
-                '<button id="articleSavedWordsBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="Kaydedilenleri göster" aria-label="Kaydedilenleri göster">Kaydedilenler (' + savedEntryCount + ')</button>' +
-                '<button id="articleHighlightToggleBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black" title="' + highlightToggleLabel + '" aria-label="' + highlightToggleLabel + '">' + (articleHighlightsVisible ? '◐' : '○') + '</button>' +
-                '<button id="articleSettingsBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="Okuma ayarlarını aç" aria-label="Okuma ayarlarını aç" aria-expanded="false" aria-controls="articleSettingsPanel">Okuma Ayarları</button>' +
+                '<button id="importantStructuresBtn" data-important-structures-trigger class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black ' + (importantStructuresPanelOpen ? 'ring-2 ring-blue-300 bg-blue-50 text-blue-700' : '') + '" title="Bu metindeki önemli yapılar" aria-controls="important-structures-drawer" aria-expanded="' + importantStructuresPanelOpen + '">Önemli Yapılar (' + importantStructureNotes(importantContext).length + ')</button>' +
+                '<button id="articleHighlightToggleBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="' + highlightToggleLabel + '" aria-label="' + highlightToggleLabel + '">Vurgular</button>' +
+                TextSizeControls("article") +
                 '<button id="articleMenuBtn" class="article-icon-btn flex h-10 w-10 items-center justify-center rounded-xl text-xl font-black" title="Diğer işlemler" aria-label="Diğer işlemler">⋯</button>' +
+                '<button id="articleFocusBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="' + (articleFocusMode ? 'Odak modundan çık' : 'Odak modunu aç') + '" aria-label="' + (articleFocusMode ? 'Odak modundan çık' : 'Odak modunu aç') + '">' + (articleFocusMode ? 'Odaktan Çık' : 'Odak Modu') + '</button>' +
+                '<div id="articleActionMenu" class="word-action-menu absolute right-0 top-12 z-30 min-w-52 rounded-xl border p-2 text-sm font-bold shadow-xl" style="border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary)">' +
+                  '<button id="renameArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Yeniden adlandır</button>' +
+                  '<button id="editArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Metni düzenle</button>' +
+                  '<button id="editArticleTranslationBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">' + (hasTranslation ? 'Türkçe Çeviriyi Düzenle' : 'Türkçe Çeviri Ekle') + '</button>' +
+                  '<button id="markArticleReadBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Okundu olarak işaretle</button>' +
+                  (kind === "external" && article.sourceUrl ? '<button id="openArticleSourceBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Kaynak bağlantısını aç</button>' : '') +
+                  '<button id="exportArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Dışa aktar</button>' +
+                  '<button id="removeArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left text-red-600 hover:bg-red-50">İçeriği sil</button>' +
+                '</div>' +
               '</div>' +
             '</div>' +
             '<div class="article-reader-heading">' +
               '<p class="text-sm font-semibold uppercase tracking-wider text-blue-500">' + (kind === "yds" ? 'Çıkmış YDS Parçası' : 'Kendi Metnim') + '</p>' +
               '<h3 class="article-reader-title">' + escapeHtml(visibleTitle) + '</h3>' +
               '<div class="article-reader-meta-row">' + articleMetadataHtml(article) +
-                '<div class="article-language-control" role="group" aria-label="Okuma dili"><button class="article-language-choice ' + (languageView === "en" ? 'is-active' : '') + '" data-language-view="en" aria-pressed="' + (languageView === "en") + '">İngilizce</button><button class="article-language-choice ' + (languageView === "bilingual" ? 'is-active' : '') + '" data-language-view="bilingual" aria-pressed="' + (languageView === "bilingual") + '"' + (!hasTranslation ? ' disabled title="Bu makaleye henüz Türkçe çeviri eklenmedi."' : '') + '>İngilizce + Türkçe</button></div>' +
-              '</div>' +
-            '</div>' +
-            '<div class="article-reader-actions relative">' +
-              '<section id="articleSettingsPanel" class="article-settings-panel" hidden aria-label="Okuma ayarları">' +
-                '<div class="mb-3 flex items-center justify-between"><h4 class="text-sm font-black">Okuma Ayarları</h4><span id="articleFontSizeValue" class="text-xs font-bold" style="color: var(--text-secondary)">' + fontSize + ' px</span></div>' +
-                '<label class="block text-xs font-black" for="articleFontSizeInput">Yazı boyutu<input id="articleFontSizeInput" class="mt-2 w-full" type="range" min="22" max="28" step="1" value="' + fontSize + '" /></label>' +
-                '<label class="mt-4 block text-xs font-black" for="articleLineHeightSelect">Satır aralığı<select id="articleLineHeightSelect" class="mt-2 w-full rounded-xl border px-3 py-2 text-sm font-bold" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)"><option value="1.65" ' + (lineHeight === 1.65 ? 'selected' : '') + '>Sıkı</option><option value="1.7" ' + (lineHeight === 1.7 ? 'selected' : '') + '>Dengeli</option><option value="1.75" ' + (lineHeight === 1.75 ? 'selected' : '') + '>Geniş</option></select></label>' +
-                '<label class="mt-4 block text-xs font-black" for="articleContentWidthSelect">Metin genişliği<select id="articleContentWidthSelect" class="mt-2 w-full rounded-xl border px-3 py-2 text-sm font-bold" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)"><option value="920" ' + (contentWidth === 920 ? 'selected' : '') + '>Dar</option><option value="940" ' + (contentWidth === 940 ? 'selected' : '') + '>Dengeli</option><option value="960" ' + (contentWidth === 960 ? 'selected' : '') + '>Geniş</option><option value="980" ' + (contentWidth === 980 ? 'selected' : '') + '>En geniş</option></select></label>' +
-                '<fieldset class="mt-4"><legend class="text-xs font-black">Okuma yüzeyi</legend><div class="mt-2 grid grid-cols-2 gap-2">' + ["white", "neutral", "warm", "dark"].map(value => '<button class="article-surface-choice rounded-xl border px-3 py-2 text-xs font-black ' + (surface === value ? 'ring-2 ring-blue-400' : '') + '" data-surface="' + value + '" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)">' + ({ white: "Beyaz", neutral: "Yumuşak nötr", warm: "Sıcak", dark: "Koyu" })[value] + '</button>').join("") + '</div></fieldset>' +
-                '<button id="articleFocusBtn" class="mt-4 w-full rounded-xl border px-3 py-2 text-sm font-black" style="border-color: var(--border-color); color: var(--button-secondary-text); background: var(--button-secondary-bg)">' + (articleFocusMode ? 'Odak modundan çık' : 'Odak moduna geç') + '</button>' +
-              '</section>' +
-              '<div id="articleActionMenu" class="word-action-menu absolute right-0 top-12 z-30 min-w-52 rounded-xl border p-2 text-sm font-bold shadow-xl" style="border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary)">' +
-                '<button id="renameArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Yeniden adlandır</button>' +
-                '<button id="editArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Metni düzenle</button>' +
-                '<button id="editArticleTranslationBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">' + (hasTranslation ? 'Türkçe Çeviriyi Düzenle' : 'Türkçe Çeviri Ekle') + '</button>' +
-                '<button id="markArticleReadBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Okundu olarak işaretle</button>' +
-                (kind === "external" && article.sourceUrl ? '<button id="openArticleSourceBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Kaynak bağlantısını aç</button>' : '') +
-                '<button id="exportArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left hover:bg-slate-100">Dışa aktar</button>' +
-                '<button id="removeArticleBtn" class="block w-full rounded-lg px-3 py-2 text-left text-red-600 hover:bg-red-50">İçeriği sil</button>' +
+                '<div class="article-language-control" role="group" aria-label="Okuma dili"><button class="article-language-choice ' + (languageView === "en" ? 'is-active' : '') + '" data-language-view="en" aria-pressed="' + (languageView === "en") + '">İngilizce</button><button class="article-language-choice ' + (languageView === "bilingual" ? 'is-active' : '') + '" data-language-view="bilingual" aria-pressed="' + (languageView === "bilingual") + '"' + (!hasTranslation ? ' disabled title="Bu metne henüz Türkçe çeviri eklenmemiş." aria-label="İngilizce ve Türkçe: Bu metne henüz Türkçe çeviri eklenmemiş."' : '') + '>İngilizce + Türkçe</button></div>' +
               '</div>' +
             '</div>' +
           '</header>' +
-          '<div id="articleReadingBody" class="article-body article-surface-' + surface + ' ' + (articleHighlightsVisible ? '' : 'article-hide-highlights ') + 'rounded-2xl border px-5 py-6 sm:px-7 lg:px-8" style="max-width: ' + contentWidth + 'px; --article-font-size: ' + fontSize + 'px; --article-line-height: ' + lineHeight + '; border-color: var(--border-color);">' + renderTranslatedArticleBody(article, languageView, vocabMap, savedEntries) + '</div>' +
+          '<div class="important-structures-layout"><div><div id="articleReadingBody" data-study-content class="article-body ' + (articleHighlightsVisible ? '' : 'article-hide-highlights ') + 'rounded-2xl border px-5 py-6 sm:px-7 lg:px-8" style="max-width: ' + contentWidth + 'px; --study-content-font-size: ' + fontSize + 'px; border-color: var(--border-color);">' + renderTranslatedArticleBody(article, languageView, vocabMap, savedEntries) + '</div>' +
           (kind === "yds" ? renderYdsReadingQuestions(article) : '<section class="mx-auto mt-4 max-w-[900px] rounded-2xl border p-4" style="border-color: var(--border-color); background: var(--bg-surface-secondary)"><div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Okuma</p><p class="text-sm font-semibold" style="color: var(--text-secondary)">Metni bitirdiğinde günlük kendi metnim görevin tamamlanır.</p></div><div class="flex flex-wrap gap-2"><button id="studyArticleWordsBtn" class="rounded-xl border px-4 py-2 text-sm font-black" style="border-color: var(--border-color); color: var(--button-secondary-text); background: var(--button-secondary-bg)">Bu metnin kelimeleri</button><button id="completeArticleReadingBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white hover:bg-blue-500">Okumayı Tamamla</button></div></div></section>') +
-        '</article>' +
+        '</div>' + importantStructuresPanelHtml(importantContext) + '</div></article>' +
         renderArticleSavedDrawer(article, savedEntries);
 
       reader.querySelectorAll(".word-token").forEach(button => {
@@ -7263,6 +7764,9 @@
         articleSavedPanelOpen = !articleSavedPanelOpen;
         renderArticleReader(article);
       });
+      document.getElementById("importantStructuresBtn")?.addEventListener("click", () => { importantStructuresPanelOpen = !importantStructuresPanelOpen; document.querySelector(".important-structure-selection")?.remove(); localStorage.setItem("yds-important-structures-panel-open-v1", importantStructuresPanelOpen ? "1" : "0"); renderArticleReader(article); });
+      applyImportantStructureHighlights(document.getElementById("articleReadingBody"), importantContext);
+      bindImportantStructures(importantContext, reader);
       document.querySelectorAll(".article-language-choice").forEach(button => {
         button.addEventListener("click", () => {
           if (button.disabled) return;
@@ -7321,43 +7825,6 @@
       const quizSavedButton = document.getElementById("quizSavedArticleWordsBtn");
       if (quizSavedButton) quizSavedButton.addEventListener("click", () => startArticleSavedWordStudy(article, "quiz"));
       bindArticleSelectionSaving(article, vocabMap);
-      const readingBody = document.getElementById("articleReadingBody");
-      const settingsButton = document.getElementById("articleSettingsBtn");
-      const settingsPanel = document.getElementById("articleSettingsPanel");
-      if (settingsButton && settingsPanel) settingsButton.addEventListener("click", () => {
-        const willOpen = settingsPanel.hidden;
-        settingsPanel.hidden = !willOpen;
-        settingsButton.setAttribute("aria-expanded", String(willOpen));
-      });
-      const fontSizeInput = document.getElementById("articleFontSizeInput");
-      if (fontSizeInput && readingBody) fontSizeInput.addEventListener("input", () => {
-        articleFontSize = Math.max(22, Math.min(28, Number(fontSizeInput.value) || 25));
-        localStorage.setItem("yds-article-font-size-v1", String(articleFontSize));
-        readingBody.style.setProperty("--article-font-size", articleFontSize + "px");
-        const value = document.getElementById("articleFontSizeValue");
-        if (value) value.textContent = articleFontSize + " px";
-      });
-      const lineHeightSelect = document.getElementById("articleLineHeightSelect");
-      if (lineHeightSelect && readingBody) lineHeightSelect.addEventListener("change", () => {
-        articleLineHeight = [1.65, 1.7, 1.75].includes(Number(lineHeightSelect.value)) ? Number(lineHeightSelect.value) : 1.7;
-        localStorage.setItem("yds-article-line-height-v1", String(articleLineHeight));
-        readingBody.style.setProperty("--article-line-height", String(articleLineHeight));
-      });
-      const contentWidthSelect = document.getElementById("articleContentWidthSelect");
-      if (contentWidthSelect && readingBody) contentWidthSelect.addEventListener("change", () => {
-        articleContentWidth = [920, 940, 960, 980].includes(Number(contentWidthSelect.value)) ? Number(contentWidthSelect.value) : 940;
-        localStorage.setItem("yds-article-content-width-v1", String(articleContentWidth));
-        readingBody.style.maxWidth = articleContentWidth + "px";
-      });
-      document.querySelectorAll(".article-surface-choice").forEach(button => {
-        button.addEventListener("click", () => {
-          const nextSurface = button.dataset.surface || "neutral";
-          if (!["white", "neutral", "warm", "dark"].includes(nextSurface)) return;
-          articleReadingSurface = nextSurface;
-          localStorage.setItem("yds-article-reading-surface-v1", articleReadingSurface);
-          renderArticleReader(article);
-        });
-      });
       document.getElementById("articleFocusBtn").addEventListener("click", () => {
         setArticleFocusMode(!articleFocusMode);
         renderArticleReader(article);
@@ -7474,7 +7941,7 @@
       const end = Math.max(...ends);
       const normalizedText = normalizeArticleTextForReading(article?.text || "");
       const selectedText = normalizedText.slice(start, end).trim() || selection.toString().trim();
-      if (!/[A-Za-z]/.test(selectedText)) return null;
+      if (!/\p{L}/u.test(selectedText)) return null;
       return makeArticleSourceLocator(article, selectedText, start, end, normalizedText);
     }
 
@@ -8057,7 +8524,7 @@
       };
     }
 
-    function saveTextSource() {
+    async function saveTextSource() {
       if (!lastTextImport?.report.valid || isSavingTextImport) return;
       isSavingTextImport = true;
       const title = document.getElementById("textTitle").value.trim() || "Adsız TXT Kaynağı";
@@ -8078,17 +8545,12 @@
       };
       let savedBank = nextUploadedBank;
       try {
-        saveJson(STORAGE_UPLOADS, savedBank);
+        await saveUploadedBank(savedBank);
       } catch (error) {
-        try {
-          savedBank = compactUploadedSourcesForStorage(nextUploadedBank);
-          saveJson(STORAGE_UPLOADS, savedBank);
-        } catch (retryError) {
-          const status = document.getElementById("textImportStatus");
-          if (status) status.textContent = "Kaynak kaydedilemedi: cihaz belleği dolu. Ayarlar'dan yedek aldıktan sonra kullanılmayan kaynakları silip tekrar deneyin.";
-          isSavingTextImport = false;
-          return;
-        }
+        const status = document.getElementById("textImportStatus");
+        if (status) status.textContent = "Kaynak IndexedDB'ye kaydedilemedi. Mevcut veriler korunuyor; tarayıcı depolama iznini ve boş alanı kontrol edip tekrar deneyin.";
+        isSavingTextImport = false;
+        return;
       }
       uploadedBank = savedBank;
       rebuildBank();
@@ -8588,7 +9050,7 @@
       uploadedBank.questions = (uploadedBank.questions || []).filter(question => question.documentId !== docId);
       uploadedBank.documents.push(documentRecord);
       uploadedBank.questions.push(...parsedQuestions);
-      saveJson(STORAGE_UPLOADS, uploadedBank);
+      void saveUploadedBank(uploadedBank);
       rebuildBank();
       activeDocumentId = docId;
       currentIndex = 0;
@@ -8612,6 +9074,19 @@
       if (window.innerWidth >= 1024) closeSidebar();
     });
     document.addEventListener("click", event => {
+      const textSizeButton = event.target instanceof Element ? event.target.closest("[data-study-font-action]") : null;
+      if (textSizeButton && !textSizeButton.disabled) {
+        event.preventDefault();
+        event.stopPropagation();
+        changeStudyContentFontSize(textSizeButton.dataset.studyFontAction === "increase" ? 1 : -1);
+        if (activeView === "solve") renderQuestion();
+        else if (activeView === "read-for-speed") renderReadForSpeedPage();
+        else if (activeView === "articles") {
+          const article = currentArticle();
+          if (article) renderArticleReader(article);
+        }
+        return;
+      }
       if (!event.target.closest(".word-menu-toggle") && !event.target.closest(".word-action-menu")) {
         document.querySelectorAll(".word-action-menu.is-open").forEach(menu => menu.classList.remove("is-open"));
       }
@@ -8649,15 +9124,13 @@
         const article = currentArticle();
         if ((event.metaKey || event.ctrlKey) && (event.key === "+" || event.key === "=")) {
           event.preventDefault();
-          articleFontSize = Math.min(28, Math.max(22, articleFontSize || 25) + 1);
-          localStorage.setItem("yds-article-font-size-v1", String(articleFontSize));
+          changeStudyContentFontSize(1);
           if (article) renderArticleReader(article);
           return;
         }
         if ((event.metaKey || event.ctrlKey) && (event.key === "-" || event.key === "_")) {
           event.preventDefault();
-          articleFontSize = Math.max(22, Math.max(22, articleFontSize || 25) - 1);
-          localStorage.setItem("yds-article-font-size-v1", String(articleFontSize));
+          changeStudyContentFontSize(-1);
           if (article) renderArticleReader(article);
           return;
         }
@@ -8669,6 +9142,23 @@
         }
       }
       if (!typing && activeView === "solve") {
+        const questionModalOpen = Boolean(document.querySelector('[role="dialog"][aria-modal="true"], #articleEditModal, #documentEditModal, #bilingualTxtImportModal')) || !wordModal.classList.contains("hidden");
+        if (!questionModalOpen && event.key === "ArrowLeft" && currentIndex > 0) {
+          event.preventDefault();
+          moveToQuestion(currentIndex - 1);
+          return;
+        }
+        if (!questionModalOpen && event.key === "ArrowRight") {
+          const questions = getCategoryQuestions();
+          event.preventDefault();
+          if (currentIndex + 1 >= questions.length) {
+            currentIndex = questions.length;
+            renderQuestion();
+          } else {
+            moveToQuestion(currentIndex + 1);
+          }
+          return;
+        }
         if (event.key === "Escape" && questionFocusMode) {
           event.preventDefault();
           setQuestionFocusMode(false);
@@ -8677,15 +9167,13 @@
         }
         if ((event.metaKey || event.ctrlKey) && (event.key === "+" || event.key === "=")) {
           event.preventDefault();
-          questionFontSize = Math.min(23, Math.max(17, questionFontSize || 19) + 1);
-          localStorage.setItem("yds-question-font-size-v1", String(questionFontSize));
+          changeStudyContentFontSize(1);
           renderQuestion();
           return;
         }
         if ((event.metaKey || event.ctrlKey) && (event.key === "-" || event.key === "_")) {
           event.preventDefault();
-          questionFontSize = Math.max(17, Math.max(17, questionFontSize || 19) - 1);
-          localStorage.setItem("yds-question-font-size-v1", String(questionFontSize));
+          changeStudyContentFontSize(-1);
           renderQuestion();
           return;
         }
@@ -8754,6 +9242,7 @@
     removeBundledVocabularyOnce();
     mergeVocabularySeed();
     rebuildBank();
+    void hydrateUploadedBank();
     setInterval(() => {
       const currentDate = todayKey();
       if (currentDate === lastDailyDateCheck) return;
