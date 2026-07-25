@@ -4075,7 +4075,52 @@
 
     // v3 makes question work first-class backup data.  v2 kept it only inside
     // studyStatistics.examProgress, which was too easy for a restore path to skip.
-    const BACKUP_SCHEMA_VERSION = 3;
+    const BACKUP_SCHEMA_VERSION = 4;
+
+    class BackupIntegrityError extends Error {
+      constructor(diagnostics) { super(`Yedek oluşturulamadı: uygulamada ${diagnostics.expectedSourceCount} kaynak bulunuyor ancak yedek paketine ${diagnostics.backupSourceCount} kaynak eklendi. Eksik ${diagnostics.missingFromBackup.length} kaynak tespit edilmeden yedek kaydedilmedi.`); this.name = "BackupIntegrityError"; this.diagnostics = diagnostics; }
+    }
+
+    function sourceType(source) {
+      return source?.builtIn || source?.collection === "yds" ? "exitQuestion" : "mockExam";
+    }
+
+    function duplicateIds(records) {
+      const seen = new Set(), duplicates = new Set();
+      records.forEach(record => { const id = String(record?.id || ""); if (!id) duplicates.add("(boş id)"); else if (seen.has(id)) duplicates.add(id); else seen.add(id); });
+      return [...duplicates];
+    }
+
+    // The single source for JSON, local snapshot and Supabase backup. It reads
+    // IndexedDB first and supplements immutable bundled documents shown in UI.
+    async function collectCompleteBackupData() {
+      const database = await openDeployDb();
+      const [storedSources, storedQuestions] = await Promise.all([idbGetAll(database, "sources"), idbGetAll(database, "questions")]);
+      const visibleSources = (documents || []).filter(source => !source?.deletedAt);
+      const idbSources = (storedSources || []).filter(source => !source?.deletedAt);
+      const sourceById = new Map();
+      idbSources.forEach(source => sourceById.set(String(source.id), source));
+      // Visible source records win so category and current metadata exactly
+      // match sidebar counts; no localStorage source snapshot is consulted.
+      visibleSources.forEach(source => sourceById.set(String(source.id), source));
+      const backupSources = [...sourceById.values()];
+      const visibleSourceIds = visibleSources.map(source => String(source.id));
+      const backupSourceIds = backupSources.map(source => String(source.id));
+      const missingFromBackup = visibleSourceIds.filter(id => !backupSourceIds.includes(id));
+      const extraInBackup = backupSourceIds.filter(id => !visibleSourceIds.includes(id));
+      const duplicateSourceIds = [...new Set([...duplicateIds(visibleSources), ...duplicateIds(idbSources)])];
+      const diagnostics = {
+        expectedSourceCount: visibleSources.length, backupSourceCount: backupSources.length,
+        visibleSourceIds, backupSourceIds, missingFromBackup, extraInBackup, duplicateSourceIds,
+        missingSources: visibleSources.filter(source => missingFromBackup.includes(String(source.id))).map(source => ({ id: source.id, title: source.title || "Başlıksız", type: sourceType(source) })),
+        validationWarnings: backupSources.filter(source => !source?.id || !source?.title || !source?.rawText).map(source => ({ id: source?.id || null, title: source?.title || "Başlıksız", warning: !source?.rawText ? "rawText/sourceText yok; yine de yedeğe eklendi." : "Kimlik veya başlık eksik; yine de yedeğe eklendi." })),
+      };
+      if (diagnostics.missingFromBackup.length || diagnostics.duplicateSourceIds.length || diagnostics.expectedSourceCount !== diagnostics.backupSourceCount) throw new BackupIntegrityError(diagnostics);
+      const questionById = new Map();
+      (storedQuestions || []).forEach(question => questionById.set(String(question.id), question));
+      (questionBank || []).forEach(question => questionById.set(String(question.id), question));
+      return { sources: backupSources, questions: [...questionById.values()], diagnostics };
+    }
 
     function safeBackupClone(value) {
       const seen = new WeakSet();
@@ -4128,7 +4173,9 @@
         if (answer.selectedKey === question.correctAnswer) correct++; else wrong++;
       });
       return {
-        sources: (normalized.uploadedBank?.documents || []).length,
+        sources: (normalized.uploadedBank?.documents || []).filter(source => !source?.deletedAt).length,
+        exitQuestionSources: (normalized.uploadedBank?.documents || []).filter(source => !source?.deletedAt && sourceType(source) === "exitQuestion").length,
+        mockExamSources: (normalized.uploadedBank?.documents || []).filter(source => !source?.deletedAt && sourceType(source) === "mockExam").length,
         answers: answers.length,
         correct,
         wrong,
@@ -4176,10 +4223,10 @@
       return { articles: Array.isArray(articles) ? articles : [], attempts: Array.isArray(attempts) ? attempts : [], updatedAt: module.updatedAt || maxUpdatedAt([articles, attempts]) };
     }
 
-    function backupPayload() {
+    async function backupPayload() {
       flushActiveQuestionWork();
-      // Re-read every persisted record after the active state has been flushed.
-      const persistedBank = loadJson(STORAGE_UPLOADS, uploadedBank);
+      const complete = await collectCompleteBackupData();
+      const persistedBank = { documents: complete.sources, questions: complete.questions };
       const persistedProgress = normalizeExamProgress(loadJson(STORAGE_EXAM_PROGRESS, examProgress));
       const persistedWrong = loadJson(STORAGE_WRONG_QUESTIONS, wrongQuestionIds);
       const persistedReview = normalizeWrongReviewSession(loadJson(STORAGE_WRONG_REVIEW_SESSION, wrongReviewSession));
@@ -4193,6 +4240,7 @@
         exportedAt: now,
         modules: {
           questionSources: { records: persistedBank, updatedAt: maxUpdatedAt([...(persistedBank.documents || []), ...(persistedBank.questions || [])]) },
+          backupIntegrity: { records: complete.diagnostics, updatedAt: now },
           // Canonical, explicit solution records. IDs are copied verbatim; no
           // restore path creates new source/question/attempt IDs.
           questionAnswers: { records: questionAnswers, updatedAt: maxUpdatedAt(questionAnswers) },
@@ -4232,8 +4280,10 @@
         .some(value => Array.isArray(value) && value.length) || Object.keys(data.examProgress?.exams || {}).length > 0;
     }
 
-    function downloadBackupJson() {
-      const payload = backupPayload();
+    async function downloadBackupJson() {
+      let payload;
+      try { payload = await backupPayload(); }
+      catch (error) { const status = document.getElementById("backupStatus"); if (status) status.textContent = error.message || "Yedek bütünlüğü doğrulanamadı."; return; }
       const fileName = "yds-calisma-yedek-" + new Date().toISOString().slice(0, 10) + ".json";
       const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
@@ -4505,6 +4555,7 @@
         url: normalizeSupabaseUrl(config.url),
         anonKey: String(config.anonKey || "").trim(),
         syncId: String(config.syncId || "").trim(),
+        connectionStatus: String(config.connectionStatus || "not_saved"),
       };
     }
 
@@ -4513,6 +4564,7 @@
         url: normalizeSupabaseUrl(config.url),
         anonKey: String(config.anonKey || "").trim(),
         syncId: String(config.syncId || "").trim(),
+        connectionStatus: String(config.connectionStatus || "saved"),
       };
       saveJson(STORAGE_SUPABASE_CONFIG, normalized);
       return normalized;
@@ -4574,14 +4626,29 @@
     async function testSupabaseConnection() {
       try {
         const config = validateSupabaseConfig(currentSupabaseFormConfig());
-        supabaseStatus("Bağlantı test ediliyor...");
+        supabaseStatus("Bağlantı kuruluyor...");
         const response = await fetch(config.url + "/rest/v1/yds_cloud_backups?select=sync_id&limit=1", {
           headers: supabaseHeaders(config),
         });
         if (!response.ok) throw new Error(await response.text() || "Supabase bağlantısı başarısız.");
+        saveSupabaseConfig({ ...config, connectionStatus: "success" });
         supabaseStatus("Bağlantı başarılı. Artık buluta yedek alabilirsin.", "success");
       } catch (error) {
+        const config = loadSupabaseConfig(); saveSupabaseConfig({ ...config, connectionStatus: navigator.onLine ? "error" : "offline" });
         supabaseStatus(error.message || "Bağlantı test edilemedi.", "error");
+      }
+    }
+
+    async function showBackupDiagnostics() {
+      try {
+        const complete = await collectCompleteBackupData();
+        const d = complete.diagnostics;
+        const text = `Beklenen: ${d.expectedSourceCount}\nYedek paketi: ${d.backupSourceCount}\nEksik: ${d.missingFromBackup.length}\nFazla: ${d.extraInBackup.length}\nÇakışan ID: ${d.duplicateSourceIds.join(", ") || "yok"}\nUyarı: ${d.validationWarnings.length}`;
+        const status = document.getElementById("backupStatus"); if (status) status.textContent = text;
+      } catch (error) {
+        const d = error.diagnostics;
+        const details = d?.missingSources?.map((source, index) => `${index + 1}. ${source.id} · ${source.title} · ${source.type}`).join(" | ") || "Tanılama ayrıntısı yok.";
+        const status = document.getElementById("backupStatus"); if (status) status.textContent = `${error.message} Eksik kayıtlar: ${details}`;
       }
     }
 
@@ -4589,7 +4656,7 @@
       try {
         const config = validateSupabaseConfig(silent ? loadSupabaseConfig() : currentSupabaseFormConfig());
         if (!silent) supabaseStatus("Veriler buluta yedekleniyor...");
-        const payload = backupPayload();
+        const payload = await backupPayload();
         const localSummary = backupSummary(normalizeBackupPayload(payload));
         const localRfsCount = payload.modules.readForSpeed.articles.length;
         const existingResponse = await fetch(config.url + "/rest/v1/yds_cloud_backups?sync_id=eq." + encodeURIComponent(config.syncId) + "&select=payload&limit=1", { headers: supabaseHeaders(config) });
@@ -4623,7 +4690,7 @@
         const verified = backupSummary(normalizeBackupPayload(verifyRows[0]?.payload));
         if (normalizeReadForSpeedBackup(verifyRows[0]?.payload).articles.length !== localRfsCount || verified.sources !== localSummary.sources || verified.answers !== localSummary.answers || verified.correct !== localSummary.correct || verified.wrong !== localSummary.wrong || verified.attempts !== localSummary.attempts || verified.words !== localSummary.words) throw new Error("Bulut kaydı yerel soru çözüm sayılarıyla eşleşmedi. Yedekleme başarılı sayılmadı.");
         const history = loadJson(STORAGE_CLOUD_HISTORY, []);
-        const entry = { createdAt: payload.createdAt, deviceLabel: navigator.userAgent.slice(0, 80), schemaVersion: payload.schemaVersion, ...localSummary };
+        const entry = { createdAt: payload.createdAt, deviceLabel: navigator.userAgent.slice(0, 80), schemaVersion: payload.schemaVersion, integrity: "verified", ...localSummary };
         saveJson(STORAGE_CLOUD_HISTORY, [entry, ...(Array.isArray(history) ? history : [])].slice(0, 5));
         // History is additive: a failure here never changes the verified current
         // snapshot, which keeps older Supabase installations compatible.
@@ -4652,8 +4719,12 @@
         if (!rows.length || !rows[0].payload) throw new Error("Bu eşitleme koduyla kayıtlı bulut yedeği bulunamadı.");
         const cloud = normalizeBackupPayload(rows[0].payload);
         const backupDate = new Date(rows[0].updated_at || cloud.createdAt || Date.now()).toLocaleString("tr-TR");
-        const localSummary = backupSummary({ uploadedBank, examProgress, wordbook, questionAttempts: questionBackupRecords(examProgress) });
+        const localSummary = backupSummary({ uploadedBank: { documents, questions: questionBank }, examProgress, wordbook, questionAttempts: questionBackupRecords(examProgress) });
         const cloudSummary = backupSummary(cloud);
+        if (cloudSummary.sources < localSummary.sources) {
+          const continueMerge = window.confirm(`Yerel kaynak: ${localSummary.sources}\nYedek kaynak: ${cloudSummary.sources}\nYedekte bulunmayan yerel kaynak: ${localSummary.sources - cloudSummary.sources}\n\nVarsayılan güvenli birleştirme yerel kaynakları korur. Devam edilsin mi?`);
+          if (!continueMerge) { supabaseStatus("Eksik bulut yedeğiyle geri yükleme iptal edildi.", "info"); return; }
+        }
         if (cloudSummary.answers === 0 && localSummary.answers > 0) {
           const protect = window.confirm("Bulut yedeğinde soru çözüm verisi bulunmuyor. Geri yükleme yerel ilerlemelerinizi silebilir. Yerel veriyi korumak için Tamam'a basın.");
           if (protect) { supabaseStatus("Yerel soru çözüm verileri korundu.", "info"); return; }
@@ -4661,7 +4732,8 @@
         const choice = String(window.prompt(backupPreviewText(localSummary, cloudSummary, backupDate), "B") || "K").trim().toLocaleUpperCase("tr-TR");
         if (choice === "K") { supabaseStatus("Yerel veriler korundu.", "info"); return; }
         if (choice !== "B" && choice !== "D") { supabaseStatus("Geri yükleme iptal edildi.", "info"); return; }
-        const replace = choice === "D";
+        const replace = choice === "D" && cloudSummary.sources >= localSummary.sources;
+        if (choice === "D" && !replace) supabaseStatus("Eksik yedek yerelin üzerine yazamaz; güvenli birleştirme uygulanacak.", "info");
         const result = safeRestoreCloudBackup(rows[0].payload, replace);
         supabaseStatus(result.message + (result.warnings.length ? " Uyarı: " + result.warnings[0] : ""), "success");
       } catch (error) {
@@ -4693,10 +4765,11 @@
       pageTitle.textContent = "Ayarlar";
       renderMenu();
       renderStats();
-      const totalQuestions = (uploadedBank.questions || []).length;
-      const totalSources = (uploadedBank.documents || []).length;
+      const totalQuestions = questionBank.length;
+      const totalSources = documents.filter(source => !source?.deletedAt).length;
       const supabaseConfig = loadSupabaseConfig();
       const cloudHistory = Array.isArray(loadJson(STORAGE_CLOUD_HISTORY, [])) ? loadJson(STORAGE_CLOUD_HISTORY, []).slice(0, 5) : [];
+      const verifiedCloudHistory = cloudHistory.filter(item => item?.integrity === "verified");
       const supabaseSql = "create table if not exists public.yds_cloud_backups (\n" +
         "  sync_id text primary key,\n" +
         "  payload jsonb not null,\n" +
@@ -4754,6 +4827,7 @@
               '</div>' +
               '<div class="flex flex-wrap gap-2">' +
                 '<button id="exportBackupBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white shadow-sm hover:bg-blue-500">JSON Yedek Al</button>' +
+                '<button id="backupDiagnosticsBtn" class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 hover:bg-slate-50">Yedek Bütünlüğünü İncele</button>' +
                 '<label class="cursor-pointer rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-black text-blue-700 hover:bg-blue-100">' +
                   'Yedekten Geri Yükle' +
                   '<input id="importBackupInput" type="file" accept="application/json" class="hidden" />' +
@@ -4801,15 +4875,15 @@
               '<button id="diagnoseCloudDataBtn" class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 hover:bg-slate-50">Kurtarılabilir Verileri İncele</button>' +
             '</div>' +
             '<div class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold text-slate-600">' +
-              '<p class="font-black text-slate-800">Son 5 yerel yedek özeti</p>' +
-              (cloudHistory.length ? '<div class="mt-2 grid gap-1">' + cloudHistory.map(item => '<p>' + escapeHtml(new Date(item.createdAt || Date.now()).toLocaleString("tr-TR")) + ' · ' + escapeHtml(item.deviceLabel || "cihaz") + ' · ' + Number(item.sources || 0) + ' kaynak · ' + Number(item.answers || 0) + ' cevap · ' + Number(item.correct || 0) + 'D/' + Number(item.wrong || 0) + 'Y · ' + Number(item.words || 0) + ' kelime · şema ' + Number(item.schemaVersion || 1) + '</p>').join("") + '</div>' : '<p class="mt-1">Henüz doğrulanmış bulut yedeği yok.</p>') +
+              '<p class="font-black text-slate-800">Son 5 doğrulanmış yerel yedek özeti</p>' +
+              (verifiedCloudHistory.length ? '<div class="mt-2 grid gap-1">' + verifiedCloudHistory.map(item => '<p>' + escapeHtml(new Date(item.createdAt || Date.now()).toLocaleString("tr-TR")) + ' · ' + escapeHtml(item.deviceLabel || "cihaz") + ' · ' + Number(item.sources || 0) + ' kaynak (' + Number(item.exitQuestionSources || 0) + ' Çıkmış · ' + Number(item.mockExamSources || 0) + ' Deneme) · ' + Number(item.answers || 0) + ' cevap · ' + Number(item.correct || 0) + 'D/' + Number(item.wrong || 0) + 'Y · ' + Number(item.words || 0) + ' kelime · şema ' + Number(item.schemaVersion || 1) + ' · Bütünlük doğrulandı</p>').join("") + '</div>' : '<p class="mt-1">Henüz doğrulanmış bulut yedeği yok.' + (cloudHistory.length ? ' Eski 38 kaynaklı özetler korunuyor ancak geçerli sayılmıyor.' : '') + '</p>') +
             '</div>' +
             '<details class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold text-slate-600">' +
               '<summary class="cursor-pointer font-black text-slate-800">Supabase tablo kodunu göster</summary>' +
               '<p class="mt-2">Supabase SQL Editor içinde bir kere çalıştır:</p>' +
               '<pre class="mt-2 max-h-72 overflow-auto rounded-xl bg-slate-950 p-3 text-xs font-semibold leading-5 text-slate-100">' + escapeHtml(supabaseSql) + '</pre>' +
             '</details>' +
-            '<p id="supabaseStatus" class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold text-slate-600">Supabase bağlantısı henüz kurulmadı.</p>' +
+            '<p id="supabaseStatus" class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold text-slate-600">' + escapeHtml(!supabaseConfig.url || !supabaseConfig.anonKey || !supabaseConfig.syncId ? "Bağlantı bilgileri kaydedilmedi." : supabaseConfig.connectionStatus === "success" ? "Bağlantı başarılı." : supabaseConfig.connectionStatus === "error" ? "Bağlantı başarısız; Test Et ile yeniden dene." : supabaseConfig.connectionStatus === "offline" ? "Çevrimdışı." : "Bağlantı bilgileri kaydedildi; henüz test edilmedi.") + '</p>' +
           '</section>' +
         '</div>';
       document.getElementById("saveDailyGoalsBtn").addEventListener("click", () => {
@@ -4826,6 +4900,7 @@
         renderSettingsPage("Günlük hedefler güncellendi.");
       });
       document.getElementById("exportBackupBtn").addEventListener("click", downloadBackupJson);
+      document.getElementById("backupDiagnosticsBtn").addEventListener("click", () => void showBackupDiagnostics());
       document.getElementById("resetStatisticsBtn").addEventListener("click", resetAllStatistics);
       document.getElementById("importBackupInput").addEventListener("change", event => {
         const file = event.target.files?.[0];
