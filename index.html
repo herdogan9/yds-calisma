@@ -204,7 +204,7 @@
         width: 100%;
         max-width: 850px;
         margin-inline: auto;
-        padding-inline: 54px;
+        padding-inline: 28px;
       }
 
       .daily-word-carousel-stage .daily-word-card {
@@ -229,8 +229,8 @@
         z-index: 2;
       }
 
-      #dailyWordPrevBtn { left: 0 !important; right: auto !important; }
-      #dailyWordNextBtn { right: 0 !important; left: auto !important; }
+      #dailyWordPrevBtn { left: 4px !important; right: auto !important; }
+      #dailyWordNextBtn { right: 4px !important; left: auto !important; }
     }
 
     #dailyWordPrevBtn:focus-visible,
@@ -241,6 +241,108 @@
 
     [data-theme="dark"] .daily-word-synonyms { color: #cbd5e1 !important; }
     [data-theme="dark"] .daily-word-synonyms-label { color: #e2e8f0 !important; }
+
+    /* Günün Kelimeleri: günlük flashcard yüzeyi */
+    .daily-word-panel {
+      overflow: visible;
+      padding: 14px 18px !important;
+      border-color: var(--border-color) !important;
+      background: var(--bg-surface) !important;
+      box-shadow: 0 8px 22px rgb(15 23 42 / 5%) !important;
+    }
+
+    .daily-word-header { margin-bottom: 7px; }
+    .daily-word-section-label { letter-spacing: .11em; }
+    .daily-word-control {
+      display: inline-flex;
+      min-height: 30px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-color);
+      border-radius: 999px;
+      background: var(--bg-surface-secondary);
+      color: var(--text-secondary);
+      padding: 4px 9px;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .daily-word-shuffle {
+      border-radius: 9px;
+      background: var(--button-secondary-bg);
+      color: var(--button-secondary-text);
+    }
+
+    .daily-word-shuffle:hover {
+      border-color: #93c5fd;
+      background: var(--button-secondary-hover);
+      color: #2563eb;
+    }
+
+    .daily-word-carousel-stage { padding-inline: 16px; }
+    .daily-word-carousel-stage .daily-word-card {
+      min-height: 0;
+      padding: 18px 28px !important;
+      border-color: var(--border-color) !important;
+      border-radius: 20px !important;
+      background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-surface-secondary) 100%) !important;
+      box-shadow: 0 8px 24px rgb(15 23 42 / 6%) !important;
+    }
+
+    .daily-word-card-content { gap: 0; }
+    .daily-word-content { padding-inline: 72px; }
+    .daily-word-difficulty {
+      border-color: #f4d58d !important;
+      background: #fff8e6 !important;
+      color: #a16207 !important;
+      padding: 4px 9px !important;
+      font-size: 11px !important;
+    }
+
+    .daily-word-title { max-width: 100%; overflow-wrap: anywhere; word-break: normal; text-wrap: balance; letter-spacing: -0.035em; line-height: 1.02 !important; }
+    .daily-word-title.word-short, .daily-word-title.word-medium { font-size: 36px !important; }
+    .daily-word-title.word-long { font-size: clamp(32px, 3.2vw, 34px) !important; }
+    .daily-word-title.word-extra-long { font-size: clamp(30px, 3vw, 32px) !important; }
+    .daily-word-title.word-phrase.word-short, .daily-word-title.word-phrase.word-medium { font-size: clamp(32px, 3.2vw, 34px) !important; }
+    .daily-word-title.word-phrase.word-long { font-size: clamp(30px, 3vw, 32px) !important; }
+    .daily-word-title.word-phrase.word-extra-long { font-size: clamp(36px, 3.5vw, 44px) !important; }
+    .daily-word-term { margin-top: 8px; }
+    .daily-word-meaning { margin-top: 8px !important; overflow-wrap: anywhere; font-size: 20px !important; line-height: 1.35 !important; }
+    .daily-word-example {
+      max-width: 1000px;
+      margin-top: 30px;
+      border-left: 3px solid #3b82f6;
+      border-radius: 0 12px 12px 0;
+      background: color-mix(in srgb, #eff6ff 52%, var(--bg-surface));
+      padding: 10px 12px;
+    }
+
+    .daily-word-example p { margin: 0; font-weight: 600 !important; line-height: 1.65 !important; }
+    .daily-word-synonym-row { display: flex; max-width: 100%; min-width: 0; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 11px; }
+    .daily-word-synonym-label { margin-right: 2px; color: var(--text-secondary); font-size: 11px; font-weight: 800; }
+    .daily-word-synonym-chip {
+      display: inline-flex;
+      max-width: 100%;
+      align-items: center;
+      border: 1px solid color-mix(in srgb, #93c5fd 48%, var(--border-color));
+      border-radius: 999px;
+      background: color-mix(in srgb, #dbeafe 58%, var(--bg-surface));
+      color: color-mix(in srgb, var(--text-primary) 78%, #2563eb);
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+    }
+
+    #dailyWordPrevBtn, #dailyWordNextBtn { width: 48px !important; min-width: 48px !important; height: 48px !important; min-height: 48px !important; border-color: var(--border-color) !important; background: var(--bg-surface) !important; box-shadow: 0 3px 9px rgb(15 23 42 / 6%); }
+    #dailyWordPrevBtn:hover:not(:disabled), #dailyWordNextBtn:hover:not(:disabled) { background: #eff6ff !important; border-color: #93c5fd !important; box-shadow: 0 5px 12px rgb(37 99 235 / 11%); }
+    [data-theme="dark"] .daily-word-carousel-stage .daily-word-card { background: linear-gradient(180deg, var(--bg-surface) 0%, #182235 100%) !important; box-shadow: none !important; }
+    [data-theme="dark"] .daily-word-difficulty { border-color: #9a6b16 !important; background: #3f3013 !important; color: #fcd34d !important; }
+    [data-theme="dark"] .daily-word-example { background: #182235; border-left-color: #60a5fa; }
+    [data-theme="dark"] .daily-word-synonym-chip { background: #263142; border-color: #506176; color: #cbd5e1; }
+    [data-theme="dark"] #dailyWordPrevBtn:hover:not(:disabled), [data-theme="dark"] #dailyWordNextBtn:hover:not(:disabled) { background: #263b5a !important; border-color: #60a5fa !important; }
 
     @media (max-width: 767px) {
       .daily-word-carousel-stage {
@@ -267,6 +369,12 @@
 
       #dailyWordPrevBtn { grid-column: 1; grid-row: 2; }
       #dailyWordNextBtn { grid-column: 2; grid-row: 2; }
+      .daily-word-panel { padding: 12px !important; }
+      .daily-word-carousel-stage .daily-word-card { min-height: 0; padding: 16px 18px !important; }
+      .daily-word-content { padding-inline: 28px; }
+      .daily-word-synonym-row { align-items: flex-start; }
+      .daily-word-synonym-label { flex-basis: 100%; }
+      .daily-word-example { margin-top: 12px; padding: 9px 10px; }
     }
 
     button:disabled,
@@ -589,13 +697,16 @@
       color: #64748b !important;
     }
 
-    .home-recent-words-panel { background: #f3f7fc !important; border-color: #cbd8e8 !important; box-shadow: 0 4px 12px rgb(15 23 42 / 4%) !important; }
-    .home-recent-words-panel .home-recent-words-item { background: #ffffff !important; border-color: #d5e0ee !important; box-shadow: none !important; }
+    .home-recent-words-panel { background: var(--home-recent-surface) !important; border-color: var(--border-color) !important; box-shadow: 0 4px 12px rgb(15 23 42 / 4%) !important; }
+    .home-recent-words-list { display: grid; margin-top: 10px; }
+    .home-recent-words-panel .home-recent-words-item { padding: 11px 4px; border: 0 !important; border-top: 1px solid var(--border-color) !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; transition: background-color .15s ease; }
+    .home-recent-words-panel .home-recent-words-item:hover { background: var(--home-recent-item-surface) !important; }
+    .home-recent-words-panel .home-recent-words-item:first-child { border-top: 0 !important; }
     .home-recent-words-panel .home-recent-words-meaning { color: #1d4ed8 !important; }
     .home-recent-words-link { border: 1px solid transparent; background: #edf3fa; color: #526b8a !important; }
     .home-recent-words-link:hover { background: #e4eef9; color: #3f5f85 !important; }
     [data-theme="dark"] .home-recent-words-panel { background: #202b3b !important; border-color: #506176 !important; box-shadow: none !important; }
-    [data-theme="dark"] .home-recent-words-panel .home-recent-words-item { background: #182235 !important; border-color: #506176 !important; }
+    [data-theme="dark"] .home-recent-words-panel .home-recent-words-item { background: transparent !important; border-color: var(--border-color) !important; }
     [data-theme="dark"] .home-recent-words-panel .home-recent-words-meaning { color: #93c5fd !important; }
     [data-theme="dark"] .home-recent-words-link { background: #263142; color: #cbd5e1 !important; }
     [data-theme="dark"] .home-recent-words-link:hover { background: #303b4d; color: #f8fafc !important; }
@@ -661,9 +772,10 @@
     }
 
     .yds-top-dashboard {
-      height: 80px;
       min-height: 80px;
+      height: 80px;
       max-height: 80px;
+      overflow: hidden;
       background: #e3eaf3 !important;
       border-color: #c5cfdd !important;
       box-shadow: 0 8px 20px rgb(15 23 42 / 10%) !important;
@@ -694,9 +806,30 @@
     }
 
     .yds-top-dashboard #headerStats {
-      background: #f8fafc !important;
-      border-color: #cbd5e1 !important;
+      position: relative;
+      width: min(100%, 540px);
+      min-width: 0;
+      gap: 4px !important;
+      padding: 4px !important;
+      background: color-mix(in srgb, var(--bg-surface-secondary) 74%, transparent) !important;
+      border-color: transparent !important;
       box-shadow: none !important;
+    }
+
+    .yds-top-dashboard #headerStats > div {
+      border-radius: 10px !important;
+      padding: 7px 10px !important;
+    }
+
+    .yds-top-dashboard #headerStats > div p:first-child {
+      font-size: 10px !important;
+      line-height: 1.1;
+    }
+
+    .yds-top-dashboard #headerStats > div p:last-child {
+      margin-top: 3px !important;
+      font-size: 20px !important;
+      line-height: 1;
     }
 
     body.dark-theme .yds-sidebar {
@@ -1711,6 +1844,9 @@
     const STORAGE_DOCUMENT_PROGRESS = "yds-document-progress-v1";
     const STORAGE_NOTES = "yds-notebook-notes-v1";
     const STORAGE_EXAM_PROGRESS = "yds-exam-progress-v1";
+    // Kept separately from source progress so the header can accurately show
+    // every question answered today, even when answers came from many sources.
+    const STORAGE_DAILY_QUESTION_RESULTS = "yds-daily-question-results-v1";
     const STORAGE_CLOUD_HISTORY = "yds-cloud-backup-history-v1";
     const DEPLOY_DB_NAME = "yds-calisma-deploy-db";
     const DEPLOY_DB_VERSION = 1;
@@ -1728,6 +1864,8 @@
     let wrongReviewSession = normalizeWrongReviewSession(loadJson(STORAGE_WRONG_REVIEW_SESSION, null));
     let documentProgress = loadJson(STORAGE_DOCUMENT_PROGRESS, {});
     let examProgress = normalizeExamProgress(loadJson(STORAGE_EXAM_PROGRESS, { version: 1, exams: {} }));
+    let dailyQuestionResults = loadJson(STORAGE_DAILY_QUESTION_RESULTS, []);
+    if (!Array.isArray(dailyQuestionResults)) dailyQuestionResults = [];
     let notes = loadJson(STORAGE_NOTES, []);
     if (!Array.isArray(notes)) notes = [];
     notes = notes.map(normalizeNote);
@@ -2020,14 +2158,65 @@
 
     function saveSelectedAnswer(question, selectedKey) {
       if (!question?.id || !isAnswerKey(selectedKey)) return;
+      const now = new Date().toISOString();
+      recordDailyQuestionResult(question, selectedKey, now);
       if (solveMode === "wrong" && wrongReviewSession) {
-        saveWrongReviewSession({ ...wrongReviewSession, answers: { ...wrongReviewSession.answers, [question.id]: selectedKey }, updatedAt: new Date().toISOString() });
+        saveWrongReviewSession({ ...wrongReviewSession, answers: { ...wrongReviewSession.answers, [question.id]: selectedKey }, updatedAt: now });
         return;
       }
       const progress = progressForQuestion(question, true);
       progress.answers = { ...(progress.answers || {}), [question.id]: selectedKey };
-      progress.updatedAt = new Date().toISOString();
+      progress.updatedAt = now;
       saveExamProgress();
+    }
+
+    function recordDailyQuestionResult(question, selectedKey, answeredAt = new Date().toISOString()) {
+      const dateKey = localDateKey(answeredAt);
+      const sourceId = String(question.documentId || "unknown");
+      const questionId = String(question.id);
+      const id = dateKey + ":" + sourceId + ":" + questionId;
+      const result = { id, dateKey, sourceId, questionId, correct: Boolean(question.correctAnswer && selectedKey === question.correctAnswer), answeredAt };
+      // One answer per question per day: changing an option corrects today's
+      // result instead of inflating the daily total.
+      dailyQuestionResults = [...dailyQuestionResults.filter(item => item?.id !== id), result].slice(-10000);
+      saveJson(STORAGE_DAILY_QUESTION_RESULTS, dailyQuestionResults);
+    }
+
+    function dailyQuestionSummary(date = todayKey()) {
+      const summary = { correct: 0, wrong: 0 };
+      const recorded = new Set();
+      dailyQuestionResults.forEach(item => {
+        if (!item || item.dateKey !== date || typeof item.questionId !== "string" || typeof item.correct !== "boolean") return;
+        const key = String(item.sourceId || "unknown") + ":" + item.questionId;
+        recorded.add(key);
+        if (item.correct) summary.correct++;
+        else summary.wrong++;
+      });
+      // Preserve today's answers recorded by older versions of the app. From
+      // now on the dedicated ledger above is the authoritative daily record.
+      weeklyActivity.filter(item => item?.category === "question" && item.date === date).forEach(item => {
+        const questionId = String(item.key || "").split(":").at(-1);
+        const question = questionBank.find(candidate => candidate.id === questionId);
+        if (!question) return;
+        const key = String(question.documentId || "unknown") + ":" + question.id;
+        if (recorded.has(key)) return;
+        const selectedKey = examProgress.exams[examKeyForQuestion(question)]?.answers?.[question.id];
+        if (!isAnswerKey(selectedKey) || !question.correctAnswer) return;
+        recorded.add(key);
+        if (selectedKey === question.correctAnswer) summary.correct++;
+        else summary.wrong++;
+      });
+      return summary;
+    }
+
+    function overallQuestionSummary() {
+      return questionBank.reduce((summary, question) => {
+        const selectedKey = examProgress.exams[examKeyForQuestion(question)]?.answers?.[question.id];
+        if (!isAnswerKey(selectedKey) || !question.correctAnswer) return summary;
+        if (selectedKey === question.correctAnswer) summary.correct++;
+        else summary.wrong++;
+        return summary;
+      }, { correct: 0, wrong: 0 });
     }
 
     // One canonical record per source. Answers are keyed by the full question
@@ -3645,6 +3834,13 @@
       saveJson(STORAGE_DAILY_WORD_POOL, pool);
     }
 
+    function dailyWordTitleSizeClass(value) {
+      const text = String(value || "").trim();
+      const length = [...text].length;
+      const tier = length <= 10 ? "short" : length <= 15 ? "medium" : length <= 21 ? "long" : "extra-long";
+      return "word-" + tier + (/\s/.test(text) ? " word-phrase" : "");
+    }
+
     function renderDailyWordPanel() {
       const pool = dailyWordPool();
       const words = dailyWordItems();
@@ -3662,23 +3858,25 @@
       const itemDifficulty = dailyWordDifficulty(item);
       const synonymText = wordMeaningNote(item);
       const example = wordExample(item);
-      return '<section class="mb-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm" aria-labelledby="dailyWordPoolTitle">' +
-        '<div class="mb-2 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">' +
+      const titleSizeClass = dailyWordTitleSizeClass(item.word);
+      const synonymChips = synonymText.split(/[;,/|]+/).map(value => value.trim()).filter(Boolean);
+      return '<section class="daily-word-panel mb-3 rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="dailyWordPoolTitle">' +
+        '<div class="daily-word-header flex flex-col gap-2 md:flex-row md:items-center md:justify-between">' +
           '<div>' +
-            '<h4 id="dailyWordPoolTitle" class="text-xs font-black uppercase tracking-wide text-blue-500">Günün Kelimeleri</h4>' +
+            '<h4 id="dailyWordPoolTitle" class="daily-word-section-label text-xs font-black uppercase text-blue-500">Günün Kelimeleri</h4>' +
           '</div>' +
           '<div class="flex flex-wrap items-center gap-2">' +
-            '<span class="rounded-full border border-slate-200 bg-white px-2 py-1 text-xs font-black text-slate-500">' + (index + 1) + ' / ' + words.length + '</span>' +
-            '<button id="dailyWordShuffleBtn" class="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs font-black text-slate-600 hover:border-blue-300 hover:text-blue-700">↻ Karıştır</button>' +
+            '<span class="daily-word-control">' + (index + 1) + ' / ' + words.length + '</span>' +
+            '<button id="dailyWordShuffleBtn" class="daily-word-control daily-word-shuffle">↻ Karıştır</button>' +
           '</div>' +
         '</div>' +
         '<div class="daily-word-carousel-stage">' +
           '<button id="dailyWordPrevBtn" aria-label="Önceki kelime" class="daily-word-arrow daily-word-arrow--previous z-10 rounded-full border border-slate-300 bg-white text-2xl leading-none text-blue-700">‹</button>' +
-          '<article class="daily-word-card min-w-0 w-full rounded-xl border border-slate-200 bg-slate-50 p-4"><div class="flex h-full min-w-0 flex-col justify-center">' +
-            '<div class="flex items-center gap-2"><div class="flex flex-wrap gap-1.5"><span class="rounded-full border px-2 py-0.5 text-[10px] font-black ' + itemDifficulty.className + '">' + itemDifficulty.label + '</span>' + (item.wordType || item.partOfSpeech ? '<span class="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-black text-slate-500">' + escapeHtml(item.wordType || item.partOfSpeech) + '</span>' : '') + '</div></div>' +
-            '<h5 class="mt-2 text-[28px] font-extrabold leading-[1.14] tracking-tight text-slate-950">' + escapeHtml(item.word) + '</h5><p class="mt-0.5 line-clamp-2 text-[18px] font-bold leading-[1.3] text-blue-700">' + escapeHtml(wordTurkish(item) || "") + '</p>' +
-            (example ? '<div class="mt-2 border-l-[3px] border-blue-500 pl-2.5"><p class="line-clamp-3 text-[14px] font-bold leading-[1.5] text-slate-700">' + escapeHtml(example) + '</p>' + (item.contextTranslation ? '<p class="mt-1 text-xs font-semibold text-slate-500">' + escapeHtml(item.contextTranslation) + '</p>' : '') + '</div>' : '') +
-            (synonymText ? '<p class="daily-word-synonyms mt-2 line-clamp-2 text-[12px] font-medium leading-[1.35] text-slate-700"><span class="daily-word-synonyms-label font-semibold text-slate-800">Yakın anlamlılar:</span> ' + escapeHtml(synonymText) + '</p>' : '') +
+          '<article class="daily-word-card min-w-0 w-full rounded-xl border border-slate-200 bg-slate-50"><div class="daily-word-card-content daily-word-content flex h-full min-w-0 flex-col justify-center">' +
+            '<div class="flex items-center gap-2"><div class="flex flex-wrap gap-1.5"><span class="daily-word-difficulty rounded-full border font-black ' + itemDifficulty.className + '">' + itemDifficulty.label + '</span>' + (item.wordType || item.partOfSpeech ? '<span class="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-black text-slate-500">' + escapeHtml(item.wordType || item.partOfSpeech) + '</span>' : '') + '</div></div>' +
+            '<h5 class="daily-word-title daily-word-term ' + titleSizeClass + ' font-extrabold tracking-tight text-slate-950">' + escapeHtml(item.word) + '</h5><p class="daily-word-meaning font-bold text-blue-700">' + escapeHtml(wordTurkish(item) || "") + '</p>' +
+            (example ? '<div class="daily-word-example"><p class="text-[14px] font-bold leading-[1.5] text-slate-700">' + escapeHtml(example) + '</p>' + (item.contextTranslation ? '<p class="mt-1 text-xs font-semibold text-slate-500">' + escapeHtml(item.contextTranslation) + '</p>' : '') + '</div>' : '') +
+            (synonymChips.length ? '<div class="daily-word-synonym-row"><span class="daily-word-synonym-label">Yakın anlamlılar</span>' + synonymChips.map(value => '<span class="daily-word-synonym-chip">' + escapeHtml(value) + '</span>').join("") + '</div>' : '') +
           '</div></article>' +
           '<button id="dailyWordNextBtn" aria-label="Sonraki kelime" class="daily-word-arrow daily-word-arrow--next z-10 rounded-full border border-slate-300 bg-white text-2xl leading-none text-blue-700">›</button>' +
         '</div>' +
@@ -3815,15 +4013,19 @@
 
     function renderWeeklySummaryPanel() {
       const summary = weeklySummary();
-      const activeDates = new Set(weeklyActivity.map(item => item.date));
+      const dayLabels = ["P", "S", "Ç", "P", "C", "C", "P"];
       const dots = Array.from({ length: 7 }, (_, index) => {
         const today = new Date(todayKey() + "T12:00:00");
         const day = today.getDay() || 7;
         const date = new Date(today);
         date.setDate(today.getDate() - day + 1 + index);
         const key = localDateKey(date);
-        const active = activeDates.has(key);
-        return '<span class="h-2.5 w-2.5 rounded-full ' + (active ? "bg-blue-500" : "bg-slate-300") + '" title="' + escapeHtml(formatTurkishDate(key)) + (active ? ' · aktif' : ' · çalışma yok') + '"></span>';
+        const activity = weeklyActivity.filter(item => item.date === key);
+        const words = activity.filter(item => item.category === "word").length;
+        const questions = activity.filter(item => item.category === "question").length;
+        const active = words + questions > 0;
+        const tooltip = formatTurkishDate(key) + (active ? ' · ' + words + ' çalışılan kelime · ' + questions + ' çözülen soru' : ' · çalışma yok');
+        return '<span class="grid justify-items-center gap-2 text-xs font-black text-slate-500" title="' + escapeHtml(tooltip) + '"><i class="h-2.5 w-2.5 rounded-full ring-4 ring-white dark:ring-slate-800 ' + (active ? "bg-blue-500" : "bg-slate-300") + '" aria-hidden="true"></i><b>' + dayLabels[index] + '</b></span>';
       }).join("");
       const cards = [
         ["Çalışılan kelime", summary.words],
@@ -3832,9 +4034,9 @@
         ["Aktif gün", summary.activeDays],
       ];
       return '<section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
-        '<div class="flex items-center justify-between gap-3">' +
-          '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Bu Hafta</p>' +
-          '<div class="flex items-center gap-1.5" aria-label="Son yedi gün">' + dots + '</div>' +
+        '<div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">' +
+          '<div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Bu Hafta</p></div>' +
+          '<div class="grid grid-cols-7 gap-2" aria-label="Bu haftaki çalışma günleri">' + dots + '</div>' +
         '</div>' +
         '<div class="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-2">' + cards.map(([label, value]) =>
           '<div class="rounded-xl bg-slate-50 p-3"><p class="text-xs font-bold text-slate-500">' + label + '</p><p class="mt-1 text-xl font-black text-slate-950">' + value + '</p></div>'
@@ -3908,11 +4110,11 @@
           '</div>' +
           '<button id="recentWordsOpenBtn" class="home-recent-words-link rounded-xl px-2.5 py-2 text-xs font-black">Kelime Defteri</button>' +
         '</div>' +
-        '<div class="grid gap-2">' + recent.map(item => {
+        '<div class="home-recent-words-list">' + recent.map(item => {
           const synonym = wordMeaningNote(item);
-          return '<article class="home-recent-words-item rounded-xl border border-slate-200 bg-slate-50 p-3">' +
-            '<h5 class="truncate text-lg font-black text-slate-950">' + escapeHtml(item.word) + '</h5>' +
-            '<p class="home-recent-words-meaning mt-2 line-clamp-2 text-sm font-black">' + escapeHtml(wordTurkish(item) || "Anlam eklenmemiş") + '</p>' +
+          return '<article class="home-recent-words-item">' +
+            '<h5 class="truncate text-[15px] font-black text-slate-950">' + escapeHtml(item.word) + '</h5>' +
+            '<p class="home-recent-words-meaning mt-1 line-clamp-2 text-sm font-black">' + escapeHtml(wordTurkish(item) || "Anlam eklenmemiş") + '</p>' +
             (synonym ? '<p class="mt-1 line-clamp-2 text-xs font-bold text-slate-600" title="' + escapeHtml(synonym) + '">Yakın anlamlılar: ' + escapeHtml(synonym) + '</p>' : '') +
           '</article>';
         }).join("") + '</div>' +
@@ -4941,6 +5143,7 @@
       dailyHistory = [];
       dailyProgress = createDailyProgress();
       weeklyActivity = [];
+      dailyQuestionResults = [];
       wordbook = wordbook.map(item => ({
         ...item,
         seen: 0,
@@ -4975,6 +5178,7 @@
       saveJson(STORAGE_DAILY_HISTORY, dailyHistory);
       saveJson(STORAGE_DAILY_PROGRESS, dailyProgress);
       saveWeeklyActivity(false);
+      saveJson(STORAGE_DAILY_QUESTION_RESULTS, dailyQuestionResults);
       saveJson(STORAGE_WORDS, wordbook);
       saveJson(STORAGE_ARTICLES, articles);
       saveJson("yds-word-session-ids-v1", wordSessionIds);
@@ -5080,8 +5284,9 @@
     }
 
     function renderStats() {
-      const total = stats.correct + stats.wrong;
-      const rate = total === 0 ? 0 : Math.round((stats.correct / total) * 100);
+      const overallStats = overallQuestionSummary();
+      const total = overallStats.correct + overallStats.wrong;
+      const rate = total === 0 ? 0 : Math.round((overallStats.correct / total) * 100);
       if (sidebarWordCount) sidebarWordCount.textContent = wordbook.length;
       if (activeView === "home") bankInfo.textContent = "Bugünkü çalışma planın";
       else if (activeView === "words") bankInfo.textContent = wordbook.length + " kayıtlı kelime";
@@ -5095,15 +5300,18 @@
         const wrong = completed.reduce((sum, item) => sum + item.incorrectCount, 0);
         const rate = correct + wrong ? Math.round(correct / (correct + wrong) * 100) : 0;
         bankInfo.textContent = `${summaries.length} metin · ${totalChoices} seçim · ${completed.length} tamamlandı`;
-        headerStats.className = "grid grid-cols-3 gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm";
+        headerStats.className = "grid grid-cols-3 gap-2 rounded-xl bg-slate-50/70 p-1";
         headerStats.innerHTML = statCard("Doğru", correct, "green") + statCard("Yanlış", wrong, "red") + statCard("Başarı", "%" + rate, "blue");
       }
       else if (activeView === "notes") bankInfo.textContent = notes.length + " not";
       else if (["yds", "eyds", "yokdil", "exams"].includes(activeView)) bankInfo.textContent = moduleMeta(activeView).description;
       else bankInfo.textContent = documents.length + " bölüm · " + questionBank.length + " soru · " + wordbook.length + " kelime kartı";
       if (activeView === "home") {
-        headerStats.className = "hidden";
-        headerStats.innerHTML = "";
+        headerStats.className = "grid grid-cols-3 gap-2 rounded-xl bg-slate-50/70 p-1";
+        headerStats.innerHTML =
+          statCard("Toplam Doğru", overallStats.correct, "green") +
+          statCard("Toplam Yanlış", overallStats.wrong, "red") +
+          statCard("Başarı", "%" + rate, "blue");
       } else if (["words", "study"].includes(activeView)) {
         const wordSummary = wordStats();
         headerStats.className = "grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm sm:grid-cols-4";
@@ -5119,13 +5327,11 @@
         headerStats.className = "hidden";
         headerStats.innerHTML = "";
       } else if (activeView === "read-for-speed") {
-        // Read for Speed header statistics were calculated from its local attempts above.
+        headerStats.className = "hidden";
+        headerStats.innerHTML = "";
       } else {
-        headerStats.className = "grid grid-cols-3 gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm";
-        headerStats.innerHTML =
-          statCard("Doğru", stats.correct, "green") +
-          statCard("Yanlış", stats.wrong, "red") +
-          statCard("Başarı", "%" + rate, "blue");
+        headerStats.className = "hidden";
+        headerStats.innerHTML = "";
       }
     }
 
