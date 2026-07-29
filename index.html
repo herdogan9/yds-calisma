@@ -1251,9 +1251,18 @@
       transform: translateX(0);
     }
     /* Reading list: saved words and important structures pop-up. */
-    .article-card-collections { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .75rem; }
-    .article-card-collection-button { display: inline-flex; align-items: center; min-height: 30px; border: 1px solid var(--border-color); border-radius: 999px; padding: .35rem .65rem; background: var(--bg-surface-secondary); color: var(--text-secondary); font-size: .75rem; font-weight: 800; line-height: 1; transition: border-color .15s ease, background .15s ease, color .15s ease; }
-    .article-card-collection-button:hover, .article-card-collection-button:focus-visible { border-color: #60a5fa; background: #eff6ff; color: #1d4ed8; outline: none; }
+    .source-saved-items { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0 .9rem; }
+    .source-stat-badge { display: inline-flex; align-items: center; min-height: 34px; gap: .3rem; border: 1px solid transparent; border-radius: .7rem; padding: .3rem .58rem; cursor: pointer; font-size: .72rem; font-weight: 750; line-height: 1; white-space: nowrap; transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease; }
+    .source-stat-badge:hover { filter: saturate(1.12); }
+    .source-stat-badge:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; }
+    .source-stat-badge strong { font-size: .84rem; font-weight: 900; }
+    .source-stat-badge--words { border-color: color-mix(in srgb, #2563eb 30%, var(--border-color)); background: color-mix(in srgb, #2563eb 9%, var(--bg-surface)); color: #2563eb; }
+    .source-stat-badge--structures { border-color: color-mix(in srgb, #7c3aed 30%, var(--border-color)); background: color-mix(in srgb, #7c3aed 9%, var(--bg-surface)); color: #6d28d9; }
+    [data-theme="dark"] .source-stat-badge--words, body.dark-theme .source-stat-badge--words { background: color-mix(in srgb, #2563eb 24%, var(--bg-surface)); color: #bfdbfe; }
+    [data-theme="dark"] .source-stat-badge--structures, body.dark-theme .source-stat-badge--structures { background: color-mix(in srgb, #7c3aed 24%, var(--bg-surface)); color: #ddd6fe; }
+    .source-stat-badge--words:hover { border-color: color-mix(in srgb, #2563eb 52%, var(--border-color)); background: color-mix(in srgb, #2563eb 14%, var(--bg-surface)); }
+    .source-stat-badge--structures:hover { border-color: color-mix(in srgb, #7c3aed 52%, var(--border-color)); background: color-mix(in srgb, #7c3aed 14%, var(--bg-surface)); }
+    @media (max-width: 640px) { .source-stat-badge { min-height: 36px; } }
     .article-collection-modal { position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; padding: 1rem; background: rgb(15 23 42 / 42%); backdrop-filter: blur(5px); animation: articleCollectionBackdropIn 160ms ease-out both; }
     .article-collection-modal__dialog { width: min(560px, 100%); max-height: min(620px, calc(100vh - 2rem)); overflow: hidden; border: 1px solid #cbd5e1; border-radius: 1.25rem; background: #fff; color: #172033; box-shadow: 0 24px 70px rgb(15 23 42 / 28%); animation: articleCollectionDialogIn 180ms cubic-bezier(.2,.8,.2,1) both; }
     .article-collection-modal__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1rem 1.15rem .85rem; border-bottom: 1px solid #e2e8f0; background: linear-gradient(135deg, #f8fbff, #fff); }
@@ -1268,6 +1277,8 @@
     @keyframes articleCollectionBackdropIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes articleCollectionDialogIn { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
     @media (max-width: 640px) { .article-collection-modal { align-items: end; padding: 0; } .article-collection-modal__dialog { width: 100%; max-height: 78vh; border-radius: 1.25rem 1.25rem 0 0; } .article-collection-modal__header { padding: .9rem 1rem .75rem; } .article-collection-modal__list { padding: .8rem 1rem 1rem; } .article-collection-modal__item { min-height: 76px; padding: .75rem .9rem; border-radius: .9rem; } }
+
+    /* Source cards use the same quick collections as Reading Center cards. */
 
     @media (max-width: 640px) {
       .article-saved-drawer {
@@ -1322,6 +1333,10 @@
     .article-language-choice:last-child { border-right: 0; }
     .article-language-choice.is-active { background: #2563eb; color: white; }
     .article-language-choice:disabled { cursor: not-allowed; opacity: .48; }
+    .rfs-language-control { display: inline-flex; align-items: center; gap: .4rem; flex: 0 0 auto; }
+    .rfs-language-control .article-language-control { flex-shrink: 0; }
+    .rfs-language-control .article-language-choice,
+    .rfs-translation-edit { min-height: 42px; white-space: nowrap; }
     .article-bilingual-grid { display: grid; gap: 0; }
     .article-bilingual-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; padding: 1.1rem 0; border: 0; border-radius: 0; transition: background-color .15s ease; }
     .article-bilingual-pair + .article-bilingual-pair { border-top: 1px solid var(--border-color); }
@@ -1675,16 +1690,16 @@
     .rfs-list-grid { display:grid; grid-template-columns:repeat(1, minmax(0, 1fr)); gap:1rem; }
     .rfs-list-filters { display:grid; grid-template-columns:minmax(220px,1fr) minmax(180px,.45fr) minmax(210px,.55fr); gap:.75rem; margin-top:1rem; }
     .rfs-list-filters input, .rfs-list-filters select { min-height:44px; border:1px solid var(--border-color); border-radius:.75rem; padding:.65rem .75rem; background:var(--bg-surface-secondary); color:var(--text-primary); font-size:.875rem; font-weight:700; }
-    .read-for-speed-card { display:flex; flex-direction:column; min-height:250px; padding:18px; border:1px solid var(--border-color); border-radius:1rem; background:var(--bg-surface); box-shadow:0 12px 28px rgb(15 23 42 / 8%); transition:transform .14s ease,border-color .14s ease,box-shadow .14s ease; }
-    .read-for-speed-card:hover { transform:translateY(-1px); border-color:#cbd5e1; box-shadow:0 8px 18px rgb(15 23 42 / 8%); }
+    .read-for-speed-card { display:flex; flex-direction:column; min-height:276px; padding:20px; border:1px solid var(--border-color); border-radius:1.15rem; background:var(--bg-surface); box-shadow:0 12px 28px rgb(15 23 42 / 8%); transition:transform .14s ease,border-color .14s ease,box-shadow .14s ease; }
+    .read-for-speed-card:hover { transform:translateY(-2px); border-color:#bfdbfe; box-shadow:0 16px 28px rgb(37 99 235 / 10%); }
     .read-for-speed-card.is-completed { background:color-mix(in srgb, #ecfdf5 20%, var(--bg-surface)); }
     .rfs-card-status { display:inline-flex; align-items:center; width:max-content; border-radius:999px; padding:4px 9px; font-size:.72rem; font-weight:900; letter-spacing:.03em; }
     .rfs-status-new { background:#eff6ff; color:#2563eb; }
     .rfs-status-progress { background:#dbeafe; color:#1d4ed8; }
     .rfs-status-completed { background:var(--success-soft-bg); color:var(--success-text); border:1px solid var(--success-border); }
     .article-status-badge.article-status-completed { background:var(--success-soft-bg) !important; color:var(--success-text) !important; border-color:var(--success-border) !important; }
-    .read-for-speed-card-title { display:-webkit-box; min-height:47px; margin-top:14px; overflow:hidden; -webkit-box-orient:vertical; -webkit-line-clamp:2; font-size:1.15rem; font-weight:900; line-height:1.25; }
-    .rfs-card-detail { min-height:22px; margin-top:7px; font-size:.9rem; font-weight:700; color:var(--text-secondary); }
+    .read-for-speed-card-title { display:-webkit-box; min-height:50px; margin-top:16px; overflow:hidden; -webkit-box-orient:vertical; -webkit-line-clamp:2; font-size:1.15rem; font-weight:900; line-height:1.3; }
+    .rfs-card-detail { min-height:22px; margin-top:8px; font-size:.9rem; font-weight:700; color:var(--text-secondary); }
     .rfs-card-progress-label { display:flex; justify-content:space-between; margin-top:auto; color:var(--text-secondary); font-size:.69rem; font-weight:900; letter-spacing:.08em; }
     .rfs-card-progress { height:8px; margin-top:7px; overflow:hidden; border-radius:999px; background:var(--border-color); }
     .rfs-card-progress span { display:block; height:100%; border-radius:inherit; background:#2563eb; }
@@ -1845,6 +1860,7 @@
     const STORAGE_REMOVE_BUILTIN_SEEDS = "yds-remove-builtin-seeds-v1";
     const STORAGE_DAILY_HARD_WORDS = "yds-daily-hard-words-v1";
     const STORAGE_DAILY_WORD_POOL = "yds-daily-word-pool-v1";
+    const STORAGE_DAILY_WORD_POOL_RESET_VERSION = "yds-daily-word-pool-reset-focus-words-v2";
     const STORAGE_DAILY_GOALS = "yds-daily-goals-v1";
     const STORAGE_DAILY_PROGRESS = "yds-daily-progress-v1";
     const STORAGE_DAILY_HISTORY = "yds-daily-history-v1";
@@ -1872,6 +1888,15 @@
     let lastTextImport = null;
     let isSavingTextImport = false;
     let wordbook = (loadJson(STORAGE_WORDS, []) || []).map(item => ({ ...item, showInDailyWords: item?.showInDailyWords === true }));
+    const shouldResetDailyWordPool = localStorage.getItem(STORAGE_DAILY_WORD_POOL_RESET_VERSION) !== "done";
+    if (shouldResetDailyWordPool) {
+      const resetAt = new Date().toISOString();
+      wordbook = wordbook.map(item => ({ ...item, showInDailyWords: false, updatedAt: item.showInDailyWords === true ? resetAt : item.updatedAt }));
+      saveJson(STORAGE_WORDS, wordbook);
+      saveJson(STORAGE_DAILY_WORD_POOL, { wordIds: [], currentWordId: null, shuffledAt: null, updatedAt: resetAt });
+      localStorage.setItem(STORAGE_DAILY_WORD_POOL_RESET_VERSION, "done");
+      window.setTimeout(() => queueSupabaseAutoBackup(), 0);
+    }
     let articles = loadJson(STORAGE_ARTICLES, []);
     let readForSpeedArticles = loadJson(STORAGE_READ_FOR_SPEED, []);
     let wrongQuestionIds = loadJson(STORAGE_WRONG_QUESTIONS, []);
@@ -2281,10 +2306,98 @@
       saveExamProgress();
     }
 
+    // Shared compact saved-items control used by source, reading, and RFS cards.
+    // It deliberately renders nothing for zero counts so cards retain their natural height.
+    function SourceSavedItemsBadges({ sourceId, wordCount = 0, structureCount = 0, scope }) {
+      const words = Math.max(0, Number(wordCount) || 0);
+      const structures = Math.max(0, Number(structureCount) || 0);
+      if (!words && !structures) return "";
+      const id = escapeHtml(sourceId || "");
+      const safeScope = escapeHtml(scope || "");
+      return '<div class="source-saved-items" aria-label="Kaydedilmiş öğeler">' +
+        (words ? '<button class="source-stat-badge source-stat-badge--words" data-saved-items-scope="' + safeScope + '" data-saved-items="words" data-id="' + id + '" type="button" title="Bu kaynaktan Kelime Defteri’ne eklenen kelimeleri göster."><strong>' + words + '</strong><span>Kelime</span></button>' : '') +
+        (structures ? '<button class="source-stat-badge source-stat-badge--structures" data-saved-items-scope="' + safeScope + '" data-saved-items="structures" data-id="' + id + '" type="button" title="Bu kaynaktan kaydedilen önemli yapıları göster."><strong>' + structures + '</strong><span>Önemli Yapı</span></button>' : '') +
+      '</div>';
+    }
+
     function sortedSourceDocuments(items) {
       const order = { inProgress: 0, notStarted: 1, completed: 2 };
       return items.map((item, index) => ({ item, index, progress: sourceProgressForDocument(item) }))
         .sort((a, b) => order[a.progress.status] - order[b.progress.status] || a.index - b.index);
+    }
+
+    // These collections let a learner review what was captured from a source
+    // before entering its question flow.  They intentionally use question ids
+    // (rather than question numbers) so identical numbering in two exams never
+    // mixes entries.
+    function savedWordsForDocument(documentInfo) {
+      const questionIds = new Set(questionBank.filter(question => question.documentId === documentInfo?.id).map(question => String(question.id)));
+      return wordbook.filter(word => questionIds.has(String(word?.questionId || "")));
+    }
+
+    function importantStructuresForDocument(documentInfo) {
+      const questionIds = new Set(questionBank.filter(question => question.documentId === documentInfo?.id).map(question => String(question.id)));
+      return notes.filter(note => note?.sourceType === "question" && (
+        String(note.sourceId || "") === String(documentInfo?.id || "") || questionIds.has(String(note.questionId || ""))
+      ));
+    }
+
+    function questionStructureLabel(note) {
+      return String(note?.highlightedText || note?.selectedText || note?.content || "Önemli yapı").split(/\r?\n/)[0].trim() || "Önemli yapı";
+    }
+
+    function questionStructureDetail(note) {
+      const contentLines = String(note?.content || "").split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+      return String(note?.meaning || contentLines.slice(1).join(" ") || "Not eklenmedi").trim();
+    }
+
+    function openSourceCardCollectionPopup(documentInfo, collection) {
+      document.getElementById("sourceCollectionModal")?.remove();
+      const isWords = collection === "words";
+      const records = isWords ? savedWordsForDocument(documentInfo) : importantStructuresForDocument(documentInfo);
+      const title = isWords ? "Kaydedilen Kelimeler" : "Önemli Yapılar";
+      const subtitle = records.length ? "Bu kaynakta eklediğin " + records.length + " kayıt" : "Bu kaynakta henüz kayıt yok";
+      const items = records.length
+        ? records.map((record, index) => {
+          const question = isWords
+            ? questionBank.find(item => String(item.id) === String(record.questionId || ""))
+            : questionBank.find(item => String(item.id) === String(record.questionId || ""));
+          const text = isWords ? (record.word || "Kelime") : questionStructureLabel(record);
+          const detail = isWords ? (record.turkish || record.meaning || "Türkçe anlam eklenmedi") : questionStructureDetail(record);
+          const location = question ? "Soru " + (question.questionNumber || "-") + " · Çözümde aç" : "Kaynağa bağlı kayıt";
+          return '<button class="article-collection-modal__item" data-source-collection-index="' + index + '" type="button">' +
+            '<span class="article-collection-modal__item-content">' +
+              '<span class="article-collection-modal__item-title">' + escapeHtml(text) + '</span>' +
+              '<span class="article-collection-modal__item-detail">' + escapeHtml(detail) + '</span>' +
+              '<span class="article-collection-modal__item-meta">' + escapeHtml(location) + '</span>' +
+            '</span><span class="article-collection-modal__item-more" aria-hidden="true">•••</span></button>';
+        }).join("")
+        : '<p class="px-1 py-4 text-sm font-semibold" style="color: var(--text-secondary)">' + (isWords ? "Soru çözerken Kelime Defterine eklediğin kelimeler burada görünecek." : "Soru çözümünde eklediğin önemli yapı notları burada görünecek.") + "</p>";
+      const modal = document.createElement("div");
+      modal.id = "sourceCollectionModal";
+      modal.className = "article-collection-modal";
+      modal.innerHTML = '<section class="article-collection-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="sourceCollectionModalTitle">' +
+        '<header class="article-collection-modal__header"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">' + escapeHtml(documentDisplayTitle(documentInfo)) + '</p><h3 id="sourceCollectionModalTitle" class="mt-1 text-lg font-black">' + title + '</h3><p class="mt-1 text-sm font-semibold" style="color: var(--text-secondary)">' + subtitle + '</p></div><button class="article-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl font-black" data-close-source-collection-modal type="button" aria-label="Pencereyi kapat">×</button></header>' +
+        '<div class="article-collection-modal__list">' + items + '</div></section>';
+      const close = () => modal.remove();
+      modal.addEventListener("click", event => { if (event.target === modal) close(); });
+      modal.querySelector("[data-close-source-collection-modal]")?.addEventListener("click", close);
+      modal.querySelectorAll("[data-source-collection-index]").forEach(button => button.addEventListener("click", () => {
+        const record = records[Number(button.dataset.sourceCollectionIndex)];
+        if (!record) return;
+        if (isWords) {
+          close();
+          openWordModal(record.word, { id: record.questionId || null }, null, { mode: "view", wordId: record.id });
+          return;
+        }
+        const question = questionBank.find(item => String(item.id) === String(record.questionId || ""));
+        if (question) {
+          close();
+          goToNoteSource(record);
+        }
+      }));
+      document.body.append(modal);
+      modal.querySelector("[data-close-source-collection-modal]")?.focus();
     }
 
     function selectedAnswerSummary(questions = getCategoryQuestions()) {
@@ -3238,6 +3351,121 @@
       queueSupabaseAutoBackup();
     }
 
+    function savedWordsForReadForSpeedArticle(article) {
+      const articleId = String(article?.id || "");
+      const titleKey = normalizeLookup(article?.title || "");
+      return wordbook.filter(item => wordSources(item).some(source =>
+        String(source?.contentId || source?.articleId || "") === articleId ||
+        normalizeLookup(source?.contentTitle || source?.sourceArticle || source?.source || "") === titleKey
+      ) || String(item?.articleId || item?.questionId || "") === articleId);
+    }
+
+    function openReadForSpeedCardCollectionPopup(article, collection) {
+      document.getElementById("rfsCollectionModal")?.remove();
+      const isWords = collection === "words";
+      const records = isWords
+        ? savedWordsForReadForSpeedArticle(article)
+        : importantStructureNotes({ sourceModule: "read_for_speed", sourceId: article.id });
+      const title = isWords ? "Kaydedilen Kelimeler" : "Önemli Yapılar";
+      const subtitle = records.length ? "Bu metinde eklediğin " + records.length + " kayıt" : "Bu metinde henüz kayıt yok";
+      const items = records.length
+        ? records.map((record, index) => {
+          const text = isWords ? (record.word || "Kelime") : (record.highlightedText || record.selectedText || "Önemli yapı");
+          const detail = isWords ? (record.turkish || record.meaning || "Türkçe anlam eklenmedi") : (record.meaning || "Anlam/not eklenmedi");
+          const meta = isWords ? "Kelime Defterinde görüntüle" : "Hızlı tekrar";
+          return '<button class="article-collection-modal__item" data-rfs-collection-index="' + index + '" type="button"><span class="article-collection-modal__item-content"><span class="article-collection-modal__item-title">' + escapeHtml(text) + '</span><span class="article-collection-modal__item-detail">' + escapeHtml(detail) + '</span><span class="article-collection-modal__item-meta">' + meta + '</span></span><span class="article-collection-modal__item-more" aria-hidden="true">•••</span></button>';
+        }).join("")
+        : '<p class="px-1 py-4 text-sm font-semibold" style="color:var(--text-secondary)">' + (isWords ? "Bu metinden Kelime Defterine eklediğin kelimeler burada görünecek." : "Bu metinden önemli yapı olarak kaydettiğin ifadeler burada görünecek.") + '</p>';
+      const modal = document.createElement("div");
+      modal.id = "rfsCollectionModal";
+      modal.className = "article-collection-modal";
+      modal.innerHTML = '<section class="article-collection-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="rfsCollectionModalTitle"><header class="article-collection-modal__header"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h3 id="rfsCollectionModalTitle" class="mt-1 text-lg font-black">' + title + '</h3><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">' + subtitle + '</p></div><button class="article-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl font-black" data-close-rfs-collection-modal type="button" aria-label="Pencereyi kapat">×</button></header><div class="article-collection-modal__list">' + items + '</div></section>';
+      const close = () => modal.remove();
+      modal.addEventListener("click", event => { if (event.target === modal) close(); });
+      modal.querySelector("[data-close-rfs-collection-modal]")?.addEventListener("click", close);
+      modal.querySelectorAll("[data-rfs-collection-index]").forEach(button => button.addEventListener("click", () => {
+        const record = records[Number(button.dataset.rfsCollectionIndex)];
+        if (isWords && record) openWordModal(record.word, null, null, { mode: "view", wordId: record.id });
+      }));
+      document.body.append(modal);
+      modal.querySelector("[data-close-rfs-collection-modal]")?.focus();
+    }
+
+    function openReadForSpeedWordModal(anchor, article) {
+      const word = normalizeWord(anchor?.dataset?.word || anchor?.textContent || "");
+      if (!word) return;
+      const text = readForSpeedEnglishParagraphs(article).join("\n\n");
+      const startOffset = Math.max(0, text.toLocaleLowerCase("en").indexOf(word.toLocaleLowerCase("en")));
+      openWordModal(word, { id: article.id });
+      pendingWord = {
+        ...pendingWord,
+        readForSpeedArticleId: article.id,
+        readForSpeedArticleTitle: article.title || "Read for Speed",
+        selectedText: word,
+        startOffset,
+        endOffset: startOffset + word.length,
+      };
+    }
+
+    function readForSpeedEnglishParagraphs(article) {
+      const text = (article.contentNodes || []).map(node => node.type === "text"
+        ? node.content
+        : (node.correctOption === "B" ? node.optionB : node.optionA)).join("");
+      return text.split(/\n\s*\n+/).map(paragraph => paragraph.trim()).filter(Boolean);
+    }
+
+    function readForSpeedNodeParagraphs(nodes) {
+      const paragraphs = [[]];
+      (nodes || []).forEach(node => {
+        if (node.type !== "text") { paragraphs.at(-1).push(node); return; }
+        const chunks = String(node.content || "").split(/(\n\s*\n+)/);
+        chunks.forEach(chunk => {
+          if (/^\n\s*\n+$/.test(chunk)) {
+            if (paragraphs.at(-1).some(part => part.type !== "text" || String(part.content || "").trim())) paragraphs.push([]);
+          } else if (chunk) paragraphs.at(-1).push({ ...node, content: chunk });
+        });
+      });
+      return paragraphs.filter(paragraph => paragraph.some(part => part.type !== "text" || String(part.content || "").trim()));
+    }
+
+    function readForSpeedTurkishParagraphs(article, paragraphCount = readForSpeedEnglishParagraphs(article).length) {
+      const saved = Array.isArray(article.turkishParagraphs) ? article.turkishParagraphs : null;
+      const legacy = String(article.turkishText || "").split(/\n\s*\n+/).map(paragraph => paragraph.trim()).filter(Boolean);
+      return Array.from({ length: paragraphCount }, (_, index) => String(saved?.[index] ?? legacy[index] ?? "").trim());
+    }
+
+    function openReadForSpeedTranslationEditor(article) {
+      document.getElementById("rfsTranslationEditor")?.remove();
+      const editor = document.createElement("aside");
+      editor.id = "rfsTranslationEditor";
+      editor.className = "article-translation-editor p-4 sm:p-5";
+      editor.setAttribute("role", "dialog");
+      editor.setAttribute("aria-modal", "true");
+      editor.setAttribute("aria-label", "Read for Speed Türkçe metin düzenleyicisi");
+      const englishParagraphs = readForSpeedEnglishParagraphs(article);
+      const turkishParagraphs = readForSpeedTurkishParagraphs(article, englishParagraphs.length);
+      editor.innerHTML = '<div class="sticky top-0 z-10 -mx-4 -mt-4 border-b p-4 sm:-mx-5 sm:-mt-5 sm:p-5" style="border-color:var(--border-color);background:var(--bg-surface)"><div class="flex items-start justify-between gap-3"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h3 class="mt-1 text-xl font-black">Türkçe Metin</h3><p class="mt-1 text-xs font-semibold" style="color:var(--text-secondary)">Her Türkçe alan, İngilizce metindeki aynı paragrafla eşleşir. Çalışma ve cevaplar değişmez.</p></div><button id="closeRfsTranslationEditor" class="article-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl font-black" aria-label="Çeviri düzenleyicisini kapat">×</button></div></div><label class="mt-5 block text-sm font-black">Türkçe başlık<input id="rfsTranslationTitle" class="mt-2 w-full rounded-xl border px-3 py-2.5 font-semibold" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" value="' + escapeHtml(article.titleTr || '') + '"></label><div class="mt-5 grid gap-3">' + englishParagraphs.map((paragraph, index) => '<section class="translation-editor-pair rounded-2xl border p-3"><p class="text-xs font-black uppercase tracking-wide text-blue-500">Paragraf ' + (index + 1) + '</p><p class="mt-2 whitespace-pre-wrap text-sm leading-6" style="color:var(--text-secondary)">' + escapeHtml(paragraph) + '</p><label class="mt-3 block text-xs font-black" style="color:var(--text-secondary)">TÜRKÇE<textarea class="rfs-translation-paragraph mt-1 min-h-28 w-full rounded-xl border px-3 py-2 text-sm leading-6" data-paragraph-index="' + index + '" style="border-color:var(--border-color);background:var(--bg-surface);color:var(--text-primary)">' + escapeHtml(turkishParagraphs[index]) + '</textarea></label></section>').join('') + '</div><p id="rfsTranslationError" class="mt-3 text-sm font-bold text-red-700" role="alert"></p><div class="sticky bottom-0 mt-5 flex justify-end gap-2 border-t py-4" style="border-color:var(--border-color);background:var(--bg-surface)"><button id="cancelRfsTranslationEditor" class="rounded-xl border px-4 py-2.5 text-sm font-black" style="border-color:var(--border-color)">İptal</button><button id="saveRfsTranslationEditor" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white">Kaydet</button></div>';
+      document.body.append(editor);
+      const close = () => editor.remove();
+      editor.querySelector("#closeRfsTranslationEditor").onclick = close;
+      editor.querySelector("#cancelRfsTranslationEditor").onclick = close;
+      editor.querySelector("#saveRfsTranslationEditor").onclick = () => {
+        const paragraphs = Array.from(editor.querySelectorAll(".rfs-translation-paragraph"), input => input.value.trim());
+        const error = editor.querySelector("#rfsTranslationError");
+        if (!paragraphs.length || paragraphs.some(paragraph => !paragraph)) { error.textContent = "Her paragrafın Türkçe çevirisini girin."; return; }
+        article.titleTr = editor.querySelector("#rfsTranslationTitle").value.trim() || null;
+        article.turkishParagraphs = paragraphs;
+        article.turkishText = paragraphs.join("\n\n");
+        article.translationStatus = "complete";
+        article.rfsLanguageView = "bilingual";
+        article.updatedAt = new Date().toISOString();
+        saveReadForSpeedArticles();
+        close();
+        renderReadForSpeedPage();
+      };
+      window.setTimeout(() => editor.querySelector(".rfs-translation-paragraph")?.focus(), 0);
+    }
+
     function setReadForSpeedFocusMode(enabled) {
       document.body.classList.toggle("read-for-speed-focus-mode", !!enabled && activeView === "read-for-speed" && readForSpeedMode === "reader");
     }
@@ -3299,8 +3527,10 @@
         const progressPercent = summary.status === "completed" ? 100 : summary.questionCount ? Math.round(summary.answeredCount / summary.questionCount * 100) : 0;
         const rawDifficulty = String(article.difficulty || "");
         const difficulty = ({ easy: "Kolay", medium: "Orta", hard: "Zor" })[rawDifficulty.toLowerCase()] || (["Kolay", "Orta", "Zor"].includes(rawDifficulty) ? rawDifficulty : "");
+        const savedWordCount = savedWordsForReadForSpeedArticle(article).length;
+        const structureCount = importantStructureNotes({ sourceModule: "read_for_speed", sourceId: article.id }).length;
         const completedActions = summary.status === "completed" ? `<button class="rfs-open" data-id="${escapeHtml(article.id)}" data-mode="review" aria-label="${escapeHtml(title)} çalışmasını gözden geçir">Gözden Geç</button><button class="rfs-retry-card rounded-xl border px-4 py-2 text-sm font-black" style="border-color:var(--border-color)" data-id="${escapeHtml(article.id)}">Tekrar Çöz</button>` : `<button class="rfs-open" data-id="${escapeHtml(article.id)}" aria-label="${escapeHtml(title)} çalışmasına ${summary.status === "new" ? "başla" : "devam et"}">${action}</button>`;
-        return `<article class="read-for-speed-card ${summary.status === "completed" ? "is-completed" : ""}"><div class="flex items-start justify-between gap-3"><div class="flex flex-wrap gap-2"><span class="rfs-card-status rfs-status-new">READ FOR SPEED</span>${difficulty ? `<span class="rfs-card-status rfs-status-new">${difficulty}</span>` : ""}</div><span class="rfs-card-status ${statusClass}">${statusLabel}</span></div><h3 class="read-for-speed-card-title" title="${escapeHtml(article.title)}">${escapeHtml(title)}</h3><p class="rfs-card-detail"${summary.status === "completed" ? ` aria-label="${summary.correctCount} doğru, ${summary.incorrectCount} yanlış, yüzde ${summary.score} başarı"` : ""}>${details}</p><div class="rfs-card-progress-label"><span>ÇALIŞMA İLERLEMESİ</span><span>%${progressPercent}</span></div><div class="rfs-card-progress"><span class="${summary.status === "completed" ? "is-completed" : ""}" style="width:${progressPercent}%"></span></div><div class="rfs-card-actions">${completedActions}<button class="rfs-reset" data-id="${escapeHtml(article.id)}" aria-label="${escapeHtml(title)} metin işlemleri" aria-expanded="false">⋯</button></div></article>`;
+        return `<article class="read-for-speed-card ${summary.status === "completed" ? "is-completed" : ""}"><div class="flex items-start justify-between gap-3"><div class="flex flex-wrap gap-2"><span class="rfs-card-status rfs-status-new">READ FOR SPEED</span>${difficulty ? `<span class="rfs-card-status rfs-status-new">${difficulty}</span>` : ""}</div><span class="rfs-card-status ${statusClass}">${statusLabel}</span></div><h3 class="read-for-speed-card-title" title="${escapeHtml(article.title)}">${escapeHtml(title)}</h3><p class="rfs-card-detail"${summary.status === "completed" ? ` aria-label="${summary.correctCount} doğru, ${summary.incorrectCount} yanlış, yüzde ${summary.score} başarı"` : ""}>${details}</p>${SourceSavedItemsBadges({ sourceId: article.id, wordCount: savedWordCount, structureCount, scope: "rfs" })}<div class="rfs-card-progress-label"><span>ÇALIŞMA İLERLEMESİ</span><span>%${progressPercent}</span></div><div class="rfs-card-progress"><span class="${summary.status === "completed" ? "is-completed" : ""}" style="width:${progressPercent}%"></span></div><div class="rfs-card-actions">${completedActions}<button class="rfs-reset" data-id="${escapeHtml(article.id)}" aria-label="${escapeHtml(title)} metin işlemleri" aria-expanded="false">⋯</button></div></article>`;
       }).join("");
       appArea.innerHTML = `<section class="rounded-2xl border p-5 shadow-sm" style="border-color:var(--border-color);background:var(--bg-surface)"><div class="rfs-list-heading"><div><p class="text-sm font-black uppercase tracking-wide text-blue-500">READ FOR SPEED</p><h2 class="mt-1 text-2xl font-black">Read for Speed</h2><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">İki seçenekli hızlı okuma parçalarını çöz, kontrol et ve ilerlemeni takip et.</p><div class="mt-3 flex flex-wrap gap-2" aria-label="Read for Speed özeti"><span class="rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color:var(--border-color);color:var(--text-secondary);background:var(--bg-surface-secondary)">${allItems.length} metin</span><span class="rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color:color-mix(in srgb,#059669 28%,var(--border-color));background:color-mix(in srgb,#059669 8%,var(--bg-surface))">${completedCount} tamamlandı</span><span class="rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color:color-mix(in srgb,#2563eb 28%,var(--border-color));background:color-mix(in srgb,#2563eb 8%,var(--bg-surface))">${inProgressCount} devam ediyor</span></div></div><button id="rfsNewBtn" class="shrink-0 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white">Yeni Metin Ekle</button></div><div class="rfs-list-filters"><input id="rfsListSearch" aria-label="Metin ara" placeholder="Metin ara" value="${escapeHtml(rfsListQuery)}"><select id="rfsListStatus" aria-label="Çalışma durumu"><option value="all">Tüm durumlar</option><option value="new">Yeni</option><option value="inProgress">Devam Ediyor</option><option value="completed">Tamamlandı</option></select><select id="rfsListSort" aria-label="Sıralama"><option value="recent">Son eklenen</option><option value="title">Başlığa göre A-Z</option><option value="countAsc">Seçim sayısı artan</option><option value="countDesc">Seçim sayısı azalan</option><option value="progress">İlerleme yüksekten düşüğe</option></select></div><div class="rfs-list-grid mt-4">${cards || `<div class="col-span-full rounded-2xl border border-dashed p-10 text-center">Bu filtrede metin bulunamadı.</div>`}</div></section>`;
       document.getElementById("rfsNewBtn").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); };
@@ -3308,6 +3538,11 @@
       document.getElementById("rfsListSearch").oninput = event => { rfsListQuery = event.target.value; renderReadForSpeedList(); };
       document.getElementById("rfsListStatus").onchange = event => { rfsListStatus = event.target.value; renderReadForSpeedList(); };
       document.getElementById("rfsListSort").onchange = event => { rfsListSort = event.target.value; renderReadForSpeedList(); };
+      document.querySelectorAll('[data-saved-items-scope="rfs"]').forEach(button => button.addEventListener("click", event => {
+        event.stopPropagation();
+        const article = readForSpeedArticles.find(item => item.id === button.dataset.id);
+        if (article) openReadForSpeedCardCollectionPopup(article, button.dataset.savedItems);
+      }));
       document.querySelectorAll(".rfs-open").forEach(button => button.onclick = () => { const article = readForSpeedArticles.find(item => item.id === button.dataset.id); if (!article) return; readForSpeedReviewAttemptId = button.dataset.mode === "review" ? latestCompletedReadForSpeedAttempt(article)?.id || null : null; readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); });
       document.querySelectorAll(".rfs-retry-card").forEach(button => button.onclick = () => { const article = readForSpeedArticles.find(item => item.id === button.dataset.id); if (!article || !window.confirm("Bu makaleyi yeniden çözmek için yeni bir çalışma başlatılacak. Önceki sonuçların korunacak.")) return; startNewReadForSpeedAttempt(article); readForSpeedReviewAttemptId = null; readForSpeedActiveArticle = article; readForSpeedMode = "reader"; saveReadForSpeedArticles(); renderReadForSpeedPage(); });
     }
@@ -3491,7 +3726,7 @@
     function renderReadForSpeedPage() {
       pageTitle.textContent = "Read for Speed"; renderMenu(); renderStats();
       setReadForSpeedFocusMode(!!readForSpeedActiveArticle?.focusMode);
-      const resetDraft = () => { readForSpeedDraft = { title: "", rawText: "" }; readForSpeedMode = "list"; };
+      const resetDraft = () => { readForSpeedDraft = { title: "", titleTr: "", rawText: "", turkishText: "" }; readForSpeedMode = "list"; };
       if (readForSpeedMode === "list") { renderReadForSpeedList(); return; }
       const summary = article => { const p = readForSpeedProgress(article), nodes = article.contentNodes.filter(node => node.type === "binary_choice"), answers = p.selectedAnswers; const correct = p.checked ? nodes.filter(node => answers[node.questionId] === String(node.correctOption || "").toUpperCase()).length : 0; const wrong = p.checked ? nodes.filter(node => answers[node.questionId] && answers[node.questionId] !== String(node.correctOption || "").toUpperCase()).length : 0; const blank = nodes.length - Object.keys(answers).length; return { total: nodes.length, correct, wrong, blank, percent: p.checked && nodes.length ? Math.round((correct / nodes.length) * 100) : 0 }; };
       if (readForSpeedMode === "reader" && readForSpeedActiveArticle) {
@@ -3504,9 +3739,19 @@
         const progress = isReview ? (readForSpeedAttempts(article).find(attempt => attempt.id === readForSpeedReviewAttemptId) || latestCompletedReadForSpeedAttempt(article)) : readForSpeedProgress(article);
         const stats = (() => { const nodes = article.contentNodes.filter(node => node.type === "binary_choice"); const answers = progress.selectedAnswers || {}; const correct = nodes.filter(node => answers[node.questionId] === String(node.correctOption || "").toUpperCase()).length; const wrong = nodes.filter(node => answers[node.questionId] && answers[node.questionId] !== String(node.correctOption || "").toUpperCase()).length; const blank = nodes.length - Object.keys(answers).filter(id => ["A", "B"].includes(answers[id])).length; return { total: nodes.length, correct, wrong, blank, percent: nodes.length ? Math.round(correct / nodes.length * 100) : 0 }; })();
         const clean = !!article.cleanReading;
+        const hasTurkishTranslation = typeof article.turkishText === "string" && article.turkishText.trim().length > 0;
+        // "tr" was used by the initial implementation; keep those saved preferences working.
+        const isBilingual = hasTurkishTranslation && ["bilingual", "tr"].includes(article.rfsLanguageView);
         const readerNodes = clean ? article.contentNodes.map(node => node.type === "text" ? node : { type: "text", content: node.correctOption === "A" ? node.optionA : node.optionB }) : article.contentNodes;
+        const readerParagraphs = readForSpeedNodeParagraphs(readerNodes);
+        const turkishParagraphs = isBilingual ? readForSpeedTurkishParagraphs(article, readerParagraphs.length) : [];
+        const renderReaderNodes = nodes => nodes.map(node => node.type === "text" ? escapeHtml(node.content) : `<span id="rfs-question-${node.questionId}" class="mx-1 inline-flex flex-wrap items-center gap-2 align-middle"><b>(${node.displayNumber})</b>${["A", "B"].map(key => { const selected = progress.selectedAnswers[node.questionId] === key, correct = String(node.correctOption || "").toUpperCase() === key, checked = progress.checked; const color = checked ? (correct ? "border-emerald-600 bg-emerald-100 text-emerald-800" : selected ? "border-red-600 bg-red-100 text-red-800" : "opacity-45") : selected ? "border-blue-600 bg-blue-100 text-blue-800" : ""; const label = checked && correct ? ` ✓ Doğru cevap${!selected ? " · Boş" : ""}` : checked && selected ? " ✕ Yanlış" : ""; return `<button class="rfs-answer rounded-lg border px-2 py-1 text-sm font-black ${color}" data-question="${node.questionId}" data-answer="${key}" ${checked ? "disabled" : ""}>${key} · ${escapeHtml(key === "A" ? node.optionA : node.optionB)}${label}</button>`; }).join("")}</span>`).join("");
+        const readerContent = isBilingual
+          ? `<div class="article-bilingual-grid">${readerParagraphs.map((paragraph, index) => `<section class="article-bilingual-pair"><div class="article-bilingual-copy" data-rfs-language-copy="en"><span class="article-bilingual-label">EN</span><p>${renderReaderNodes(paragraph)}</p></div><div class="article-bilingual-copy article-bilingual-tr"><span class="article-bilingual-label">TR</span><p>${escapeHtml(turkishParagraphs[index] || "")}</p></div></section>`).join("")}</div>`
+          : renderReaderNodes(readerNodes);
+        const readerTitle = article.title;
         const importantContext = { sourceModule: "read_for_speed", sourceId: article.id, sourceTitle: article.title || "Read for Speed", rerender: () => renderReadForSpeedPage() };
-        appArea.innerHTML = `<section class="mx-auto max-w-6xl ${article.focusMode ? "rfs-focus" : ""}"><header class="sticky top-0 z-20 flex flex-col gap-2 border-b py-2 md:flex-row md:items-center md:justify-between" style="border-color:var(--border-color);background:var(--bg-page)"><button id="rfsBack" class="rounded-xl border px-3 py-2 text-sm font-black" style="border-color:var(--border-color)">← Listeye dön</button><div class="min-w-0"><p class="text-xs font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h2 class="truncate text-xl font-black">${escapeHtml(article.title)}</h2></div><div class="flex flex-wrap gap-2"><button id="rfsCheck" ${progress.checked ? "disabled" : ""} class="rounded-xl bg-blue-600 px-3 py-2 text-sm font-black text-white disabled:opacity-50">${progress.checked ? "Kontrol Edildi ✓" : "Kontrol Et"}</button><button id="rfsClean" class="rounded-xl border px-3 py-2 text-sm font-black">${clean ? "Çalışma Modu" : "Temiz Oku"}</button><button id="rfsFocus" class="rounded-xl border px-3 py-2 text-sm font-black">${article.focusMode ? "Odaktan Çık" : "Odak Modu"}</button>${TextSizeControls("rfs")}</div></header><article id="rfsBody" data-study-content class="article-body mx-auto mt-4 rounded-2xl border p-5" style="max-width:940px;--study-content-font-size:${studyContentFontSize}px;border-color:var(--border-color);white-space:pre-wrap">${readerNodes.map((node, index) => node.type === "text" ? escapeHtml(node.content) : `<span id="rfs-question-${node.questionId}" class="mx-1 inline-flex flex-wrap items-center gap-2 align-middle"><b>(${node.displayNumber})</b>${["A", "B"].map(key => { const selected = progress.selectedAnswers[node.questionId] === key, correct = String(node.correctOption || "").toUpperCase() === key, checked = progress.checked; const color = checked ? (correct ? "border-emerald-600 bg-emerald-100 text-emerald-800" : selected ? "border-red-600 bg-red-100 text-red-800" : "opacity-45") : selected ? "border-blue-600 bg-blue-100 text-blue-800" : ""; const label = checked && correct ? ` ✓ Doğru cevap${!selected ? " · Boş" : ""}` : checked && selected ? " ✕ Yanlış" : ""; return `<button class="rfs-answer rounded-lg border px-2 py-1 text-sm font-black ${color}" data-question="${node.questionId}" data-answer="${key}" ${checked ? "disabled" : ""}>${key} · ${escapeHtml(key === "A" ? node.optionA : node.optionB)}${label}</button>`; }).join("")}</span>`).join("")}</article>${progress.checked ? `<section id="rfsResult" class="mx-auto mt-4 max-w-3xl rounded-2xl border p-4" style="border-color:var(--border-color);background:var(--bg-surface)"><h3 class="text-lg font-black">Sonuç Özeti</h3><div class="mt-3 grid grid-cols-2 gap-2 text-sm md:grid-cols-5"><b>Toplam ${stats.total}</b><b class="text-emerald-700">Doğru ${stats.correct}</b><b class="text-red-700">Yanlış ${stats.wrong}</b><b>Boş ${stats.blank}</b><b>Başarı %${stats.percent}</b></div><p class="mt-2 text-sm">Geçen süre: ${Math.floor((progress.elapsedMs + Date.now() - progress.startedAt) / 60)} sn</p></section>` : ""}</section>`;
+        appArea.innerHTML = `<section class="mx-auto max-w-6xl ${article.focusMode ? "rfs-focus" : ""}"><header class="sticky top-0 z-20 flex flex-col gap-2 border-b py-2 md:flex-row md:items-center md:justify-between" style="border-color:var(--border-color);background:var(--bg-page)"><button id="rfsBack" class="rounded-xl border px-3 py-2 text-sm font-black" style="border-color:var(--border-color)">← Listeye dön</button><div class="min-w-0"><p class="text-xs font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h2 class="truncate text-xl font-black">${escapeHtml(readerTitle)}</h2></div><div class="flex flex-wrap gap-2"><button id="rfsCheck" ${progress.checked ? "disabled" : ""} class="rounded-xl bg-blue-600 px-3 py-2 text-sm font-black text-white disabled:opacity-50">${progress.checked ? "Kontrol Edildi ✓" : "Kontrol Et"}</button><button id="rfsClean" class="rounded-xl border px-3 py-2 text-sm font-black">${clean ? "Çalışma Modu" : "Temiz Oku"}</button><button id="rfsFocus" class="rounded-xl border px-3 py-2 text-sm font-black">${article.focusMode ? "Odaktan Çık" : "Odak Modu"}</button>${TextSizeControls("rfs")}</div></header><article id="rfsBody" data-study-content class="article-body mx-auto mt-4 rounded-2xl border p-5" style="max-width:940px;--study-content-font-size:${studyContentFontSize}px;border-color:var(--border-color);white-space:pre-wrap">${readerContent}</article>${progress.checked ? `<section id="rfsResult" class="mx-auto mt-4 max-w-3xl rounded-2xl border p-4" style="border-color:var(--border-color);background:var(--bg-surface)"><h3 class="text-lg font-black">Sonuç Özeti</h3><div class="mt-3 grid grid-cols-2 gap-2 text-sm md:grid-cols-5"><b>Toplam ${stats.total}</b><b class="text-emerald-700">Doğru ${stats.correct}</b><b class="text-red-700">Yanlış ${stats.wrong}</b><b>Boş ${stats.blank}</b><b>Başarı %${stats.percent}</b></div><p class="mt-2 text-sm">Geçen süre: ${Math.floor((progress.elapsedMs + Date.now() - progress.startedAt) / 60)} sn</p></section>` : ""}</section>`;
         const toolbar = appArea.querySelector("header");
         const toolbarTitle = toolbar?.querySelector("h2");
         const toolbarHeading = toolbarTitle?.parentElement;
@@ -3524,9 +3769,21 @@
         if (isReview) {
           document.getElementById("rfsCheck")?.remove();
           const badge = document.createElement("span"); badge.className = "review-status-badge"; badge.textContent = `GÖZDEN GEÇİRİLİYOR · ${stats.correct}D · ${stats.wrong}Y · %${stats.percent}`;
-          document.getElementById("rfsClean")?.before(badge);
+          (document.getElementById("rfsClean") || document.getElementById("rfsFocus"))?.before(badge);
         }
-        enableReadForSpeedWordTokens(document.getElementById("rfsBody"));
+        const languageControl = document.createElement("div");
+        languageControl.className = "rfs-language-control";
+        languageControl.innerHTML = hasTurkishTranslation
+          ? '<div class="article-language-control" role="group" aria-label="Okuma dili"><button class="article-language-choice ' + (!isBilingual ? 'is-active' : '') + '" data-rfs-language="en" aria-pressed="' + (!isBilingual) + '">İngilizce</button><button class="article-language-choice ' + (isBilingual ? 'is-active' : '') + '" data-rfs-language="bilingual" aria-pressed="' + isBilingual + '">İngilizce + Türkçe</button></div><button class="rfs-translation-edit rounded-xl border px-3 text-sm font-black" style="border-color:var(--border-color)" data-rfs-translation-edit>Çeviriyi Düzenle</button>'
+          : '<button class="rfs-translation-edit rounded-xl border px-3 text-sm font-black" style="border-color:var(--border-color)" data-rfs-translation-edit>Türkçe Ekle</button>';
+        toolbarActions?.prepend(languageControl);
+        languageControl.querySelectorAll("[data-rfs-language]").forEach(button => button.onclick = () => { article.rfsLanguageView = button.dataset.rfsLanguage; saveReadForSpeedArticles(); renderReadForSpeedPage(); });
+        languageControl.querySelector("[data-rfs-translation-edit]")?.addEventListener("click", () => openReadForSpeedTranslationEditor(article));
+        enableReadForSpeedWordTokens(isBilingual ? document.querySelector("#rfsBody [data-rfs-language-copy=en]") : document.getElementById("rfsBody"));
+        document.querySelectorAll("#rfsBody .word-token").forEach(button => button.addEventListener("click", event => {
+          event.stopPropagation();
+          openReadForSpeedWordModal(button, article);
+        }));
         const choiceById = new Map(article.contentNodes.filter(node => node.type === "binary_choice").map(node => [node.questionId, node]));
         document.querySelectorAll("#rfsBody .rfs-answer").forEach(button => {
           const question = choiceById.get(button.dataset.question);
@@ -3595,8 +3852,8 @@
         document.getElementById("rfsBack").onclick = () => { persist(); readForSpeedReviewAttemptId = null; setReadForSpeedFocusMode(false); readForSpeedMode = "list"; readForSpeedActiveArticle = null; renderReadForSpeedPage(); };
         document.querySelectorAll(".rfs-answer").forEach(button => button.onclick = () => { progress.selectedAnswers[button.dataset.question] = button.dataset.answer; persist(); renderReadForSpeedPage(); });
         const check = () => { progress.checked = true; progress.completed = true; const next = summary(article); progress.correctCount = next.correct; progress.incorrectCount = next.wrong; progress.blankCount = next.blank; progress.score = next.percent; progress.updatedAt = new Date().toISOString(); recordReadForSpeedCompletion(article, progress); persist(); renderReadForSpeedPage(); };
-        document.getElementById("rfsCheck").onclick = check;
-        document.getElementById("rfsClean").onclick = () => { article.cleanReading = !clean; saveReadForSpeedArticles(); renderReadForSpeedPage(); }; document.getElementById("rfsFocus").onclick = () => { article.focusMode = !article.focusMode; saveReadForSpeedArticles(); renderReadForSpeedPage(); };
+        document.getElementById("rfsCheck")?.addEventListener("click", check);
+        document.getElementById("rfsClean")?.addEventListener("click", () => { article.cleanReading = !clean; saveReadForSpeedArticles(); renderReadForSpeedPage(); }); document.getElementById("rfsFocus")?.addEventListener("click", () => { article.focusMode = !article.focusMode; saveReadForSpeedArticles(); renderReadForSpeedPage(); });
         if (!window.__rfsEscapeBound) { window.__rfsEscapeBound = true; window.addEventListener("keydown", event => { if (event.key === "Escape" && readForSpeedMode === "reader" && readForSpeedActiveArticle?.focusMode) { readForSpeedActiveArticle.focusMode = false; saveReadForSpeedArticles(); renderReadForSpeedPage(); } }); }
         document.getElementById("rfsWrong")?.addEventListener("click", () => { const wrongs = article.contentNodes.filter(node => node.type === "binary_choice" && progress.selectedAnswers[node.questionId] && progress.selectedAnswers[node.questionId] !== node.correctOption); const wrong = wrongs[readForSpeedReviewWrongIndex++ % Math.max(1, wrongs.length)]; const element = document.getElementById(`rfs-question-${wrong?.questionId}`); element?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" }); element?.classList.add("is-flashing"); window.setTimeout(() => element?.classList.remove("is-flashing"), 1400); }); document.getElementById("rfsRetry")?.addEventListener("click", () => { if (!window.confirm("Bu makaleyi yeniden çözmek için yeni bir çalışma başlatılacak. Önceki sonuçların korunacak.")) return; startNewReadForSpeedAttempt(article); article.cleanReading = false; saveReadForSpeedArticles(); renderReadForSpeedPage(); }); document.getElementById("rfsCleanResult")?.addEventListener("click", () => { article.cleanReading = true; renderReadForSpeedPage(); }); document.getElementById("rfsListResult")?.addEventListener("click", () => document.getElementById("rfsBack").click());
         return;
@@ -3620,9 +3877,9 @@
         document.querySelectorAll(".rfs-retry").forEach(button => button.onclick = () => { const article = readForSpeedArticles.find(item => item.id === button.dataset.id); if (!article || !window.confirm("Bu makaleyi yeniden çözmek için yeni bir çalışma başlatılacak. Önceki sonuçların korunacak.")) return; startNewReadForSpeedAttempt(article); readForSpeedActiveArticle = article; readForSpeedMode = "reader"; saveReadForSpeedArticles(); renderReadForSpeedPage(); });
         document.getElementById("rfsNewBtn").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); }; document.querySelectorAll(".rfs-open").forEach(button => button.onclick = () => { readForSpeedReviewAttemptId = null; readForSpeedActiveArticle = readForSpeedArticles.find(item => item.id === button.dataset.id); readForSpeedMode = "reader"; renderReadForSpeedPage(); }); document.querySelectorAll(".rfs-reset").forEach(button => button.onclick = () => { const article = readForSpeedArticles.find(item => item.id === button.dataset.id); if (!article) return; const action = prompt("İşlem seçin: d = düzenle, s = sil, r = sıfırla", "r"); if (action === "d") { const title = prompt("Yeni başlık", article.title); if (title?.trim()) { article.title = title.trim(); saveReadForSpeedArticles(); renderReadForSpeedPage(); } } else if (action === "s") { if (confirm("Bu Read for Speed metni silinsin mi?")) { readForSpeedArticles = readForSpeedArticles.filter(item => item.id !== article.id); saveReadForSpeedArticles(); renderReadForSpeedPage(); } } else if (action === "r" && confirm("Bu makaleyi yeniden çözmek için yeni bir çalışma başlatılacak. Önceki sonuçların korunacak.")) { startNewReadForSpeedAttempt(article); saveReadForSpeedArticles(); renderReadForSpeedPage(); } }); return;
       }
-      if (readForSpeedMode === "form") { appArea.innerHTML = `<section class="rounded-2xl border p-5" style="border-color:var(--border-color);background:var(--bg-surface)"><h2 class="text-2xl font-black">Yeni Metin Ekle</h2><p class="mt-1 font-semibold" style="color:var(--text-secondary)">Önerilen biçim: {{1|Even if|Unless|A}}</p><label class="mt-5 block font-black">Başlık<input id="rfsTitle" class="mt-1 w-full rounded-xl border p-3" value="${escapeHtml(readForSpeedDraft.title || "")}" /></label><label class="mt-4 block font-black">Ham metin<textarea id="rfsRaw" class="mt-1 min-h-80 w-full rounded-xl border p-3">${escapeHtml(readForSpeedDraft.rawText || "")}</textarea></label><div class="mt-4 flex gap-2"><button id="rfsPreview" class="rounded-xl bg-blue-600 px-4 py-2.5 font-black text-white">Ön İzle</button><button id="rfsCancel" class="rounded-xl border px-4 py-2.5 font-black">İptal</button></div></section>`; document.getElementById("rfsPreview").onclick = () => { readForSpeedDraft.title = document.getElementById("rfsTitle").value; readForSpeedDraft.rawText = document.getElementById("rfsRaw").value; readForSpeedMode = "preview"; renderReadForSpeedPage(); }; document.getElementById("rfsCancel").onclick = () => { resetDraft(); renderReadForSpeedPage(); }; return; }
+      if (readForSpeedMode === "form") { appArea.innerHTML = `<section class="rounded-2xl border p-5" style="border-color:var(--border-color);background:var(--bg-surface)"><h2 class="text-2xl font-black">Yeni Metin Ekle</h2><p class="mt-1 font-semibold" style="color:var(--text-secondary)">Önerilen biçim: {{1|Even if|Unless|A}}</p><label class="mt-5 block font-black">Başlık<input id="rfsTitle" class="mt-1 w-full rounded-xl border p-3" value="${escapeHtml(readForSpeedDraft.title || "")}" /></label><label class="mt-4 block font-black">Ham metin<textarea id="rfsRaw" class="mt-1 min-h-80 w-full rounded-xl border p-3">${escapeHtml(readForSpeedDraft.rawText || "")}</textarea></label><details class="mt-4 rounded-xl border p-3" style="border-color:var(--border-color)"><summary class="cursor-pointer font-black">Türkçe metin ekle <span class="text-sm font-semibold" style="color:var(--text-secondary)">(isteğe bağlı)</span></summary><label class="mt-3 block text-sm font-black">Türkçe başlık<input id="rfsTitleTr" class="mt-1 w-full rounded-xl border p-3" value="${escapeHtml(readForSpeedDraft.titleTr || "")}" /></label><label class="mt-3 block text-sm font-black">Türkçe metin<textarea id="rfsTurkishText" class="mt-1 min-h-56 w-full rounded-xl border p-3">${escapeHtml(readForSpeedDraft.turkishText || "")}</textarea></label></details><div class="mt-4 flex gap-2"><button id="rfsPreview" class="rounded-xl bg-blue-600 px-4 py-2.5 font-black text-white">Ön İzle</button><button id="rfsCancel" class="rounded-xl border px-4 py-2.5 font-black">İptal</button></div></section>`; document.getElementById("rfsPreview").onclick = () => { readForSpeedDraft.title = document.getElementById("rfsTitle").value; readForSpeedDraft.rawText = document.getElementById("rfsRaw").value; readForSpeedDraft.titleTr = document.getElementById("rfsTitleTr").value; readForSpeedDraft.turkishText = document.getElementById("rfsTurkishText").value; readForSpeedMode = "preview"; renderReadForSpeedPage(); }; document.getElementById("rfsCancel").onclick = () => { resetDraft(); renderReadForSpeedPage(); }; return; }
       const parsed = parseReadForSpeed(readForSpeedDraft.rawText, ""); if (parsed.legacyDetected) { appArea.innerHTML = `<section class="rounded-2xl border border-amber-300 bg-amber-50 p-5"><p class="font-black">Bu metindeki seçenek sınırları kesin olarak belirlenemiyor. Güvenli biçim: {{numara|A|B|doğru seçenek}}</p><button id="rfsEdit" class="mt-3 rounded-xl bg-blue-600 px-3 py-2 font-black text-white">Metni Düzenlemeye Dön</button></section>`; document.getElementById("rfsEdit").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); }; return; }
-      const valid = parsed.questions.length && !parsed.errors.length; appArea.innerHTML = `<section class="rounded-2xl border p-5" style="border-color:var(--border-color);background:var(--bg-surface)"><h2 class="text-2xl font-black">İçe Aktarma Ön İzlemesi</h2><p class="mt-1 font-semibold">Bulunan seçim: ${parsed.questions.length} · Geçerli seçim: ${valid ? parsed.questions.length : 0}</p>${parsed.errors.length ? `<ul class="mt-3 list-disc text-red-700">${parsed.errors.map(error => `<li>${escapeHtml(error)}</li>`).join("")}</ul>` : ""}<div class="mt-4 rounded-xl border p-4" style="white-space:pre-wrap">${parsed.nodes.map(node => node.type === "text" ? escapeHtml(node.content) : `<span class="mx-1 inline-flex gap-2 rounded border px-2 py-1">(${node.displayNumber}) [A: ${escapeHtml(node.optionA)}] [B: ${escapeHtml(node.optionB)}]</span>`).join("")}</div><div class="mt-4 flex gap-2"><button id="rfsSave" ${valid ? "" : "disabled"} class="rounded-xl bg-blue-600 px-4 py-2.5 font-black text-white">Yerel Olarak Kaydet</button><button id="rfsBackForm" class="rounded-xl border px-4 py-2.5 font-black">Geri Dön</button></div></section>`; document.getElementById("rfsBackForm").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); }; document.getElementById("rfsSave").onclick = () => { if (!valid) return; const id = `read-for-speed-${Date.now()}`, now = new Date(), article = { id, title: readForSpeedDraft.title.trim() || "Başlıksız çalışma", source: null, articleNumber: null, difficulty: null, rawText: readForSpeedDraft.rawText, contentNodes: parsed.nodes.map(node => node.type === "binary_choice" ? { ...node, questionId: `${id}:${node.questionKey}` } : node), questionCount: parsed.questions.length, createdAt: now.toISOString(), updatedAt: now.toISOString() }; readForSpeedArticles.push(article); saveReadForSpeedArticles(); readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); };
+      const valid = parsed.questions.length && !parsed.errors.length; appArea.innerHTML = `<section class="rounded-2xl border p-5" style="border-color:var(--border-color);background:var(--bg-surface)"><h2 class="text-2xl font-black">İçe Aktarma Ön İzlemesi</h2><p class="mt-1 font-semibold">Bulunan seçim: ${parsed.questions.length} · Geçerli seçim: ${valid ? parsed.questions.length : 0}</p>${parsed.errors.length ? `<ul class="mt-3 list-disc text-red-700">${parsed.errors.map(error => `<li>${escapeHtml(error)}</li>`).join("")}</ul>` : ""}<div class="mt-4 rounded-xl border p-4" style="white-space:pre-wrap">${parsed.nodes.map(node => node.type === "text" ? escapeHtml(node.content) : `<span class="mx-1 inline-flex gap-2 rounded border px-2 py-1">(${node.displayNumber}) [A: ${escapeHtml(node.optionA)}] [B: ${escapeHtml(node.optionB)}]</span>`).join("")}</div><div class="mt-4 flex gap-2"><button id="rfsSave" ${valid ? "" : "disabled"} class="rounded-xl bg-blue-600 px-4 py-2.5 font-black text-white">Yerel Olarak Kaydet</button><button id="rfsBackForm" class="rounded-xl border px-4 py-2.5 font-black">Geri Dön</button></div></section>`; document.getElementById("rfsBackForm").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); }; document.getElementById("rfsSave").onclick = () => { if (!valid) return; const id = `read-for-speed-${Date.now()}`, now = new Date(), article = { id, title: readForSpeedDraft.title.trim() || "Başlıksız çalışma", titleTr: readForSpeedDraft.titleTr?.trim() || null, turkishText: readForSpeedDraft.turkishText?.trim() || null, translationStatus: readForSpeedDraft.turkishText?.trim() ? "complete" : "none", source: null, articleNumber: null, difficulty: null, rawText: readForSpeedDraft.rawText, contentNodes: parsed.nodes.map(node => node.type === "binary_choice" ? { ...node, questionId: `${id}:${node.questionKey}` } : node), questionCount: parsed.questions.length, createdAt: now.toISOString(), updatedAt: now.toISOString() }; readForSpeedArticles.push(article); saveReadForSpeedArticles(); readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); };
     }
 
     function setView(view) {
@@ -3853,9 +4110,9 @@
         return '<section class="mb-4 rounded-2xl border border-dashed border-blue-200 bg-blue-50/60 p-4">' +
           '<div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">' +
             '<div>' +
-              '<h4 class="text-xs font-black uppercase text-blue-500">Günün Kelimeleri</h4>' +
-              '<p class="mt-2 text-sm font-black text-slate-600">Henüz günün kelimesi seçmedin.</p>' +
-              '<p class="mt-1 text-sm text-slate-500">Kelime Defteri’nden tekrar etmek istediğin kelimeleri Günün Kelimeleri havuzuna ekleyebilirsin.</p>' +
+              '<h4 class="text-xs font-black uppercase text-blue-500">Odak Kelimeler</h4>' +
+              '<p class="mt-2 text-sm font-black text-slate-600">Henüz tekrar kelimesi yok.</p>' +
+              '<p class="mt-1 text-sm text-slate-500">Kart Çalışması’nda Orta veya Zor seçtiğin, ya da Çoktan Seçmeli’de yanlış yaptığın kelimeler burada birikir.</p>' +
               '<button id="dailyWordGoToWordsBtn" class="mt-3 rounded-xl bg-blue-600 px-3 py-2 text-sm font-black text-white">Kelime Defterine Git</button>' +
             '</div>' +
           '</div>' +
@@ -3870,11 +4127,11 @@
       return '<section class="daily-word-panel mb-3 rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="dailyWordPoolTitle">' +
         '<div class="daily-word-header flex flex-col gap-2 md:flex-row md:items-center md:justify-between">' +
           '<div>' +
-            '<h4 id="dailyWordPoolTitle" class="daily-word-section-label text-xs font-black uppercase text-blue-500">Günün Kelimeleri</h4>' +
+            '<h4 id="dailyWordPoolTitle" class="daily-word-section-label text-xs font-black uppercase text-blue-500">Odak Kelimeler</h4>' +
           '</div>' +
           '<div class="flex flex-wrap items-center gap-2">' +
             '<span aria-label="' + (index + 1) + '. kelime, toplam ' + words.length + ' kelime" class="daily-word-control">' + (index + 1) + ' / ' + words.length + '</span>' +
-            '<button id="dailyWordShuffleBtn" aria-label="Günün kelimelerini karıştır" class="daily-word-control daily-word-shuffle">↻ Karıştır</button>' +
+            '<button id="dailyWordShuffleBtn" aria-label="Zorlandığım kelimeleri karıştır" class="daily-word-control daily-word-shuffle">↻ Karıştır</button>' +
           '</div>' +
         '</div>' +
         '<div class="daily-word-carousel-stage">' +
@@ -4184,14 +4441,17 @@
                 '<button id="hubAddBtn" class="rounded-xl border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-black text-blue-700 hover:bg-blue-100">' + meta.primaryLabel + '</button>' +
               '</div>' +
             '</div>' +
-            '<div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">' +
+              '<div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">' +
               (sortedItems.length ? sortedItems.map(({ item, progress }) => {
                 const actionLabel = progress.isCompleted ? "Sonuçları Gör" : progress.answeredCount > 0 ? "Devam Et" : "Başla";
+                const savedWordCount = savedWordsForDocument(item).length;
+                const importantStructureCount = importantStructuresForDocument(item).length;
                 return '<article class="rounded-xl border p-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ' + (progress.isCompleted ? 'border-emerald-200 bg-emerald-50/50 hover:border-emerald-300' : 'border-slate-200 bg-slate-50 hover:border-blue-300 hover:bg-white') + '">' +
                   '<div class="flex items-start justify-between gap-3">' +
                     '<button class="hub-document-card min-w-0 flex-1 text-left" data-id="' + escapeHtml(item.id) + '"><span class="block truncate text-base font-extrabold text-slate-950">' + escapeHtml(documentDisplayTitle(item)) + '</span></button>' +
                     '<div class="document-menu relative shrink-0"><button class="document-menu-toggle flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-xl font-black text-slate-500 hover:bg-slate-50" aria-label="' + escapeHtml(documentDisplayTitle(item)) + ' işlemleri" data-id="' + escapeHtml(item.id) + '">⋯</button><div class="document-action-menu absolute right-0 top-10 z-10 min-w-52 rounded-xl border border-slate-200 bg-white p-1 shadow-xl shadow-slate-200"><button class="toggle-document-completion block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50" data-id="' + escapeHtml(item.id) + '">' + (progress.isCompleted ? 'Aktife Geri Al' : 'Tamamlandı Olarak İşaretle') + '</button>' + (item.builtIn ? '' : '<button class="edit-document block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50" data-id="' + escapeHtml(item.id) + '">Düzenle</button><button class="delete-uploaded-pdf block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-red-700 hover:bg-red-50" data-id="' + escapeHtml(item.id) + '">Sil</button>') + '</div></div>' +
                   '</div>' +
+                  SourceSavedItemsBadges({ sourceId: item.id, wordCount: savedWordCount, structureCount: importantStructureCount, scope: "source" }) +
                   (progress.isCompleted ? '<span class="mt-3 inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700">Tamamlandı</span>' : '') +
                   '<div class="mt-3 space-y-1 text-sm font-semibold text-slate-500"><p>Eklendi: ' + escapeHtml(documentAddedAtLabel(item)) + '</p><p>İlerleme: ' + progress.answeredCount + ' / ' + progress.totalCount + ' soru · %' + progress.progressPercent + '</p>' + (progress.answeredCount ? '<p class="text-sm font-bold">Sonuç: <span class="text-emerald-700">' + progress.correct + 'D</span><span class="text-slate-400"> · </span><span class="text-rose-700">' + progress.wrong + 'Y</span></p>' : '') + '</div>' +
                   '<div class="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-200"><span class="block h-full rounded-full ' + (progress.isCompleted ? 'bg-emerald-500' : 'bg-blue-600') + '" style="width:' + progress.progressPercent + '%"></span></div>' +
@@ -4202,6 +4462,13 @@
           '</section>';
       document.querySelectorAll(".hub-document-card").forEach(button => {
         button.addEventListener("click", () => selectDocument(button.dataset.id));
+      });
+      document.querySelectorAll('[data-saved-items-scope="source"]').forEach(button => {
+        button.addEventListener("click", event => {
+          event.stopPropagation();
+          const documentInfo = documents.find(item => item.id === button.dataset.id);
+          if (documentInfo) openSourceCardCollectionPopup(documentInfo, button.dataset.savedItems === "structures" ? "structures" : "words");
+        });
       });
       document.querySelectorAll(".document-menu-toggle").forEach(button => {
         button.addEventListener("click", event => {
@@ -4254,7 +4521,7 @@
               '<p class="mt-1 text-sm font-semibold text-slate-500">Yanlış çözdüğün sorular burada birikir; istediğin zaman tekrar çözebilirsin.</p>' +
             '</div>' +
             '<button id="startWrongReviewBtn" ' + (items.length ? "" : "disabled ") + 'class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white shadow-sm hover:bg-blue-500 disabled:bg-slate-300 disabled:text-slate-500">' +
-              ((wrongReviewSession && !wrongReviewSession.completed) ? 'Devam Et' : 'Yanlışları Çöz') +
+              ((wrongReviewSession && !wrongReviewSession.completed) ? 'Yanlış Tekrarına Dön (' + items.length + ' soru)' : 'Yanlışları Çöz (' + items.length + ' soru)') +
             '</button>' +
           '</div>' +
           (items.length
@@ -5224,11 +5491,27 @@
     }
 
     function startWrongQuestionReview() {
+      const items = wrongQuestions();
+      if (!items.length) return;
+      const wrongQuestionIdsNow = items.map(item => item.id);
       const resumable = wrongReviewSession && !wrongReviewSession.completed && wrongReviewSession.questionIds.length;
-      if (!resumable) {
-        const items = wrongQuestions();
-        if (!items.length) return;
-        saveWrongReviewSession(createWrongReviewSession(items.map(item => item.id)));
+      if (resumable) {
+        // The review could have been created when the wrong-answer pool was
+        // different. Preserve answers and position where possible, but
+        // reconcile it with the whole current pool without a fixed limit.
+        const currentQuestionId = wrongReviewSession.questionIds[wrongReviewSession.currentIndex];
+        const questionIds = [
+          ...wrongReviewSession.questionIds.filter(id => wrongQuestionIdsNow.includes(id)),
+          ...wrongQuestionIdsNow.filter(id => !wrongReviewSession.questionIds.includes(id)),
+        ];
+        saveWrongReviewSession({
+          ...wrongReviewSession,
+          questionIds,
+          currentIndex: Math.max(0, questionIds.indexOf(currentQuestionId)),
+          updatedAt: new Date().toISOString(),
+        });
+      } else {
+        saveWrongReviewSession(createWrongReviewSession(wrongQuestionIdsNow));
       }
       wrongReviewIds = wrongReviewSession.questionIds;
       solveMode = "wrong";
@@ -6198,6 +6481,26 @@
         article.updatedAt = new Date().toISOString();
         saveArticles();
       }
+      if (pending?.readForSpeedArticleId) {
+        const article = readForSpeedArticles.find(item => String(item.id) === String(pending.readForSpeedArticleId));
+        const source = {
+          id: "rfs-word-source:" + Date.now(),
+          contentId: pending.readForSpeedArticleId,
+          contentType: "read_for_speed",
+          contentTitle: pending.readForSpeedArticleTitle || "Read for Speed",
+          selectedText: pending.selectedText || word,
+          startOffset: pending.startOffset,
+          endOffset: pending.endOffset,
+          savedAt: new Date().toISOString(),
+        };
+        addSourceToWord(record, source);
+        if (article) {
+          article.savedWords = Array.isArray(article.savedWords) ? article.savedWords : [];
+          if (!article.savedWords.includes(record.id)) article.savedWords.push(record.id);
+          article.updatedAt = new Date().toISOString();
+          saveReadForSpeedArticles();
+        }
+      }
       saveJson(STORAGE_WORDS, wordbook);
       queueSupabaseAutoBackup();
       closeWordModal();
@@ -6717,7 +7020,7 @@
               '<option value="created"' + (wordSortMode === "created" ? " selected" : "") + '>Son Eklenen</option>' +
               '<option value="review"' + (wordSortMode === "review" ? " selected" : "") + '>Tekrar Tarihi</option>' +
             '</select>' +
-            '<label class="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-700"><input id="wordDailyOnlyFilter" type="checkbox"' + (wordDailyOnly ? " checked" : "") + ' /> Günün Kelimeleri</label>' +
+            '<label class="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-700"><input id="wordDailyOnlyFilter" type="checkbox"' + (wordDailyOnly ? " checked" : "") + ' /> Odak Kelimeler</label>' +
             '<button id="shuffleWordsBtn" type="button" class="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 hover:bg-slate-50">Karıştır</button>' +
             '<button id="startWordStudyBtn" type="button" ' + (canStudy ? "" : "disabled ") + 'class="h-11 rounded-xl bg-blue-600 px-3 text-sm font-black text-white shadow-lg shadow-blue-200 hover:bg-blue-500 disabled:bg-slate-300 disabled:text-slate-500 disabled:shadow-none">Çalışmaya Başla</button>' +
           '</div>' +
@@ -6730,13 +7033,13 @@
               '<div class="flex items-start justify-between gap-3">' +
                 '<div class="min-w-0">' +
                   '<div class="mb-2 inline-flex rounded-full border px-2.5 py-1 text-xs font-black ' + status.className + '">' + status.label + '</div>' +
-                  '<div class="flex items-center gap-2"><h3 class="truncate text-xl font-black text-slate-950">' + escapeHtml(item.word) + '</h3>' + (item.showInDailyWords ? '<span title="Günün Kelimeleri havuzunda" aria-label="Günün Kelimeleri havuzunda" class="text-sm text-blue-600">★</span>' : '') + '</div>' +
+                  '<div class="flex items-center gap-2"><h3 class="truncate text-xl font-black text-slate-950">' + escapeHtml(item.word) + '</h3>' + (item.showInDailyWords ? '<span title="Odak Kelimeler havuzunda" aria-label="Odak Kelimeler havuzunda" class="text-sm text-blue-600">★</span>' : '') + '</div>' +
                 '</div>' +
                 '<div class="relative">' +
                   '<button class="word-menu-toggle flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-xl font-black text-slate-500 hover:bg-white" aria-label="' + escapeHtml(item.word) + ' işlemleri" data-id="' + escapeHtml(item.id) + '">⋯</button>' +
                   '<div class="word-action-menu absolute right-0 top-10 z-10 min-w-32 rounded-xl border border-slate-200 bg-white p-1 shadow-xl shadow-slate-200">' +
                     '<button class="edit-word block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50" data-id="' + escapeHtml(item.id) + '">Düzenle</button>' +
-                    '<button class="toggle-daily-word block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-blue-700 hover:bg-blue-50" data-id="' + escapeHtml(item.id) + '">' + (item.showInDailyWords ? 'Günün Kelimelerinden Çıkar' : 'Günün Kelimelerine Ekle') + '</button>' +
+                    '<button class="toggle-daily-word block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-blue-700 hover:bg-blue-50" data-id="' + escapeHtml(item.id) + '">' + (item.showInDailyWords ? 'Odak Kelimelerden Çıkar' : 'Odak Kelimelere Ekle') + '</button>' +
                     '<button class="delete-word block w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-red-700 hover:bg-red-50" data-id="' + escapeHtml(item.id) + '">Sil</button>' +
                   '</div>' +
                 '</div>' +
@@ -6813,12 +7116,12 @@
           item.updatedAt = new Date().toISOString();
           saveJson(STORAGE_WORDS, wordbook);
           dailyWordPool();
-          button.textContent = item.showInDailyWords ? "Günün Kelimelerinden Çıkar" : "Günün Kelimelerine Ekle";
+          button.textContent = item.showInDailyWords ? "Odak Kelimelerden Çıkar" : "Odak Kelimelere Ekle";
           const heading = button.closest(".word-card")?.querySelector("h3")?.parentElement;
-          heading?.querySelector("[aria-label='Günün Kelimeleri havuzunda']")?.remove();
-          if (item.showInDailyWords && heading) heading.insertAdjacentHTML("beforeend", '<span title="Günün Kelimeleri havuzunda" aria-label="Günün Kelimeleri havuzunda" class="text-sm text-blue-600">★</span>');
+          heading?.querySelector("[aria-label='Odak Kelimeler havuzunda']")?.remove();
+          if (item.showInDailyWords && heading) heading.insertAdjacentHTML("beforeend", '<span title="Odak Kelimeler havuzunda" aria-label="Odak Kelimeler havuzunda" class="text-sm text-blue-600">★</span>');
           updateWordbookResults();
-          showToast(item.showInDailyWords ? "Günün Kelimelerine eklendi." : "Günün Kelimelerinden çıkarıldı.");
+          showToast(item.showInDailyWords ? "Odak Kelimelere eklendi." : "Odak Kelimelerden çıkarıldı.");
         });
       });
       document.querySelectorAll(".delete-word").forEach(button => {
@@ -7014,7 +7317,7 @@
       item.needsReview = false;
       item.dueAt = new Date(Date.now() + option.minutes * 60000).toISOString();
       item.updatedAt = new Date().toISOString();
-      const addedToDailyWords = ["good", "hard"].includes(rating) && addToDailyWords(item);
+      const addedToDailyWords = source === "flashcards" && ["good", "hard"].includes(rating) && addToDailyWords(item);
       saveJson(STORAGE_WORDS, wordbook);
       if (addedToDailyWords) queueSupabaseAutoBackup();
       if (source === "flashcards") {
@@ -7190,7 +7493,7 @@
           '<div class="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">' +
             '<div class="flex flex-wrap gap-2">' +
               '<button id="prevStudyWordBtn" ' + (isFirst ? "disabled " : "") + 'class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400">Önceki</button>' +
-              '<button id="nextStudyWordBtn" ' + (!wordCardRevealed ? "disabled " : "") + 'class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400" title="' + (wordCardRevealed ? "Değerlendirme seçmeden geçersen Zor olarak kaydedilir." : "Önce anlamı göster.") + '">' + (isLast ? "Oturumu Bitir" : "Sonraki") + '</button>' +
+              '<button id="nextStudyWordBtn" ' + (!wordCardRevealed ? "disabled " : "") + 'class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400" title="' + (wordCardRevealed ? "Değerlendirme yapmadan geç; kelimenin seviyesi ve tekrar havuzu değişmez." : "Önce anlamı göster.") + '">' + (isLast ? "Oturumu Bitir" : "Sonraki") + '</button>' +
             '</div>' +
             (wordCardRevealed
               ? '<div class="grid flex-1 gap-2 sm:grid-cols-3 lg:flex-none">' + srsOptions.map((option, index) =>
@@ -7215,7 +7518,6 @@
       });
       document.getElementById("nextStudyWordBtn").addEventListener("click", () => {
         if (!wordCardRevealed) return;
-        applySrsRating(item.id, "hard", "flashcards");
         wordStudyIndex++;
         persistDailyWordCardProgress(item.id, wordStudyIndex, wordStudyIndex >= words.length);
         wordCardRevealed = false;
@@ -7608,10 +7910,7 @@
         '</div>' +
         '<h3 class="line-clamp-2 text-lg font-black" style="color: var(--text-primary)">' + escapeHtml(articleDisplayTitle(article)) + '</h3>' +
         '<p class="mt-2 line-clamp-2 text-sm font-semibold" style="color: var(--text-secondary)">' + escapeHtml(normalizeArticleTextForReading(article.text || "").slice(0, 180)) + (article.text && article.text.length > 180 ? '...' : '') + '</p>' +
-        '<div class="article-card-collections">' +
-          '<button class="article-card-collection-button" data-article-collection="words" data-id="' + escapeHtml(article.id) + '" type="button">Kaydedilen kelimeler: ' + added + '</button>' +
-          '<button class="article-card-collection-button" data-article-collection="structures" data-id="' + escapeHtml(article.id) + '" type="button">Önemli yapılar: ' + structureCount + '</button>' +
-        '</div>' +
+        SourceSavedItemsBadges({ sourceId: article.id, wordCount: added, structureCount, scope: "article" }) +
         (metaParts.length > 1 ? '<div class="mt-3 flex flex-wrap gap-2">' + metaParts.slice(1).map(item => '<span class="rounded-full border px-2.5 py-1 text-xs font-bold" style="border-color: var(--border-color); color: var(--text-secondary); background: var(--bg-surface-secondary)">' + escapeHtml(item) + '</span>').join("") + '</div>' : '') +
         '<div class="mt-3">' +
           '<div class="mb-1 flex items-center justify-between text-[11px] font-black uppercase tracking-wide" style="color: var(--text-secondary)"><span>Okuma ilerlemesi</span><span>%' + progress + '</span></div>' +
@@ -7773,11 +8072,11 @@
           renderArticlesPage();
         });
       });
-      document.querySelectorAll(".article-card-collection-button").forEach(button => {
+      document.querySelectorAll('[data-saved-items-scope="article"]').forEach(button => {
         button.addEventListener("click", event => {
           event.stopPropagation();
           const article = articles.find(item => item.id === button.dataset.id);
-          if (article) openArticleCardCollectionPopup(article, button.dataset.articleCollection === "structures" ? "structures" : "words");
+          if (article) openArticleCardCollectionPopup(article, button.dataset.savedItems === "structures" ? "structures" : "words");
         });
       });
       document.querySelectorAll(".article-card-menu-btn").forEach(button => {
