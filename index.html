@@ -1257,6 +1257,7 @@
     .source-stat-badge:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; }
     .source-stat-badge strong { font-size: .84rem; font-weight: 900; }
     .source-stat-badge--words { border-color: color-mix(in srgb, #2563eb 30%, var(--border-color)); background: color-mix(in srgb, #2563eb 9%, var(--bg-surface)); color: #2563eb; }
+    .source-stat-badge--collections { border-color: color-mix(in srgb, #2563eb 30%, var(--border-color)); background: color-mix(in srgb, #2563eb 9%, var(--bg-surface)); color: #2563eb; }
     .source-stat-badge--structures { border-color: color-mix(in srgb, #7c3aed 30%, var(--border-color)); background: color-mix(in srgb, #7c3aed 9%, var(--bg-surface)); color: #6d28d9; }
     [data-theme="dark"] .source-stat-badge--words, body.dark-theme .source-stat-badge--words { background: color-mix(in srgb, #2563eb 24%, var(--bg-surface)); color: #bfdbfe; }
     [data-theme="dark"] .source-stat-badge--structures, body.dark-theme .source-stat-badge--structures { background: color-mix(in srgb, #7c3aed 24%, var(--bg-surface)); color: #ddd6fe; }
@@ -1274,6 +1275,9 @@
     .article-collection-modal__item-detail { display: block; margin-top: .3rem; color: #475569; font-size: .88rem; font-weight: 720; line-height: 1.25; overflow-wrap: anywhere; }
     .article-collection-modal__item-meta { display: block; margin-top: .28rem; color: #64748b; font-size: .67rem; font-weight: 800; letter-spacing: .01em; }
     .article-collection-modal__item-more { flex: 0 0 auto; color: #172033; font-size: 1.15rem; font-weight: 950; letter-spacing: .1em; line-height: 1; }
+    .article-collection-modal__tabs { display: flex; gap: .45rem; padding: .75rem 1.15rem 0; background: #fff; }
+    .article-collection-modal__tab { flex: 1; min-height: 38px; border: 1px solid #cbd5e1; border-radius: .75rem; background: #f8fafc; color: #475569; font-size: .82rem; font-weight: 850; }
+    .article-collection-modal__tab[aria-selected="true"] { border-color: #2563eb; background: #2563eb; color: #fff; }
     .cloud-restore-modal { position: fixed; inset: 0; z-index: 130; display: grid; place-items: center; padding: 1rem; background: rgb(15 23 42 / 52%); backdrop-filter: blur(5px); }
     .cloud-restore-modal__dialog { width: min(680px, 100%); max-height: calc(100vh - 2rem); overflow: auto; border: 1px solid #cbd5e1; border-radius: 1.25rem; background: #fff; color: #172033; box-shadow: 0 24px 70px rgb(15 23 42 / 32%); }
     .cloud-restore-modal__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1.15rem 1.15rem .85rem; border-bottom: 1px solid #e2e8f0; }
@@ -2378,6 +2382,10 @@
       if (!words && !structures) return "";
       const id = escapeHtml(sourceId || "");
       const safeScope = escapeHtml(scope || "");
+      if (scope === "rfs" || scope === "article") return '<div class="source-saved-items" aria-label="Kaydedilmiş öğeler">' +
+        (words ? '<button class="source-stat-badge source-stat-badge--words" data-saved-items-scope="' + safeScope + '" data-saved-items="collections" data-collection-tab="words" data-id="' + id + '" type="button" title="Bu metindeki kelimeleri göster."><strong>' + words + '</strong><span>Kelime</span></button>' : '') +
+        (structures ? '<button class="source-stat-badge source-stat-badge--structures" data-saved-items-scope="' + safeScope + '" data-saved-items="collections" data-collection-tab="structures" data-id="' + id + '" type="button" title="Bu metindeki önemli yapıları göster."><strong>' + structures + '</strong><span>Önemli Yapı</span></button>' : '') +
+      '</div>';
       return '<div class="source-saved-items" aria-label="Kaydedilmiş öğeler">' +
         (words ? '<button class="source-stat-badge source-stat-badge--words" data-saved-items-scope="' + safeScope + '" data-saved-items="words" data-id="' + id + '" type="button" title="Bu kaynaktan Kelime Defteri’ne eklenen kelimeleri göster."><strong>' + words + '</strong><span>Kelime</span></button>' : '') +
         (structures ? '<button class="source-stat-badge source-stat-badge--structures" data-saved-items-scope="' + safeScope + '" data-saved-items="structures" data-id="' + id + '" type="button" title="Bu kaynaktan kaydedilen önemli yapıları göster."><strong>' + structures + '</strong><span>Önemli Yapı</span></button>' : '') +
@@ -3453,34 +3461,33 @@
       ) || String(item?.articleId || item?.questionId || "") === articleId);
     }
 
-    function openReadForSpeedCardCollectionPopup(article, collection) {
+    function openReadForSpeedCardCollectionPopup(article, initialTab = "words") {
       document.getElementById("rfsCollectionModal")?.remove();
-      const isWords = collection === "words";
-      const records = isWords
-        ? savedWordsForReadForSpeedArticle(article)
-        : importantStructureNotes({ sourceModule: "read_for_speed", sourceId: article.id });
-      const title = isWords ? "Kaydedilen Kelimeler" : "Önemli Yapılar";
-      const subtitle = records.length ? "Bu metinde eklediğin " + records.length + " kayıt" : "Bu metinde henüz kayıt yok";
-      const items = records.length
-        ? records.map((record, index) => {
-          const text = isWords ? (record.word || "Kelime") : (record.highlightedText || record.selectedText || "Önemli yapı");
-          const detail = isWords ? (record.turkish || record.meaning || "Türkçe anlam eklenmedi") : (record.meaning || "Anlam/not eklenmedi");
-          const meta = isWords ? "Kelime Defterinde görüntüle" : "Hızlı tekrar";
-          return '<button class="article-collection-modal__item" data-rfs-collection-index="' + index + '" type="button"><span class="article-collection-modal__item-content"><span class="article-collection-modal__item-title">' + escapeHtml(text) + '</span><span class="article-collection-modal__item-detail">' + escapeHtml(detail) + '</span><span class="article-collection-modal__item-meta">' + meta + '</span></span><span class="article-collection-modal__item-more" aria-hidden="true">•••</span></button>';
-        }).join("")
-        : '<p class="px-1 py-4 text-sm font-semibold" style="color:var(--text-secondary)">' + (isWords ? "Bu metinden Kelime Defterine eklediğin kelimeler burada görünecek." : "Bu metinden önemli yapı olarak kaydettiğin ifadeler burada görünecek.") + '</p>';
       const modal = document.createElement("div");
       modal.id = "rfsCollectionModal";
       modal.className = "article-collection-modal";
-      modal.innerHTML = '<section class="article-collection-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="rfsCollectionModalTitle"><header class="article-collection-modal__header"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h3 id="rfsCollectionModalTitle" class="mt-1 text-lg font-black">' + title + '</h3><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">' + subtitle + '</p></div><button class="article-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl font-black" data-close-rfs-collection-modal type="button" aria-label="Pencereyi kapat">×</button></header><div class="article-collection-modal__list">' + items + '</div></section>';
+      const words = savedWordsForReadForSpeedArticle(article);
+      const structures = importantStructureNotes({ sourceModule: "read_for_speed", sourceId: article.id });
+      const render = tab => {
+        const isWords = tab === "words", records = isWords ? words : structures;
+        const items = records.length ? records.map((record, index) => {
+          const text = isWords ? (record.word || "Kelime") : (record.highlightedText || record.selectedText || "Önemli yapı");
+          const detail = isWords ? (record.turkish || record.meaning || "Türkçe anlam eklenmedi") : (record.meaning || "Anlam/not eklenmedi");
+          return '<button class="article-collection-modal__item" data-rfs-collection-index="' + index + '" type="button"><span class="article-collection-modal__item-content"><span class="article-collection-modal__item-title">' + escapeHtml(text) + '</span><span class="article-collection-modal__item-detail">' + escapeHtml(detail) + '</span><span class="article-collection-modal__item-meta">' + (isWords ? "Kelime Defterinde görüntüle" : "Metindeki yerine git") + '</span></span><span class="article-collection-modal__item-more" aria-hidden="true">•••</span></button>';
+        }).join("") : '<p class="px-1 py-4 text-sm font-semibold" style="color:var(--text-secondary)">' + (isWords ? "Bu metinden Kelime Defterine eklediğin kelimeler burada görünecek." : "Bu metinden önemli yapı olarak kaydettiğin ifadeler burada görünecek.") + '</p>';
+        modal.innerHTML = '<section class="article-collection-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="rfsCollectionModalTitle"><header class="article-collection-modal__header"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h3 id="rfsCollectionModalTitle" class="mt-1 text-lg font-black">Kelime ve Yapılar</h3><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">' + (words.length + structures.length) + ' kayıt</p></div><button class="article-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl font-black" data-close-rfs-collection-modal type="button" aria-label="Pencereyi kapat">×</button></header><div class="article-collection-modal__tabs" role="tablist"><button class="article-collection-modal__tab" data-rfs-tab="words" role="tab" aria-selected="' + isWords + '">Kelimeler (' + words.length + ')</button><button class="article-collection-modal__tab" data-rfs-tab="structures" role="tab" aria-selected="' + !isWords + '">Önemli Yapılar (' + structures.length + ')</button></div><div class="article-collection-modal__list">' + items + '</div></section>';
+        modal.querySelector("[data-close-rfs-collection-modal]")?.addEventListener("click", close);
+        modal.querySelectorAll("[data-rfs-tab]").forEach(button => button.addEventListener("click", () => render(button.dataset.rfsTab)));
+        modal.querySelectorAll("[data-rfs-collection-index]").forEach(button => button.addEventListener("click", () => {
+          const record = records[Number(button.dataset.rfsCollectionIndex)];
+          if (isWords && record) { close(); openWordModal(record.word, null, null, { mode: "view", wordId: record.id }); }
+          if (!isWords && record) { close(); readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); window.setTimeout(() => jumpToImportantStructure(record), 80); }
+        }));
+      };
       const close = () => modal.remove();
       modal.addEventListener("click", event => { if (event.target === modal) close(); });
-      modal.querySelector("[data-close-rfs-collection-modal]")?.addEventListener("click", close);
-      modal.querySelectorAll("[data-rfs-collection-index]").forEach(button => button.addEventListener("click", () => {
-        const record = records[Number(button.dataset.rfsCollectionIndex)];
-        if (isWords && record) openWordModal(record.word, null, null, { mode: "view", wordId: record.id });
-      }));
       document.body.append(modal);
+      render(initialTab === "structures" ? "structures" : "words");
       modal.querySelector("[data-close-rfs-collection-modal]")?.focus();
     }
 
@@ -3634,7 +3641,7 @@
       document.querySelectorAll('[data-saved-items-scope="rfs"]').forEach(button => button.addEventListener("click", event => {
         event.stopPropagation();
         const article = readForSpeedArticles.find(item => item.id === button.dataset.id);
-        if (article) openReadForSpeedCardCollectionPopup(article, button.dataset.savedItems);
+        if (article) openReadForSpeedCardCollectionPopup(article, button.dataset.collectionTab);
       }));
       document.querySelectorAll(".rfs-open").forEach(button => button.onclick = () => { const article = readForSpeedArticles.find(item => item.id === button.dataset.id); if (!article) return; readForSpeedReviewAttemptId = button.dataset.mode === "review" ? latestCompletedReadForSpeedAttempt(article)?.id || null : null; readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); });
       document.querySelectorAll(".rfs-retry-card").forEach(button => button.onclick = async () => { const article = readForSpeedArticles.find(item => item.id === button.dataset.id); if (!article || !(await confirmReadForSpeedRetry(article))) return; startNewReadForSpeedAttempt(article); readForSpeedReviewAttemptId = null; readForSpeedActiveArticle = article; readForSpeedMode = "reader"; saveReadForSpeedArticles(); renderReadForSpeedPage(); });
@@ -3912,15 +3919,16 @@
           readingBody.dataset.structureParagraph = "0";
           const layout = document.createElement("div"); layout.className = "important-structures-layout";
           readingBody.before(layout); layout.append(readingBody);
-          layout.insertAdjacentHTML("beforeend", importantStructuresPanelHtml(importantContext));
           applyImportantStructureHighlights(readingBody, importantContext);
           bindImportantStructures(importantContext, appArea);
         }
-        const importantButton = document.createElement("button");
-        importantButton.id = "rfsImportantStructures"; importantButton.dataset.importantStructuresTrigger = ""; importantButton.className = "important-structures-button rounded-xl border px-3 py-2 text-sm font-black" + (importantStructuresPanelOpen ? " border-blue-500 bg-blue-50 text-blue-700" : ""); importantButton.setAttribute("aria-controls", "important-structures-drawer"); importantButton.setAttribute("aria-expanded", String(importantStructuresPanelOpen));
-        importantButton.textContent = "Önemli Yapılar (" + importantStructureNotes(importantContext).length + ")";
-        importantButton.onclick = () => { importantStructuresPanelOpen = !importantStructuresPanelOpen; document.querySelector(".important-structure-selection")?.remove(); localStorage.setItem("yds-important-structures-panel-open-v1", importantStructuresPanelOpen ? "1" : "0"); renderReadForSpeedPage(); };
-        document.getElementById("rfsFontDownBtn")?.closest(".study-text-size-controls")?.before(importantButton);
+        const collectionsButton = document.createElement("button");
+        const rfsWords = savedWordsForReadForSpeedArticle(article).length, rfsStructures = importantStructureNotes(importantContext).length;
+        collectionsButton.id = "rfsCollections"; collectionsButton.className = "important-structures-button rounded-xl border px-3 py-2 text-sm font-black";
+        const rfsCollectionTotal = rfsWords + rfsStructures;
+        collectionsButton.textContent = "Kelime ve Yapılar" + (rfsCollectionTotal ? " (" + rfsCollectionTotal + ")" : "");
+        collectionsButton.onclick = () => openReadForSpeedCardCollectionPopup(article);
+        document.getElementById("rfsFontDownBtn")?.closest(".study-text-size-controls")?.before(collectionsButton);
         if (!progress.checked && article.pendingCheckConfirmation && readingBody) {
           const blankCount = article.contentNodes.filter(node => node.type === "binary_choice" && readForSpeedQuestionStatus(node, progress.selectedAnswers) === "blank").length;
           readingBody.insertAdjacentHTML("beforebegin", `<section class="rfs-check-confirm"><b>${blankCount} soru boş.</b> Yine de cevapları kontrol etmek istiyor musun?<div class="mt-3 flex flex-wrap gap-2"><button id="rfsBlank" class="rounded-xl border px-3 py-2 text-sm font-black">Boşlara Dön</button><button id="rfsConfirmCheck" class="rounded-xl bg-blue-600 px-3 py-2 text-sm font-black text-white">Yine de Kontrol Et</button></div></section>`);
@@ -6199,7 +6207,6 @@
       const minutes = articleReadMinutes(article?.text || "");
       const added = articleAddedWordCount(article);
       if (minutes) parts.push(minutes + " dk okuma");
-      if (added) parts.push("Deftere eklenen: " + added + " kelime");
       return parts.length ? '<div class="article-reader-metadata" style="color: var(--text-secondary)">' + parts.map(item => '<span class="rounded-full border" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-secondary)">' + escapeHtml(item) + '</span>').join("") + '</div>' : "";
     }
 
@@ -7983,61 +7990,34 @@
       return null;
     }
 
-    function openArticleCardCollectionPopup(article, collection) {
+    function openArticleCardCollectionPopup(article, initialTab = "words") {
       document.getElementById("articleCollectionModal")?.remove();
-      const isWords = collection === "words";
-      const records = isWords
-        ? savedArticleEntries(article).filter(entry => !entry.unresolved)
-        : articleImportantStructures(article);
-      const title = isWords ? "Kaydedilen Kelimeler" : "Önemli Yapılar";
-      const subtitle = records.length ? "Bu parçada eklediğin " + records.length + " kayıt" : "Bu parçada henüz kayıt yok";
-      const items = records.length
-        ? records.map((record, index) => {
-          const text = isWords ? savedEntryLabel(record) : record.highlightedText;
-          const detail = isWords
-            ? (record.item.turkish || record.item.meaning || "Türkçe anlam eklenmedi")
-            : (record.meaning || "Anlam/not eklenmedi");
-          const paragraph = isWords
-            ? articleParagraphNumber(article, record.start)
-            : (Number.isFinite(Number(record.paragraphIndex)) ? Number(record.paragraphIndex) + 1 : null);
-          const location = paragraph ? "Paragraf " + paragraph + " · Metindeki yerine git" : "Metindeki yerine git";
-          return '<button class="article-collection-modal__item" data-collection-index="' + index + '" type="button">' +
-            '<span class="article-collection-modal__item-content">' +
-              '<span class="article-collection-modal__item-title">' + escapeHtml(text || "Kayıt") + '</span>' +
-              '<span class="article-collection-modal__item-detail">' + escapeHtml(detail) + '</span>' +
-              '<span class="article-collection-modal__item-meta">' + location + '</span>' +
-            '</span>' +
-            '<span class="article-collection-modal__item-more" aria-hidden="true">•••</span>' +
-          '</button>';
-        }).join("")
-        : '<p class="px-1 py-4 text-sm font-semibold" style="color: var(--text-secondary)">' + (isWords ? "Metinden seçip kelime defterine eklediğin kelimeler burada görünecek." : "Metinden ifade seçip önemli yapı olarak kaydettiğin notlar burada görünecek.") + '</p>';
       const modal = document.createElement("div");
       modal.id = "articleCollectionModal";
-      modal.className = "article-collection-modal article-collection-modal--" + (isWords ? "words" : "structures");
-      modal.innerHTML = '<section class="article-collection-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="articleCollectionModalTitle">' +
-        '<header class="article-collection-modal__header"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Okuma Parçası</p><h3 id="articleCollectionModalTitle" class="mt-1 text-lg font-black">' + title + '</h3><p class="mt-1 text-sm font-semibold" style="color: var(--text-secondary)">' + subtitle + '</p></div><button class="article-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl font-black" data-close-collection-modal type="button" aria-label="Pencereyi kapat">×</button></header>' +
-        '<div class="article-collection-modal__list">' + items + '</div></section>';
+      modal.className = "article-collection-modal";
+      const words = savedArticleEntries(article).filter(entry => !entry.unresolved);
+      const structures = articleImportantStructures(article);
+      const render = tab => {
+        const isWords = tab === "words", records = isWords ? words : structures;
+        const items = records.length ? records.map((record, index) => {
+          const text = isWords ? savedEntryLabel(record) : record.highlightedText;
+          const detail = isWords ? (record.item.turkish || record.item.meaning || "Türkçe anlam eklenmedi") : (record.meaning || "Anlam/not eklenmedi");
+          const paragraph = isWords ? articleParagraphNumber(article, record.start) : (Number.isFinite(Number(record.paragraphIndex)) ? Number(record.paragraphIndex) + 1 : null);
+          return '<button class="article-collection-modal__item" data-collection-index="' + index + '" type="button"><span class="article-collection-modal__item-content"><span class="article-collection-modal__item-title">' + escapeHtml(text || "Kayıt") + '</span><span class="article-collection-modal__item-detail">' + escapeHtml(detail) + '</span><span class="article-collection-modal__item-meta">' + (paragraph ? "Paragraf " + paragraph + " · " : "") + (isWords ? "Kelime Defterinde görüntüle" : "Metindeki yerine git") + '</span></span><span class="article-collection-modal__item-more" aria-hidden="true">•••</span></button>';
+        }).join("") : '<p class="px-1 py-4 text-sm font-semibold" style="color: var(--text-secondary)">' + (isWords ? "Metinden seçip kelime defterine eklediğin kelimeler burada görünecek." : "Metinden ifade seçip önemli yapı olarak kaydettiğin notlar burada görünecek.") + '</p>';
+        modal.innerHTML = '<section class="article-collection-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="articleCollectionModalTitle"><header class="article-collection-modal__header"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Okuma Parçası</p><h3 id="articleCollectionModalTitle" class="mt-1 text-lg font-black">Kelime ve Yapılar</h3><p class="mt-1 text-sm font-semibold" style="color: var(--text-secondary)">' + (words.length + structures.length) + ' kayıt</p></div><button class="article-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl font-black" data-close-collection-modal type="button" aria-label="Pencereyi kapat">×</button></header><div class="article-collection-modal__tabs" role="tablist"><button class="article-collection-modal__tab" data-collection-tab="words" role="tab" aria-selected="' + isWords + '">Kelimeler (' + words.length + ')</button><button class="article-collection-modal__tab" data-collection-tab="structures" role="tab" aria-selected="' + !isWords + '">Önemli Yapılar (' + structures.length + ')</button></div><div class="article-collection-modal__list">' + items + '</div></section>';
+        modal.querySelector("[data-close-collection-modal]")?.addEventListener("click", close);
+        modal.querySelectorAll("[data-collection-tab]").forEach(button => button.addEventListener("click", () => render(button.dataset.collectionTab)));
+        modal.querySelectorAll("[data-collection-index]").forEach(button => button.addEventListener("click", () => {
+          const record = records[Number(button.dataset.collectionIndex)]; if (!record) return;
+          if (isWords) { close(); openWordModal(record.item.word, null, null, { mode: "view", wordId: record.item.id }); }
+          else { close(); activeArticleId = article.id; articleLanguageView = "en"; renderArticlesPage(); window.setTimeout(() => jumpToImportantStructure(record), 80); }
+        }));
+      };
       const close = () => modal.remove();
       modal.addEventListener("click", event => { if (event.target === modal) close(); });
-      modal.querySelector("[data-close-collection-modal]")?.addEventListener("click", close);
-      modal.querySelectorAll("[data-collection-index]").forEach(button => button.addEventListener("click", () => {
-        const record = records[Number(button.dataset.collectionIndex)];
-        if (!record) return;
-        close();
-        activeArticleId = article.id;
-        articleLanguageView = "en";
-        if (isWords) {
-          articleSavedPanelOpen = true;
-          renderArticlesPage();
-          window.setTimeout(() => jumpToArticleSavedSource(record.key), 80);
-        } else {
-          importantStructuresPanelOpen = true;
-          pendingImportantStructureId = record.id;
-          renderArticlesPage();
-          window.setTimeout(() => jumpToImportantStructure(record), 80);
-        }
-      }));
       document.body.append(modal);
+      render(initialTab === "structures" ? "structures" : "words");
       modal.querySelector("[data-close-collection-modal]")?.focus();
     }
 
@@ -8229,7 +8209,7 @@
         button.addEventListener("click", event => {
           event.stopPropagation();
           const article = articles.find(item => item.id === button.dataset.id);
-          if (article) openArticleCardCollectionPopup(article, button.dataset.savedItems === "structures" ? "structures" : "words");
+          if (article) openArticleCardCollectionPopup(article, button.dataset.collectionTab);
         });
       });
       document.querySelectorAll(".article-card-menu-btn").forEach(button => {
@@ -8605,6 +8585,7 @@
       const kind = articleKind(article);
       const savedEntries = savedArticleEntries(article);
       const savedEntryCount = savedEntries.filter(entry => !entry.unresolved).length;
+      const importantStructureCount = importantStructureNotes({ sourceModule: "reading_center", sourceId: article.id }).length;
       const highlightToggleLabel = articleHighlightsVisible ? "Kelime vurgularını gizle" : "Kelime vurgularını göster";
       const hasTranslation = articleHasTranslation(article);
       if (!hasTranslation || articleLanguageView !== "bilingual") articleLanguageView = "en";
@@ -8619,7 +8600,7 @@
             '<div class="article-toolbar-toprow">' +
               '<button id="articleBackBtn" class="article-toolbar-btn flex h-10 shrink-0 items-center justify-center rounded-xl px-3 text-xs font-black" title="Okuma listesine dön" aria-label="Okuma listesine dön">← <span class="article-toolbar-back-copy ml-1">Listeye dön</span></button>' +
               '<div class="article-reader-actions relative">' +
-                '<button id="importantStructuresBtn" data-important-structures-trigger class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black ' + (importantStructuresPanelOpen ? 'ring-2 ring-blue-300 bg-blue-50 text-blue-700' : '') + '" title="Bu metindeki önemli yapılar" aria-controls="important-structures-drawer" aria-expanded="' + importantStructuresPanelOpen + '">Önemli Yapılar (' + importantStructureNotes(importantContext).length + ')</button>' +
+                '<button id="articleCollectionsBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="Bu metindeki kelimeleri ve önemli yapıları göster">Kelime ve Yapılar' + (savedEntryCount + importantStructureCount ? ' (' + (savedEntryCount + importantStructureCount) + ')' : '') + '</button>' +
                 '<button id="articleHighlightToggleBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="' + highlightToggleLabel + '" aria-label="' + highlightToggleLabel + '">Vurgular</button>' +
                 TextSizeControls("article") +
                 '<button id="articleMenuBtn" class="article-icon-btn flex h-10 w-10 items-center justify-center rounded-xl text-xl font-black" title="Diğer işlemler" aria-label="Diğer işlemler">⋯</button>' +
@@ -8644,9 +8625,7 @@
             '</div>' +
           '</header>' +
           '<div class="important-structures-layout"><div><div id="articleReadingBody" data-study-content class="article-body ' + (articleHighlightsVisible ? '' : 'article-hide-highlights ') + 'rounded-2xl border px-5 py-6 sm:px-7 lg:px-8" style="max-width: ' + contentWidth + 'px; --study-content-font-size: ' + fontSize + 'px; border-color: var(--border-color);">' + renderTranslatedArticleBody(article, languageView, vocabMap, savedEntries) + '</div>' +
-          (kind === "yds" ? renderYdsReadingQuestions(article) : '<section class="mx-auto mt-4 max-w-[900px] rounded-2xl border p-4" style="border-color: var(--border-color); background: var(--bg-surface-secondary)"><div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Okuma</p><p class="text-sm font-semibold" style="color: var(--text-secondary)">Metni bitirdiğinde günlük kendi metnim görevin tamamlanır.</p></div><div class="flex flex-wrap gap-2"><button id="studyArticleWordsBtn" class="rounded-xl border px-4 py-2 text-sm font-black" style="border-color: var(--border-color); color: var(--button-secondary-text); background: var(--button-secondary-bg)">Bu metnin kelimeleri</button><button id="completeArticleReadingBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white hover:bg-blue-500">Okumayı Tamamla</button></div></div></section>') +
-        '</div>' + importantStructuresPanelHtml(importantContext) + '</div></article>' +
-        renderArticleSavedDrawer(article, savedEntries);
+        '</div></div></article>';
 
       reader.querySelectorAll(".word-token").forEach(button => {
         button.addEventListener("click", event => {
@@ -8660,12 +8639,7 @@
           openArticleWordModal(button, button.dataset.word, article, suggested, locator);
         });
       });
-      const savedWordsButton = document.getElementById("articleSavedWordsBtn");
-      if (savedWordsButton) savedWordsButton.addEventListener("click", () => {
-        articleSavedPanelOpen = !articleSavedPanelOpen;
-        renderArticleReader(article);
-      });
-      document.getElementById("importantStructuresBtn")?.addEventListener("click", () => { importantStructuresPanelOpen = !importantStructuresPanelOpen; document.querySelector(".important-structure-selection")?.remove(); localStorage.setItem("yds-important-structures-panel-open-v1", importantStructuresPanelOpen ? "1" : "0"); renderArticleReader(article); });
+      document.getElementById("articleCollectionsBtn")?.addEventListener("click", () => openArticleCardCollectionPopup(article));
       applyImportantStructureHighlights(document.getElementById("articleReadingBody"), importantContext);
       bindImportantStructures(importantContext, reader);
       document.querySelectorAll(".article-language-choice").forEach(button => {
@@ -8700,31 +8674,6 @@
         localStorage.setItem("yds-article-highlights-visible-v1", articleHighlightsVisible ? "1" : "0");
         renderArticleReader(article);
       });
-      const closeDrawerButton = document.getElementById("closeArticleSavedDrawerBtn");
-      if (closeDrawerButton) closeDrawerButton.addEventListener("click", () => {
-        articleSavedPanelOpen = false;
-        renderArticleReader(article);
-      });
-      document.querySelectorAll(".article-saved-filter").forEach(button => {
-        button.addEventListener("click", () => {
-          articleSavedFilter = button.dataset.filter || "all";
-          articleSavedPanelOpen = true;
-          renderArticleReader(article);
-        });
-      });
-      document.querySelectorAll(".jump-saved-source").forEach(button => {
-        button.addEventListener("click", () => jumpToArticleSavedSource(button.dataset.sourceKey));
-      });
-      document.querySelectorAll(".open-wordbook-source").forEach(button => {
-        button.addEventListener("click", () => {
-          wordSearchQuery = wordbook.find(item => item.id === button.dataset.wordId)?.word || "";
-          setView("words");
-        });
-      });
-      const studySavedButton = document.getElementById("studySavedArticleWordsBtn");
-      if (studySavedButton) studySavedButton.addEventListener("click", () => startArticleSavedWordStudy(article, "cards"));
-      const quizSavedButton = document.getElementById("quizSavedArticleWordsBtn");
-      if (quizSavedButton) quizSavedButton.addEventListener("click", () => startArticleSavedWordStudy(article, "quiz"));
       bindArticleSelectionSaving(article, vocabMap);
       document.getElementById("articleFocusBtn").addEventListener("click", () => {
         setArticleFocusMode(!articleFocusMode);
