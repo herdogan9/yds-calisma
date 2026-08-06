@@ -1159,6 +1159,29 @@
       text-wrap: pretty;
     }
 
+    .option-btn.is-eliminated {
+      border-color: var(--border-color) !important;
+      background: var(--bg-surface-secondary) !important;
+      color: var(--text-secondary) !important;
+      box-shadow: none !important;
+      cursor: context-menu;
+    }
+
+    .option-btn.is-eliminated:hover {
+      border-color: var(--border-color) !important;
+      background: var(--bg-surface-secondary) !important;
+    }
+
+    .option-btn.is-eliminated .option-letter {
+      opacity: .55;
+    }
+
+    .option-btn.is-eliminated .option-copy {
+      opacity: .62;
+      text-decoration: line-through;
+      text-decoration-thickness: 2px;
+    }
+
     .word-token:hover {
       color: #60a5fa;
       text-decoration: underline;
@@ -2210,10 +2233,17 @@
       const exams = raw.exams && typeof raw.exams === "object" ? raw.exams : {};
       Object.keys(exams).forEach(key => {
         const item = exams[key] && typeof exams[key] === "object" ? exams[key] : {};
+        const eliminatedOptions = {};
+        const rawEliminatedOptions = item.eliminatedOptions && typeof item.eliminatedOptions === "object" ? item.eliminatedOptions : {};
+        Object.entries(rawEliminatedOptions).forEach(([questionId, optionKeys]) => {
+          const validKeys = [...new Set((Array.isArray(optionKeys) ? optionKeys : []).filter(isAnswerKey))];
+          if (validKeys.length) eliminatedOptions[questionId] = validKeys;
+        });
         exams[key] = {
           examId: String(item.examId || key.replace(/^document:/, "")),
           currentQuestionId: typeof item.currentQuestionId === "string" ? item.currentQuestionId : null,
           answers: item.answers && typeof item.answers === "object" ? item.answers : {},
+          eliminatedOptions,
           manuallyCompleted: item.manuallyCompleted === true,
           completedAt: typeof item.completedAt === "string" ? item.completedAt : null,
           updatedAt: typeof item.updatedAt === "string" ? item.updatedAt : new Date(0).toISOString(),
@@ -2230,7 +2260,7 @@
       const key = examKeyForQuestion(question);
       let progress = examProgress.exams[key];
       if (!progress && create) {
-        progress = { examId: String(question?.documentId || activeDocumentId || "unknown"), currentQuestionId: null, answers: {}, updatedAt: new Date().toISOString() };
+        progress = { examId: String(question?.documentId || activeDocumentId || "unknown"), currentQuestionId: null, answers: {}, eliminatedOptions: {}, updatedAt: new Date().toISOString() };
         examProgress.exams[key] = progress;
       }
       return progress || null;
@@ -2243,6 +2273,32 @@
       }
       const value = progressForQuestion(question)?.answers?.[question?.id];
       return isAnswerKey(value) ? value : null;
+    }
+
+    function eliminatedOptionsForQuestion(question) {
+      if (solveMode === "wrong" || !question?.id) return new Set();
+      const optionKeys = progressForQuestion(question)?.eliminatedOptions?.[question.id];
+      return new Set((Array.isArray(optionKeys) ? optionKeys : []).filter(isAnswerKey));
+    }
+
+    function toggleEliminatedOptionForQuestion(question, optionKey) {
+      if (
+        solveMode === "wrong"
+        || !question?.id
+        || !isAnswerKey(optionKey)
+        || selectedAnswerForQuestion(question) === optionKey
+      ) return false;
+      const progress = progressForQuestion(question, true);
+      const eliminatedOptions = { ...(progress.eliminatedOptions || {}) };
+      const current = new Set((Array.isArray(eliminatedOptions[question.id]) ? eliminatedOptions[question.id] : []).filter(isAnswerKey));
+      if (current.has(optionKey)) current.delete(optionKey);
+      else current.add(optionKey);
+      if (current.size) eliminatedOptions[question.id] = [...current];
+      else delete eliminatedOptions[question.id];
+      progress.eliminatedOptions = eliminatedOptions;
+      progress.updatedAt = new Date().toISOString();
+      saveExamProgress();
+      return true;
     }
 
     function saveExamProgress() {
@@ -6326,6 +6382,7 @@
       }
       rememberCurrentQuestion(question);
       const selectedAnswer = selectedAnswerForQuestion(question);
+      const eliminatedOptions = eliminatedOptionsForQuestion(question);
       const fontSize = studyContentFontSize;
       const questionDocDisplay = documentInfo ? friendlyDocumentDisplay(documentInfo, questions.length) : { title: "Soru" };
 
@@ -6356,14 +6413,15 @@
           '<div id="optionsArea" class="space-y-3">' +
             Object.entries(question.options || {}).map(([key, value]) => {
               const isSelected = selectedAnswer === key;
+              const isEliminated = !isSelected && eliminatedOptions.has(key);
               const isCorrect = Boolean(selectedAnswer && question.correctAnswer && key === question.correctAnswer);
               const isWrong = Boolean(selectedAnswer && question.correctAnswer && isSelected && key !== question.correctAnswer);
               const borderColor = isCorrect ? '#059669' : isWrong ? '#dc2626' : isSelected ? '#2563eb' : 'var(--border-color)';
               const background = isCorrect ? '#ecfdf5' : isWrong ? '#fef2f2' : isSelected ? '#eff6ff' : 'var(--bg-surface-secondary)';
               const letterColor = isCorrect ? 'bg-emerald-600 text-white' : isWrong ? 'bg-red-600 text-white' : isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white';
-              return '<div class="option-btn group flex w-full cursor-pointer items-start gap-3 rounded-2xl border p-3.5 text-left transition hover:border-blue-300 hover:bg-blue-50' + ((isCorrect || isWrong || isSelected) ? ' ring-1' : '') + '" style="border-color: ' + borderColor + '; background: ' + background + '; color: var(--text-primary)" role="button" aria-pressed="' + (isSelected ? 'true' : 'false') + '" data-key="' + escapeHtml(key) + '">' +
+              return '<div class="option-btn group flex w-full cursor-pointer items-start gap-3 rounded-2xl border p-3.5 text-left transition hover:border-blue-300 hover:bg-blue-50' + ((isCorrect || isWrong || isSelected) ? ' ring-1' : '') + (isEliminated ? ' is-eliminated' : '') + '" style="border-color: ' + borderColor + '; background: ' + background + '; color: var(--text-primary)" role="button" aria-pressed="' + (isSelected ? 'true' : 'false') + '" aria-label="' + escapeHtml(key) + ' seçeneği' + (isEliminated ? ', elendi' : '') + '" title="' + (isSelected ? 'Seçili şık elenemez' : isEliminated ? 'Sağ tık: elemeyi kaldır' : 'Sağ tık: şıkkı ele') + '" data-key="' + escapeHtml(key) + '">' +
                 '<span class="option-letter flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ' + letterColor + ' font-bold">' + escapeHtml(key) + '</span>' +
-                '<span class="question-text block flex-1 pt-1" style="font-size: ' + Math.max(16, fontSize - 2) + 'px; line-height: 1.6; overflow-wrap: break-word; word-break: normal; hyphens: none;">' + clickableQuestionText(value) + '</span>' +
+                '<span class="option-copy question-text block flex-1 pt-1" style="font-size: ' + Math.max(16, fontSize - 2) + 'px; line-height: 1.6; overflow-wrap: break-word; word-break: normal; hyphens: none;">' + clickableQuestionText(value) + '</span>' +
               '</div>';
             }).join("") +
           '</div>' +
@@ -6381,7 +6439,17 @@
       document.querySelectorAll(".option-btn").forEach(button => {
         button.addEventListener("click", event => {
           if (event.target.closest(".word-token")) return;
+          if (button.classList.contains("is-eliminated")) return;
           checkAnswer(button, question);
+        });
+        button.addEventListener("contextmenu", event => {
+          if (
+            solveMode === "wrong"
+            || selectedAnswerForQuestion(question) === button.dataset.key
+            || !window.matchMedia("(hover: hover) and (pointer: fine)").matches
+          ) return;
+          event.preventDefault();
+          if (toggleEliminatedOptionForQuestion(question, button.dataset.key)) renderQuestion();
         });
       });
       document.querySelectorAll(".word-token").forEach(button => {
