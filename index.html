@@ -6399,6 +6399,7 @@
               TextSizeControls("question") +
               '<button id="questionFocusBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black ' + (questionFocusMode ? 'ring-2 ring-blue-300' : '') + '" title="Odak moduna geç" aria-label="Odak moduna geç">' + (questionFocusMode ? '↔' : '◎') + '</button>' +
               '<button id="questionQuickNoteBtn" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black" title="Bu soru için not ekle" aria-label="Not Ekle">Not Ekle</button>' +
+              (solveMode === "wrong" ? '<button id="removeCurrentWrongBtn" class="flex h-10 items-center justify-center rounded-xl border border-red-200 bg-red-50 px-3 text-xs font-black text-red-700 transition hover:border-red-300 hover:bg-red-100" title="Bu soruyu yanlış sorular havuzundan çıkar" aria-label="Bu soruyu havuzdan çıkar">Havuzdan Çıkar</button>' : '') +
               '<button id="questionBackBtn" class="article-toolbar-btn flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black" title="Kaynaklara dön" aria-label="Kaynaklara dön">←</button>' +
             '</div>' +
           '</div>' +
@@ -6473,6 +6474,26 @@
           },
           onSaved: () => showToast("Not kaydedildi."),
         });
+      });
+      const removeCurrentWrongButton = document.getElementById("removeCurrentWrongBtn");
+      if (removeCurrentWrongButton) removeCurrentWrongButton.addEventListener("click", () => {
+        removeWrongQuestion(question.id);
+        if (wrongReviewSession) {
+          const questionIds = wrongReviewSession.questionIds.filter(id => id !== question.id);
+          saveWrongReviewSession({
+            ...wrongReviewSession,
+            questionIds,
+            currentIndex: Math.min(wrongReviewSession.currentIndex, Math.max(questionIds.length - 1, 0)),
+            updatedAt: new Date().toISOString(),
+          });
+          wrongReviewIds = questionIds;
+        }
+        showToast("Soru havuzdan çıkarıldı.");
+        if (!wrongReviewIds.length) {
+          setView("wrong");
+          return;
+        }
+        renderQuestion();
       });
       document.getElementById("questionBackBtn").addEventListener("click", () => {
         setQuestionFocusMode(false);
@@ -7131,15 +7152,13 @@
       const preview = notePreview(note);
       const hasSource = note.sourceType !== "manual" && Boolean(note.sourceId || note.questionId);
       const sourceExists = noteSourceExists(note);
-      const sourceName = note.sourceTitle || "Kaynak başlığı eklenmedi";
-      const sourceSection = note.sourceType === "reading" ? (note.sourceModule === "read_for_speed" ? "Read for Speed" : "Okuma Merkezi") : note.sourceType === "question" ? "Çıkmış Sorular" : "";
       const sourceStatus = !hasSource ? "Serbest not" : !sourceExists ? "Kaynak artık mevcut değil" : "";
       return '<article class="note-card relative flex min-h-[220px] min-w-0 cursor-pointer flex-col rounded-2xl border border-slate-200 bg-slate-50 p-[22px] shadow-sm transition duration-150 hover:border-slate-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800" data-note-open="' + escapeHtml(note.id) + '">' +
         '<div class="flex items-start justify-between gap-3"><p class="text-xs font-bold text-slate-500">' + escapeHtml(formatNoteDate(note.createdAt)) + '</p>' +
         '<button class="note-menu-toggle flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-lg font-black text-slate-500 hover:bg-slate-100 hover:text-blue-700 dark:border-slate-700 dark:bg-slate-900" data-note-id="' + escapeHtml(note.id) + '" aria-label="' + escapeHtml(noteTitle(note)) + ' not işlemleri" aria-expanded="false">…</button></div>' +
         '<h3 class="mt-4 line-clamp-3 break-words text-[clamp(20px,1.55vw,23px)] font-bold leading-[1.28] text-blue-700">' + escapeHtml(noteTitle(note)) + '</h3>' +
         (preview ? '<p class="mt-2 whitespace-pre-wrap line-clamp-3 text-base font-medium leading-relaxed text-slate-700 dark:text-slate-300">' + escapeHtml(preview) + '</p>' : "") +
-        '<div class="mt-auto flex min-w-0 items-center gap-2 border-t border-slate-200 pt-4 text-xs dark:border-slate-700">' + (sourceExists ? '<button class="note-source-link flex min-w-0 items-center gap-2 text-left font-semibold text-slate-600 hover:text-slate-800 dark:text-slate-300" data-note-source="' + escapeHtml(note.id) + '" aria-label="' + escapeHtml(sourceName) + ' metnine git" title="' + escapeHtml(sourceName) + '">' + (sourceSection ? '<span class="shrink-0 max-w-[46%] truncate rounded-full border border-slate-200 px-2 py-0.5 text-[11px] font-bold text-slate-500 dark:border-slate-700">' + escapeHtml(sourceSection + (note.questionNumber ? " · Soru " + note.questionNumber : "")) + '</span>' : "") + '<span class="line-clamp-2">' + escapeHtml(sourceName) + '</span><b aria-hidden="true" class="ml-auto shrink-0 text-base text-blue-700">→</b></button>' : '<span class="' + (hasSource ? "font-medium text-slate-500" : "rounded-full border border-slate-200 px-2 py-0.5 font-bold text-slate-500 dark:border-slate-700") + '">' + sourceStatus + '</span>') + '</div>' +
+        '<div class="mt-auto flex min-w-0 items-center gap-2 border-t border-slate-200 pt-4 text-xs dark:border-slate-700">' + (sourceExists ? '<button class="note-source-link ml-auto flex w-full items-center justify-end text-blue-700 hover:text-blue-800" data-note-source="' + escapeHtml(note.id) + '" aria-label="Notun kaynağına git" title="Kaynağa git"><b aria-hidden="true" class="shrink-0 text-base">→</b></button>' : '<span class="' + (hasSource ? "font-medium text-slate-500" : "rounded-full border border-slate-200 px-2 py-0.5 font-bold text-slate-500 dark:border-slate-700") + '">' + sourceStatus + '</span>') + '</div>' +
         '<div class="note-action-menu hidden absolute right-4 top-14 z-10 w-48 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl" data-note-menu="' + escapeHtml(note.id) + '">' +
           '<button data-note-action="edit" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50">Düzenle</button>' +
           (sourceExists ? '<button data-note-action="source" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50">Kaynağa Git</button>' : "") +
