@@ -1902,6 +1902,7 @@
     const STORAGE_THEME = "yds-theme-v1";
     const STORAGE_WRONG_QUESTIONS = "yds-wrong-questions-v1";
     const STORAGE_RESOLVED_WRONG_QUESTIONS = "yds-resolved-wrong-questions-v1";
+    const STORAGE_DISMISSED_WRONG_QUESTIONS = "yds-dismissed-wrong-questions-v1";
     const STORAGE_WRONG_REVIEW_SESSION = "yds-wrong-question-review-session-v1";
     const STORAGE_WORD_SEED_VERSION = "yds-word-seed-version-v1";
     const STORAGE_REMOVE_BUILTIN_SEEDS = "yds-remove-builtin-seeds-v1";
@@ -1915,6 +1916,7 @@
     // display counters. Each key is a completed item in one concrete session.
     const STORAGE_WEEKLY_ACTIVITY = "yds-weekly-activity-v2";
     const STORAGE_WORD_STUDY_SESSION = "yds-word-study-session-v2";
+    const STORAGE_WORD_STUDY_PROGRESS = "yds-word-study-progress-v1";
     const STORAGE_DAILY_WORD_CARD_SESSION = "yds-daily-word-card-session-v1";
     const STORAGE_QUESTION_SESSION = "yds-question-solving-session-v2";
     const STORAGE_SUPABASE_CONFIG = "yds-supabase-config-v1";
@@ -1955,8 +1957,10 @@
     let readForSpeedArticles = loadJson(STORAGE_READ_FOR_SPEED, []);
     let wrongQuestionIds = loadJson(STORAGE_WRONG_QUESTIONS, []);
     let resolvedWrongQuestionIds = loadJson(STORAGE_RESOLVED_WRONG_QUESTIONS, []);
+    let dismissedWrongQuestionIds = loadJson(STORAGE_DISMISSED_WRONG_QUESTIONS, []);
     if (!Array.isArray(wrongQuestionIds)) wrongQuestionIds = [];
     if (!Array.isArray(resolvedWrongQuestionIds)) resolvedWrongQuestionIds = [];
+    if (!Array.isArray(dismissedWrongQuestionIds)) dismissedWrongQuestionIds = [];
     let wrongReviewSession = normalizeWrongReviewSession(loadJson(STORAGE_WRONG_REVIEW_SESSION, null));
     let documentProgress = loadJson(STORAGE_DOCUMENT_PROGRESS, {});
     let examProgress = normalizeExamProgress(loadJson(STORAGE_EXAM_PROGRESS, { version: 1, exams: {} }));
@@ -1981,15 +1985,16 @@
     let pendingWord = null;
     let wordModalMode = "create";
     let selectedWordId = null;
-    let wordStudyMode = "cards";
+    const savedWordStudyProgress = loadJson(STORAGE_WORD_STUDY_PROGRESS, null);
+    let wordStudyMode = savedWordStudyProgress?.mode === "quiz" ? "quiz" : "cards";
     let wordStudyScopeIds = null;
     let wordStudyScopeLabel = "";
     let wordSessionSize = localStorage.getItem("yds-word-session-size-v1") || "20";
     let wordCustomSessionSize = Number(localStorage.getItem("yds-word-custom-session-size-v1") || 20);
     let wordSessionIds = loadJson("yds-word-session-ids-v1", []);
-    let wordStudyIndex = 0;
+    let wordStudyIndex = Number.isInteger(savedWordStudyProgress?.index) && savedWordStudyProgress.index >= 0 ? savedWordStudyProgress.index : 0;
     let wordCardRevealed = false;
-    let wordQuizQuestion = null;
+    let wordQuizQuestion = savedWordStudyProgress?.mode === "quiz" && savedWordStudyProgress?.quizQuestion ? savedWordStudyProgress.quizQuestion : null;
     let wordQuizSessionResults = loadJson("yds-word-quiz-session-results-v1", {});
     let wordStudySessionId = localStorage.getItem(STORAGE_WORD_STUDY_SESSION) || "";
     let dailyWordCardSession = loadJson(STORAGE_DAILY_WORD_CARD_SESSION, null);
@@ -2669,6 +2674,7 @@
         saveJson(STORAGE_WRONG_QUESTIONS, wrongQuestionIds);
       }
       resolvedWrongQuestionIds = resolvedWrongQuestionIds.filter(id => validQuestionIds.has(id));
+      dismissedWrongQuestionIds = dismissedWrongQuestionIds.filter(id => validQuestionIds.has(id));
       reconcileWrongQuestionPool();
       if (wrongReviewSession) {
         const review = normalizeWrongReviewSession({ ...wrongReviewSession, questionIds: wrongReviewSession.questionIds.filter(id => validQuestionIds.has(id)) });
@@ -2701,6 +2707,7 @@
     function saveWrongQuestions() {
       saveJson(STORAGE_WRONG_QUESTIONS, wrongQuestionIds);
       saveJson(STORAGE_RESOLVED_WRONG_QUESTIONS, resolvedWrongQuestionIds);
+      saveJson(STORAGE_DISMISSED_WRONG_QUESTIONS, dismissedWrongQuestionIds);
       queueSupabaseAutoBackup();
     }
 
@@ -2708,8 +2715,10 @@
       if (!questionId) return;
       const wasResolved = resolvedWrongQuestionIds.includes(questionId);
       const isNew = !wrongQuestionIds.includes(questionId);
-      if (!wasResolved && !isNew) return;
+      const wasDismissed = dismissedWrongQuestionIds.includes(questionId);
+      if (!wasResolved && !isNew && !wasDismissed) return;
       resolvedWrongQuestionIds = resolvedWrongQuestionIds.filter(id => id !== questionId);
+      dismissedWrongQuestionIds = dismissedWrongQuestionIds.filter(id => id !== questionId);
       if (isNew) wrongQuestionIds.unshift(questionId);
       saveWrongQuestions();
     }
@@ -2721,6 +2730,7 @@
       if (!wasInPool && wasResolved) return;
       wrongQuestionIds = wrongQuestionIds.filter(id => id !== questionId);
       if (!wasResolved) resolvedWrongQuestionIds.push(questionId);
+      if (!dismissedWrongQuestionIds.includes(questionId)) dismissedWrongQuestionIds.push(questionId);
       saveWrongQuestions();
     }
 
@@ -2730,8 +2740,9 @@
     // the wrong-question review.
     function reconcileWrongQuestionPool() {
       const resolved = new Set(resolvedWrongQuestionIds);
+      const dismissed = new Set(dismissedWrongQuestionIds);
       const inferred = inferWrongQuestionIdsFromProgress(examProgress, { questions: uploadedBank.questions || [] });
-      const next = [...new Set([...wrongQuestionIds, ...inferred])].filter(id => !resolved.has(id));
+      const next = [...new Set([...wrongQuestionIds, ...inferred])].filter(id => !resolved.has(id) && !dismissed.has(id));
       if (next.length === wrongQuestionIds.length && next.every((id, index) => id === wrongQuestionIds[index])) return;
       wrongQuestionIds = next;
       saveWrongQuestions();
@@ -4481,7 +4492,7 @@
           if (task === "multipleChoice") {
             wordSessionSize = String(dailyGoals.multipleChoice);
             localStorage.setItem("yds-word-session-size-v1", wordSessionSize);
-            startWordStudy("quiz", true);
+            startWordStudy("quiz");
           }
           if (task === "pastExamReading") {
             activeArticleId = "__list__";
@@ -4558,7 +4569,7 @@
         const doc = activeDocument();
         if (doc) selectDocument(doc.id);
       });
-      if (homeStudyBtn) homeStudyBtn.addEventListener("click", () => startWordStudy("cards", true));
+      if (homeStudyBtn) homeStudyBtn.addEventListener("click", () => startWordStudy("cards"));
       if (homeWrongBtn) homeWrongBtn.addEventListener("click", startWrongQuestionReview);
       if (homeWordsBtn) homeWordsBtn.addEventListener("click", () => setView("words"));
     }
@@ -4870,6 +4881,7 @@
       const persistedProgress = normalizeExamProgress(loadJson(STORAGE_EXAM_PROGRESS, examProgress));
       const persistedWrong = loadJson(STORAGE_WRONG_QUESTIONS, wrongQuestionIds);
       const persistedResolvedWrong = loadJson(STORAGE_RESOLVED_WRONG_QUESTIONS, resolvedWrongQuestionIds);
+      const persistedDismissedWrong = loadJson(STORAGE_DISMISSED_WRONG_QUESTIONS, dismissedWrongQuestionIds);
       const persistedReview = normalizeWrongReviewSession(loadJson(STORAGE_WRONG_REVIEW_SESSION, wrongReviewSession));
       const questionAnswers = questionBackupRecords(persistedProgress);
       const now = new Date().toISOString();
@@ -4894,6 +4906,7 @@
           notes: { records: notes, updatedAt: maxUpdatedAt(notes) },
           wrongQuestions: { records: persistedWrong, updatedAt: null },
           resolvedWrongQuestions: { records: persistedResolvedWrong, updatedAt: null },
+          dismissedWrongQuestions: { records: persistedDismissedWrong, updatedAt: null },
           reviewLaterQuestions: { records: persistedReview?.questionIds || [], updatedAt: persistedReview?.updatedAt || null },
           completedSources: { records: Object.values(persistedProgress.exams || {}).filter(item => item.manuallyCompleted || item.completedAt).map(item => item.examId), updatedAt: maxUpdatedAt(Object.values(persistedProgress.exams || {})) },
           studyStatistics: { records: { examProgress: persistedProgress, dailyGoals, dailyProgress, dailyHistory, weeklyActivity, dailyHardWords: loadJson(STORAGE_DAILY_HARD_WORDS, null) }, updatedAt: maxUpdatedAt([dailyProgress, ...dailyHistory, ...weeklyActivity, ...Object.values(persistedProgress?.exams || {})]) },
@@ -4972,6 +4985,7 @@
       const examProgress = normalizeExamProgress(modules.studyStatistics?.records?.examProgress || data.examProgress || { version: 2, exams: modules.sourceProgress?.records || {} });
       const explicitWrongQuestionIds = Array.isArray(modules.wrongQuestions?.records) ? modules.wrongQuestions.records : Array.isArray(data.wrongQuestionIds) ? data.wrongQuestionIds : [];
       const resolvedWrongQuestionIds = Array.isArray(modules.resolvedWrongQuestions?.records) ? modules.resolvedWrongQuestions.records : Array.isArray(data.resolvedWrongQuestionIds) ? data.resolvedWrongQuestionIds : [];
+      const dismissedWrongQuestionIds = Array.isArray(modules.dismissedWrongQuestions?.records) ? modules.dismissedWrongQuestions.records : Array.isArray(data.dismissedWrongQuestionIds) ? data.dismissedWrongQuestionIds : [];
       return {
         schemaVersion: Number(payload?.schemaVersion || payload?.version || 1),
         createdAt: payload?.createdAt || payload?.exportedAt || null,
@@ -4982,6 +4996,7 @@
         notes: (Array.isArray(modules.notes?.records) ? modules.notes.records : Array.isArray(data.notes) ? data.notes : []).map(normalizeNote),
         wrongQuestionIds: explicitWrongQuestionIds.length ? [...new Set(explicitWrongQuestionIds)] : inferWrongQuestionIdsFromProgress(examProgress, uploadedBank),
         resolvedWrongQuestionIds: [...new Set(resolvedWrongQuestionIds)],
+        dismissedWrongQuestionIds: [...new Set(dismissedWrongQuestionIds)],
         examProgress,
         questionAnswers: Array.isArray(modules.questionAnswers?.records) ? modules.questionAnswers.records : Array.isArray(data.questionAnswers) ? data.questionAnswers : [],
         questionAttempts: Array.isArray(modules.questionAttempts?.records) ? modules.questionAttempts.records : Array.isArray(data.questionAttempts) ? data.questionAttempts : [],
@@ -5183,6 +5198,7 @@
       if (replace) {
         wrongQuestionIds = cloud.wrongQuestionIds;
         resolvedWrongQuestionIds = cloud.resolvedWrongQuestionIds;
+        dismissedWrongQuestionIds = cloud.dismissedWrongQuestionIds;
         examProgress = mergedProgress;
         dailyGoals = normalizeDailyGoals(cloud.dailyGoals);
         dailyProgress = normalizeDailyProgress(cloud.dailyProgress);
@@ -5191,6 +5207,7 @@
       } else {
         wrongQuestionIds = [...new Set([...wrongQuestionIds, ...cloud.wrongQuestionIds])];
         resolvedWrongQuestionIds = [...new Set([...resolvedWrongQuestionIds, ...cloud.resolvedWrongQuestionIds])];
+        dismissedWrongQuestionIds = [...new Set([...dismissedWrongQuestionIds, ...cloud.dismissedWrongQuestionIds])];
         examProgress = mergedProgress;
       }
       void saveUploadedBank(uploadedBank);
@@ -5226,6 +5243,7 @@
       notes = normalized.notes;
       wrongQuestionIds = normalized.wrongQuestionIds;
       resolvedWrongQuestionIds = normalized.resolvedWrongQuestionIds;
+      dismissedWrongQuestionIds = normalized.dismissedWrongQuestionIds;
       examProgress = normalized.examProgress;
       dailyGoals = normalizeDailyGoals(normalized.dailyGoals);
       dailyHistory = normalized.dailyHistory;
@@ -5658,6 +5676,7 @@
       stats.wrong = 0;
       wrongQuestionIds = [];
       resolvedWrongQuestionIds = [];
+      dismissedWrongQuestionIds = [];
       documentProgress = {};
       dailyHistory = [];
       dailyProgress = createDailyProgress();
@@ -6802,7 +6821,7 @@
         button.addEventListener("click", () => {
           if (button.dataset.tab === "list") setView("words");
           else {
-            startWordStudy(button.dataset.tab === "quiz" ? "quiz" : "cards", true);
+            startWordStudy(button.dataset.tab === "quiz" ? "quiz" : "cards");
           }
         });
       });
@@ -6810,15 +6829,32 @@
       if (addButton) addButton.addEventListener("click", openBlankWordModal);
     }
 
+    function persistWordStudyProgress() {
+      saveJson(STORAGE_WORD_STUDY_PROGRESS, {
+        mode: wordStudyMode,
+        index: wordStudyIndex,
+        sessionIds: wordSessionIds,
+        quizQuestion: wordStudyMode === "quiz" ? wordQuizQuestion : null,
+        updatedAt: new Date().toISOString(),
+      });
+    }
+
     function startWordStudy(mode = "cards", fresh = false) {
       wordStudyScopeIds = null;
       wordStudyScopeLabel = "";
-      wordStudyMode = mode === "quiz" ? "quiz" : "cards";
-      wordStudyIndex = 0;
+      const requestedMode = mode === "quiz" ? "quiz" : "cards";
+      const canResume = !fresh && wordStudyMode === requestedMode && wordSessionIds.length && wordStudyIndex < wordSessionIds.length;
+      wordStudyMode = requestedMode;
       wordCardRevealed = false;
-      wordQuizQuestion = null;
-      if (wordStudyMode === "quiz") resetWordQuizSessionResults();
-      if (fresh) buildWordSession(true, wordStudyMode);
+      if (!canResume) {
+        wordStudyIndex = 0;
+        wordQuizQuestion = null;
+        if (wordStudyMode === "quiz") resetWordQuizSessionResults();
+        buildWordSession(true, wordStudyMode);
+        wordStudySessionId = createActivitySession("word-study");
+        localStorage.setItem(STORAGE_WORD_STUDY_SESSION, wordStudySessionId);
+      }
+      persistWordStudyProgress();
       setView("study");
     }
 
@@ -7502,11 +7538,13 @@
       if (wordSessionIds.length > size) wordSessionIds = wordSessionIds.slice(0, size);
       saveJson("yds-word-session-ids-v1", wordSessionIds);
       keepWordStudyIndexInRange(currentSessionWords());
+      persistWordStudyProgress();
     }
 
     function resetWordQuizSessionResults() {
       wordQuizSessionResults = {};
       saveJson("yds-word-quiz-session-results-v1", wordQuizSessionResults);
+      persistWordStudyProgress();
     }
 
     function recordWordQuizResult(wordId, correct) {
@@ -7531,7 +7569,11 @@
     }
 
     function currentSessionWords() {
-      const byId = new Map(wordPracticeWords().map(item => [item.id, item]));
+      // An active session must keep its original order even after a rating
+      // changes a word's due status and removes it from the current practice
+      // pool. Looking it up in wordPracticeWords() rebuilt/shuffled the whole
+      // session mid-way through.
+      const byId = new Map(wordbook.map(item => [item.id, item]));
       const selected = wordSessionIds.map(id => byId.get(id)).filter(Boolean);
       return selected.length ? selected : allStudyWords().slice(0, activeWordSessionSize());
     }
@@ -7761,6 +7803,7 @@
         if (isFirst) return;
         wordStudyIndex--;
         wordCardRevealed = false;
+        persistWordStudyProgress();
         renderWordStudy();
       });
       document.getElementById("nextStudyWordBtn").addEventListener("click", () => {
@@ -7768,6 +7811,7 @@
         wordStudyIndex++;
         persistDailyWordCardProgress(item.id, wordStudyIndex, wordStudyIndex >= words.length);
         wordCardRevealed = false;
+        persistWordStudyProgress();
         renderStats();
         renderWordStudy();
       });
@@ -7777,6 +7821,7 @@
           wordStudyIndex++;
           persistDailyWordCardProgress(item.id, wordStudyIndex, wordStudyIndex >= words.length);
           wordCardRevealed = false;
+          persistWordStudyProgress();
           renderStats();
           renderWordStudy();
         });
@@ -7801,6 +7846,7 @@
         checked: false,
         choices,
       };
+      persistWordStudyProgress();
     }
 
     function renderWordQuizSummary(words) {
@@ -7894,6 +7940,7 @@
             queueSupabaseAutoBackup();
           }
           recordWordQuizResult(target.id, correct);
+          persistWordStudyProgress();
           renderWordStudy();
         });
       });
@@ -7905,6 +7952,7 @@
           }
           wordStudyIndex++;
           wordQuizQuestion = null;
+          persistWordStudyProgress();
           renderStats();
           renderWordStudy();
         });
@@ -8329,7 +8377,8 @@
         });
       });
       document.querySelectorAll(".article-card-translation").forEach(button => {
-        button.addEventListener("click", () => {
+        button.addEventListener("click", event => {
+          event.stopPropagation();
           const article = articles.find(item => item.id === button.dataset.id);
           if (article) openArticleTranslationEditor(article);
         });
@@ -10024,7 +10073,11 @@
         }
         return;
       }
-      if (!event.target.closest(".word-menu-toggle") && !event.target.closest(".word-action-menu")) {
+      // Reading-card menus share the word-action-menu shell. Treat both the
+      // trigger and its panel as inside clicks; otherwise this document-level
+      // listener closes the menu immediately after the card's own click
+      // handler opens it, making actions such as “Türkçe Çeviri Ekle” flaky.
+      if (!event.target.closest(".word-menu-toggle, .article-card-menu-btn") && !event.target.closest(".word-action-menu, .article-card-menu")) {
         document.querySelectorAll(".word-action-menu.is-open").forEach(menu => menu.classList.remove("is-open"));
       }
       if (!event.target.closest(".note-menu-toggle") && !event.target.closest(".note-action-menu")) {
