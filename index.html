@@ -1935,6 +1935,10 @@
     const INDEXED_STATE_KEYS = new Set([
       STORAGE_DAILY_QUESTION_RESULTS,
       STORAGE_WEEKLY_ACTIVITY,
+      // Articles contain the original passage as well as its translation.
+      // Keeping those growing records in localStorage made saves fail once
+      // the browser's small quota was reached.
+      STORAGE_ARTICLES,
     ]);
     const VOCABULARY_SEED_VERSION = baseBank.vocabularySeedVersion || "2026-07-13-vocabulary";
     const vocabularySeed = baseBank.vocabularySeed || [];
@@ -1954,6 +1958,7 @@
       window.setTimeout(() => queueSupabaseAutoBackup(), 0);
     }
     let articles = loadJson(STORAGE_ARTICLES, []);
+    let articleSaveQueue = Promise.resolve();
     let readForSpeedArticles = loadJson(STORAGE_READ_FOR_SPEED, []);
     let wrongQuestionIds = loadJson(STORAGE_WRONG_QUESTIONS, []);
     let resolvedWrongQuestionIds = loadJson(STORAGE_RESOLVED_WRONG_QUESTIONS, []);
@@ -4671,7 +4676,7 @@
                   '</div>' +
                   SourceSavedItemsBadges({ sourceId: item.id, wordCount: savedWordCount, structureCount: importantStructureCount, scope: "source" }) +
                   (progress.isCompleted ? '<span class="mt-3 inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700">Tamamlandı</span>' : '') +
-                  '<div class="mt-3 space-y-1 text-sm font-semibold text-slate-500"><p>Eklendi: ' + escapeHtml(documentAddedAtLabel(item)) + '</p><p>İlerleme: ' + progress.answeredCount + ' / ' + progress.totalCount + ' soru · %' + progress.progressPercent + '</p>' + (progress.answeredCount ? '<p class="text-sm font-bold">Sonuç: <span class="text-emerald-700">' + progress.correct + 'D</span><span class="text-slate-400"> · </span><span class="text-rose-700">' + progress.wrong + 'Y</span></p>' : '') + '</div>' +
+                  '<div class="mt-3 space-y-1 text-sm font-semibold text-slate-500"><p>Eklendi: ' + escapeHtml(documentAddedAtLabel(item)) + '</p><p>İlerleme: ' + progress.answeredCount + ' / ' + progress.totalCount + ' soru</p>' + (progress.answeredCount ? '<p class="text-sm font-bold">Sonuç: <span class="text-emerald-700">' + progress.correct + 'D</span><span class="text-slate-400"> · </span><span class="text-rose-700">' + progress.wrong + 'Y</span><span class="text-slate-400"> · </span><span class="text-emerald-700">%' + Math.round((progress.correct / progress.answeredCount) * 100) + '</span></p>' : '') + '</div>' +
                   '<div class="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-200"><span class="block h-full rounded-full ' + (progress.isCompleted ? 'bg-emerald-500' : 'bg-blue-600') + '" style="width:' + progress.progressPercent + '%"></span></div>' +
                   '<div class="mt-3 border-t border-slate-200 pt-3"><button class="hub-document-card rounded-lg bg-blue-600 px-3 py-2 text-xs font-black text-white hover:bg-blue-500" data-id="' + escapeHtml(item.id) + '">' + actionLabel + '</button></div>' +
                 '</article>';
@@ -5260,7 +5265,7 @@
       }
       void saveUploadedBank(uploadedBank);
       saveJson(STORAGE_WORDS, wordbook);
-      saveJson(STORAGE_ARTICLES, articles);
+      void saveArticles();
       saveNotes();
       saveWrongQuestions();
       // Always persist merged question progress. Previously this ran only for
@@ -5311,7 +5316,7 @@
       }
       void saveUploadedBank(uploadedBank);
       saveJson(STORAGE_WORDS, wordbook);
-      saveJson(STORAGE_ARTICLES, articles);
+      void saveArticles();
       saveNotes();
       saveJson(STORAGE_DAILY_GOALS, dailyGoals);
       saveJson(STORAGE_DAILY_PROGRESS, dailyProgress);
@@ -5824,7 +5829,7 @@
       saveWeeklyActivity(false);
       saveJson(STORAGE_DAILY_QUESTION_RESULTS, dailyQuestionResults);
       saveJson(STORAGE_WORDS, wordbook);
-      saveJson(STORAGE_ARTICLES, articles);
+      void saveArticles();
       saveJson("yds-word-session-ids-v1", wordSessionIds);
       saveJson("yds-word-quiz-session-results-v1", wordQuizSessionResults);
       localStorage.removeItem(STORAGE_DAILY_HARD_WORDS);
@@ -8154,8 +8159,14 @@
 
     function saveArticles() {
       articles = articles.map(normalizeArticleRecord);
-      saveJson(STORAGE_ARTICLES, articles);
-      queueSupabaseAutoBackup();
+      // Serialize writes so a slower IndexedDB transaction can never replace
+      // a newer article edit with an older snapshot.
+      const snapshot = articles.map(article => ({ ...article, bilingualParagraphs: (article.bilingualParagraphs || []).map(pair => ({ ...pair })) }));
+      articleSaveQueue = articleSaveQueue.catch(() => undefined).then(async () => {
+        await saveDeployState(STORAGE_ARTICLES, snapshot);
+        queueSupabaseAutoBackup();
+      });
+      return articleSaveQueue;
     }
 
     function currentArticle() {
@@ -9276,9 +9287,9 @@
       document.querySelectorAll(".translation-tr-input, #translationTitleTrInput").forEach(input => input.addEventListener("input", refresh));
       document.querySelectorAll(".translation-split-btn").forEach(button => button.addEventListener("click", () => { syncTranslationDraftFromEditor(); const index = activeTranslationDraft.pairs.findIndex(pair => pair.id === button.dataset.pairId); const pair = activeTranslationDraft.pairs[index]; const midpoint = pair.en.lastIndexOf(" ", Math.floor(pair.en.length / 2)); if (midpoint < 1) return; activeTranslationDraft.pairs.splice(index, 1, { ...pair, id: pair.id + "-a", en: pair.en.slice(0, midpoint).trim() }, { id: pair.id + "-b", en: pair.en.slice(midpoint).trim(), tr: "" }); renderArticleTranslationEditor(); }));
       document.querySelectorAll(".translation-merge-btn").forEach(button => button.addEventListener("click", () => { syncTranslationDraftFromEditor(); const index = activeTranslationDraft.pairs.findIndex(pair => pair.id === button.dataset.pairId); const first = activeTranslationDraft.pairs[index]; const second = activeTranslationDraft.pairs[index + 1]; if (!first || !second) return; activeTranslationDraft.pairs.splice(index, 2, { id: first.id, en: first.en + "\n\n" + second.en, tr: [first.tr, second.tr].filter(Boolean).join("\n\n") }); renderArticleTranslationEditor(); }));
-      const save = complete => { syncTranslationDraftFromEditor(); const errors = translationDraftValidation(activeTranslationDraft, complete); const status = document.getElementById("translationEditorStatus"); if (errors.length) { status.textContent = errors.join(" "); status.style.color = "#b91c1c"; return; } article.titleTr = activeTranslationDraft.titleTr.trim() || null; article.bilingualParagraphs = activeTranslationDraft.pairs.map(pair => ({ id: pair.id, en: pair.en, tr: pair.tr })); article.translationStatus = complete ? "complete" : "draft"; article.updatedAt = new Date().toISOString(); saveArticles(); closeArticleTranslationEditor(); renderArticlesPage(); };
-      document.getElementById("saveTranslationDraftBtn").addEventListener("click", () => save(false));
-      document.getElementById("completeTranslationBtn").addEventListener("click", () => save(true));
+      const save = async complete => { syncTranslationDraftFromEditor(); const errors = translationDraftValidation(activeTranslationDraft, complete); const status = document.getElementById("translationEditorStatus"); if (errors.length) { status.textContent = errors.join(" "); status.style.color = "#b91c1c"; return; } const previous = { titleTr: article.titleTr, bilingualParagraphs: article.bilingualParagraphs, translationStatus: article.translationStatus, updatedAt: article.updatedAt }; article.titleTr = activeTranslationDraft.titleTr.trim() || null; article.bilingualParagraphs = activeTranslationDraft.pairs.map(pair => ({ id: pair.id, en: pair.en, tr: pair.tr })); article.translationStatus = complete ? "complete" : "draft"; article.updatedAt = new Date().toISOString(); status.textContent = "Kaydediliyor…"; status.style.color = "var(--text-secondary)"; try { await saveArticles(); closeArticleTranslationEditor(); renderArticlesPage(); } catch (error) { Object.assign(article, previous); status.textContent = "Çeviri kaydedilemedi. Tarayıcı yerel depolamasını kontrol edip tekrar deneyin."; status.style.color = "#b91c1c"; console.error("Çeviri kaydedilemedi.", error); } };
+      document.getElementById("saveTranslationDraftBtn").addEventListener("click", () => { void save(false); });
+      document.getElementById("completeTranslationBtn").addEventListener("click", () => { void save(true); });
     }
 
     function parseBilingualTxt(raw) {
@@ -10342,12 +10353,14 @@
 
     async function bootstrapApp() {
       try {
-        const [storedQuestionResults, storedWeeklyActivity] = await Promise.all([
+        const [storedQuestionResults, storedWeeklyActivity, storedArticles] = await Promise.all([
           loadDeployState(STORAGE_DAILY_QUESTION_RESULTS, dailyQuestionResults),
           loadDeployState(STORAGE_WEEKLY_ACTIVITY, weeklyActivity),
+          loadDeployState(STORAGE_ARTICLES, articles),
         ]);
         dailyQuestionResults = Array.isArray(storedQuestionResults) ? storedQuestionResults : [];
         weeklyActivity = normalizeWeeklyActivity(storedWeeklyActivity);
+        articles = (Array.isArray(storedArticles) ? storedArticles : []).map(normalizeArticleRecord);
       } catch (error) {
         // The legacy localStorage copies remain usable if IndexedDB is blocked.
         console.error("Yerel çalışma kayıtları IndexedDB'ye taşınamadı.", error);
