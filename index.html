@@ -1713,8 +1713,10 @@
     .rfs-focus #rfsBody { margin-top: 26px !important; box-shadow: 0 14px 34px rgba(15, 23, 42, .12); }
     .rfs-focus header { position: sticky; }
     body.read-for-speed-focus-mode #appArea { width: 100%; max-width: none; }
-    body.read-for-speed-focus-mode .rfs-focus { max-width: min(100%, 1440px) !important; min-height: calc(100vh - 2.5rem); margin: 0 auto; }
-    body.read-for-speed-focus-mode .rfs-focus #rfsBody { max-width: min(100%, 1220px) !important; }
+    /* In bilingual mode, a narrow centered reader leaves large unused gutters.
+       Use the full available focus workspace while retaining the card padding. */
+    body.read-for-speed-focus-mode .rfs-focus { width: 100%; max-width: none !important; min-height: calc(100vh - 2.5rem); margin: 0 auto; }
+    body.read-for-speed-focus-mode .rfs-focus #rfsBody { max-width: none !important; }
     #rfsBody .rfs-choice-group { display: inline-flex; align-items: center; gap: 6px; vertical-align: baseline; flex-wrap: wrap; max-width: 100%; }
     #rfsBody .rfs-answer { min-height: 36px; padding: 6px 10px; border-radius: 10px; font-size: .86em; line-height: 1.2; white-space: normal; }
     #rfsBody .rfs-question-status { margin-left: 4px; font-size: .76em; font-weight: 900; white-space: nowrap; }
@@ -3644,6 +3646,38 @@
       window.setTimeout(() => editor.querySelector(".rfs-translation-paragraph")?.focus(), 0);
     }
 
+    function openReadForSpeedTextEditor(article) {
+      document.getElementById("rfsTextEditor")?.remove();
+      const editor = document.createElement("aside");
+      editor.id = "rfsTextEditor";
+      editor.className = "article-translation-editor p-4 sm:p-5";
+      editor.setAttribute("role", "dialog");
+      editor.setAttribute("aria-modal", "true");
+      editor.setAttribute("aria-label", "Read for Speed metin düzenleyicisi");
+      editor.innerHTML = '<div class="sticky top-0 z-10 -mx-4 -mt-4 border-b p-4 sm:-mx-5 sm:-mt-5 sm:p-5" style="border-color:var(--border-color);background:var(--bg-surface)"><div class="flex items-start justify-between gap-3"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h3 class="mt-1 text-xl font-black">Metni Düzenle</h3><p class="mt-1 text-xs font-semibold" style="color:var(--text-secondary)">Seçenekleri {{numara|A|B|doğru cevap}} biçiminde bırakın. Kaydetmeden önce metin doğrulanır.</p></div><button id="closeRfsTextEditor" class="article-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl font-black" aria-label="Metin düzenleyicisini kapat">×</button></div></div><label class="mt-5 block text-sm font-black">Başlık<input id="rfsTextEditorTitle" class="mt-2 w-full rounded-xl border px-3 py-2.5 font-semibold" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" value="' + escapeHtml(article.title || "") + '"></label><label class="mt-5 block text-sm font-black">Ham metin<textarea id="rfsTextEditorRaw" class="mt-2 min-h-96 w-full rounded-xl border px-3 py-2.5 font-mono text-sm leading-6" style="border-color:var(--border-color);background:var(--bg-surface);color:var(--text-primary)"> ' + escapeHtml(article.rawText || "") + '</textarea></label><p id="rfsTextEditorError" class="mt-3 text-sm font-bold text-red-700" role="alert"></p><div class="sticky bottom-0 mt-5 flex justify-end gap-2 border-t py-4" style="border-color:var(--border-color);background:var(--bg-surface)"><button id="cancelRfsTextEditor" class="rounded-xl border px-4 py-2.5 text-sm font-black" style="border-color:var(--border-color)">İptal</button><button id="saveRfsTextEditor" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white">Doğrula ve Kaydet</button></div>';
+      document.body.append(editor);
+      const close = () => editor.remove();
+      editor.querySelector("#closeRfsTextEditor").onclick = close;
+      editor.querySelector("#cancelRfsTextEditor").onclick = close;
+      editor.querySelector("#saveRfsTextEditor").onclick = () => {
+        const rawText = editor.querySelector("#rfsTextEditorRaw").value;
+        const title = editor.querySelector("#rfsTextEditorTitle").value.trim();
+        const error = editor.querySelector("#rfsTextEditorError");
+        const parsed = parseReadForSpeed(rawText, "");
+        if (!parsed.questions.length || parsed.errors.length) { error.textContent = parsed.errors.join(" ") || "En az bir geçerli seçim gerekli."; return; }
+        const existingIds = new Map((article.contentNodes || []).filter(node => node.type === "binary_choice").map(node => [String(node.questionKey || node.displayNumber).toUpperCase(), node.questionId]));
+        article.title = title || "Başlıksız çalışma";
+        article.rawText = rawText;
+        article.contentNodes = parsed.nodes.map(node => node.type === "binary_choice" ? { ...node, questionId: existingIds.get(String(node.questionKey || node.displayNumber).toUpperCase()) || `${article.id}:${node.questionKey}` } : node);
+        article.questionCount = parsed.questions.length;
+        article.updatedAt = new Date().toISOString();
+        saveReadForSpeedArticles();
+        close();
+        renderReadForSpeedPage();
+      };
+      window.setTimeout(() => editor.querySelector("#rfsTextEditorRaw")?.focus(), 0);
+    }
+
     function setReadForSpeedFocusMode(enabled) {
       document.body.classList.toggle("read-for-speed-focus-mode", !!enabled && activeView === "read-for-speed" && readForSpeedMode === "reader");
     }
@@ -3711,7 +3745,12 @@
         return `<article class="read-for-speed-card ${summary.status === "completed" ? "is-completed" : ""}"><div class="flex items-start justify-between gap-3"><div class="flex flex-wrap gap-2"><span class="rfs-card-status rfs-status-new">READ FOR SPEED</span>${difficulty ? `<span class="rfs-card-status rfs-status-new">${difficulty}</span>` : ""}</div><span class="rfs-card-status ${statusClass}">${statusLabel}</span></div><h3 class="read-for-speed-card-title" title="${escapeHtml(article.title)}">${escapeHtml(title)}</h3><p class="rfs-card-detail"${summary.status === "completed" ? ` aria-label="${summary.correctCount} doğru, ${summary.incorrectCount} yanlış, yüzde ${summary.score} başarı"` : ""}>${details}</p>${SourceSavedItemsBadges({ sourceId: article.id, wordCount: savedWordCount, structureCount, scope: "rfs" })}<div class="rfs-card-progress-label"><span>ÇALIŞMA İLERLEMESİ</span><span>%${progressPercent}</span></div><div class="rfs-card-progress"><span class="${summary.status === "completed" ? "is-completed" : ""}" style="width:${progressPercent}%"></span></div><div class="rfs-card-actions">${completedActions}<button class="rfs-reset" data-id="${escapeHtml(article.id)}" aria-label="${escapeHtml(title)} metin işlemleri" aria-expanded="false">⋯</button></div></article>`;
       }).join("");
       appArea.innerHTML = `<section class="rounded-2xl border p-5 shadow-sm" style="border-color:var(--border-color);background:var(--bg-surface)"><div class="rfs-list-heading"><div><p class="text-sm font-black uppercase tracking-wide text-blue-500">READ FOR SPEED</p><h2 class="mt-1 text-2xl font-black">Read for Speed</h2><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">İki seçenekli hızlı okuma parçalarını çöz, kontrol et ve ilerlemeni takip et.</p><div class="mt-3 flex flex-wrap gap-2" aria-label="Read for Speed özeti"><span class="rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color:var(--border-color);color:var(--text-secondary);background:var(--bg-surface-secondary)">${allItems.length} metin</span><span class="rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color:color-mix(in srgb,#059669 28%,var(--border-color));background:color-mix(in srgb,#059669 8%,var(--bg-surface))">${completedCount} tamamlandı</span><span class="rounded-full border px-3 py-1.5 text-sm font-bold" style="border-color:color-mix(in srgb,#2563eb 28%,var(--border-color));background:color-mix(in srgb,#2563eb 8%,var(--bg-surface))">${inProgressCount} devam ediyor</span></div></div><button id="rfsNewBtn" class="shrink-0 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white">Yeni Metin Ekle</button></div><div class="rfs-list-filters"><input id="rfsListSearch" aria-label="Metin ara" placeholder="Metin ara" value="${escapeHtml(rfsListQuery)}"><select id="rfsListStatus" aria-label="Çalışma durumu"><option value="all">Tüm durumlar</option><option value="new">Yeni</option><option value="inProgress">Devam Ediyor</option><option value="completed">Tamamlandı</option></select><select id="rfsListSort" aria-label="Sıralama"><option value="recent">Son eklenen</option><option value="title">Başlığa göre A-Z</option><option value="countAsc">Seçim sayısı artan</option><option value="countDesc">Seçim sayısı azalan</option><option value="progress">İlerleme yüksekten düşüğe</option></select></div><div class="rfs-list-grid mt-4">${cards || `<div class="col-span-full rounded-2xl border border-dashed p-10 text-center">Bu filtrede metin bulunamadı.</div>`}</div></section>`;
-      document.getElementById("rfsNewBtn").onclick = () => { readForSpeedMode = "form"; renderReadForSpeedPage(); };
+      document.getElementById("rfsNewBtn").onclick = () => {
+        // A new import must not reuse the previously saved article's draft.
+        readForSpeedDraft = { title: "", titleTr: "", rawText: "", turkishText: "" };
+        readForSpeedMode = "form";
+        renderReadForSpeedPage();
+      };
       document.getElementById("rfsListStatus").value = rfsListStatus; document.getElementById("rfsListSort").value = rfsListSort;
       document.getElementById("rfsListSearch").oninput = event => { rfsListQuery = event.target.value; renderReadForSpeedList(); };
       document.getElementById("rfsListStatus").onchange = event => { rfsListStatus = event.target.value; renderReadForSpeedList(); };
@@ -3837,7 +3876,7 @@
       window.__rfsCardMenuEventsBound = true;
       const closeReadForSpeedCardMenus = () => { document.querySelectorAll(".rfs-card-menu").forEach(menu => menu.remove()); document.querySelectorAll(".rfs-reset[aria-expanded='true']").forEach(button => button.setAttribute("aria-expanded", "false")); };
       document.addEventListener("click", event => {
-        const target = event.target instanceof Element ? event.target.closest(".rfs-reset, .rfs-menu-open, .rfs-menu-retry, .rfs-menu-rename, .rfs-menu-edit, .rfs-menu-answer-key, .rfs-menu-reset, .rfs-menu-delete") : null;
+        const target = event.target instanceof Element ? event.target.closest(".rfs-reset, .rfs-menu-open, .rfs-menu-retry, .rfs-menu-rename, .rfs-menu-edit, .rfs-menu-translation, .rfs-menu-answer-key, .rfs-menu-reset, .rfs-menu-delete") : null;
         if (!target) { closeReadForSpeedCardMenus(); return; }
         event.preventDefault();
         event.stopImmediatePropagation();
@@ -3852,7 +3891,7 @@
           menu.className = "rfs-card-menu";
           const summary = readForSpeedArticleSummary(article);
           menu.setAttribute("role", "menu");
-          menu.innerHTML = `<button class="rfs-menu-rename" data-id="${escapeHtml(article.id)}" role="menuitem">Başlığı Düzenle</button>${summary.status !== "new" ? `<button class="rfs-menu-reset" data-id="${escapeHtml(article.id)}" role="menuitem">İlerlemeyi Sıfırla</button>` : ""}<button class="rfs-menu-delete" data-id="${escapeHtml(article.id)}" role="menuitem">Sil</button>`;
+          menu.innerHTML = `<button class="rfs-menu-rename" data-id="${escapeHtml(article.id)}" role="menuitem">Başlığı Düzenle</button><button class="rfs-menu-edit" data-id="${escapeHtml(article.id)}" role="menuitem">Metni Düzenle</button><button class="rfs-menu-translation" data-id="${escapeHtml(article.id)}" role="menuitem">${article.turkishText?.trim() ? "Çeviriyi Düzenle" : "Çeviri Ekle"}</button>${summary.status !== "new" ? `<button class="rfs-menu-reset" data-id="${escapeHtml(article.id)}" role="menuitem">İlerlemeyi Sıfırla</button>` : ""}<button class="rfs-menu-delete" data-id="${escapeHtml(article.id)}" role="menuitem">Sil</button>`;
           target.parentElement?.classList.add("relative");
           target.parentElement?.append(menu);
           target.setAttribute("aria-expanded", "true");
@@ -3866,7 +3905,15 @@
           if (title?.trim()) { article.title = title.trim(); article.updatedAt = new Date().toISOString(); saveReadForSpeedArticles(); renderReadForSpeedPage(); }
           return;
         }
-        if (target.classList.contains("rfs-menu-edit") || target.classList.contains("rfs-menu-answer-key")) {
+        if (target.classList.contains("rfs-menu-translation")) {
+          openReadForSpeedTranslationEditor(article);
+          return;
+        }
+        if (target.classList.contains("rfs-menu-edit")) {
+          openReadForSpeedTextEditor(article);
+          return;
+        }
+        if (target.classList.contains("rfs-menu-answer-key")) {
           const rawText = prompt(target.classList.contains("rfs-menu-answer-key") ? "Cevap anahtarını token içindeki A/B değerleriyle düzenle" : "Ham metni düzenle", article.rawText || "");
           if (rawText === null || rawText === article.rawText) return;
           const parsed = parseReadForSpeed(rawText, "");
@@ -3922,16 +3969,55 @@
         const hasTurkishTranslation = typeof article.turkishText === "string" && article.turkishText.trim().length > 0;
         // "tr" was used by the initial implementation; keep those saved preferences working.
         const isBilingual = hasTurkishTranslation && ["bilingual", "tr"].includes(article.rfsLanguageView);
-        const readerNodes = clean ? article.contentNodes.map(node => node.type === "text" ? node : { type: "text", content: node.correctOption === "A" ? node.optionA : node.optionB }) : article.contentNodes;
+        const rawReaderNodes = clean ? article.contentNodes.map(node => node.type === "text" ? node : { type: "text", content: node.correctOption === "A" ? node.optionA : node.optionB }) : article.contentNodes;
+        // Some pasted passages split terminal punctuation into its own text node
+        // (for example: "technology" followed by a separate "."). Merge it
+        // with the preceding text node before the reader preserves line breaks.
+        const readerNodes = rawReaderNodes.reduce((nodes, node) => {
+          if (node.type !== "text") { nodes.push(node); return nodes; }
+          const content = String(node.content || "").replace(/\s+([,.;:!?])/g, "$1");
+          const punctuation = content.trim();
+          const previous = nodes.at(-1);
+          if (/^[,.;:!?]$/.test(punctuation) && previous?.type === "text") {
+            previous.content = String(previous.content || "").replace(/\s+$/, "") + punctuation;
+            return nodes;
+          }
+          nodes.push({ ...node, content });
+          return nodes;
+        }, []);
         const readerParagraphs = readForSpeedNodeParagraphs(readerNodes);
         const turkishParagraphs = isBilingual ? readForSpeedTurkishParagraphs(article, readerParagraphs.length) : [];
-        const renderReaderNodes = nodes => nodes.map(node => node.type === "text" ? escapeHtml(node.content) : `<span id="rfs-question-${node.questionId}" class="mx-1 inline-flex flex-wrap items-center gap-2 align-middle"><b>(${node.displayNumber})</b>${["A", "B"].map(key => { const selected = progress.selectedAnswers[node.questionId] === key, correct = String(node.correctOption || "").toUpperCase() === key, checked = progress.checked; const color = checked ? (correct ? "border-emerald-600 bg-emerald-100 text-emerald-800" : selected ? "border-red-600 bg-red-100 text-red-800" : "opacity-45") : selected ? "border-blue-600 bg-blue-100 text-blue-800" : ""; const label = checked && correct ? ` ✓ Doğru cevap${!selected ? " · Boş" : ""}` : checked && selected ? " ✕ Yanlış" : ""; return `<button class="rfs-answer rounded-lg border px-2 py-1 text-sm font-black ${color}" data-question="${node.questionId}" data-answer="${key}" ${checked ? "disabled" : ""}>${key} · ${escapeHtml(key === "A" ? node.optionA : node.optionB)}${label}</button>`; }).join("")}</span>`).join("");
+        // Pasted text can contain a line break directly before punctuation.
+        // Since the reader preserves paragraph breaks, remove only that invalid
+        // whitespace so a period never renders on its own line.
+        const renderReaderText = text => escapeHtml(String(text || "").replace(/\s+([,.;:!?])/g, "$1"));
+        const renderReaderNodes = nodes => nodes.map(node => node.type === "text" ? renderReaderText(node.content) : `<span id="rfs-question-${node.questionId}" class="mx-1 inline-flex flex-wrap items-center gap-2 align-middle"><b>(${node.displayNumber})</b>${["A", "B"].map(key => { const selected = progress.selectedAnswers[node.questionId] === key, correct = String(node.correctOption || "").toUpperCase() === key, checked = progress.checked; const color = checked ? (correct ? "border-emerald-600 bg-emerald-100 text-emerald-800" : selected ? "border-red-600 bg-red-100 text-red-800" : "opacity-45") : selected ? "border-blue-600 bg-blue-100 text-blue-800" : ""; const label = checked && correct ? ` ✓ Doğru cevap${!selected ? " · Boş" : ""}` : checked && selected ? " ✕ Yanlış" : ""; return `<button class="rfs-answer rounded-lg border px-2 py-1 text-sm font-black ${color}" data-question="${node.questionId}" data-answer="${key}" ${checked ? "disabled" : ""}>${key} · ${escapeHtml(key === "A" ? node.optionA : node.optionB)}${label}</button>`; }).join("")}</span>`).join("");
         const readerContent = isBilingual
           ? `<div class="article-bilingual-grid">${readerParagraphs.map((paragraph, index) => `<section class="article-bilingual-pair"><div class="article-bilingual-copy" data-rfs-language-copy="en"><span class="article-bilingual-label">EN</span><p>${renderReaderNodes(paragraph)}</p></div><div class="article-bilingual-copy article-bilingual-tr"><span class="article-bilingual-label">TR</span><p>${escapeHtml(turkishParagraphs[index] || "")}</p></div></section>`).join("")}</div>`
           : renderReaderNodes(readerNodes);
         const readerTitle = article.title;
         const importantContext = { sourceModule: "read_for_speed", sourceId: article.id, sourceTitle: article.title || "Read for Speed", rerender: () => renderReadForSpeedPage() };
         appArea.innerHTML = `<section class="mx-auto max-w-6xl ${article.focusMode ? "rfs-focus" : ""}"><header class="sticky top-0 z-20 flex flex-col gap-2 border-b py-2 md:flex-row md:items-center md:justify-between" style="border-color:var(--border-color);background:var(--bg-page)"><button id="rfsBack" class="rounded-xl border px-3 py-2 text-sm font-black" style="border-color:var(--border-color)">← Listeye dön</button><div class="min-w-0"><p class="text-xs font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h2 class="truncate text-xl font-black">${escapeHtml(readerTitle)}</h2></div><div class="flex flex-wrap gap-2"><button id="rfsCheck" ${progress.checked ? "disabled" : ""} class="rounded-xl bg-blue-600 px-3 py-2 text-sm font-black text-white disabled:opacity-50">${progress.checked ? "Kontrol Edildi ✓" : "Kontrol Et"}</button><button id="rfsClean" class="rounded-xl border px-3 py-2 text-sm font-black">${clean ? "Çalışma Modu" : "Temiz Oku"}</button><button id="rfsFocus" class="rounded-xl border px-3 py-2 text-sm font-black">${article.focusMode ? "Odaktan Çık" : "Odak Modu"}</button>${TextSizeControls("rfs")}</div></header><article id="rfsBody" data-study-content class="article-body mx-auto mt-4 rounded-2xl border p-5" style="max-width:940px;--study-content-font-size:${studyContentFontSize}px;border-color:var(--border-color);white-space:pre-wrap">${readerContent}</article>${progress.checked ? `<section id="rfsResult" class="mx-auto mt-4 max-w-3xl rounded-2xl border p-4" style="border-color:var(--border-color);background:var(--bg-surface)"><h3 class="text-lg font-black">Sonuç Özeti</h3><div class="mt-3 grid grid-cols-2 gap-2 text-sm md:grid-cols-5"><b>Toplam ${stats.total}</b><b class="text-emerald-700">Doğru ${stats.correct}</b><b class="text-red-700">Yanlış ${stats.wrong}</b><b>Boş ${stats.blank}</b><b>Başarı %${stats.percent}</b></div><p class="mt-2 text-sm">Geçen süre: ${Math.floor((progress.elapsedMs + Date.now() - progress.startedAt) / 60)} sn</p></section>` : ""}</section>`;
+        // Final DOM safeguard for existing saved articles: merge a punctuation
+        // character that was pasted as its own visual line into the preceding
+        // text node. This runs after HTML is created, so it also covers older
+        // records whose node boundaries cannot be repaired during parsing.
+        const readerBody = document.getElementById("rfsBody");
+        if (readerBody) {
+          const walker = document.createTreeWalker(readerBody, NodeFilter.SHOW_TEXT);
+          const textNodes = [];
+          let textNode;
+          while ((textNode = walker.nextNode())) textNodes.push(textNode);
+          textNodes.forEach((node, index) => {
+            node.nodeValue = String(node.nodeValue || "").replace(/\s+([,.;:!?])/g, "$1");
+            const punctuation = String(node.nodeValue || "").trim();
+            if (!/^[,.;:!?…]$/.test(punctuation)) return;
+            const previous = [...textNodes.slice(0, index)].reverse().find(item => item.parentElement?.closest(".rfs-answer") === null && /[\p{L}\p{N})]$/u.test(String(item.nodeValue || "").trim()));
+            if (!previous) return;
+            previous.nodeValue = String(previous.nodeValue || "").replace(/\s+$/, "") + punctuation;
+            node.remove();
+          });
+        }
         const toolbar = appArea.querySelector("header");
         const toolbarTitle = toolbar?.querySelector("h2");
         const toolbarHeading = toolbarTitle?.parentElement;
@@ -9278,7 +9364,7 @@
       const editor = document.createElement("aside");
       editor.id = "articleTranslationEditor";
       editor.className = "article-translation-editor p-4 sm:p-5";
-      editor.innerHTML = '<div class="sticky top-0 z-10 -mx-4 -mt-4 border-b p-4 sm:-mx-5 sm:-mt-5 sm:p-5" style="border-color: var(--border-color); background: var(--bg-surface)"><div class="flex items-start justify-between gap-3"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Türkçe Çeviri</p><h3 class="mt-1 text-xl font-black">' + escapeHtml(articleDisplayTitle(article)) + '</h3><p class="mt-1 text-xs font-semibold" style="color: var(--text-secondary)">İngilizce metin salt okunurdur; değişiklikler yalnızca kaydedildiğinde uygulanır.</p></div><button id="closeTranslationEditorBtn" class="article-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl font-black" aria-label="Çeviri düzenleyicisini kapat">×</button></div><button id="importBilingualTxtBtn" class="mt-3 rounded-xl border px-3 py-2 text-xs font-black" style="border-color: var(--border-color); color: var(--button-secondary-text); background: var(--button-secondary-bg)">Çift dilli TXT içe aktar</button></div><label class="mt-5 block text-sm font-black">Türkçe başlık<input id="translationTitleTrInput" class="mt-2 w-full rounded-xl border px-3 py-2.5 font-semibold" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)" value="' + escapeHtml(draft.titleTr) + '" /></label><div class="mt-5 grid gap-3">' + draft.pairs.map((pair, index) => '<section class="translation-editor-pair rounded-2xl border p-3"><div class="flex items-center justify-between gap-2"><p class="text-xs font-black uppercase tracking-wide text-blue-500">Paragraf ' + (index + 1) + '</p><div class="flex gap-2"><button class="translation-split-btn rounded-lg border px-2 py-1 text-[11px] font-black" data-pair-id="' + escapeHtml(pair.id) + '" style="border-color: var(--border-color)">Böl</button>' + (index < draft.pairs.length - 1 ? '<button class="translation-merge-btn rounded-lg border px-2 py-1 text-[11px] font-black" data-pair-id="' + escapeHtml(pair.id) + '" style="border-color: var(--border-color)">Sonrakiyle birleştir</button>' : '') + '</div></div><label class="mt-3 block text-xs font-black" style="color: var(--text-secondary)">İNGİLİZCE · SALT OKUNUR<textarea readonly class="mt-1 min-h-28 w-full rounded-xl border px-3 py-2 text-sm leading-6" style="border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary)">' + escapeHtml(pair.en) + '</textarea></label><label class="mt-3 block text-xs font-black" style="color: var(--text-secondary)">TÜRKÇE<textarea class="translation-tr-input mt-1 min-h-28 w-full rounded-xl border px-3 py-2 text-sm leading-6" data-pair-id="' + escapeHtml(pair.id) + '" style="border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary)">' + escapeHtml(pair.tr) + '</textarea></label></section>').join("") + '</div><div id="translationPreview">' + translationDraftPreviewHtml(draft) + '</div><p id="translationEditorStatus" class="mt-3 text-sm font-bold" style="color: var(--text-secondary)"></p><div class="sticky bottom-0 mt-5 flex flex-col gap-2 border-t py-4 sm:flex-row sm:justify-end" style="border-color: var(--border-color); background: var(--bg-surface)"><button id="cancelTranslationEditorBtn" class="rounded-xl border px-4 py-2.5 text-sm font-black" style="border-color: var(--border-color)">İptal</button><button id="saveTranslationDraftBtn" class="rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-black text-blue-700">Taslak Kaydet</button><button id="completeTranslationBtn" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white">Çeviriyi Tamamla</button></div>';
+      editor.innerHTML = '<div class="sticky top-0 z-10 -mx-4 -mt-4 border-b p-4 sm:-mx-5 sm:-mt-5 sm:p-5" style="border-color: var(--border-color); background: var(--bg-surface)"><div class="flex items-start justify-between gap-3"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Türkçe Çeviri</p><h3 class="mt-1 text-xl font-black">' + escapeHtml(articleDisplayTitle(article)) + '</h3><p class="mt-1 text-xs font-semibold" style="color: var(--text-secondary)">İngilizce metin salt okunurdur; değişiklikler yalnızca çeviri tamamlandığında uygulanır.</p></div><button id="closeTranslationEditorBtn" class="article-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl font-black" aria-label="Çeviri düzenleyicisini kapat">×</button></div><button id="importBilingualTxtBtn" class="mt-3 rounded-xl border px-3 py-2 text-xs font-black" style="border-color: var(--border-color); color: var(--button-secondary-text); background: var(--button-secondary-bg)">Çift dilli TXT içe aktar</button></div><label class="mt-5 block text-sm font-black">Türkçe başlık<input id="translationTitleTrInput" class="mt-2 w-full rounded-xl border px-3 py-2.5 font-semibold" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary)" value="' + escapeHtml(draft.titleTr) + '" /></label><div class="mt-5 grid gap-3">' + draft.pairs.map((pair, index) => '<section class="translation-editor-pair rounded-2xl border p-3"><div class="flex items-center justify-between gap-2"><p class="text-xs font-black uppercase tracking-wide text-blue-500">Paragraf ' + (index + 1) + '</p><div class="flex gap-2"><button class="translation-split-btn rounded-lg border px-2 py-1 text-[11px] font-black" data-pair-id="' + escapeHtml(pair.id) + '" style="border-color: var(--border-color)">Böl</button>' + (index < draft.pairs.length - 1 ? '<button class="translation-merge-btn rounded-lg border px-2 py-1 text-[11px] font-black" data-pair-id="' + escapeHtml(pair.id) + '" style="border-color: var(--border-color)">Sonrakiyle birleştir</button>' : '') + '</div></div><label class="mt-3 block text-xs font-black" style="color: var(--text-secondary)">İNGİLİZCE · SALT OKUNUR<textarea readonly class="mt-1 min-h-28 w-full rounded-xl border px-3 py-2 text-sm leading-6" style="border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary)">' + escapeHtml(pair.en) + '</textarea></label><label class="mt-3 block text-xs font-black" style="color: var(--text-secondary)">TÜRKÇE<textarea class="translation-tr-input mt-1 min-h-28 w-full rounded-xl border px-3 py-2 text-sm leading-6" data-pair-id="' + escapeHtml(pair.id) + '" style="border-color: var(--border-color); background: var(--bg-surface); color: var(--text-primary)">' + escapeHtml(pair.tr) + '</textarea></label></section>').join("") + '</div><div id="translationPreview">' + translationDraftPreviewHtml(draft) + '</div><p id="translationEditorStatus" class="mt-3 text-sm font-bold" style="color: var(--text-secondary)"></p><div class="sticky bottom-0 mt-5 flex flex-col gap-2 border-t py-4 sm:flex-row sm:justify-end" style="border-color: var(--border-color); background: var(--bg-surface)"><button id="cancelTranslationEditorBtn" class="rounded-xl border px-4 py-2.5 text-sm font-black" style="border-color: var(--border-color)">İptal</button><button id="completeTranslationBtn" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white">Çeviriyi Tamamla</button></div>';
       document.body.appendChild(editor);
       document.getElementById("closeTranslationEditorBtn").addEventListener("click", closeArticleTranslationEditor);
       document.getElementById("cancelTranslationEditorBtn").addEventListener("click", closeArticleTranslationEditor);
@@ -9287,9 +9373,8 @@
       document.querySelectorAll(".translation-tr-input, #translationTitleTrInput").forEach(input => input.addEventListener("input", refresh));
       document.querySelectorAll(".translation-split-btn").forEach(button => button.addEventListener("click", () => { syncTranslationDraftFromEditor(); const index = activeTranslationDraft.pairs.findIndex(pair => pair.id === button.dataset.pairId); const pair = activeTranslationDraft.pairs[index]; const midpoint = pair.en.lastIndexOf(" ", Math.floor(pair.en.length / 2)); if (midpoint < 1) return; activeTranslationDraft.pairs.splice(index, 1, { ...pair, id: pair.id + "-a", en: pair.en.slice(0, midpoint).trim() }, { id: pair.id + "-b", en: pair.en.slice(midpoint).trim(), tr: "" }); renderArticleTranslationEditor(); }));
       document.querySelectorAll(".translation-merge-btn").forEach(button => button.addEventListener("click", () => { syncTranslationDraftFromEditor(); const index = activeTranslationDraft.pairs.findIndex(pair => pair.id === button.dataset.pairId); const first = activeTranslationDraft.pairs[index]; const second = activeTranslationDraft.pairs[index + 1]; if (!first || !second) return; activeTranslationDraft.pairs.splice(index, 2, { id: first.id, en: first.en + "\n\n" + second.en, tr: [first.tr, second.tr].filter(Boolean).join("\n\n") }); renderArticleTranslationEditor(); }));
-      const save = async complete => { syncTranslationDraftFromEditor(); const errors = translationDraftValidation(activeTranslationDraft, complete); const status = document.getElementById("translationEditorStatus"); if (errors.length) { status.textContent = errors.join(" "); status.style.color = "#b91c1c"; return; } const previous = { titleTr: article.titleTr, bilingualParagraphs: article.bilingualParagraphs, translationStatus: article.translationStatus, updatedAt: article.updatedAt }; article.titleTr = activeTranslationDraft.titleTr.trim() || null; article.bilingualParagraphs = activeTranslationDraft.pairs.map(pair => ({ id: pair.id, en: pair.en, tr: pair.tr })); article.translationStatus = complete ? "complete" : "draft"; article.updatedAt = new Date().toISOString(); status.textContent = "Kaydediliyor…"; status.style.color = "var(--text-secondary)"; try { await saveArticles(); closeArticleTranslationEditor(); renderArticlesPage(); } catch (error) { Object.assign(article, previous); status.textContent = "Çeviri kaydedilemedi. Tarayıcı yerel depolamasını kontrol edip tekrar deneyin."; status.style.color = "#b91c1c"; console.error("Çeviri kaydedilemedi.", error); } };
-      document.getElementById("saveTranslationDraftBtn").addEventListener("click", () => { void save(false); });
-      document.getElementById("completeTranslationBtn").addEventListener("click", () => { void save(true); });
+      const save = async () => { syncTranslationDraftFromEditor(); const errors = translationDraftValidation(activeTranslationDraft, true); const status = document.getElementById("translationEditorStatus"); if (errors.length) { status.textContent = errors.join(" "); status.style.color = "#b91c1c"; return; } const previous = { titleTr: article.titleTr, bilingualParagraphs: article.bilingualParagraphs, translationStatus: article.translationStatus, updatedAt: article.updatedAt }; article.titleTr = activeTranslationDraft.titleTr.trim() || null; article.bilingualParagraphs = activeTranslationDraft.pairs.map(pair => ({ id: pair.id, en: pair.en, tr: pair.tr })); article.translationStatus = "complete"; article.updatedAt = new Date().toISOString(); status.textContent = "Kaydediliyor…"; status.style.color = "var(--text-secondary)"; try { await saveArticles(); closeArticleTranslationEditor(); renderArticlesPage(); } catch (error) { Object.assign(article, previous); status.textContent = "Çeviri kaydedilemedi. Tarayıcı yerel depolamasını kontrol edip tekrar deneyin."; status.style.color = "#b91c1c"; console.error("Çeviri kaydedilemedi.", error); } };
+      document.getElementById("completeTranslationBtn").addEventListener("click", () => { void save(); });
     }
 
     function parseBilingualTxt(raw) {
