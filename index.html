@@ -1928,7 +1928,7 @@
     const STORAGE_DAILY_QUESTION_RESULTS = "yds-daily-question-results-v1";
     const STORAGE_CLOUD_HISTORY = "yds-cloud-backup-history-v1";
     const DEPLOY_DB_NAME = "yds-calisma-deploy-db";
-    const DEPLOY_DB_VERSION = 2;
+    const DEPLOY_DB_VERSION = 3;
     // These ledgers grow continually and must not compete with preferences in
     // localStorage's small quota. They are kept in IndexedDB under their
     // existing keys so the backup payload and Supabase workflow stay unchanged.
@@ -2118,6 +2118,7 @@
           if (!database.objectStoreNames.contains("questions")) database.createObjectStore("questions", { keyPath: "id" });
           if (!database.objectStoreNames.contains("meta")) database.createObjectStore("meta", { keyPath: "key" });
           if (!database.objectStoreNames.contains("appState")) database.createObjectStore("appState", { keyPath: "key" });
+          if (!database.objectStoreNames.contains("canonicalIdentityRegistry")) database.createObjectStore("canonicalIdentityRegistry", { keyPath: "key" });
         };
         request.onerror = () => reject(request.error);
         request.onsuccess = () => resolve(request.result);
@@ -2137,6 +2138,10 @@
         request.onerror = () => reject(request.error); request.onsuccess = () => resolve(request.result || null);
       });
     }
+    function identityRegistryKey(record) { return `${record.entity_type}|${record.local_namespace}|${record.local_id}`; }
+    async function getIdentityMapping(entityType, localNamespace, localId) { const db = await openDeployDb(); return idbGet(db, "canonicalIdentityRegistry", `${entityType}|${localNamespace}|${localId}`); }
+    async function listIdentityMappings() { const db = await openDeployDb(); return idbGetAll(db, "canonicalIdentityRegistry"); }
+    async function putIdentityMapping(record) { const key = identityRegistryKey(record), existing = await getIdentityMapping(record.entity_type, record.local_namespace, record.local_id); if (existing && existing.canonical_id !== record.canonical_id) return { ok: false, code: "IDENTITY_MAPPING_CONFLICT", entity_type: record.entity_type, local_namespace: record.local_namespace, local_id: record.local_id, existing_canonical_id: existing.canonical_id, incoming_canonical_id: record.canonical_id }; const db = await openDeployDb(), now = new Date().toISOString(), value = { ...existing, ...record, key, canonical_id: existing?.canonical_id || record.canonical_id, created_at: existing?.created_at || now, updated_at: now, schema_version: 1 }; await new Promise((resolve, reject) => { const request = db.transaction("canonicalIdentityRegistry", "readwrite").objectStore("canonicalIdentityRegistry").put(value); request.onsuccess = resolve; request.onerror = () => reject(request.error); }); return { ok: true }; }
 
     async function saveDeployState(key, value) {
       const database = await openDeployDb();
@@ -5552,19 +5557,26 @@
       Object.values(examProgress?.exams || {}).forEach(progress => { const sourceId = String(progress.examId || "").replace(/^document:/, ""); if (!sourceId) return; const state = { sourceId, answers: progress.answers || {}, currentQuestionId: progress.currentQuestionId || null, manuallyCompleted: !!progress.manuallyCompleted, completedAt: progress.completedAt || null, updatedAt: progress.updatedAt || new Date().toISOString() }; rows.push(["sourceProgress", sourceId, state]); Object.entries(state.answers).forEach(([questionId, selectedKey]) => { const answer = { id: sourceId + ":" + questionId, questionId, sourceId, selectedKey, updatedAt: state.updatedAt }; rows.push(["questionAnswers", answer.id, answer]); rows.push(["attempts", questionId, { questionId, documentId: sourceId, selectedKey, status: "manual", attempts: [], createdAt: state.updatedAt, updatedAt: state.updatedAt }]); }); });
       wordbook.forEach(word => { const id = deployId(word, "word"); rows.push(["dictionaryWords", id, { ...word, wordId: id }]); });
       notes.forEach(note => rows.push(["notes", deployId(note, "note"), note]));
-      readForSpeedArticles.forEach(article => rows.push(["readForSpeedArticles", deployId(article, "rfs"), article])); return rows;
+      readForSpeedArticles.forEach(article => {
+        const articleId = deployId(article, "rfs");
+        rows.push(["readForSpeedArticles", articleId, { ...article, id: articleId }]);
+        const attempts = Array.isArray(article.attempts) ? article.attempts : article.progress ? [article.progress] : [];
+        attempts.forEach((attempt, index) => { const id = String(attempt.id || `rfs-attempt:${articleId}:${index}`); rows.push(["readForSpeedAttempts", id, { ...attempt, id, articleId, updatedAt: attempt.updatedAt || article.updatedAt }]); });
+        if (article.progress) rows.push(["readingProgress", articleId, { ...article.progress, id: articleId, articleId, updatedAt: article.progress.updatedAt || article.updatedAt }]);
+      }); return rows;
     }
     async function deployApply(records) {
       let changed = 0; deployRestoring = true;
-      try { for (const record of records) { const value = { ...record.payload, updatedAt: record.payload?.updatedAt || record.updated_at }; if (record.entity_type === "dictionaryWords") { const i = wordbook.findIndex(x => deployId(x, "word") === record.id); if (i < 0) wordbook.push(value); else if ((Date.parse(value.updatedAt) || 0) >= (Date.parse(wordbook[i].updatedAt) || 0)) wordbook[i] = value; changed++; } else if (record.entity_type === "notes") { const i = notes.findIndex(x => String(x.id) === record.id); if (i < 0) notes.push(value); else if ((Date.parse(value.updatedAt) || 0) >= (Date.parse(notes[i].updatedAt) || 0)) notes[i] = value; changed++; } else if (record.entity_type === "sourceProgress") { const key = "document:" + value.sourceId, current = examProgress.exams[key]; if (!current || (Date.parse(value.updatedAt) || 0) >= (Date.parse(current.updatedAt) || 0)) examProgress.exams[key] = { ...value, examId: key }; changed++; } else if (record.entity_type === "questionAnswers") { const key = "document:" + value.sourceId, current = examProgress.exams[key] || { examId: key, answers: {} }; current.answers = { ...current.answers, [value.questionId]: value.selectedKey }; current.updatedAt = value.updatedAt; examProgress.exams[key] = current; changed++; } } if (changed) { saveJson(STORAGE_WORDS, wordbook); saveNotes(); saveJson(STORAGE_EXAM_PROGRESS, examProgress); rebuildBank(); } } finally { deployRestoring = false; } return changed;
+      try { for (const record of records) { const value = { ...record.payload, updatedAt: record.payload?.updatedAt || record.updated_at }; if (record.entity_type === "dictionaryWords") { const i = wordbook.findIndex(x => deployId(x, "word") === record.id); if (i < 0) wordbook.push(value); else if ((Date.parse(value.updatedAt) || 0) >= (Date.parse(wordbook[i].updatedAt) || 0)) wordbook[i] = value; changed++; } else if (record.entity_type === "notes") { const i = notes.findIndex(x => String(x.id) === record.id); if (i < 0) notes.push(value); else if ((Date.parse(value.updatedAt) || 0) >= (Date.parse(notes[i].updatedAt) || 0)) notes[i] = value; changed++; } else if (record.entity_type === "sourceProgress") { const key = "document:" + value.sourceId, current = examProgress.exams[key]; if (!current || (Date.parse(value.updatedAt) || 0) >= (Date.parse(current.updatedAt) || 0)) examProgress.exams[key] = { ...value, examId: key }; changed++; } else if (record.entity_type === "questionAnswers") { const key = "document:" + value.sourceId, current = examProgress.exams[key] || { examId: key, answers: {} }; current.answers = { ...current.answers, [value.questionId]: value.selectedKey }; current.updatedAt = value.updatedAt; examProgress.exams[key] = current; changed++; } else if (record.entity_type === "readForSpeedArticles") { const i = readForSpeedArticles.findIndex(x => String(x.id) === record.id); if (i < 0) readForSpeedArticles.push(value); else if ((Date.parse(value.updatedAt) || 0) >= (Date.parse(readForSpeedArticles[i].updatedAt) || 0)) readForSpeedArticles[i] = value; changed++; } else if (record.entity_type === "readForSpeedAttempts" || record.entity_type === "readingProgress") { const articleId = String(value.articleId || record.id), article = readForSpeedArticles.find(x => String(x.id) === articleId); if (article) { if (record.entity_type === "readingProgress") article.progress = value; else { const attempts = Array.isArray(article.attempts) ? article.attempts : []; const i = attempts.findIndex(x => String(x.id) === record.id); if (i < 0) attempts.push(value); else if ((Date.parse(value.updatedAt) || 0) >= (Date.parse(attempts[i].updatedAt) || 0)) attempts[i] = value; article.attempts = attempts; } changed++; } } } if (changed) { saveJson(STORAGE_WORDS, wordbook); saveNotes(); saveJson(STORAGE_EXAM_PROGRESS, examProgress); saveJson(STORAGE_READ_FOR_SPEED, readForSpeedArticles); rebuildBank(); } } finally { deployRestoring = false; } return changed;
     }
     async function deployIncrementalSync() {
       if (deploySyncActive) { deploySyncAgain = true; return deploySyncActive; }
       deploySyncActive = (async () => { const start = performance.now(), config = await deployConfig(), hashes = loadJson(DEPLOY_SYNC_HASHES, {}), rows = deployRows(), dirty = rows.filter(([type, id, payload]) => hashes[type + ":" + id] !== deployHash(payload)); for (const [entity_type, id, payload] of dirty) { const record = { id, user_id: config.userId, entity_type, payload, version: Number(payload.version || 0) + 1, device_id: deployDevice(), created_at: payload.createdAt || new Date().toISOString(), updated_at: payload.updatedAt || new Date().toISOString(), deleted_at: payload.deletedAt || null }; const response = await fetch(config.url + "/rest/v1/yds_sync_records?on_conflict=user_id,entity_type,id", { method: "POST", headers: { ...deployHeaders(config), Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(record) }); if (!response.ok) throw new Error(await response.text()); hashes[entity_type + ":" + id] = deployHash(payload); } const cursor = localStorage.getItem(DEPLOY_SYNC_CURSOR) || "1970-01-01T00:00:00.000Z"; const query = new URLSearchParams({ select: "id,entity_type,payload,version,device_id,updated_at,deleted_at", user_id: "eq." + config.userId, updated_at: "gt." + cursor, order: "updated_at.asc" }); const response = await fetch(config.url + "/rest/v1/yds_sync_records?" + query, { headers: deployHeaders(config) }); if (!response.ok) throw new Error(await response.text()); const pulled = await response.json(), applied = await deployApply(pulled), newest = pulled.reduce((n, row) => Math.max(n, Date.parse(row.updated_at) || 0), 0); if (newest) localStorage.setItem(DEPLOY_SYNC_CURSOR, new Date(newest).toISOString()); localStorage.setItem(DEPLOY_SYNC_HASHES, JSON.stringify(hashes)); const result = { upload: dirty.length, download: pulled.length, applied, duration: Math.round(performance.now() - start) }; if (localStorage.getItem("yds-sync-debug") === "1") console.info("SYNC COMPLETE", result); return result; })().finally(() => { deploySyncActive = null; if (deploySyncAgain) { deploySyncAgain = false; void deployIncrementalSync(); } }); return deploySyncActive;
     }
     function queueSupabaseAutoBackup() { /* Cloud traffic is manual; local saves remain immediate. */ }
-    async function uploadSupabaseBackup() { const result = await deployIncrementalSync(); supabaseStatus(`Buluta kaydedildi: ${result.upload} kayıt gönderildi · ${result.download} kayıt indirildi.`, "success"); }
-    async function restoreSupabaseBackup() { const result = await deployIncrementalSync(); supabaseStatus(`Buluttan yüklendi: ${result.download} değişiklik işlendi.`, "success"); }
+    async function uploadSupabaseBackup(silent = false) { try { const config = validateSupabaseConfig(silent ? loadSupabaseConfig() : currentSupabaseFormConfig()); if (!silent) supabaseStatus("Veriler buluta yedekleniyor..."); const payload = await backupPayload(); const localSummary = backupSummary(normalizeBackupPayload(payload)); const response = await fetch(config.url + "/rest/v1/yds_cloud_backups?on_conflict=sync_id", { method: "POST", headers: supabaseHeaders(config, { Prefer: "resolution=merge-duplicates,return=minimal" }), body: JSON.stringify([{ sync_id: config.syncId, payload, updated_at: new Date().toISOString() }]) }); if (!response.ok) throw new Error(await response.text() || "Buluta yedek alınamadı."); const history = loadJson(STORAGE_CLOUD_HISTORY, []), entry = { createdAt: payload.createdAt, deviceLabel: navigator.userAgent.slice(0, 80), schemaVersion: payload.schemaVersion, integrity: "written", ...localSummary }; saveJson(STORAGE_CLOUD_HISTORY, [entry, ...(Array.isArray(history) ? history : [])].slice(0, 5)); if (!silent) supabaseStatus(`Buluta yedeklendi: ${localSummary.sources} kaynak · ${localSummary.answers} cevap · ${localSummary.words} kelime.`, "success"); } catch (error) { if (!silent) supabaseStatus(error.message || "Buluta yedek alınamadı.", "error"); } }
+    // Restore deliberately remains the one user-requested full-payload read.
+    // The original restore function above is retained; no automatic backup is queued.
 
     function renderDailyHistoryHtml() {
       const rows = [dailyProgress, ...dailyHistory].filter(Boolean).slice(0, 14);
@@ -5584,6 +5596,10 @@
           '<p class="mt-1 text-xs font-bold text-slate-500">' + escapeHtml(taskLine) + '</p>' +
         '</article>';
       }).join("") + '</div>';
+    }
+
+    function dailyHistoryCount() {
+      return [dailyProgress, ...dailyHistory].filter(Boolean).slice(0, 14).length;
     }
 
     function renderSettingsPage(message = "") {
@@ -5638,10 +5654,13 @@
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Soru çözümü</span><input id="goalDifficultInput" type="number" min="1" max="200" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500" value="' + dailyGoals.difficultWords + '" /></label>' +
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Seri koşulu</span><select id="goalStreakModeInput" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-black text-slate-800 outline-none focus:border-blue-500"><option value="all" ' + (dailyGoals.streakMode === "all" ? "selected" : "") + '>Tüm görevler</option><option value="80" ' + (dailyGoals.streakMode === "80" ? "selected" : "") + '>%80 yeterli</option></select></label>' +
             '</div>' +
-            '<div class="mt-4">' +
-              '<p class="mb-2 text-xs font-black uppercase tracking-wide text-slate-500">Günlük Geçmiş</p>' +
-              renderDailyHistoryHtml() +
-            '</div>' +
+            '<details class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">' +
+              '<summary class="flex cursor-pointer list-none items-center justify-between gap-3 text-xs font-black uppercase tracking-wide text-slate-600">' +
+                '<span>Günlük Geçmiş</span>' +
+                '<span class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] text-slate-500"><span>' + dailyHistoryCount() + ' kayıt</span><span aria-hidden="true" class="text-sm leading-none">⌄</span></span>' +
+              '</summary>' +
+              '<div class="mt-3">' + renderDailyHistoryHtml() + '</div>' +
+            '</details>' +
           '</section>' +
           '<section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
             '<div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">' +
@@ -5694,15 +5713,14 @@
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Anon public key</span><input id="supabaseKeyInput" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white" placeholder="eyJhbGci..." value="' + escapeHtml(supabaseConfig.anonKey) + '" /></label>' +
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Eşitleme kodu</span><input id="supabaseSyncIdInput" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white" placeholder="hakan-yds-gizli-kod" value="' + escapeHtml(supabaseConfig.syncId) + '" /></label>' +
             '</div>' +
-            '<form id="supabaseAuthForm" class="mt-4 grid gap-3 lg:grid-cols-3"><label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Supabase e-posta</span><input id="supabaseEmailInput" autocomplete="email" type="email" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm" required /></label><label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Parola</span><input id="supabasePasswordInput" autocomplete="current-password" type="password" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm" required /></label><div class="flex items-end gap-2"><button class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-black text-white" type="submit">Giriş Yap</button><button id="supabaseSignOutBtn" class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-black" type="button">Çıkış</button></div></form>' +
             '<div class="mt-4 flex flex-wrap gap-2">' +
               '<button id="uploadSupabaseBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white shadow-sm hover:bg-blue-500">Buluta Yedekle</button>' +
               '<button id="restoreSupabaseBtn" class="rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-black text-blue-700 hover:bg-blue-100">Buluttan Geri Yükle</button>' +
               '<button id="diagnoseCloudDataBtn" class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 hover:bg-slate-50">Kurtarılabilir Verileri İncele</button>' +
             '</div>' +
             '<div class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold text-slate-600">' +
-              '<p class="font-black text-slate-800">Son 5 doğrulanmış yerel yedek özeti</p>' +
-              (verifiedCloudHistory.length ? '<div class="mt-2 grid gap-1">' + verifiedCloudHistory.map(item => '<p>' + escapeHtml(new Date(item.createdAt || Date.now()).toLocaleString("tr-TR")) + ' · ' + escapeHtml(item.deviceLabel || "cihaz") + ' · ' + Number(item.sources || 0) + ' kaynak (' + Number(item.exitQuestionSources || 0) + ' Çıkmış · ' + Number(item.mockExamSources || 0) + ' Deneme) · ' + Number(item.answers || 0) + ' cevap · ' + Number(item.correct || 0) + 'D/' + Number(item.wrong || 0) + 'Y · ' + Number(item.words || 0) + ' kelime · şema ' + Number(item.schemaVersion || 1) + ' · Bütünlük doğrulandı</p>').join("") + '</div>' : '<p class="mt-1">Henüz doğrulanmış bulut yedeği yok.' + (cloudHistory.length ? ' Eski 38 kaynaklı özetler korunuyor ancak geçerli sayılmıyor.' : '') + '</p>') +
+              '<p class="font-black text-slate-800">Son bulut yedeği</p>' +
+              (cloudHistory[0] ? '<p class="mt-1">' + escapeHtml(new Date(cloudHistory[0].createdAt || Date.now()).toLocaleString("tr-TR")) + ' · ' + Number(cloudHistory[0].sources || 0) + ' kaynak · ' + Number(cloudHistory[0].answers || 0) + ' cevap · ' + Number(cloudHistory[0].words || 0) + ' kelime</p>' : '<p class="mt-1">Henüz manuel bulut yedeği alınmadı.</p>') +
             '</div>' +
             '<details class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold text-slate-600">' +
               '<summary class="cursor-pointer font-black text-slate-800">Supabase tablo kodunu göster</summary>' +
@@ -5751,8 +5769,6 @@
         }
       });
       document.getElementById("testSupabaseBtn").addEventListener("click", testSupabaseConnection);
-      document.getElementById("supabaseAuthForm").addEventListener("submit", async event => { event.preventDefault(); try { await deploySignIn(document.getElementById("supabaseEmailInput").value, document.getElementById("supabasePasswordInput").value); document.getElementById("supabasePasswordInput").value = ""; supabaseStatus("Giriş başarılı. Oturum bu tarayıcıda güvenle saklandı.", "success"); } catch (error) { supabaseStatus(error.message || "Giriş başarısız.", "error"); } });
-      document.getElementById("supabaseSignOutBtn").addEventListener("click", async () => { localStorage.removeItem(DEPLOY_AUTH_SESSION); supabaseStatus("Oturum kapatıldı.", "info"); });
       document.getElementById("uploadSupabaseBtn").addEventListener("click", uploadSupabaseBackup);
       document.getElementById("restoreSupabaseBtn").addEventListener("click", restoreSupabaseBackup);
       document.getElementById("diagnoseCloudDataBtn").addEventListener("click", showRecoveryDiagnostics);
