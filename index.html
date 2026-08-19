@@ -5644,33 +5644,32 @@
         // previous cloud payload byte-for-byte (apart from server metadata).
         const payload = await backupPayload();
         const localSummary = backupSummary(normalizeBackupPayload(payload));
-        const localRfsCount = payload.modules.readForSpeed.articles.length;
+        const uploadedAt = new Date().toISOString();
         const response = await fetch(config.url + "/rest/v1/yds_cloud_backups?on_conflict=sync_id", {
           method: "POST",
-          headers: supabaseHeaders(config, { Prefer: "resolution=merge-duplicates,return=representation" }),
+          headers: supabaseHeaders(config, { Prefer: "resolution=merge-duplicates,return=minimal" }),
           body: JSON.stringify([{
             sync_id: config.syncId,
             payload,
-            updated_at: new Date().toISOString(),
+            updated_at: uploadedAt,
           }]),
         });
         if (!response.ok) throw new Error(await response.text() || "Buluta yedek alınamadı.");
-        // Do not trust a successful upsert alone: JSONB payload must round-trip intact.
-        const verifyResponse = await fetch(config.url + "/rest/v1/yds_cloud_backups?sync_id=eq." + encodeURIComponent(config.syncId) + "&select=payload,updated_at&limit=1", { headers: supabaseHeaders(config) });
+        // PostgreSQL stores a JSONB document atomically. Verify the committed
+        // snapshot identity without downloading the multi-megabyte payload a
+        // second time; the next restore still reads the complete document.
+        const verifyQuery = new URLSearchParams({
+          sync_id: "eq." + config.syncId,
+          select: "updated_at,snapshot_id:payload->>snapshotId",
+          limit: "1",
+        });
+        const verifyResponse = await fetch(config.url + "/rest/v1/yds_cloud_backups?" + verifyQuery.toString(), { headers: supabaseHeaders(config) });
         if (!verifyResponse.ok) throw new Error("Bulut yedeği yazıldı ancak doğrulama için tekrar okunamadı.");
         const verifyRows = await verifyResponse.json();
-        const verified = backupSummary(normalizeBackupPayload(verifyRows[0]?.payload));
-        if (normalizeReadForSpeedBackup(verifyRows[0]?.payload).articles.length !== localRfsCount || verified.sources !== localSummary.sources || verified.answers !== localSummary.answers || verified.correct !== localSummary.correct || verified.wrongAnswers !== localSummary.wrongAnswers || verified.wrong !== localSummary.wrong || verified.attempts !== localSummary.attempts || verified.words !== localSummary.words || verified.notes !== localSummary.notes) throw new Error("Bulut kaydı yerel verilerle eşleşmedi. Yedekleme başarılı sayılmadı.");
+        if (!verifyRows.length || verifyRows[0]?.snapshot_id !== payload.snapshotId) throw new Error("Bulut kaydı bu cihazın son yedek kimliğiyle eşleşmedi. Yedekleme başarılı sayılmadı.");
         const history = loadJson(STORAGE_CLOUD_HISTORY, []);
-        const entry = { createdAt: verifyRows[0]?.updated_at || payload.createdAt, deviceLabel: navigator.userAgent.slice(0, 80), schemaVersion: payload.schemaVersion, integrity: "verified", ...localSummary };
+        const entry = { createdAt: verifyRows[0]?.updated_at || uploadedAt, deviceLabel: navigator.userAgent.slice(0, 80), schemaVersion: payload.schemaVersion, integrity: "verified", ...localSummary };
         saveJson(STORAGE_CLOUD_HISTORY, [entry, ...(Array.isArray(history) ? history : [])].slice(0, 5));
-        // History is additive: a failure here never changes the verified current
-        // snapshot, which keeps older Supabase installations compatible.
-        fetch(config.url + "/rest/v1/yds_cloud_backup_history", {
-          method: "POST",
-          headers: supabaseHeaders(config, { Prefer: "return=minimal" }),
-          body: JSON.stringify({ sync_id: config.syncId, payload, device_label: entry.deviceLabel, summary: localSummary }),
-        }).catch(() => {});
         if (!silent) {
           supabaseStatus(`Bu cihazın mevcut hâli buluta aynen kaydedildi ve doğrulandı: ${localSummary.sources} kaynak · ${localSummary.answers} cevap · ${localSummary.wrong} yanlış soru · ${localSummary.words} kelime · ${localSummary.notes} not. Artık sayfadan güvenle çıkabilirsin.`, "success");
         }
