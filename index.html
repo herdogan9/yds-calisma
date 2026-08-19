@@ -1945,6 +1945,10 @@
     const vocabularySeed = baseBank.vocabularySeed || [];
 
     let uploadedBank = loadJson(STORAGE_UPLOADS, { documents: [], questions: [] });
+    // Wrong-question ids must not be pruned until the complete IndexedDB
+    // question bank has finished loading. Browsers hydrate IndexedDB at
+    // different speeds, which previously produced 112 -> 95/96 on refresh.
+    let uploadedBankHydrated = false;
     let uploadTargetModule = "exams";
     let lastTextImport = null;
     let isSavingTextImport = false;
@@ -2218,11 +2222,12 @@
         }
         if (storedDocuments.length || storedQuestions.length) {
           uploadedBank = { documents: storedDocuments, questions: storedQuestions };
-          rebuildBank(); renderMenu();
-          if (activeView === "home") renderHomePage();
         }
+        uploadedBankHydrated = true;
+        return true;
       } catch (error) {
         console.error("IndexedDB kaynak geçişi başarısız; eski veri korunuyor.", error);
+        return false;
       }
     }
 
@@ -2695,17 +2700,19 @@
       documents = [...baseBank.documents, ...(uploadedBank.documents || [])];
       questionBank = [...baseBank.questions, ...(uploadedBank.questions || [])];
       const validQuestionIds = new Set(questionBank.map(item => item.id));
-      wrongQuestionState = Object.fromEntries(Object.entries(wrongQuestionState).filter(([id]) => validQuestionIds.has(id)));
-      syncWrongQuestionArraysFromState();
-      const validWrongIds = wrongQuestionIds.filter(id => validQuestionIds.has(id));
-      if (validWrongIds.length !== wrongQuestionIds.length) {
-        wrongQuestionIds = validWrongIds;
-        saveJson(STORAGE_WRONG_QUESTIONS, wrongQuestionIds);
+      if (uploadedBankHydrated) {
+        wrongQuestionState = Object.fromEntries(Object.entries(wrongQuestionState).filter(([id]) => validQuestionIds.has(id)));
+        syncWrongQuestionArraysFromState();
+        const validWrongIds = wrongQuestionIds.filter(id => validQuestionIds.has(id));
+        if (validWrongIds.length !== wrongQuestionIds.length) {
+          wrongQuestionIds = validWrongIds;
+          saveJson(STORAGE_WRONG_QUESTIONS, wrongQuestionIds);
+        }
+        resolvedWrongQuestionIds = resolvedWrongQuestionIds.filter(id => validQuestionIds.has(id));
+        dismissedWrongQuestionIds = dismissedWrongQuestionIds.filter(id => validQuestionIds.has(id));
       }
-      resolvedWrongQuestionIds = resolvedWrongQuestionIds.filter(id => validQuestionIds.has(id));
-      dismissedWrongQuestionIds = dismissedWrongQuestionIds.filter(id => validQuestionIds.has(id));
       reconcileWrongQuestionPool();
-      if (wrongReviewSession) {
+      if (uploadedBankHydrated && wrongReviewSession) {
         const review = normalizeWrongReviewSession({ ...wrongReviewSession, questionIds: wrongReviewSession.questionIds.filter(id => validQuestionIds.has(id)) });
         wrongReviewSession = review.questionIds.length ? review : null;
         saveJson(STORAGE_WRONG_REVIEW_SESSION, wrongReviewSession);
@@ -5117,10 +5124,14 @@
       const persistedNotes = loadJson(STORAGE_NOTES, notes);
       const questionAnswers = questionBackupRecords(persistedProgress);
       const now = new Date().toISOString();
+      const snapshotId = globalThis.crypto?.randomUUID
+        ? globalThis.crypto.randomUUID()
+        : "snapshot-" + Date.now() + "-" + Math.random().toString(36).slice(2);
       return safeBackupClone({
         app: "YDS Çalışma",
         owner: "Hakan Erdoğan",
         schemaVersion: BACKUP_SCHEMA_VERSION,
+        snapshotId,
         createdAt: now,
         exportedAt: now,
         modules: {
@@ -5413,7 +5424,7 @@
       supabaseStatus(`Kurtarılabilir veriler bulundu: ${result.summary.answers} cevap · ${result.summary.correct} doğru · ${result.summary.wrongAnswers} son yanlış cevap · ${result.summary.wrong} yanlış soru havuzu · ${Object.keys(examProgress.exams || {}).length} kaynak ilerlemesi. İncelenen depolar: ${keys}. Hiçbir kayıt değiştirilmedi.`, "info");
     }
 
-    function safeRestoreCloudBackup(payload, replace = false) {
+    async function safeRestoreCloudBackup(payload, replace = false) {
       const cloud = normalizeBackupPayload(payload);
       const localRfs = readForSpeedBackupModule();
       const mergedRfs = mergeReadForSpeed(localRfs, cloud.readForSpeed, replace);
@@ -5448,7 +5459,10 @@
       } else {
         examProgress = mergedProgress;
       }
-      void saveUploadedBank(uploadedBank);
+      // Do not report a successful restore until every source and question is
+      // durably written and count-verified in IndexedDB.
+      await saveUploadedBank(uploadedBank);
+      uploadedBankHydrated = true;
       saveJson(STORAGE_WORDS, wordbook);
       void saveArticles();
       saveNotes();
@@ -5688,7 +5702,7 @@
         const choice = await chooseCloudRestoreAction(localSummary, cloudSummary, backupDate);
         if (choice === "K") { supabaseStatus("Yerel veriler korundu.", "info"); return; }
         if (choice !== "D") { supabaseStatus("Geri yükleme iptal edildi.", "info"); return; }
-        const result = safeRestoreCloudBackup(rows[0].payload, true);
+        const result = await safeRestoreCloudBackup(rows[0].payload, true);
         supabaseStatus(result.message + (result.warnings.length ? " Uyarı: " + result.warnings[0] : ""), "success");
       } catch (error) {
         supabaseStatus(error.message || "Bulut yedeği geri yüklenemedi.", "error");
@@ -10581,8 +10595,11 @@
       initializeDailyState();
       removeBundledVocabularyOnce();
       mergeVocabularySeed();
+      // Load the complete source/question bank before rebuildBank is allowed
+      // to remove ids that appear unknown. This ordering is required on both
+      // Safari and Chromium because IndexedDB hydration is asynchronous.
+      await hydrateUploadedBank();
       rebuildBank();
-      void hydrateUploadedBank();
       setInterval(() => {
         const currentDate = todayKey();
         if (currentDate === lastDailyDateCheck) return;
