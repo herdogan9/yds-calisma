@@ -1159,6 +1159,30 @@
       text-wrap: pretty;
     }
 
+    .question-highlight-region,
+    .question-highlight-region .word-token {
+      -webkit-user-select: text;
+      user-select: text;
+    }
+
+    .question-user-highlight {
+      border-radius: 0.18rem;
+      background: #fde047;
+      color: inherit;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+      padding: 0.04em 0;
+    }
+
+    body.dark-theme .question-user-highlight {
+      background: #facc15;
+      color: #172033;
+    }
+
+    .question-user-highlight .word-token {
+      color: inherit !important;
+    }
+
     .option-btn.is-eliminated {
       border-color: var(--border-color) !important;
       background: var(--bg-surface-secondary) !important;
@@ -1803,6 +1827,65 @@
     .important-structure-modal { position: fixed; inset: 0; z-index: 110; display: grid; place-items: center; padding: 1rem; background: rgb(15 23 42 / 48%); }
     .important-structure-modal > form { width: min(440px, 100%); border: 1px solid var(--border-color); border-radius: 1rem; padding: 1rem; background: var(--bg-surface); color: var(--text-primary); box-shadow: 0 18px 48px rgb(15 23 42 / 28%); }
     @media (max-width: 768px) { .important-structures-panel { inset: auto 0 0 0; width: 100%; max-height: 80vh; border-radius: 1.25rem 1.25rem 0 0; box-shadow: 0 -12px 36px rgb(15 23 42 / 22%); animation-name: importantStructuresUp; } @keyframes importantStructuresUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } } }
+
+    /* Compact notebook editor: keeps the notebook visible while the note stays focused. */
+    .note-drawer-overlay { position: fixed; inset: 0; z-index: 90; background: rgb(15 23 42 / 42%); backdrop-filter: blur(3px); animation: noteDrawerBackdropIn 150ms ease-out both; }
+    .note-drawer { position: absolute; inset: 12px 12px 12px auto; display: flex; width: min(580px, calc(100vw - 24px)); overflow: hidden; flex-direction: column; border: 1px solid var(--border-color); border-radius: 1.35rem; background: var(--bg-surface); color: var(--text-primary); box-shadow: -22px 0 60px rgb(15 23 42 / 24%); animation: noteDrawerIn 190ms cubic-bezier(.22,.8,.26,1) both; }
+    .note-drawer-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 20px 22px 18px; border-bottom: 1px solid var(--border-color); background: linear-gradient(135deg, color-mix(in srgb, #dbeafe 62%, var(--bg-surface)), var(--bg-surface) 72%); }
+    .note-drawer-heading { display: flex; min-width: 0; align-items: flex-start; gap: 12px; }
+    .note-drawer-icon { display: grid; width: 42px; height: 42px; flex: 0 0 auto; place-items: center; border: 1px solid #bfdbfe; border-radius: .85rem; background: #eff6ff; color: #2563eb; font-size: 20px; font-weight: 900; box-shadow: 0 4px 12px rgb(37 99 235 / 10%); }
+    .note-drawer-eyebrow { margin: 0; color: #2563eb; font-size: 11px; font-weight: 900; letter-spacing: .11em; text-transform: uppercase; }
+    .note-drawer-title { margin: 3px 0 0; color: var(--text-primary); font-size: 22px; font-weight: 900; line-height: 1.15; letter-spacing: -.02em; }
+    .note-drawer-subtitle { margin: 5px 0 0; color: var(--text-secondary); font-size: 13px; font-weight: 600; line-height: 1.35; }
+    .note-drawer-close { display: grid; width: 40px; height: 40px; flex: 0 0 auto; place-items: center; border: 1px solid var(--border-color); border-radius: .8rem; background: var(--bg-surface); color: var(--text-secondary); font-size: 22px; font-weight: 900; transition: border-color .15s ease, background .15s ease, color .15s ease, transform .15s ease; }
+    .note-drawer-close:hover { border-color: #93c5fd; background: #eff6ff; color: #1d4ed8; transform: rotate(3deg); }
+    .note-drawer-form { min-height: 0; flex: 1 1 auto; overflow-y: auto; padding: 20px 22px 24px; }
+    .note-drawer-source { display: flex; align-items: center; gap: 11px; margin-bottom: 18px; border: 1px solid #bfdbfe; border-radius: .9rem; background: color-mix(in srgb, #eff6ff 78%, var(--bg-surface)); padding: 11px 13px; }
+    .note-drawer-source-icon { display: grid; width: 32px; height: 32px; flex: 0 0 auto; place-items: center; border-radius: .65rem; background: #dbeafe; color: #2563eb; font-size: 16px; font-weight: 900; }
+    .note-drawer-source-copy { min-width: 0; }
+    .note-drawer-source-copy small { display: block; color: #2563eb; font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+    .note-drawer-source-copy strong { display: block; margin-top: 2px; overflow: hidden; color: var(--text-primary); font-size: 13px; font-weight: 750; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
+    .note-editor-field { display: grid; gap: 7px; }
+    .note-editor-field + .note-editor-field { margin-top: 17px; }
+    .note-editor-label-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .note-editor-label { color: var(--text-primary); font-size: 13px; font-weight: 850; }
+    .note-editor-required { color: #e11d48; }
+    .note-editor-help { color: var(--text-secondary); font-size: 11px; font-weight: 600; }
+    .note-editor-title-input, .note-editor-textarea { width: 100%; border: 1px solid var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary); outline: 0; transition: border-color .15s ease, background .15s ease, box-shadow .15s ease; }
+    .note-editor-title-input { height: 48px; border-radius: .85rem; padding: 0 14px; font-size: 16px; font-weight: 800; }
+    .note-editor-textarea { height: clamp(260px, 42vh, 440px); min-height: 240px; resize: vertical; border-radius: 1rem; padding: 15px 16px; font-size: 15px; font-weight: 550; line-height: 1.65; }
+    .note-editor-title-input::placeholder, .note-editor-textarea::placeholder { color: color-mix(in srgb, var(--text-secondary) 72%, transparent); }
+    .note-editor-title-input:focus, .note-editor-textarea:focus { border-color: #3b82f6; background: var(--bg-surface); box-shadow: 0 0 0 4px rgb(59 130 246 / 13%); }
+    .note-editor-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-top: 9px; color: var(--text-secondary); font-size: 11px; font-weight: 650; }
+    .note-editor-dirty { display: inline-flex; align-items: center; gap: 6px; }
+    .note-editor-dirty::before { width: 6px; height: 6px; border-radius: 50%; background: #94a3b8; content: ""; }
+    .note-editor-dirty.is-dirty { color: #b45309; }
+    .note-editor-dirty.is-dirty::before { background: #f59e0b; }
+    .note-editor-error { margin: 12px 0 0; border-radius: .75rem; background: #fff1f2; color: #be123c; padding: 9px 11px; font-size: 12px; font-weight: 800; }
+    .note-drawer-footer { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 14px; border-top: 1px solid var(--border-color); background: color-mix(in srgb, var(--bg-surface-secondary) 72%, var(--bg-surface)); padding: 13px 18px; }
+    .note-drawer-shortcut { color: var(--text-secondary); font-size: 11px; font-weight: 650; white-space: nowrap; }
+    .note-drawer-shortcut kbd { border: 1px solid var(--border-color); border-bottom-width: 2px; border-radius: .35rem; background: var(--bg-surface); color: var(--text-primary); padding: 2px 5px; font: inherit; font-weight: 850; }
+    .note-drawer-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+    .note-drawer-cancel, .note-drawer-save { min-height: 42px; border-radius: .8rem; padding: 9px 15px; font-size: 13px; font-weight: 900; }
+    .note-drawer-cancel { border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-primary); }
+    .note-drawer-cancel:hover { background: var(--bg-surface-secondary); }
+    .note-drawer-save { border: 1px solid #2563eb; background: #2563eb; color: #fff; box-shadow: 0 7px 18px rgb(37 99 235 / 24%); }
+    .note-drawer-save:hover { background: #1d4ed8; }
+    @keyframes noteDrawerBackdropIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes noteDrawerIn { from { opacity: .6; transform: translateX(28px) scale(.99); } to { opacity: 1; transform: translateX(0) scale(1); } }
+    @media (max-width: 640px) {
+      .note-drawer { inset: 0; width: 100%; border: 0; border-radius: 0; }
+      .note-drawer-header { padding: 15px 16px 14px; }
+      .note-drawer-icon { width: 38px; height: 38px; }
+      .note-drawer-title { font-size: 20px; }
+      .note-drawer-subtitle { display: none; }
+      .note-drawer-form { padding: 16px; }
+      .note-editor-textarea { height: min(38vh, 340px); min-height: 210px; }
+      .note-drawer-footer { align-items: stretch; flex-direction: column; padding: 12px 16px 16px; }
+      .note-drawer-shortcut { text-align: center; }
+      .note-drawer-actions { display: grid; grid-template-columns: 1fr 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) { .note-drawer-overlay, .note-drawer { animation: none; } }
   </style>
 </head>
 <body class="light-theme min-h-screen bg-slate-100 text-slate-900">
@@ -2083,6 +2166,7 @@
     let articleLanguageView = "en";
     let activeTranslationDraft = null;
     let questionFocusMode = localStorage.getItem("yds-question-focus-v1") === "1";
+    let questionHighlightGestureUntil = 0;
     let activeArticlePopover = null;
     let activeSentencePanel = null;
     let lastPdfImportReport = null;
@@ -2272,16 +2356,29 @@
       Object.keys(exams).forEach(key => {
         const item = exams[key] && typeof exams[key] === "object" ? exams[key] : {};
         const eliminatedOptions = {};
+        const textHighlights = {};
         const rawEliminatedOptions = item.eliminatedOptions && typeof item.eliminatedOptions === "object" ? item.eliminatedOptions : {};
         Object.entries(rawEliminatedOptions).forEach(([questionId, optionKeys]) => {
           const validKeys = [...new Set((Array.isArray(optionKeys) ? optionKeys : []).filter(isAnswerKey))];
           if (validKeys.length) eliminatedOptions[questionId] = validKeys;
+        });
+        const rawTextHighlights = item.textHighlights && typeof item.textHighlights === "object" ? item.textHighlights : {};
+        Object.entries(rawTextHighlights).forEach(([questionId, highlights]) => {
+          const validHighlights = (Array.isArray(highlights) ? highlights : []).map(highlight => {
+            const region = typeof highlight?.region === "string" ? highlight.region : "";
+            const start = Math.max(0, Math.floor(Number(highlight?.start)));
+            const end = Math.floor(Number(highlight?.end));
+            if (!/^(passage|question|option:[A-E])$/.test(region) || !Number.isFinite(start) || !Number.isFinite(end) || end <= start) return null;
+            return { region, start, end, text: typeof highlight?.text === "string" ? highlight.text : "" };
+          }).filter(Boolean);
+          if (validHighlights.length) textHighlights[questionId] = validHighlights;
         });
         exams[key] = {
           examId: String(item.examId || key.replace(/^document:/, "")),
           currentQuestionId: typeof item.currentQuestionId === "string" ? item.currentQuestionId : null,
           answers: item.answers && typeof item.answers === "object" ? item.answers : {},
           eliminatedOptions,
+          textHighlights,
           manuallyCompleted: item.manuallyCompleted === true,
           completedAt: typeof item.completedAt === "string" ? item.completedAt : null,
           updatedAt: typeof item.updatedAt === "string" ? item.updatedAt : new Date(0).toISOString(),
@@ -2298,7 +2395,7 @@
       const key = examKeyForQuestion(question);
       let progress = examProgress.exams[key];
       if (!progress && create) {
-        progress = { examId: String(question?.documentId || activeDocumentId || "unknown"), currentQuestionId: null, answers: {}, eliminatedOptions: {}, updatedAt: new Date().toISOString() };
+        progress = { examId: String(question?.documentId || activeDocumentId || "unknown"), currentQuestionId: null, answers: {}, eliminatedOptions: {}, textHighlights: {}, updatedAt: new Date().toISOString() };
         examProgress.exams[key] = progress;
       }
       return progress || null;
@@ -2333,6 +2430,48 @@
       if (current.size) eliminatedOptions[question.id] = [...current];
       else delete eliminatedOptions[question.id];
       progress.eliminatedOptions = eliminatedOptions;
+      progress.updatedAt = new Date().toISOString();
+      saveExamProgress();
+      return true;
+    }
+
+    function textHighlightsForQuestionRegion(question, region, textLength = Infinity) {
+      if (!question?.id) return [];
+      const highlights = progressForQuestion(question)?.textHighlights?.[question.id];
+      return (Array.isArray(highlights) ? highlights : [])
+        .filter(highlight => highlight?.region === region && Number.isFinite(highlight.start) && Number.isFinite(highlight.end) && highlight.end > highlight.start && highlight.start < textLength)
+        .map(highlight => ({ ...highlight, start: Math.max(0, highlight.start), end: Math.min(textLength, highlight.end) }))
+        .filter(highlight => highlight.end > highlight.start)
+        .sort((a, b) => a.start - b.start || a.end - b.end);
+    }
+
+    function toggleTextHighlightForQuestion(question, region, start, end, text) {
+      if (!question?.id || !/^(passage|question|option:[A-E])$/.test(region)) return false;
+      const cleanStart = Math.max(0, Math.floor(Number(start)));
+      const cleanEnd = Math.floor(Number(end));
+      if (!Number.isFinite(cleanStart) || !Number.isFinite(cleanEnd) || cleanEnd <= cleanStart) return false;
+      const progress = progressForQuestion(question, true);
+      const textHighlights = { ...(progress.textHighlights || {}) };
+      const current = Array.isArray(textHighlights[question.id]) ? textHighlights[question.id] : [];
+      const exact = current.find(highlight => highlight.region === region && highlight.start === cleanStart && highlight.end === cleanEnd);
+      let next;
+      if (exact) {
+        next = current.filter(highlight => highlight !== exact);
+      } else {
+        let mergedStart = cleanStart;
+        let mergedEnd = cleanEnd;
+        const untouched = current.filter(highlight => {
+          if (highlight.region !== region || highlight.end < mergedStart || highlight.start > mergedEnd) return true;
+          mergedStart = Math.min(mergedStart, highlight.start);
+          mergedEnd = Math.max(mergedEnd, highlight.end);
+          return false;
+        });
+        next = [...untouched, { region, start: mergedStart, end: mergedEnd, text: String(text || "") }]
+          .sort((a, b) => a.region.localeCompare(b.region) || a.start - b.start || a.end - b.end);
+      }
+      if (next.length) textHighlights[question.id] = next;
+      else delete textHighlights[question.id];
+      progress.textHighlights = textHighlights;
       progress.updatedAt = new Date().toISOString();
       saveExamProgress();
       return true;
@@ -5735,7 +5874,7 @@
     function deployRows() {
       const rows = [];
       (uploadedBank.documents || []).forEach(doc => { const id = String(doc.id); rows.push(["sources", id, { ...doc, questions: (uploadedBank.questions || []).filter(q => String(q.documentId) === id) }]); });
-      Object.values(examProgress?.exams || {}).forEach(progress => { const sourceId = String(progress.examId || "").replace(/^document:/, ""); if (!sourceId) return; const state = { sourceId, answers: progress.answers || {}, currentQuestionId: progress.currentQuestionId || null, manuallyCompleted: !!progress.manuallyCompleted, completedAt: progress.completedAt || null, updatedAt: progress.updatedAt || new Date().toISOString() }; rows.push(["sourceProgress", sourceId, state]); Object.entries(state.answers).forEach(([questionId, selectedKey]) => { const answer = { id: sourceId + ":" + questionId, questionId, sourceId, selectedKey, updatedAt: state.updatedAt }; rows.push(["questionAnswers", answer.id, answer]); rows.push(["attempts", questionId, { questionId, documentId: sourceId, selectedKey, status: "manual", attempts: [], createdAt: state.updatedAt, updatedAt: state.updatedAt }]); }); });
+      Object.values(examProgress?.exams || {}).forEach(progress => { const sourceId = String(progress.examId || "").replace(/^document:/, ""); if (!sourceId) return; const state = { sourceId, answers: progress.answers || {}, eliminatedOptions: progress.eliminatedOptions || {}, textHighlights: progress.textHighlights || {}, currentQuestionId: progress.currentQuestionId || null, manuallyCompleted: !!progress.manuallyCompleted, completedAt: progress.completedAt || null, updatedAt: progress.updatedAt || new Date().toISOString() }; rows.push(["sourceProgress", sourceId, state]); Object.entries(state.answers).forEach(([questionId, selectedKey]) => { const answer = { id: sourceId + ":" + questionId, questionId, sourceId, selectedKey, updatedAt: state.updatedAt }; rows.push(["questionAnswers", answer.id, answer]); rows.push(["attempts", questionId, { questionId, documentId: sourceId, selectedKey, status: "manual", attempts: [], createdAt: state.updatedAt, updatedAt: state.updatedAt }]); }); });
       wordbook.forEach(word => { const id = deployId(word, "word"); rows.push(["dictionaryWords", id, { ...word, wordId: id }]); });
       notes.forEach(note => rows.push(["notes", deployId(note, "note"), note]));
       readForSpeedArticles.forEach(article => {
@@ -6236,16 +6375,92 @@
       }
     }
 
-    function clickableQuestionText(text, vocabulary = null) {
-      const parts = String(text || "").split(/(\p{L}[\p{L}\p{M}]*(?:['’\-\u2011]\p{L}[\p{L}\p{M}]*)*)/gu);
-      return parts.map(part => {
-        if (/^\p{L}[\p{L}\p{M}]*(?:['’\-\u2011]\p{L}[\p{L}\p{M}]*)*$/u.test(part)) {
-          const word = normalizeWord(part);
-          const found = vocabulary && vocabulary[normalizeLookup(word)];
-          return '<button type="button" class="word-token" data-word="' + escapeHtml(word) + '"' + (found ? ' data-vocab-key="' + escapeHtml(normalizeLookup(word)) + '"' : '') + (found?.isInWordbook ? ' data-added-word="true"' : '') + '>' + escapeHtml(part) + '</button>';
-        }
-        return escapeHtml(part);
-      }).join("");
+    function clickableQuestionText(text, highlights = []) {
+      const source = String(text || "");
+      const ranges = (Array.isArray(highlights) ? highlights : [])
+        .map(highlight => ({ start: Math.max(0, Math.floor(Number(highlight?.start))), end: Math.min(source.length, Math.floor(Number(highlight?.end))) }))
+        .filter(highlight => Number.isFinite(highlight.start) && Number.isFinite(highlight.end) && highlight.end > highlight.start)
+        .sort((a, b) => a.start - b.start || a.end - b.end);
+      let cursor = 0;
+      let html = "";
+      ranges.forEach(range => {
+        if (range.start < cursor) return;
+        html += escapeHtml(source.slice(cursor, range.start));
+        html += '<mark class="question-user-highlight" title="Aynı metni yeniden seçerek vurguyu kaldır">' + escapeHtml(source.slice(range.start, range.end)) + '</mark>';
+        cursor = range.end;
+      });
+      html += escapeHtml(source.slice(cursor));
+      return html;
+    }
+
+    function questionWordAtPoint(container, clientX, clientY) {
+      const caret = document.caretRangeFromPoint?.(clientX, clientY) || (() => {
+        const position = document.caretPositionFromPoint?.(clientX, clientY);
+        if (!position) return null;
+        const fallback = document.createRange();
+        fallback.setStart(position.offsetNode, position.offset);
+        fallback.collapse(true);
+        return fallback;
+      })();
+      if (!caret || !container.contains(caret.startContainer)) return null;
+      const before = document.createRange();
+      before.selectNodeContents(container);
+      before.setEnd(caret.startContainer, caret.startOffset);
+      const offset = before.toString().length;
+      const text = container.textContent || "";
+      const matches = [...text.matchAll(/\p{L}[\p{L}\p{M}]*(?:['’\-\u2011]\p{L}[\p{L}\p{M}]*)*/gu)];
+      const match = matches.find(item => offset >= item.index && offset <= item.index + item[0].length);
+      return match?.[0] || null;
+    }
+
+    function bindQuestionTextHighlighting(question) {
+      const surface = document.querySelector(".question-reader-surface");
+      if (!surface) return;
+      const commitSelection = () => {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount !== 1 || selection.isCollapsed) return false;
+        const range = selection.getRangeAt(0);
+        const startElement = range.startContainer.nodeType === Node.ELEMENT_NODE ? range.startContainer : range.startContainer.parentElement;
+        const endElement = range.endContainer.nodeType === Node.ELEMENT_NODE ? range.endContainer : range.endContainer.parentElement;
+        const container = startElement?.closest?.("[data-question-highlight-region]");
+        if (!container || container !== endElement?.closest?.("[data-question-highlight-region]") || !surface.contains(container)) return false;
+
+        const before = document.createRange();
+        before.selectNodeContents(container);
+        before.setEnd(range.startContainer, range.startOffset);
+        const rawStart = before.toString().length;
+        const selectedText = range.toString();
+        const leadingWhitespace = selectedText.match(/^\s*/u)?.[0].length || 0;
+        const trailingWhitespace = selectedText.match(/\s*$/u)?.[0].length || 0;
+        const start = rawStart + leadingWhitespace;
+        const end = rawStart + selectedText.length - trailingWhitespace;
+        if (end <= start) return false;
+
+        const region = container.dataset.questionHighlightRegion;
+        const fullText = container.textContent || "";
+        if (!toggleTextHighlightForQuestion(question, region, start, end, fullText.slice(start, end))) return false;
+        questionHighlightGestureUntil = Date.now() + 700;
+        selection.removeAllRanges();
+        renderQuestion();
+        showToast("Metin vurgusu güncellendi.");
+        return true;
+      };
+      surface.addEventListener("mouseup", commitSelection);
+      surface.addEventListener("touchend", () => window.setTimeout(commitSelection, 0), { passive: true });
+      surface.querySelectorAll("[data-question-highlight-region]").forEach(container => {
+        container.addEventListener("click", event => {
+          if (Date.now() < questionHighlightGestureUntil) {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+          }
+          const word = questionWordAtPoint(container, event.clientX, event.clientY);
+          if (!word) return;
+          event.preventDefault();
+          event.stopPropagation();
+          openWordModal(word, question);
+        });
+      });
     }
 
     function renderArticleTokenText(text, baseOffset = 0, vocabulary = null) {
@@ -6763,11 +6978,11 @@
           (question.passage
             ? '<section class="mx-auto mb-5 max-w-[900px] rounded-2xl border px-5 py-5 sm:px-7 lg:px-8" style="border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary); font-size: ' + fontSize + 'px; line-height: 1.6; overflow-wrap: break-word; word-break: normal; hyphens: none;">' +
                 '<div class="mb-3 text-xs font-bold uppercase tracking-wider text-blue-500">Okuma Parçası</div>' +
-                '<p class="question-text text-left">' + clickableQuestionText(question.passage) + '</p>' +
+                '<p class="question-text question-highlight-region text-left" data-question-highlight-region="passage">' + clickableQuestionText(question.passage, textHighlightsForQuestionRegion(question, "passage", String(question.passage || "").length)) + '</p>' +
               '</section>'
             : '') +
           '<div class="mx-auto max-w-[900px]">' +
-          '<p id="questionText" data-study-content class="question-text mb-5 text-left font-medium" style="color: var(--text-primary); font-size: ' + fontSize + 'px; line-height: 1.6; overflow-wrap: break-word; word-break: normal; hyphens: none;">' + clickableQuestionText(question.question) + '</p>' +
+          '<p id="questionText" data-study-content data-question-highlight-region="question" class="question-text question-highlight-region mb-5 text-left font-medium" style="color: var(--text-primary); font-size: ' + fontSize + 'px; line-height: 1.6; overflow-wrap: break-word; word-break: normal; hyphens: none;">' + clickableQuestionText(question.question, textHighlightsForQuestionRegion(question, "question", String(question.question || "").length)) + '</p>' +
           '<div id="optionsArea" class="space-y-3">' +
             Object.entries(question.options || {}).map(([key, value]) => {
               const isSelected = selectedAnswer === key;
@@ -6779,7 +6994,7 @@
               const letterColor = isCorrect ? 'bg-emerald-600 text-white' : isWrong ? 'bg-red-600 text-white' : isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white';
               return '<div class="option-btn group flex w-full cursor-pointer items-start gap-3 rounded-2xl border p-3.5 text-left transition hover:border-blue-300 hover:bg-blue-50' + ((isCorrect || isWrong || isSelected) ? ' ring-1' : '') + (isEliminated ? ' is-eliminated' : '') + '" style="border-color: ' + borderColor + '; background: ' + background + '; color: var(--text-primary)" role="button" aria-pressed="' + (isSelected ? 'true' : 'false') + '" aria-label="' + escapeHtml(key) + ' seçeneği' + (isEliminated ? ', elendi' : '') + '" title="' + (isSelected ? 'Seçili şık elenemez' : isEliminated ? 'Sağ tık: elemeyi kaldır' : 'Sağ tık: şıkkı ele') + '" data-key="' + escapeHtml(key) + '">' +
                 '<span class="option-letter flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ' + letterColor + ' font-bold">' + escapeHtml(key) + '</span>' +
-                '<span class="option-copy question-text block flex-1 pt-1" style="font-size: ' + Math.max(16, fontSize - 2) + 'px; line-height: 1.6; overflow-wrap: break-word; word-break: normal; hyphens: none;">' + clickableQuestionText(value) + '</span>' +
+                '<span class="option-copy question-text question-highlight-region block flex-1 pt-1" data-question-highlight-region="option:' + escapeHtml(key) + '" style="font-size: ' + Math.max(16, fontSize - 2) + 'px; line-height: 1.6; overflow-wrap: break-word; word-break: normal; hyphens: none;">' + clickableQuestionText(value, textHighlightsForQuestionRegion(question, "option:" + key, String(value || "").length)) + '</span>' +
               '</div>';
             }).join("") +
           '</div>' +
@@ -6787,6 +7002,8 @@
           '<div id="questionNavArea" class="mt-6">' + questionNavigationHtml() + '</div>' +
           '</div>' +
         '</article></div>';
+
+      bindQuestionTextHighlighting(question);
 
       document.querySelectorAll(".question-palette-item").forEach(button => {
         button.addEventListener("click", () => {
@@ -6796,6 +7013,7 @@
 
       document.querySelectorAll(".option-btn").forEach(button => {
         button.addEventListener("click", event => {
+          if (Date.now() < questionHighlightGestureUntil) return;
           if (event.target.closest(".word-token")) return;
           if (button.classList.contains("is-eliminated")) return;
           checkAnswer(button, question);
@@ -6811,6 +7029,11 @@
       });
       document.querySelectorAll(".word-token").forEach(button => {
         button.addEventListener("click", event => {
+          if (Date.now() < questionHighlightGestureUntil) {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+          }
           event.stopPropagation();
           openWordModal(button.dataset.word, question);
         });
@@ -7471,31 +7694,53 @@
     function openQuickNoteDrawer({ note = null, context = null, onSaved = null } = {}) {
       closeNoteDrawer();
       const item = note ? normalizeNote(note) : normalizeNote({ ...context, content: context?.selectedText ? context.selectedText + "\n\n" : "" });
+      const initialTitle = String(item.content || "").trim() ? noteTitle(item) : "";
+      const initialBody = String(item.content || "").trim() ? notePreview(item) : "";
       const overlay = document.createElement("div");
       overlay.id = "noteDrawerOverlay";
-      overlay.className = "fixed inset-0 z-[90] bg-slate-950/45";
+      overlay.className = "note-drawer-overlay";
       const source = noteSourceLabel(item);
+      const noteKind = source ? "Kaynağa bağlı not" : "Serbest not";
       overlay.innerHTML =
-        '<aside class="absolute inset-y-0 right-0 flex w-full max-w-2xl flex-col border-l border-slate-200 bg-white shadow-2xl" role="dialog" aria-modal="true" aria-label="' + (note ? "Notu düzenle" : "Yeni not") + '">' +
-          '<div class="flex items-start justify-between border-b border-slate-200 px-5 py-4 sm:px-6">' +
-            '<div><p class="text-xs font-black uppercase tracking-wider text-blue-600">Not Defteri</p><h2 class="mt-1 text-xl font-black text-slate-950">' + (note ? "Notu Düzenle" : "Yeni Not") + '</h2></div>' +
-            '<button type="button" data-note-drawer-close class="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-xl font-black text-slate-700 hover:bg-slate-50" aria-label="Kapat">×</button>' +
-          '</div>' +
-          '<form id="noteEditorForm" class="min-h-0 flex-1 overflow-y-auto p-5 sm:p-6">' +
-            '<label class="grid h-full min-h-[360px] gap-2 text-sm font-bold text-slate-700"><span>Not <span class="text-rose-600">*</span></span><textarea id="noteContent" required class="min-h-[320px] flex-1 resize-y rounded-xl border border-slate-200 bg-slate-50 p-4 font-medium leading-relaxed text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white" placeholder="allow sb to do sth&#10;&#10;Birinin bir şey yapmasına izin vermek.&#10;&#10;Örnek:&#10;The system allows users to save their work.">' + escapeHtml(item.content) + '</textarea></label>' +
-            (source ? '<p class="mt-3 text-xs font-bold text-slate-500">Kaynak: ' + escapeHtml(source) + '</p>' : "") +
-            '<p id="noteEditorError" class="mt-3 hidden text-sm font-bold text-rose-600"></p>' +
+        '<aside class="note-drawer" role="dialog" aria-modal="true" aria-labelledby="noteDrawerTitle">' +
+          '<header class="note-drawer-header">' +
+            '<div class="note-drawer-heading"><span class="note-drawer-icon" aria-hidden="true">▤</span><div><p class="note-drawer-eyebrow">' + escapeHtml(noteKind) + '</p><h2 class="note-drawer-title" id="noteDrawerTitle">' + (note ? "Notu Düzenle" : "Yeni Not") + '</h2><p class="note-drawer-subtitle">Başlığı kısa tut; açıklamaya örnek ve hatırlatıcılarını ekle.</p></div></div>' +
+            '<button type="button" data-note-drawer-close class="note-drawer-close" aria-label="Not düzenleyiciyi kapat">×</button>' +
+          '</header>' +
+          '<form id="noteEditorForm" class="note-drawer-form">' +
+            (source ? '<div class="note-drawer-source"><span class="note-drawer-source-icon" aria-hidden="true">↗</span><div class="note-drawer-source-copy"><small>Bağlı kaynak</small><strong title="' + escapeHtml(source) + '">' + escapeHtml(source) + '</strong></div></div>' : "") +
+            '<label class="note-editor-field" for="noteTitleInput"><span class="note-editor-label-row"><span class="note-editor-label">Başlık <span class="note-editor-required">*</span></span><span class="note-editor-help">Not kartında görünen ilk satır</span></span><input id="noteTitleInput" class="note-editor-title-input" required autocomplete="off" placeholder="Örn. replace sb/sth with/by sb/sth" value="' + escapeHtml(initialTitle) + '"></label>' +
+            '<label class="note-editor-field" for="noteBodyInput"><span class="note-editor-label-row"><span class="note-editor-label">Açıklama</span><span class="note-editor-help">Anlam, kural veya örnek cümle</span></span><textarea id="noteBodyInput" class="note-editor-textarea" placeholder="Türkçe karşılığını, kullanım kuralını veya örnek cümleni yazabilirsin.">' + escapeHtml(initialBody) + '</textarea></label>' +
+            '<div class="note-editor-meta"><span class="note-editor-dirty" id="noteEditorDirty">Değişiklik yok</span><span><b id="noteEditorLineCount">0</b> satır · <b id="noteEditorCharCount">0</b> karakter</span></div>' +
+            '<p id="noteEditorError" class="note-editor-error hidden" role="alert"></p>' +
           '</form>' +
-          '<div class="flex flex-col-reverse gap-2 border-t border-slate-200 p-4 sm:flex-row sm:justify-end sm:px-6">' +
-            '<button type="button" data-note-drawer-close class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-black text-slate-700 hover:bg-slate-50">İptal</button>' +
-            '<button type="submit" form="noteEditorForm" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-lg shadow-blue-200 hover:bg-blue-500">' + (note ? "Kaydet" : "Notu Kaydet") + '</button>' +
-          '</div>' +
+          '<footer class="note-drawer-footer"><span class="note-drawer-shortcut"><kbd>⌘/Ctrl</kbd> + <kbd>Enter</kbd> ile kaydet</span><div class="note-drawer-actions"><button type="button" data-note-drawer-close class="note-drawer-cancel">İptal</button><button type="submit" form="noteEditorForm" class="note-drawer-save">' + (note ? "Değişiklikleri Kaydet" : "Notu Kaydet") + '</button></div></footer>' +
         '</aside>';
       document.body.appendChild(overlay);
-      overlay.addEventListener("click", event => { if (event.target === overlay) closeNoteDrawer(); });
-      overlay.querySelectorAll("[data-note-drawer-close]").forEach(button => button.addEventListener("click", closeNoteDrawer));
+      const titleInput = overlay.querySelector("#noteTitleInput");
+      const bodyInput = overlay.querySelector("#noteBodyInput");
+      const dirtyStatus = overlay.querySelector("#noteEditorDirty");
+      const editorContent = () => [titleInput.value.trim(), bodyInput.value.trim()].filter(Boolean).join("\n\n");
+      const isDirty = () => titleInput.value !== initialTitle || bodyInput.value !== initialBody;
+      const updateEditorMeta = () => {
+        const content = editorContent();
+        overlay.querySelector("#noteEditorLineCount").textContent = content ? String(content.split(/\r?\n/).length) : "0";
+        overlay.querySelector("#noteEditorCharCount").textContent = String(content.length);
+        dirtyStatus.textContent = isDirty() ? "Kaydedilmemiş değişiklik" : "Değişiklik yok";
+        dirtyStatus.classList.toggle("is-dirty", isDirty());
+        overlay.querySelector("#noteEditorError").classList.add("hidden");
+      };
+      const requestClose = () => {
+        if (isDirty() && !window.confirm("Kaydedilmemiş değişiklikler var. Not düzenleyici kapatılsın mı?")) return;
+        closeNoteDrawer();
+      };
+      titleInput.addEventListener("input", updateEditorMeta);
+      bodyInput.addEventListener("input", updateEditorMeta);
+      updateEditorMeta();
+      overlay.addEventListener("click", event => { if (event.target === overlay) requestClose(); });
+      overlay.querySelectorAll("[data-note-drawer-close]").forEach(button => button.addEventListener("click", requestClose));
       overlay.addEventListener("keydown", event => {
-        if (event.key === "Escape") closeNoteDrawer();
+        if (event.key === "Escape") requestClose();
         if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
           event.preventDefault();
           overlay.querySelector("#noteEditorForm").requestSubmit();
@@ -7503,11 +7748,12 @@
       });
       overlay.querySelector("#noteEditorForm").addEventListener("submit", event => {
         event.preventDefault();
-        const content = overlay.querySelector("#noteContent").value;
+        const content = editorContent();
         const error = overlay.querySelector("#noteEditorError");
-        if (!content.trim()) {
-          error.textContent = "Not alanı boş bırakılamaz.";
+        if (!titleInput.value.trim()) {
+          error.textContent = "Not başlığı boş bırakılamaz.";
           error.classList.remove("hidden");
+          titleInput.focus();
           return;
         }
         const now = new Date().toISOString();
@@ -7523,7 +7769,9 @@
         if (typeof onSaved === "function") onSaved(record);
         else if (activeView === "notes") renderNotebook();
       });
-      overlay.querySelector("#noteContent").focus();
+      const focusTarget = note && initialBody ? bodyInput : titleInput;
+      focusTarget.focus();
+      if (focusTarget === bodyInput) bodyInput.setSelectionRange(bodyInput.value.length, bodyInput.value.length);
     }
 
     function noteCardHtml(note) {
