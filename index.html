@@ -2011,8 +2011,6 @@
     // every question answered today, even when answers came from many sources.
     const STORAGE_DAILY_QUESTION_RESULTS = "yds-daily-question-results-v1";
     const STORAGE_CLOUD_HISTORY = "yds-cloud-backup-history-v1";
-    const STORAGE_WRONG_CLOUD_OVERRIDES = "yds-wrong-cloud-overrides-v1";
-    const STORAGE_QUESTION_CLOUD_SNAPSHOTS = "yds-question-cloud-snapshots-v1";
     const DEPLOY_DB_NAME = "yds-calisma-deploy-db";
     const DEPLOY_DB_VERSION = 3;
     // These ledgers grow continually and must not compete with preferences in
@@ -2058,11 +2056,6 @@
     if (!Array.isArray(dismissedWrongQuestionIds)) dismissedWrongQuestionIds = [];
     let wrongReviewSession = normalizeWrongReviewSession(loadJson(STORAGE_WRONG_REVIEW_SESSION, null));
     let wrongQuestionState = normalizeWrongQuestionState(loadJson(STORAGE_WRONG_QUESTION_STATE, {}));
-    let wrongCloudOverrides = loadJson(STORAGE_WRONG_CLOUD_OVERRIDES, {});
-    let questionCloudSnapshots = loadJson(STORAGE_QUESTION_CLOUD_SNAPSHOTS, {});
-    if (!wrongCloudOverrides || typeof wrongCloudOverrides !== "object" || Array.isArray(wrongCloudOverrides)) wrongCloudOverrides = {};
-    if (!questionCloudSnapshots || typeof questionCloudSnapshots !== "object" || Array.isArray(questionCloudSnapshots)) questionCloudSnapshots = {};
-    let wrongBridgeWriteChain = Promise.resolve();
     if (!Object.keys(wrongQuestionState).length) {
       // v1 kept three independent arrays. They could contain the same question
       // in both the active and resolved lists after a multi-device merge. An
@@ -2259,19 +2252,6 @@
     async function getIdentityMapping(entityType, localNamespace, localId) { const db = await openDeployDb(); return idbGet(db, "canonicalIdentityRegistry", `${entityType}|${localNamespace}|${localId}`); }
     async function listIdentityMappings() { const db = await openDeployDb(); return idbGetAll(db, "canonicalIdentityRegistry"); }
     async function putIdentityMapping(record) { const key = identityRegistryKey(record), existing = await getIdentityMapping(record.entity_type, record.local_namespace, record.local_id); if (existing && existing.canonical_id !== record.canonical_id) return { ok: false, code: "IDENTITY_MAPPING_CONFLICT", entity_type: record.entity_type, local_namespace: record.local_namespace, local_id: record.local_id, existing_canonical_id: existing.canonical_id, incoming_canonical_id: record.canonical_id }; const db = await openDeployDb(), now = new Date().toISOString(), value = { ...existing, ...record, key, canonical_id: existing?.canonical_id || record.canonical_id, created_at: existing?.created_at || now, updated_at: now, schema_version: 1 }; await new Promise((resolve, reject) => { const request = db.transaction("canonicalIdentityRegistry", "readwrite").objectStore("canonicalIdentityRegistry").put(value); request.onsuccess = resolve; request.onerror = () => reject(request.error); }); return { ok: true }; }
-
-    const DEPLOY_IDENTITY_NAMESPACE = "deploy";
-    function canonicalClean(value) { return String(value ?? "").normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("tr-TR").replace(/[^\p{L}\p{N}]+/gu, " ").trim(); }
-    function canonicalDigest(value) { const text = JSON.stringify(value); let hash = 2166136261; for (let i = 0; i < text.length; i++) { hash ^= text.charCodeAt(i); hash = Math.imul(hash, 16777619); } return (hash >>> 0).toString(36); }
-    function deployQuestionFingerprint(question) { return canonicalDigest({ prompt: canonicalClean(question?.prompt || question?.question || question?.stem), options: Object.values(question?.options || {}).map(value => canonicalClean(typeof value === "object" ? value.text : value)).sort(), answer: canonicalClean(question?.correctAnswer || question?.answer), explanation: canonicalClean(question?.explanation), number: question?.questionNumber || question?.number || null }); }
-    function normalizeCloudQuestionOptions(options) { const keys = ["A", "B", "C", "D", "E"]; if (Array.isArray(options)) return keys.map(key => { const option = options.find(item => item?.key === key); return option ? { key, text: String(option.text || "") } : null; }).filter(Boolean); return keys.map(key => options?.[key] === undefined ? null : { key, text: String(options[key] || "") }).filter(Boolean); }
-    function deployQuestionSnapshot(question, canonicalQuestionId) { const sourceId = String(question?.sourceId || question?.documentId || ""); if (!question?.id || !sourceId || !canonicalQuestionId) throw new Error("Soru canonical snapshot için eksik"); return { canonicalQuestionId, localQuestionId: String(question.id), sourceId, documentId: String(question.documentId || sourceId), setId: question.setId === undefined ? null : String(question.setId), questionNumber: Number(question.questionNumber ?? question.number ?? 0), category: String(question.category || ""), prompt: String(question.prompt || question.question || question.stem || ""), options: normalizeCloudQuestionOptions(question.options), answer: question.answer ?? question.correctAnswer ?? null, explanation: question.explanation ?? null, fingerprint: deployQuestionFingerprint(question) }; }
-    function normalizeCloudWrongOverride(value) { if (!value || typeof value !== "object") return null; const canonicalQuestionId = String(value.canonicalQuestionId || value.id || "").trim(); if (!canonicalQuestionId || !["active", "resolved"].includes(value.status)) return null; const updatedAt = typeof value.updatedAt === "string" && !Number.isNaN(Date.parse(value.updatedAt)) ? value.updatedAt : new Date(0).toISOString(); return { canonicalQuestionId, status: value.status, updatedAt }; }
-    function newerCloudWrongOverride(localValue, remoteValue) { const local = normalizeCloudWrongOverride(localValue), remote = normalizeCloudWrongOverride(remoteValue); if (!local) return remote; if (!remote) return local; const localTime = Date.parse(local.updatedAt) || 0, remoteTime = Date.parse(remote.updatedAt) || 0; if (remoteTime > localTime) return remote; if (remoteTime < localTime) return local; return local.status === "resolved" || remote.status !== "resolved" ? local : remote; }
-    async function resolveDeployCanonicalQuestionId(question) { const existing = await getIdentityMapping("questions", DEPLOY_IDENTITY_NAMESPACE, String(question.id)); if (existing?.canonical_id) return existing.canonical_id; const fingerprint = deployQuestionFingerprint(question); const matches = Object.values(questionCloudSnapshots).filter(snapshot => snapshot?.fingerprint === fingerprint && snapshot?.canonicalQuestionId); const canonicalIds = [...new Set(matches.map(snapshot => String(snapshot.canonicalQuestionId)))]; if (canonicalIds.length > 1) throw new Error("Belirsiz canonical soru eşlemesi: " + question.id); const canonicalQuestionId = canonicalIds[0] || crypto.randomUUID(); const result = await putIdentityMapping({ entity_type: "questions", local_namespace: DEPLOY_IDENTITY_NAMESPACE, local_id: String(question.id), canonical_id: canonicalQuestionId, fingerprint, mapping_source: canonicalIds.length ? "cloud-fingerprint-reconciliation" : "local-create", confidence: canonicalIds.length ? "EXACT" : "UNMATCHED" }); if (!result.ok) throw new Error(result.code); return canonicalQuestionId; }
-    async function persistDeployWrongBridge(questionId, status, updatedAt) { const question = questionBank.find(item => item.id === questionId); if (!question) throw new Error("Canonical köprü için soru bulunamadı: " + questionId); const canonicalQuestionId = await resolveDeployCanonicalQuestionId(question); const snapshot = deployQuestionSnapshot(question, canonicalQuestionId); questionCloudSnapshots[canonicalQuestionId] = snapshot; const incoming = { canonicalQuestionId, status, updatedAt }; wrongCloudOverrides[canonicalQuestionId] = newerCloudWrongOverride(wrongCloudOverrides[canonicalQuestionId], incoming); saveJson(STORAGE_QUESTION_CLOUD_SNAPSHOTS, questionCloudSnapshots); saveJson(STORAGE_WRONG_CLOUD_OVERRIDES, wrongCloudOverrides); return canonicalQuestionId; }
-    function queueDeployWrongBridge(questionId, status, updatedAt) { wrongBridgeWriteChain = wrongBridgeWriteChain.catch(() => undefined).then(() => persistDeployWrongBridge(questionId, status, updatedAt)).catch(error => { console.error("Yanlış havuzu canonical köprüsü atlandı; yerel kayıt korundu.", error); }); return wrongBridgeWriteChain; }
-    async function bootstrapDeployWrongBridge() { for (const [questionId, record] of Object.entries(wrongQuestionState)) { const normalized = normalizeWrongQuestionState({ [questionId]: record })[questionId]; if (normalized) await queueDeployWrongBridge(questionId, normalized.status === "active" ? "active" : "resolved", normalized.updatedAt); } }
 
     async function saveDeployState(key, value) {
       const database = await openDeployDb();
@@ -2982,21 +2962,17 @@
     function addWrongQuestion(questionId) {
       if (!questionId) return;
       if (wrongQuestionState[questionId]?.status === "active") return;
-      const updatedAt = new Date().toISOString();
-      wrongQuestionState[questionId] = { status: "active", updatedAt };
+      wrongQuestionState[questionId] = { status: "active", updatedAt: new Date().toISOString() };
       wrongQuestionIds = [questionId, ...wrongQuestionIds.filter(id => id !== questionId)];
       saveWrongQuestions();
-      void queueDeployWrongBridge(questionId, "active", updatedAt);
     }
 
     function removeWrongQuestion(questionId) {
       if (!questionId) return;
       if (wrongQuestionState[questionId]?.status === "resolved") return;
-      const updatedAt = new Date().toISOString();
-      wrongQuestionState[questionId] = { status: "resolved", updatedAt };
+      wrongQuestionState[questionId] = { status: "resolved", updatedAt: new Date().toISOString() };
       wrongQuestionIds = wrongQuestionIds.filter(id => id !== questionId);
       saveWrongQuestions();
-      void queueDeployWrongBridge(questionId, "resolved", updatedAt);
     }
 
     // Older versions only added questions to this pool at the moment they were
@@ -5802,9 +5778,6 @@
       try {
         const config = validateSupabaseConfig(silent ? loadSupabaseConfig() : currentSupabaseFormConfig());
         if (!silent) supabaseStatus("Veriler buluta yedekleniyor...");
-        // The legacy full snapshot remains intact. The Telegram-ready wrong pool
-        // bridge is additionally pushed with authenticated, timestamp-aware rows.
-        await pushDeployWrongPoolBridge();
         // Manual backup is an exact snapshot, not a two-way sync. The current
         // device is the sole source of truth for this action and replaces the
         // previous cloud payload byte-for-byte (apart from server metadata).
@@ -5849,7 +5822,6 @@
     async function restoreSupabaseBackup() {
       try {
         const config = validateSupabaseConfig(currentSupabaseFormConfig());
-        await deployConfig();
         supabaseStatus("Bulut yedeği okunuyor...");
         const response = await fetch(config.url + "/rest/v1/yds_cloud_backups?sync_id=eq." + encodeURIComponent(config.syncId) + "&select=payload,updated_at&limit=1", {
           headers: supabaseHeaders(config),
@@ -5869,8 +5841,6 @@
         if (choice === "K") { supabaseStatus("Yerel veriler korundu.", "info"); return; }
         if (choice !== "D") { supabaseStatus("Geri yükleme iptal edildi.", "info"); return; }
         const result = await safeRestoreCloudBackup(rows[0].payload, true);
-        await bootstrapDeployWrongBridge();
-        await pullDeployWrongPoolBridge();
         supabaseStatus(result.message + (result.warnings.length ? " Uyarı: " + result.warnings[0] : ""), "success");
       } catch (error) {
         supabaseStatus(error.message || "Bulut yedeği geri yüklenemedi.", "error");
@@ -5884,9 +5854,7 @@
     const DEPLOY_SYNC_HASHES = "yds-deploy-sync-hashes-v1";
     const DEPLOY_DEVICE_ID = "yds-deploy-device-id-v1";
     let deploySyncActive = null, deploySyncAgain = false, deployRestoring = false;
-    function deployTokenPayload(token) { try { return JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))); } catch { return {}; } }
-    function deployTokenUser(token) { return deployTokenPayload(token).sub || null; }
-    function deployTokenNeedsRefresh(token) { const expiresAt = deployTokenPayload(token).exp; return Number.isFinite(expiresAt) && expiresAt * 1000 <= Date.now() + 60000; }
+    function deployTokenUser(token) { try { return JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))).sub; } catch { return null; } }
     function deploySession() { return loadJson(DEPLOY_AUTH_SESSION, null); }
     function deployDevice() { let id = localStorage.getItem(DEPLOY_DEVICE_ID); if (!id) { id = crypto.randomUUID(); localStorage.setItem(DEPLOY_DEVICE_ID, id); } return id; }
     function deployHeaders(config) { return { apikey: config.anonKey, Authorization: "Bearer " + config.token, "Content-Type": "application/json" }; }
@@ -5897,26 +5865,10 @@
       localStorage.setItem(DEPLOY_AUTH_SESSION, JSON.stringify(session)); return session;
     }
     async function deployConfig() {
-      const config = loadSupabaseConfig(); let session = deploySession();
-      if (!config.url || !config.anonKey || !session?.access_token) throw new Error("Bulut eşitlemesi için e-posta ve parola ile giriş yapın.");
-      if (deployTokenNeedsRefresh(session.access_token)) {
-        if (!session.refresh_token) throw new Error("Bulut oturumu sona erdi; yeniden giriş yapın.");
-        const response = await fetch(config.url + "/auth/v1/token?grant_type=refresh_token", { method: "POST", headers: { apikey: config.anonKey, "Content-Type": "application/json" }, body: JSON.stringify({ refresh_token: session.refresh_token }) });
-        const refreshed = await response.json(); if (!response.ok || !refreshed.access_token) throw new Error(refreshed.error_description || "Bulut oturumu yenilenemedi.");
-        session = refreshed; localStorage.setItem(DEPLOY_AUTH_SESSION, JSON.stringify(refreshed));
-      }
-      const userId = deployTokenUser(session.access_token); if (!userId) throw new Error("Bulut oturumunda kullanıcı kimliği bulunamadı.");
+      const config = loadSupabaseConfig(), session = deploySession(); const userId = deployTokenUser(session?.access_token || "");
+      if (!config.url || !config.anonKey || !session?.access_token || !userId) throw new Error("Bulut eşitlemesi için e-posta ve parola ile giriş yapın.");
       return { ...config, token: session.access_token, userId };
     }
-    async function replaceDeployCanonicalMapping(question, previousId, canonicalQuestionId) { if (previousId === canonicalQuestionId) return; const existing = await getIdentityMapping("questions", DEPLOY_IDENTITY_NAMESPACE, String(question.id)); if (!existing || existing.canonical_id !== previousId || existing.fingerprint !== deployQuestionFingerprint(question)) throw new Error("Canonical mapping güvenle güncellenemedi: " + question.id); const db = await openDeployDb(), now = new Date().toISOString(), value = { ...existing, canonical_id: canonicalQuestionId, mapping_source: "server-claim", updated_at: now }; await new Promise((resolve, reject) => { const request = db.transaction("canonicalIdentityRegistry", "readwrite").objectStore("canonicalIdentityRegistry").put(value); request.onsuccess = resolve; request.onerror = () => reject(request.error); }); const snapshot = questionCloudSnapshots[previousId]; if (snapshot) { questionCloudSnapshots[canonicalQuestionId] = { ...snapshot, canonicalQuestionId }; delete questionCloudSnapshots[previousId]; } const override = wrongCloudOverrides[previousId]; if (override) { wrongCloudOverrides[canonicalQuestionId] = newerCloudWrongOverride(wrongCloudOverrides[canonicalQuestionId], { ...override, canonicalQuestionId }); delete wrongCloudOverrides[previousId]; } }
-    async function deployBridgeRecords(config) { const query = new URLSearchParams({ select: "id,entity_type,payload,updated_at", user_id: "eq." + config.userId, entity_type: "in.(questions,wrongQuestionOverrides)", deleted_at: "is.null" }); const response = await fetch(config.url + "/rest/v1/yds_sync_records?" + query, { headers: deployHeaders(config) }); if (!response.ok) throw new Error(await response.text()); return response.json(); }
-    async function mergeDeployBridgeRecords(records) { for (const record of records) { if (record.entity_type === "questions" && record.payload?.fingerprint) questionCloudSnapshots[record.id] = { ...record.payload, canonicalQuestionId: record.id }; } const mappings = await listIdentityMappings(); for (const question of questionBank) { const existing = mappings.find(item => item.entity_type === "questions" && item.local_namespace === DEPLOY_IDENTITY_NAMESPACE && item.local_id === String(question.id)); const matches = Object.values(questionCloudSnapshots).filter(snapshot => snapshot?.fingerprint === deployQuestionFingerprint(question)); const canonicalIds = [...new Set(matches.map(snapshot => String(snapshot.canonicalQuestionId)))]; if (canonicalIds.length !== 1) continue; if (!existing) await putIdentityMapping({ entity_type: "questions", local_namespace: DEPLOY_IDENTITY_NAMESPACE, local_id: String(question.id), canonical_id: canonicalIds[0], fingerprint: deployQuestionFingerprint(question), mapping_source: "cloud-fingerprint-reconciliation", confidence: "EXACT" }); else if (existing.canonical_id !== canonicalIds[0] && existing.mapping_source === "local-create") await replaceDeployCanonicalMapping(question, existing.canonical_id, canonicalIds[0]); }
-      const refreshedMappings = await listIdentityMappings();
-      for (const record of records) { if (record.entity_type !== "wrongQuestionOverrides") continue; const remote = normalizeCloudWrongOverride({ ...record.payload, canonicalQuestionId: record.id }); if (!remote) continue; wrongCloudOverrides[record.id] = newerCloudWrongOverride(wrongCloudOverrides[record.id], remote); const localId = refreshedMappings.find(item => item.entity_type === "questions" && item.local_namespace === DEPLOY_IDENTITY_NAMESPACE && item.canonical_id === record.id)?.local_id; if (!localId || !questionBank.some(question => question.id === localId)) continue; const local = wrongQuestionState[localId]; if (!local || Date.parse(remote.updatedAt) > (Date.parse(local.updatedAt) || 0) || (remote.updatedAt === local.updatedAt && remote.status === "resolved")) wrongQuestionState[localId] = { status: remote.status, updatedAt: remote.updatedAt }; }
-      syncWrongQuestionArraysFromState(); saveWrongQuestions(); saveJson(STORAGE_QUESTION_CLOUD_SNAPSHOTS, questionCloudSnapshots); saveJson(STORAGE_WRONG_CLOUD_OVERRIDES, wrongCloudOverrides);
-    }
-    async function pullDeployWrongPoolBridge() { const config = await deployConfig(); const records = await deployBridgeRecords(config); await mergeDeployBridgeRecords(records); rebuildBank(); return records.length; }
-    async function pushDeployWrongPoolBridge() { await wrongBridgeWriteChain; const config = await deployConfig(); await mergeDeployBridgeRecords(await deployBridgeRecords(config)); let questionCount = 0, overrideCount = 0; for (const original of Object.values(questionCloudSnapshots)) { const question = questionBank.find(item => item.id === original.localQuestionId); if (!question) continue; const claimResponse = await fetch(config.url + "/rest/v1/rpc/claim_yds_question_snapshot", { method: "POST", headers: deployHeaders(config), body: JSON.stringify({ p_proposed_id: original.canonicalQuestionId, p_payload: original, p_device_id: deployDevice() }) }); if (!claimResponse.ok) throw new Error(await claimResponse.text()); const claimedId = await claimResponse.json(); if (claimedId && claimedId !== original.canonicalQuestionId) await replaceDeployCanonicalMapping(question, original.canonicalQuestionId, claimedId); questionCount++; } const remoteRecords = await deployBridgeRecords(config), remoteOverrides = new Map(remoteRecords.filter(record => record.entity_type === "wrongQuestionOverrides").map(record => [record.id, record.payload])); for (const [canonicalQuestionId, localValue] of Object.entries(wrongCloudOverrides)) { const winner = newerCloudWrongOverride(localValue, remoteOverrides.get(canonicalQuestionId)); wrongCloudOverrides[canonicalQuestionId] = winner; if (winner.updatedAt !== localValue.updatedAt || winner.status !== localValue.status) continue; const record = { id: canonicalQuestionId, user_id: config.userId, entity_type: "wrongQuestionOverrides", payload: winner, version: 1, device_id: deployDevice(), created_at: winner.updatedAt, updated_at: winner.updatedAt, deleted_at: null }; const response = await fetch(config.url + "/rest/v1/yds_sync_records?on_conflict=user_id,entity_type,id", { method: "POST", headers: { ...deployHeaders(config), Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(record) }); if (!response.ok) throw new Error(await response.text()); overrideCount++; } await mergeDeployBridgeRecords(await deployBridgeRecords(config)); return { questions: questionCount, overrides: overrideCount }; }
     function deployId(value, fallback) { return String(value?.id || value?.wordId || value?.questionId || value?.sourceId || value?.word || fallback); }
     function deployHash(value) { const text = JSON.stringify(value); let hash = 2166136261; for (let i = 0; i < text.length; i++) { hash ^= text.charCodeAt(i); hash = Math.imul(hash, 16777619); } return (hash >>> 0).toString(36) + ":" + text.length; }
     function deployRows() {
@@ -6131,9 +6083,6 @@
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Supabase URL</span><input id="supabaseUrlInput" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white" placeholder="https://proje-ref.supabase.co" value="' + escapeHtml(supabaseConfig.url) + '" /></label>' +
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Anon public key</span><input id="supabaseKeyInput" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white" placeholder="eyJhbGci..." value="' + escapeHtml(supabaseConfig.anonKey) + '" /></label>' +
               '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Eşitleme kodu</span><input id="supabaseSyncIdInput" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white" placeholder="hakan-yds-gizli-kod" value="' + escapeHtml(supabaseConfig.syncId) + '" /></label>' +
-              '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Supabase e-posta</span><input id="supabaseEmailInput" type="email" autocomplete="username" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-800 outline-none focus:border-blue-500 focus:bg-white" /></label>' +
-              '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Supabase parola</span><input id="supabasePasswordInput" type="password" autocomplete="current-password" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-800 outline-none focus:border-blue-500 focus:bg-white" /></label>' +
-              '<div class="flex items-end"><button id="supabaseAuthBtn" class="h-11 w-full rounded-xl border border-emerald-200 bg-emerald-50 px-4 text-sm font-black text-emerald-700">' + (deploySession()?.access_token ? 'Bulut hesabı bağlı' : 'Bulut hesabına giriş') + '</button></div>' +
             '</div>' +
             '<div class="mt-4 flex flex-wrap gap-2">' +
               '<button id="uploadSupabaseBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white shadow-sm hover:bg-blue-500">Buluta Yedekle</button>' +
@@ -6190,18 +6139,6 @@
         }
       });
       document.getElementById("testSupabaseBtn").addEventListener("click", testSupabaseConnection);
-      document.getElementById("supabaseAuthBtn").addEventListener("click", async () => {
-        try {
-          validateSupabaseConfig(currentSupabaseFormConfig());
-          const email = document.getElementById("supabaseEmailInput").value.trim();
-          const password = document.getElementById("supabasePasswordInput").value;
-          if (!email || !password) throw new Error("Bulut hesabı için e-posta ve parola gerekli.");
-          await deploySignIn(email, password);
-          document.getElementById("supabasePasswordInput").value = "";
-          supabaseStatus("Bulut hesabına giriş yapıldı. Parola saklanmadı.", "success");
-          document.getElementById("supabaseAuthBtn").textContent = "Bulut hesabı bağlı";
-        } catch (error) { supabaseStatus(error.message || "Bulut hesabına giriş yapılamadı.", "error"); }
-      });
       document.getElementById("uploadSupabaseBtn").addEventListener("click", uploadSupabaseBackup);
       document.getElementById("restoreSupabaseBtn").addEventListener("click", restoreSupabaseBackup);
       document.getElementById("diagnoseCloudDataBtn").addEventListener("click", showRecoveryDiagnostics);
@@ -6214,11 +6151,6 @@
 
       stats.correct = 0;
       stats.wrong = 0;
-      const wrongResetAt = new Date().toISOString();
-      Object.keys(wrongQuestionState).forEach(questionId => {
-        wrongQuestionState[questionId] = { status: "resolved", updatedAt: wrongResetAt };
-        void queueDeployWrongBridge(questionId, "resolved", wrongResetAt);
-      });
       wrongQuestionIds = [];
       resolvedWrongQuestionIds = [];
       dismissedWrongQuestionIds = [];
@@ -10915,7 +10847,6 @@
       // Safari and Chromium because IndexedDB hydration is asynchronous.
       await hydrateUploadedBank();
       rebuildBank();
-      await bootstrapDeployWrongBridge();
       setInterval(() => {
         const currentDate = todayKey();
         if (currentDate === lastDailyDateCheck) return;
