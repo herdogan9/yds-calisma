@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YDS Etkileşimli Soru Çözme</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&amp;display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     (function () {
@@ -19,6 +22,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
+    *,
+    *::before,
+    *::after {
+      font-family: "Open Sans", sans-serif !important;
+      font-weight: 700 !important;
+    }
+
     :root,
     [data-theme="light"] {
       --bg-page: #f8fafc;
@@ -1159,6 +1169,27 @@
       text-wrap: pretty;
     }
 
+    /* Question typography follows the existing A+/A− font-size values. */
+    #questionText,
+    #questionText * {
+      font-family: "Open Sans", sans-serif !important;
+      font-weight: 700 !important;
+      line-height: 1.5 !important;
+      letter-spacing: 0 !important;
+    }
+
+    #optionsArea .option-copy,
+    #optionsArea .option-copy * {
+      font-family: "Open Sans", sans-serif !important;
+      font-weight: 400 !important;
+      line-height: 1.4 !important;
+      letter-spacing: 0 !important;
+    }
+
+    #optionsArea .option-letter {
+      font-weight: 700 !important;
+    }
+
     .question-highlight-region,
     .question-highlight-region .word-token {
       -webkit-user-select: text;
@@ -1886,6 +1917,267 @@
       .note-drawer-actions { display: grid; grid-template-columns: 1fr 1fr; }
     }
     @media (prefers-reduced-motion: reduce) { .note-drawer-overlay, .note-drawer { animation: none; } }
+
+    /* Ana sayfa UI polishing: mevcut bilgi mimarisini koruyup dikey yoğunluğu
+       ve tipografik ağırlıkları daha kontrollü hale getirir. */
+    @media (min-width: 1024px) {
+      #appSidebar {
+        width: 232px !important;
+        padding: 10px !important;
+      }
+
+      .yds-main-shell {
+        margin-left: 232px !important;
+        padding: 16px 18px !important;
+      }
+
+      .yds-sidebar #categoryMenu > * + * { margin-top: 4px !important; }
+      .yds-sidebar .yds-module-card > div { padding: 3px 7px !important; }
+      .yds-sidebar .yds-module-toggle { width: 27px !important; height: 27px !important; }
+    }
+
+    .yds-sidebar .module-title > span:first-child { font-weight: 700 !important; }
+    .yds-sidebar .module-title > span + span { font-weight: 600 !important; }
+
+    .yds-top-dashboard {
+      min-height: 70px;
+      height: 70px;
+      max-height: 70px;
+      padding: 4px 10px !important;
+    }
+
+    .yds-top-dashboard #pageTitle {
+      font-weight: 700 !important;
+      line-height: 1.1;
+    }
+
+    .yds-top-dashboard #bankInfo { font-weight: 600 !important; }
+    .yds-top-dashboard #headerStats > div { padding: 6px 10px !important; }
+    .yds-top-dashboard #headerStats > div p:first-child { font-weight: 600 !important; }
+    .yds-top-dashboard #headerStats > div p:last-child {
+      margin-top: 2px !important;
+      font-size: 22px !important;
+      font-weight: 700 !important;
+    }
+    .yds-top-dashboard #headerStats > div:last-child p:last-child { font-size: 25px !important; }
+
+    .exam-countdown {
+      --exam-accent: #2563eb;
+      box-sizing: border-box;
+      width: 230px;
+      min-width: 0;
+      border: 1px solid color-mix(in srgb, var(--exam-accent) 28%, var(--border-color));
+      border-radius: 12px;
+      background: var(--bg-surface);
+      padding: 4px 10px 5px;
+      color: var(--text-primary);
+    }
+
+    .exam-countdown--warning { --exam-accent: #d97706; }
+    .exam-countdown--urgent { --exam-accent: #ea580c; }
+    .exam-countdown--critical { --exam-accent: #dc2626; }
+    .exam-countdown--complete { --exam-accent: #475569; }
+    .exam-countdown__eyebrow {
+      color: var(--exam-accent) !important;
+      font-size: 9px;
+      font-weight: 700 !important;
+      line-height: 1.1;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .exam-countdown__main {
+      margin-top: 1px;
+      color: var(--exam-accent) !important;
+      font-size: 16px;
+      font-weight: 700 !important;
+      line-height: 1.1;
+    }
+    .exam-countdown--message .exam-countdown__main { font-size: 14px; }
+    .exam-countdown__meta {
+      margin-top: 1px;
+      overflow: hidden;
+      color: var(--text-secondary) !important;
+      font-size: 10px;
+      font-weight: 600 !important;
+      line-height: 1.2;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .exam-countdown__track {
+      height: 4px;
+      margin-top: 4px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--exam-accent) 14%, var(--bg-surface-secondary));
+    }
+    .exam-countdown__track > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--exam-accent);
+    }
+    [data-theme="dark"] .exam-countdown { background: var(--bg-surface-secondary); }
+
+    @media (min-width: 1280px) {
+      .yds-top-dashboard.has-exam-countdown {
+        display: grid !important;
+        grid-template-columns: minmax(170px, 1fr) 230px minmax(340px, 360px);
+        gap: 10px;
+      }
+      .yds-top-dashboard.has-exam-countdown > div:last-child { margin-top: 0 !important; }
+      .yds-top-dashboard.has-exam-countdown #headerStats { width: 100%; }
+    }
+
+    .home-dashboard-grid,
+    .home-dashboard-primary,
+    .home-dashboard-secondary { gap: 10px !important; }
+
+    .home-daily-tasks-panel { padding: 13px !important; }
+    .home-daily-tasks-panel > div:first-child { margin-bottom: 11px !important; }
+    .home-daily-tasks-panel > .h-2 { margin-bottom: 11px !important; }
+    .home-daily-date { font-weight: 600 !important; }
+    .home-daily-heading { font-weight: 700 !important; line-height: 1.2; }
+    .home-daily-summary,
+    .home-goal-settings { font-weight: 600 !important; }
+
+    .daily-tasks-grid { gap: 10px !important; }
+    .daily-task-card { padding: 10px !important; }
+    .daily-task-card > div { gap: 10px !important; }
+    .home-daily-task-title,
+    .home-daily-task-status { font-weight: 600 !important; }
+    .daily-task-card .h-1\.5 { margin-top: 7px !important; }
+
+    .daily-task-action {
+      flex-basis: 96px !important;
+      width: 96px !important;
+      min-width: 96px !important;
+      height: 38px !important;
+      font-weight: 600 !important;
+    }
+
+    .daily-word-panel { padding: 8px 14px !important; }
+    .daily-word-header { margin-bottom: 2px; }
+    .daily-word-section-label,
+    .daily-word-control { font-weight: 600 !important; }
+    .daily-word-control { min-height: 28px; padding: 3px 8px; }
+    .daily-word-carousel-stage .daily-word-card { padding: 18px 24px !important; }
+    .daily-word-content {
+      justify-content: flex-start !important;
+      padding: 0 54px;
+    }
+    .daily-word-term { margin-top: 0; font-weight: 700 !important; line-height: 1.15 !important; }
+    .daily-word-title.word-short,
+    .daily-word-title.word-medium { font-size: 33px !important; }
+    .daily-word-title.word-long { font-size: clamp(29px, 2.8vw, 32px) !important; }
+    .daily-word-title.word-extra-long { font-size: clamp(27px, 2.6vw, 30px) !important; }
+    .daily-word-title.word-phrase.word-short,
+    .daily-word-title.word-phrase.word-medium { font-size: clamp(29px, 2.8vw, 32px) !important; }
+    .daily-word-title.word-phrase.word-long { font-size: clamp(27px, 2.6vw, 30px) !important; }
+    .daily-word-title.word-phrase.word-extra-long { font-size: clamp(26px, 2.6vw, 29px) !important; }
+    .daily-word-meaning {
+      margin-top: 4px !important;
+      font-weight: 600 !important;
+    }
+    .daily-word-example {
+      margin-top: 16px;
+      padding: 12px 16px;
+    }
+    .daily-word-example p { font-weight: 500 !important; line-height: 1.55 !important; }
+    .daily-word-synonym-row { gap: 6px; margin-top: 12px; }
+    .daily-word-synonym-label { font-weight: 600 !important; }
+    .daily-word-synonym-chip {
+      min-height: 28px;
+      padding: 4px 10px;
+      font-weight: 600 !important;
+    }
+
+    .home-weekly-panel > div:first-child p,
+    .home-recent-words-panel > div:first-child p { font-weight: 600 !important; }
+    .home-weekly-panel [aria-label="Bu haftaki çalışma günleri"] span,
+    .home-weekly-panel > div:last-child p:first-child { font-weight: 500 !important; }
+    .home-weekly-panel > div:last-child p:last-child { font-weight: 700 !important; }
+    .home-recent-words-heading,
+    .home-recent-word-title,
+    .home-recent-words-meaning,
+    .home-recent-words-link { font-weight: 600 !important; }
+    .home-recent-words-synonym {
+      color: color-mix(in srgb, var(--text-secondary) 82%, var(--text-primary)) !important;
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      line-height: 1.35;
+      opacity: .9;
+    }
+
+    @media (min-width: 768px) {
+      .daily-word-carousel-stage .daily-word-card { min-height: 250px; }
+    }
+
+    @media (min-width: 1024px) and (max-width: 1279px) {
+      .yds-top-dashboard {
+        display: flex;
+        min-height: 70px;
+        height: 70px;
+        max-height: 70px;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .yds-top-dashboard > div:last-child {
+        flex: 0 1 480px;
+        min-width: 0;
+        margin-top: 0 !important;
+      }
+      .yds-top-dashboard #headerStats { width: 100%; }
+      .yds-top-dashboard.has-exam-countdown {
+        display: grid;
+        grid-template-columns: minmax(145px, 1fr) 190px minmax(330px, 360px);
+        gap: 8px;
+      }
+      .yds-top-dashboard.has-exam-countdown .exam-countdown { width: 190px; }
+      .yds-top-dashboard.has-exam-countdown .exam-countdown--message .exam-countdown__main { font-size: 13px; }
+    }
+
+    @media (max-width: 1023px) {
+      .yds-top-dashboard {
+        min-height: 0;
+        height: auto;
+        max-height: none;
+        padding-block: 6px !important;
+      }
+      .yds-top-dashboard.has-exam-countdown {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+        gap: 8px;
+      }
+      .yds-top-dashboard.has-exam-countdown .exam-countdown {
+        width: 100%;
+        align-self: center;
+      }
+      .yds-top-dashboard.has-exam-countdown > div:last-child {
+        grid-column: 1 / -1;
+        width: 100%;
+        margin-top: 0 !important;
+      }
+      .yds-top-dashboard.has-exam-countdown #headerStats { width: 100%; }
+    }
+
+    @media (max-width: 639px) {
+      .yds-top-dashboard.has-exam-countdown { grid-template-columns: minmax(0, 1fr); }
+      .yds-top-dashboard.has-exam-countdown > div:last-child { grid-column: auto; }
+    }
+
+    @media (max-width: 767px) {
+      .daily-task-card { padding: 11px !important; }
+      .daily-task-action {
+        flex-basis: 92px !important;
+        width: 92px !important;
+        min-width: 92px !important;
+        height: 40px !important;
+      }
+      .daily-word-panel { padding: 8px 12px !important; }
+      .daily-word-carousel-stage .daily-word-card { min-height: 0; padding: 12px 16px !important; }
+      .daily-word-content { padding-inline: 20px; }
+      .daily-word-example { margin-top: 14px; padding: 10px 12px; }
+    }
   </style>
 </head>
 <body class="light-theme min-h-screen bg-slate-100 text-slate-900">
@@ -1927,7 +2219,7 @@
       </div>
     </aside>
 
-    <main class="min-h-screen flex-1 p-4 lg:ml-64 lg:p-5">
+    <main class="yds-main-shell min-h-screen flex-1 p-4 lg:ml-64 lg:p-5">
       <header class="yds-top-dashboard mb-3 rounded-2xl border border-slate-200 bg-white px-2.5 py-1.5 shadow-sm xl:flex xl:items-center xl:justify-between">
         <div class="flex items-start gap-3">
           <button id="mobileMenuBtn" aria-label="Menüyü aç" class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-base font-black text-slate-700 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 lg:hidden">☰</button>
@@ -1937,6 +2229,8 @@
           <p id="bankInfo" class="mt-0.5 text-sm text-slate-400"></p>
           </div>
         </div>
+
+        <div id="examCountdown" class="exam-countdown hidden" aria-live="polite"></div>
 
         <div class="mt-2 flex flex-wrap items-center gap-2 xl:mt-0">
           <div id="headerStats" class="grid grid-cols-3 gap-2 rounded-2xl border border-slate-800 bg-slate-900/80 p-2 shadow-xl shadow-black/20"></div>
@@ -2011,6 +2305,9 @@
     // every question answered today, even when answers came from many sources.
     const STORAGE_DAILY_QUESTION_RESULTS = "yds-daily-question-results-v1";
     const STORAGE_CLOUD_HISTORY = "yds-cloud-backup-history-v1";
+    const STORAGE_EXAM_TARGET = "yds-exam-target-v1";
+    const EXAM_COUNTDOWN_WINDOW_DAYS = 50;
+    const CALENDAR_DAY_MS = 24 * 60 * 60 * 1000;
     const DEPLOY_DB_NAME = "yds-calisma-deploy-db";
     const DEPLOY_DB_VERSION = 3;
     // These ledgers grow continually and must not compete with preferences in
@@ -2089,6 +2386,7 @@
     let currentIndex = 0;
     let answered = false;
     let activeView = "home";
+    let examTarget = normalizeExamTarget(loadJson(STORAGE_EXAM_TARGET, null));
     let returnViewAfterQuestion = "";
     let solveMode = "document";
     let wrongReviewIds = [];
@@ -2097,6 +2395,7 @@
     let selectedWordId = null;
     const savedWordStudyProgress = loadJson(STORAGE_WORD_STUDY_PROGRESS, null);
     let wordStudyMode = savedWordStudyProgress?.mode === "quiz" ? "quiz" : "cards";
+    let wordStudyPool = savedWordStudyProgress?.pool === "hard" ? "hard" : "all";
     let wordStudyScopeIds = null;
     let wordStudyScopeLabel = "";
     let wordSessionSize = localStorage.getItem("yds-word-session-size-v1") || "20";
@@ -2175,6 +2474,7 @@
     const categoryMenu = document.getElementById("categoryMenu");
     const appArea = document.getElementById("appArea");
     const headerStats = document.getElementById("headerStats");
+    const examCountdown = document.getElementById("examCountdown");
     const bankInfo = document.getElementById("bankInfo");
     const pageTitle = document.getElementById("pageTitle");
     const documentCount = document.getElementById("documentCount");
@@ -3129,6 +3429,7 @@
 
     function startOrResumeDailyWordCards() {
       const active = activeDailyWordCardSession();
+      wordStudyPool = "all";
       if (active) {
         wordStudyMode = "cards";
         wordSessionIds = active.wordIds;
@@ -4709,6 +5010,7 @@
       }
       wordStudyScopeIds = null;
       wordStudyScopeLabel = "";
+      wordStudyPool = "all";
       wordStudyMode = "cards";
       wordSessionSize = String(ids.length);
       localStorage.setItem("yds-word-session-size-v1", String(wordSessionSize));
@@ -4757,14 +5059,14 @@
       const labels = dailyTaskLabels();
       const summary = dailyTaskSummary();
       const streak = calculateStreak();
-      return '<section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
+      return '<section class="home-daily-tasks-panel rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
         '<div class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">' +
           '<div>' +
-            '<p class="text-xs font-black uppercase tracking-wide text-blue-500">' + escapeHtml(formatTurkishDate()) + '</p>' +
-            '<h3 class="mt-1 text-xl font-black text-slate-950">Bugünkü Görevler</h3>' +
-            '<p class="mt-1 text-sm font-semibold text-slate-500">Günlük ilerleme: %' + summary.percent + ' · Tamamlanan: ' + summary.completed + ' / ' + summary.total + ' · Seri: ' + streak + ' gün</p>' +
+            '<p class="home-daily-date text-xs font-black uppercase tracking-wide text-blue-500">' + escapeHtml(formatTurkishDate()) + '</p>' +
+            '<h3 class="home-daily-heading mt-1 text-xl font-black text-slate-950">Bugünkü Görevler</h3>' +
+            '<p class="home-daily-summary mt-1 text-sm font-semibold text-slate-500">Günlük ilerleme: %' + summary.percent + ' · Tamamlanan: ' + summary.completed + ' / ' + summary.total + ' · Seri: ' + streak + ' gün</p>' +
           '</div>' +
-          '<button id="dailyGoalSettingsBtn" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-600 hover:bg-slate-50">Hedefleri Düzenle</button>' +
+          '<button id="dailyGoalSettingsBtn" class="home-goal-settings rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-600 hover:bg-slate-50">Hedefleri Düzenle</button>' +
         '</div>' +
         '<div class="mb-4 h-2 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full bg-blue-600" style="width:' + summary.percent + '%"></div></div>' +
         '<div class="daily-tasks-grid">' + Object.entries(labels).map(([key, meta]) => {
@@ -4785,8 +5087,8 @@
             '<div class="flex items-center gap-3">' +
               '<div class="min-w-0 flex-1">' +
                 '<div class="flex flex-wrap items-center justify-between gap-2">' +
-                  '<h4 class="truncate text-sm font-black text-slate-950">' + meta.title + '</h4>' +
-                  '<span class="text-xs font-black ' + statusClass + '">' + statusLabel + '</span>' +
+                  '<h4 class="home-daily-task-title truncate text-sm font-black text-slate-950">' + meta.title + '</h4>' +
+                  '<span class="home-daily-task-status text-xs font-black ' + statusClass + '">' + statusLabel + '</span>' +
                 '</div>' +
                 '<div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full ' + progressClass + '" style="width:' + percent + '%"></div></div>' +
               '</div>' +
@@ -4837,7 +5139,7 @@
         ["Okunan metin", summary.readings],
         ["Aktif gün", summary.activeDays],
       ];
-      return '<section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
+      return '<section class="home-weekly-panel rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
         '<div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">' +
           '<div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Bu Hafta</p></div>' +
           '<div class="grid grid-cols-7 gap-2" aria-label="Bu haftaki çalışma günleri">' + dots + '</div>' +
@@ -4906,16 +5208,16 @@
         '<div class="mb-3 flex items-start justify-between gap-3">' +
           '<div>' +
             '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Son Eklenen Kelimeler</p>' +
-            '<h4 class="mt-1 text-base font-black text-slate-950">Yeni eklenenler</h4>' +
+            '<h4 class="home-recent-words-heading mt-1 text-base font-black text-slate-950">Yeni eklenenler</h4>' +
           '</div>' +
           '<button id="recentWordsOpenBtn" class="home-recent-words-link rounded-xl px-2.5 py-2 text-xs font-black">Kelime Defteri</button>' +
         '</div>' +
         '<div class="home-recent-words-list">' + recent.map(item => {
           const synonym = wordMeaningNote(item);
           return '<article class="home-recent-words-item">' +
-            '<h5 class="truncate text-[15px] font-black text-slate-950">' + escapeHtml(item.word) + '</h5>' +
+            '<h5 class="home-recent-word-title truncate text-[15px] font-black text-slate-950">' + escapeHtml(item.word) + '</h5>' +
             '<p class="home-recent-words-meaning mt-1 line-clamp-2 text-sm font-black">' + escapeHtml(wordTurkish(item) || "Anlam eklenmemiş") + '</p>' +
-            (synonym ? '<p class="mt-1 line-clamp-2 text-xs font-bold text-slate-600" title="' + escapeHtml(synonym) + '">Yakın anlamlılar: ' + escapeHtml(synonym) + '</p>' : '') +
+            (synonym ? '<p class="home-recent-words-synonym mt-1 line-clamp-2 text-xs font-bold text-slate-600" title="' + escapeHtml(synonym) + '">Yakın anlamlılar: ' + escapeHtml(synonym) + '</p>' : '') +
           '</article>';
         }).join("") + '</div>' +
       '</aside>';
@@ -4950,13 +5252,13 @@
       renderMenu();
       renderStats();
       appArea.innerHTML =
-        '<div class="grid gap-3 xl:grid-cols-[minmax(0,1fr)_360px]">' +
-          '<div class="grid content-start gap-3 self-start">' +
+        '<div class="home-dashboard-grid grid gap-3 xl:grid-cols-[minmax(0,1fr)_360px]">' +
+          '<div class="home-dashboard-primary grid content-start gap-3 self-start">' +
             renderDailyTasksPanel() +
             renderDailyWordPanel() +
             renderHomeActionPanel() +
           '</div>' +
-          '<div class="grid gap-3 self-start xl:sticky xl:top-4">' + renderWeeklySummaryPanel() + renderRecentWordsPanel() + '</div>' +
+          '<div class="home-dashboard-secondary grid gap-3 self-start xl:sticky xl:top-4">' + renderWeeklySummaryPanel() + renderRecentWordsPanel() + '</div>' +
         '</div>';
       bindDailyTasksPanel();
       bindDailyWordPanel();
@@ -6011,6 +6313,24 @@
           '<section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
             '<div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">' +
               '<div>' +
+                '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Sınav Hedefi</p>' +
+                '<h3 class="mt-1 text-xl font-black text-slate-950">Sonraki sınavını belirle</h3>' +
+                '<p class="mt-1 max-w-2xl text-sm font-semibold text-slate-500">Ana sayfadaki geri sayım, seçtiğin sınav tarihine göre yerel gün hesabıyla otomatik güncellenir.</p>' +
+              '</div>' +
+              '<div class="flex flex-wrap gap-2">' +
+                '<button id="saveExamTargetBtn" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white shadow-sm hover:bg-blue-500">Kaydet</button>' +
+                '<button id="clearExamTargetBtn" class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 hover:bg-slate-50">Hedefi Temizle</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="mt-4 grid gap-3 md:grid-cols-2">' +
+              '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Sınav Adı</span><input id="examTargetNameInput" class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white" placeholder="Örn. e-YDS 2026/10" value="' + escapeHtml(examTarget?.name || "") + '" /></label>' +
+              '<label class="block"><span class="mb-1 block text-xs font-black uppercase text-slate-500">Sınav Tarihi</span><input id="examTargetDateInput" type="date" required class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-800 outline-none focus:border-blue-500 focus:bg-white" value="' + escapeHtml(examTarget?.date || "") + '" /></label>' +
+            '</div>' +
+            '<p id="examTargetStatus" class="mt-3 text-sm font-semibold text-slate-500">' + escapeHtml(examTarget ? examTarget.name + " · " + formatExamTargetDate(examTarget.date) : "Henüz bir sınav hedefi belirlenmedi.") + '</p>' +
+          '</section>' +
+          '<section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
+            '<div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">' +
+              '<div>' +
                 '<p class="text-xs font-black uppercase tracking-wide text-blue-500">Günlük Çalışma Hedefleri</p>' +
                 '<h3 class="mt-1 text-xl font-black text-slate-950">Ana sayfa görevlerini ayarla</h3>' +
                 '<p class="mt-1 max-w-2xl text-sm font-semibold text-slate-500">Hedefleri değiştirmek bugünkü tamamlanan çalışmalarını silmez; yalnızca günlük planın çıtasını günceller.</p>' +
@@ -6100,6 +6420,28 @@
             '<p id="supabaseStatus" class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold text-slate-600">' + escapeHtml(!supabaseConfig.url || !supabaseConfig.anonKey || !supabaseConfig.syncId ? "Bağlantı bilgileri kaydedilmedi." : supabaseConfig.connectionStatus === "success" ? "Bağlantı başarılı." : supabaseConfig.connectionStatus === "error" ? "Bağlantı başarısız; Test Et ile yeniden dene." : supabaseConfig.connectionStatus === "offline" ? "Çevrimdışı." : "Bağlantı bilgileri kaydedildi; henüz test edilmedi.") + '</p>' +
           '</section>' +
         '</div>';
+      document.getElementById("saveExamTargetBtn").addEventListener("click", () => {
+        const nameInput = document.getElementById("examTargetNameInput");
+        const dateInput = document.getElementById("examTargetDateInput");
+        const normalizedTarget = normalizeExamTarget({ name: nameInput.value, date: dateInput.value });
+        if (!normalizedTarget) {
+          dateInput.setCustomValidity("Geçerli bir sınav tarihi seç.");
+          dateInput.reportValidity();
+          return;
+        }
+        dateInput.setCustomValidity("");
+        examTarget = normalizedTarget;
+        saveJson(STORAGE_EXAM_TARGET, examTarget);
+        renderSettingsPage();
+        showToast("Sınav hedefi güncellendi.");
+      });
+      document.getElementById("examTargetDateInput").addEventListener("input", event => event.currentTarget.setCustomValidity(""));
+      document.getElementById("clearExamTargetBtn").addEventListener("click", () => {
+        examTarget = null;
+        localStorage.removeItem(STORAGE_EXAM_TARGET);
+        renderSettingsPage();
+        showToast("Sınav hedefi temizlendi.");
+      });
       document.getElementById("saveDailyGoalsBtn").addEventListener("click", () => {
         dailyGoals = normalizeDailyGoals({
           flashcards: document.getElementById("goalFlashcardsInput").value,
@@ -6139,7 +6481,7 @@
         }
       });
       document.getElementById("testSupabaseBtn").addEventListener("click", testSupabaseConnection);
-      document.getElementById("uploadSupabaseBtn").addEventListener("click", uploadSupabaseBackup);
+      document.getElementById("uploadSupabaseBtn").addEventListener("click", () => void uploadSupabaseBackup(false));
       document.getElementById("restoreSupabaseBtn").addEventListener("click", restoreSupabaseBackup);
       document.getElementById("diagnoseCloudDataBtn").addEventListener("click", showRecoveryDiagnostics);
       void refreshRemoteCloudBackupSummary();
@@ -6309,6 +6651,94 @@
       return { learned, learning, fresh, dailyTarget: activeWordSessionSize(studyWords().length) };
     }
 
+    function localCalendarDayNumber(date) {
+      return Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / CALENDAR_DAY_MS);
+    }
+
+    function parseLocalDateKey(dateKey) {
+      const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(dateKey || ""));
+      if (!match) return null;
+      const year = Number(match[1]);
+      const monthIndex = Number(match[2]) - 1;
+      const day = Number(match[3]);
+      const date = new Date(year, monthIndex, day);
+      if (date.getFullYear() !== year || date.getMonth() !== monthIndex || date.getDate() !== day) return null;
+      return date;
+    }
+
+    function normalizeExamTarget(value) {
+      const date = String(value?.date || "").trim();
+      if (!parseLocalDateKey(date)) return null;
+      return {
+        name: String(value?.name || "").trim() || "Sonraki Sınav",
+        date,
+      };
+    }
+
+    function formatExamTargetDate(dateKey) {
+      const date = parseLocalDateKey(dateKey);
+      return date ? date.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) : "";
+    }
+
+    function examCountdownState(target = examTarget, now = new Date()) {
+      const normalizedTarget = normalizeExamTarget(target);
+      if (!normalizedTarget) {
+        return {
+          remainingDays: null,
+          progress: 0,
+          tone: "primary",
+          eyebrow: "Sonraki Sınav",
+          mainText: "Sınav hedefi belirlenmedi",
+          metaText: "Ayarlar'dan hedefi güncelle",
+        };
+      }
+      const targetDate = parseLocalDateKey(normalizedTarget.date);
+      const remainingDays = localCalendarDayNumber(targetDate) - localCalendarDayNumber(now);
+      const progress = Math.max(0, Math.min(100, ((EXAM_COUNTDOWN_WINDOW_DAYS - remainingDays) / EXAM_COUNTDOWN_WINDOW_DAYS) * 100));
+      const tone = remainingDays < 0
+        ? "complete"
+        : remainingDays === 0 || remainingDays <= 7
+          ? "critical"
+          : remainingDays <= 14
+            ? "urgent"
+            : remainingDays <= 30
+              ? "warning"
+              : "primary";
+      return {
+        remainingDays,
+        progress,
+        tone,
+        eyebrow: "Sonraki Sınav",
+        mainText: remainingDays < 0 ? "Yeni sınav tarihi belirle" : remainingDays === 0 ? "BUGÜN" : remainingDays + " gün kaldı",
+        metaText: remainingDays < 0
+          ? "Ayarlar'dan hedefi güncelle"
+          : normalizedTarget.name + " · " + formatExamTargetDate(normalizedTarget.date),
+      };
+    }
+
+    function renderExamCountdown() {
+      const visible = activeView === "home";
+      const dashboard = examCountdown?.closest(".yds-top-dashboard");
+      dashboard?.classList.toggle("has-exam-countdown", visible);
+      if (!examCountdown) return;
+      examCountdown.classList.toggle("hidden", !visible);
+      if (!visible) {
+        examCountdown.innerHTML = "";
+        return;
+      }
+      const state = examCountdownState();
+      const messageClass = state.remainingDays === null || state.remainingDays < 0 ? " exam-countdown--message" : "";
+      examCountdown.className = "exam-countdown exam-countdown--" + state.tone + messageClass;
+      examCountdown.setAttribute("aria-label", state.mainText + ", " + state.metaText);
+      examCountdown.innerHTML =
+        '<p class="exam-countdown__eyebrow">' + escapeHtml(state.eyebrow) + '</p>' +
+        '<p class="exam-countdown__main">' + escapeHtml(state.mainText) + '</p>' +
+        '<p class="exam-countdown__meta">' + escapeHtml(state.metaText) + '</p>' +
+        '<div class="exam-countdown__track" role="progressbar" aria-label="Sınava yaklaşma" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(state.progress) + '">' +
+          '<span style="width:' + state.progress + '%"></span>' +
+        '</div>';
+    }
+
     function statCard(label, value, tone = "blue") {
       const toneMap = {
         blue: "text-blue-600 bg-blue-50",
@@ -6330,7 +6760,10 @@
       if (sidebarWordCount) sidebarWordCount.textContent = wordbook.length;
       if (activeView === "home") bankInfo.textContent = "Bugünkü çalışma planın";
       else if (activeView === "words") bankInfo.textContent = wordbook.length + " kayıtlı kelime";
-      else if (activeView === "study") bankInfo.textContent = "Aktif çalışma oturumu · " + activeWordSessionSize(studyWords().length) + " kelime";
+      else if (activeView === "study") {
+        const activeSessionWordCount = currentSessionWords().length || activeWordSessionSize(allStudyWords().length);
+        bankInfo.textContent = "Aktif çalışma oturumu · " + activeSessionWordCount + " kelime" + (wordStudyPool === "hard" && !Array.isArray(wordStudyScopeIds) ? " · Zor Kelimeler" : "");
+      }
       else if (activeView === "articles") bankInfo.textContent = articles.length + " içerik";
       else if (activeView === "read-for-speed") {
         const summaries = readForSpeedArticles.map(readForSpeedArticleSummary);
@@ -6373,6 +6806,7 @@
         headerStats.className = "hidden";
         headerStats.innerHTML = "";
       }
+      renderExamCountdown();
     }
 
     function clickableQuestionText(text, highlights = []) {
@@ -7397,6 +7831,7 @@
     function persistWordStudyProgress() {
       saveJson(STORAGE_WORD_STUDY_PROGRESS, {
         mode: wordStudyMode,
+        pool: wordStudyPool,
         index: wordStudyIndex,
         sessionIds: wordSessionIds,
         quizQuestion: wordStudyMode === "quiz" ? wordQuizQuestion : null,
@@ -8053,6 +8488,10 @@
       return wordbook.filter(item => item.word && wordTurkish(item));
     }
 
+    function wordHardPracticeWords() {
+      return wordPracticeWords().filter(item => wordCardStatus(item).key === "hard");
+    }
+
     function isWordDueForStudy(item) {
       if (!item?.dueAt) return true;
       if (item?.needsReview) return true;
@@ -8074,9 +8513,15 @@
     }
 
     function activeStudyPool() {
-      if (!Array.isArray(wordStudyScopeIds)) return studyWords();
-      const scopedIds = new Set(wordStudyScopeIds);
-      return wordPracticeWords().filter(item => scopedIds.has(item.id));
+      if (Array.isArray(wordStudyScopeIds)) {
+        const scopedIds = new Set(wordStudyScopeIds);
+        return wordPracticeWords().filter(item => scopedIds.has(item.id));
+      }
+      // The explicit hard-word practice is user initiated, so it intentionally
+      // ignores SRS due dates. A word marked as hard remains available for an
+      // extra card or quiz session immediately after it was rated.
+      if (wordStudyPool === "hard") return wordHardPracticeWords();
+      return studyWords();
     }
 
     function allStudyWords() {
@@ -8225,13 +8670,26 @@
     }
 
     function renderStudyEmpty(message) {
+      const hardPoolEmpty = !Array.isArray(wordStudyScopeIds) && wordStudyPool === "hard";
       appArea.innerHTML =
         wordTabsHtml(wordStudyMode === "quiz" ? "quiz" : "cards", false) +
         '<div class="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">' +
           '<h3 class="text-2xl font-bold text-slate-950">' + escapeHtml(message) + '</h3>' +
-          '<p class="mt-3 text-slate-500">Deftere elle kelime ekleyebilir veya soru metnindeki kelimelere tıklayarak kayıt oluşturabilirsin.</p>' +
+          '<p class="mt-3 text-slate-500">' + (hardPoolEmpty
+            ? 'Kart Çalışması’nda Zor verdiğin veya Çoktan Seçmeli’de yanlış yaptığın kelimeler burada birikir.'
+            : 'Deftere elle kelime ekleyebilir veya soru metnindeki kelimelere tıklayarak kayıt oluşturabilirsin.') + '</p>' +
+          (hardPoolEmpty ? '<button id="returnToGeneralWordPoolBtn" class="mt-5 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-blue-200 hover:bg-blue-500">Genel Havuza Dön</button>' : '') +
         '</div>';
       bindWordTabs();
+      document.getElementById("returnToGeneralWordPoolBtn")?.addEventListener("click", () => {
+        wordStudyPool = "all";
+        wordStudyIndex = 0;
+        wordCardRevealed = false;
+        wordQuizQuestion = null;
+        if (wordStudyMode === "quiz") resetWordQuizSessionResults();
+        buildWordSession(true, wordStudyMode);
+        renderWordStudy();
+      });
     }
 
     function renderWordStudy() {
@@ -8240,11 +8698,15 @@
       renderStats();
       const pool = allStudyWords();
       const totalPracticeWords = wordPracticeWords().length;
+      const hardPracticeWordCount = wordHardPracticeWords().length;
+      const scopedWordStudy = Array.isArray(wordStudyScopeIds);
       const desiredSessionLength = activeWordSessionSize(pool.length);
       if (!wordSessionIds.length || currentSessionWords().length !== desiredSessionLength) buildWordSession(true, wordStudyMode);
       let words = currentSessionWords();
       if (!words.length) {
-        renderStudyEmpty(wordPracticeWords().length ? "Bugün çalışılacak kelime yok" : "Çalışılacak kelime yok");
+        renderStudyEmpty(wordStudyPool === "hard" && !scopedWordStudy
+          ? "Henüz zor işaretlenmiş kelime yok"
+          : wordPracticeWords().length ? "Bugün çalışılacak kelime yok" : "Çalışılacak kelime yok");
         return;
       }
       if (wordStudyMode === "cards" || wordStudyMode === "quiz") {
@@ -8266,16 +8728,25 @@
               '<p class="mt-1 text-xs font-semibold text-slate-500">' + (wordStudyMode === "quiz" ? "Oturum: " + words.length + " soru" : "Çalışılabilir havuz: " + pool.length + " kelime") + '</p>' +
               (wordStudyScopeLabel
                 ? '<p class="mt-1 text-xs font-black text-blue-600">' + escapeHtml(wordStudyScopeLabel) + '</p>'
-                : '<p class="mt-1 text-xs font-semibold text-slate-400">Genel havuz: ' + totalPracticeWords + ' kelime</p>') +
+                : wordStudyPool === "hard"
+                  ? '<p class="mt-1 text-xs font-black text-amber-700">Zor kelime havuzu: ' + hardPracticeWordCount + ' kelime</p><p class="mt-1 text-xs font-semibold text-slate-400">Sorular zor kelimelerden, çeldiriciler genel sözlükten gelir.</p>'
+                  : '<p class="mt-1 text-xs font-semibold text-slate-400">Genel havuz: ' + totalPracticeWords + ' kelime</p>') +
               (limitMessage ? '<p class="mt-1 text-xs font-bold text-amber-700">' + escapeHtml(limitMessage) + '</p>' : '') +
             '</div>' +
             '<div class="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-2">' +
+              (!scopedWordStudy
+                ? '<label class="text-sm font-black text-slate-600" for="wordStudyPoolSelect">Çalışma Havuzu</label>' +
+                  '<select id="wordStudyPoolSelect" class="h-10 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-700">' +
+                    '<option value="all"' + (wordStudyPool === "all" ? ' selected' : '') + '>Genel Havuz (' + totalPracticeWords + ')</option>' +
+                    '<option value="hard"' + (wordStudyPool === "hard" ? ' selected' : '') + (hardPracticeWordCount ? '' : ' disabled') + '>Zor Kelimeler (' + hardPracticeWordCount + ')</option>' +
+                  '</select>'
+                : '') +
               '<label class="text-sm font-black text-slate-600" for="wordSessionSizeSelect">Oturum Boyutu</label>' +
               '<select id="wordSessionSizeSelect" class="h-10 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-700">' +
                 wordSessionOptionsHtml(pool.length) +
               '</select>' +
               '<input id="wordCustomSessionInput" type="number" min="1" max="' + Math.max(1, pool.length) + '" value="' + Math.min(wordCustomSessionSize, Math.max(1, pool.length)) + '" class="' + (String(wordSessionSize) === "custom" ? "" : "hidden ") + 'h-10 w-24 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-700" />' +
-              '<button id="newWordSessionBtn" class="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 hover:bg-slate-50">Yeni Oturum Başlat</button>' +
+              '<button id="newWordSessionBtn" class="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 hover:bg-slate-50">' + (wordStudyPool === "hard" && !scopedWordStudy ? 'Zorlarla Yeni Oturum' : 'Yeni Oturum Başlat') + '</button>' +
             '</div>' +
           '</div>' +
           '<div class="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">' +
@@ -8285,6 +8756,17 @@
         '<div id="studyArea"></div>';
 
       bindWordTabs();
+      document.getElementById("wordStudyPoolSelect")?.addEventListener("change", event => {
+        wordStudyPool = event.target.value === "hard" ? "hard" : "all";
+        wordStudyIndex = 0;
+        wordCardRevealed = false;
+        wordQuizQuestion = null;
+        wordStudySessionId = createActivitySession("word-study");
+        localStorage.setItem(STORAGE_WORD_STUDY_SESSION, wordStudySessionId);
+        if (wordStudyMode === "quiz") resetWordQuizSessionResults();
+        buildWordSession(true, wordStudyMode);
+        renderWordStudy();
+      });
       document.getElementById("wordSessionSizeSelect").addEventListener("change", event => {
         wordSessionSize = event.target.value;
         localStorage.setItem("yds-word-session-size-v1", String(wordSessionSize));
@@ -8476,7 +8958,7 @@
 
     function renderWordQuiz(words) {
       const studyArea = document.getElementById("studyArea");
-      if (words.length < 2) {
+      if (wordPracticeWords().length < 2) {
         studyArea.innerHTML =
           '<div class="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm">' +
             '<h3 class="text-2xl font-black text-slate-950">Çoktan seçmeli için en az 2 kelime lazım</h3>' +
@@ -9562,6 +10044,7 @@
       if (!ids.length) return;
       wordStudyScopeIds = [...new Set(ids)];
       wordStudyScopeLabel = 'Bu metinden kaydettiklerin: ' + wordStudyScopeIds.length + ' kelime';
+      wordStudyPool = "all";
       wordStudyMode = mode === "quiz" ? "quiz" : "cards";
       wordSessionIds = [...wordStudyScopeIds];
       wordStudyIndex = 0;
