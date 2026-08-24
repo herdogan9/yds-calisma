@@ -1346,13 +1346,20 @@
     .article-collection-modal__dialog { width: min(560px, 100%); max-height: min(620px, calc(100vh - 2rem)); overflow: hidden; border: 1px solid #cbd5e1; border-radius: 1.25rem; background: #fff; color: #172033; box-shadow: 0 24px 70px rgb(15 23 42 / 28%); animation: articleCollectionDialogIn 180ms cubic-bezier(.2,.8,.2,1) both; }
     .article-collection-modal__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1rem 1.15rem .85rem; border-bottom: 1px solid #e2e8f0; background: linear-gradient(135deg, #f8fbff, #fff); }
     .article-collection-modal__list { display: grid; gap: .7rem; max-height: calc(min(620px, 100vh - 2rem) - 104px); overflow: auto; padding: .9rem 1.15rem 1.15rem; background: #fff; }
-    .article-collection-modal__item { display: flex; align-items: center; justify-content: space-between; gap: .8rem; width: 100%; min-height: 82px; border: 1.5px solid #cad6e5; border-radius: 1rem; padding: .8rem 1rem; background: #eff5fd; text-align: left; transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease; }
+    .article-collection-modal__item { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .8rem; width: 100%; min-height: 82px; border: 1.5px solid #cad6e5; border-radius: 1rem; padding: .8rem 1rem; background: #eff5fd; text-align: left; transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease; }
     .article-collection-modal__item:hover, .article-collection-modal__item:focus-visible { border-color: #5b9bff; background: #e9f2ff; box-shadow: 0 10px 24px rgb(37 99 235 / 12%); outline: none; transform: translateY(-2px); }
     .article-collection-modal__item-content { min-width: 0; }
+    .article-collection-modal__item-main { min-width: 0; flex: 1 1 auto; border: 0; background: transparent; padding: 0; text-align: left; }
     .article-collection-modal__item-title { display: block; color: #2563eb; font-size: 1.05rem; font-weight: 850; line-height: 1.18; letter-spacing: -.02em; overflow-wrap: anywhere; }
     .article-collection-modal__item-detail { display: block; margin-top: .3rem; color: #475569; font-size: .88rem; font-weight: 720; line-height: 1.25; overflow-wrap: anywhere; }
     .article-collection-modal__item-meta { display: block; margin-top: .28rem; color: #64748b; font-size: .67rem; font-weight: 800; letter-spacing: .01em; }
     .article-collection-modal__item-more { flex: 0 0 auto; color: #172033; font-size: 1.15rem; font-weight: 950; letter-spacing: .1em; line-height: 1; }
+    .article-collection-modal__item-menu-toggle { display: grid; width: 42px; min-height: 42px; flex: 0 0 42px; place-items: center; border: 0; border-radius: .65rem; background: transparent; color: #172033; font-size: 1.15rem; font-weight: 950; letter-spacing: .1em; line-height: 1; }
+    .article-collection-modal__item-menu-toggle:hover, .article-collection-modal__item-menu-toggle[aria-expanded="true"] { background: #dbeafe; color: #1d4ed8; }
+    .article-collection-modal__item-menu { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; flex: 1 0 100%; gap: .45rem; border-top: 1px solid #cbd5e1; padding-top: .7rem; }
+    .article-collection-modal__item-menu[hidden] { display: none; }
+    .article-collection-modal__item-menu button { min-height: 36px; border: 1px solid #cbd5e1; border-radius: .65rem; background: #fff; color: #334155; padding: .45rem .65rem; font-size: .78rem; font-weight: 800; }
+    .article-collection-modal__item-menu button:hover, .article-collection-modal__item-menu button:focus-visible { border-color: #60a5fa; background: #eff6ff; color: #1d4ed8; outline: none; }
     .article-collection-modal__tabs { display: flex; gap: .45rem; padding: .75rem 1.15rem 0; background: #fff; }
     .article-collection-modal__tab { flex: 1; min-height: 38px; border: 1px solid #cbd5e1; border-radius: .75rem; background: #f8fafc; color: #475569; font-size: .82rem; font-weight: 850; }
     .article-collection-modal__tab[aria-selected="true"] { border-color: #2563eb; background: #2563eb; color: #fff; }
@@ -4109,13 +4116,27 @@
         const items = records.length ? records.map((record, index) => {
           const text = isWords ? (record.word || "Kelime") : (record.highlightedText || record.selectedText || "Önemli yapı");
           const detail = isWords ? (record.turkish || record.meaning || "Türkçe anlam eklenmedi") : (record.meaning || "Anlam/not eklenmedi");
-          return '<button class="article-collection-modal__item" data-rfs-collection-index="' + index + '" type="button"><span class="article-collection-modal__item-content"><span class="article-collection-modal__item-title">' + escapeHtml(text) + '</span><span class="article-collection-modal__item-detail">' + escapeHtml(detail) + '</span><span class="article-collection-modal__item-meta">' + (isWords ? "Kelime Defterinde görüntüle" : "Metindeki yerine git") + '</span></span><span class="article-collection-modal__item-more" aria-hidden="true">•••</span></button>';
+          if (isWords) return '<button class="article-collection-modal__item" data-rfs-collection-index="' + index + '" type="button"><span class="article-collection-modal__item-content"><span class="article-collection-modal__item-title">' + escapeHtml(text) + '</span><span class="article-collection-modal__item-detail">' + escapeHtml(detail) + '</span><span class="article-collection-modal__item-meta">Kelime Defterinde görüntüle</span></span><span class="article-collection-modal__item-more" aria-hidden="true">•••</span></button>';
+          return '<article class="article-collection-modal__item"><button class="article-collection-modal__item-main" data-rfs-collection-index="' + index + '" type="button"><span class="article-collection-modal__item-content"><span class="article-collection-modal__item-title">' + escapeHtml(text) + '</span><span class="article-collection-modal__item-detail">' + escapeHtml(detail) + '</span><span class="article-collection-modal__item-meta">Metindeki yerine git</span></span></button><button class="article-collection-modal__item-menu-toggle" data-rfs-structure-menu="' + index + '" type="button" aria-label="' + escapeHtml(text) + ' yapı işlemleri" aria-expanded="false">•••</button><div class="article-collection-modal__item-menu" data-rfs-structure-menu-content="' + index + '" hidden><button data-rfs-structure-action="edit" data-rfs-structure-index="' + index + '" type="button">Düzenle</button><button data-rfs-structure-action="show" data-rfs-structure-index="' + index + '" type="button">Metinde Göster</button></div></article>';
         }).join("") : '<p class="px-1 py-4 text-sm font-semibold" style="color:var(--text-secondary)">' + (isWords ? "Bu metinden Kelime Defterine eklediğin kelimeler burada görünecek." : "Bu metinden önemli yapı olarak kaydettiğin ifadeler burada görünecek.") + '</p>';
         const addStructure = isWords ? '' : '<div class="article-collection-modal__add-row"><p>Metinden bir ifadeyi seçebilir veya yapıyı elle girebilirsin.</p><button class="article-collection-modal__add" data-rfs-add-structure type="button">+ Yapı Ekle</button></div>';
         modal.innerHTML = '<section class="article-collection-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="rfsCollectionModalTitle"><header class="article-collection-modal__header"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h3 id="rfsCollectionModalTitle" class="mt-1 text-lg font-black">Kelime ve Yapılar</h3><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">' + (words.length + structures.length) + ' kayıt</p></div><button class="article-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl font-black" data-close-rfs-collection-modal type="button" aria-label="Pencereyi kapat">×</button></header><div class="article-collection-modal__tabs" role="tablist"><button class="article-collection-modal__tab" data-rfs-tab="words" role="tab" aria-selected="' + isWords + '">Kelimeler (' + words.length + ')</button><button class="article-collection-modal__tab" data-rfs-tab="structures" role="tab" aria-selected="' + !isWords + '">Önemli Yapılar (' + structures.length + ')</button></div>' + addStructure + '<div class="article-collection-modal__list">' + items + '</div></section>';
         modal.querySelector("[data-close-rfs-collection-modal]")?.addEventListener("click", close);
         modal.querySelectorAll("[data-rfs-tab]").forEach(button => button.addEventListener("click", () => render(button.dataset.rfsTab)));
         modal.querySelector("[data-rfs-add-structure]")?.addEventListener("click", () => { close(); openImportantStructureForm(importantContext); });
+        modal.querySelectorAll("[data-rfs-structure-menu]").forEach(button => button.addEventListener("click", () => {
+          const menu = modal.querySelector('[data-rfs-structure-menu-content="' + button.dataset.rfsStructureMenu + '"]');
+          const willOpen = menu?.hidden !== false;
+          modal.querySelectorAll("[data-rfs-structure-menu-content]").forEach(item => { item.hidden = true; });
+          modal.querySelectorAll("[data-rfs-structure-menu]").forEach(item => item.setAttribute("aria-expanded", "false"));
+          if (menu && willOpen) { menu.hidden = false; button.setAttribute("aria-expanded", "true"); }
+        }));
+        modal.querySelectorAll("[data-rfs-structure-action]").forEach(button => button.addEventListener("click", () => {
+          const record = structures[Number(button.dataset.rfsStructureIndex)];
+          if (!record) return;
+          if (button.dataset.rfsStructureAction === "edit") { close(); openImportantStructureForm(importantContext, record); return; }
+          close(); readForSpeedActiveArticle = article; readForSpeedMode = "reader"; renderReadForSpeedPage(); window.setTimeout(() => jumpToImportantStructure(record), 80);
+        }));
         modal.querySelectorAll("[data-rfs-collection-index]").forEach(button => button.addEventListener("click", () => {
           const record = records[Number(button.dataset.rfsCollectionIndex)];
           if (isWords && record) { close(); openWordModal(record.word, null, null, { mode: "view", wordId: record.id }); }
@@ -9239,18 +9260,36 @@
       modal.id = "articleCollectionModal";
       modal.className = "article-collection-modal";
       const words = savedArticleEntries(article).filter(entry => !entry.unresolved);
-      const structures = articleImportantStructures(article);
+      const importantContext = { sourceModule: "reading_center", sourceId: article.id, sourceTitle: articleDisplayTitle(article), rerender: () => { activeArticleId = article.id; renderArticlesPage(); } };
+      const structures = importantStructureNotes(importantContext);
       const render = tab => {
         const isWords = tab === "words", records = isWords ? words : structures;
         const items = records.length ? records.map((record, index) => {
           const text = isWords ? savedEntryLabel(record) : record.highlightedText;
           const detail = isWords ? (record.item.turkish || record.item.meaning || "Türkçe anlam eklenmedi") : (record.meaning || "Anlam/not eklenmedi");
           const paragraph = isWords ? articleParagraphNumber(article, record.start) : (Number.isFinite(Number(record.paragraphIndex)) ? Number(record.paragraphIndex) + 1 : null);
-          return '<button class="article-collection-modal__item" data-collection-index="' + index + '" type="button"><span class="article-collection-modal__item-content"><span class="article-collection-modal__item-title">' + escapeHtml(text || "Kayıt") + '</span><span class="article-collection-modal__item-detail">' + escapeHtml(detail) + '</span><span class="article-collection-modal__item-meta">' + (paragraph ? "Paragraf " + paragraph + " · " : "") + (isWords ? "Kelime Defterinde görüntüle" : "Metindeki yerine git") + '</span></span><span class="article-collection-modal__item-more" aria-hidden="true">•••</span></button>';
+          const meta = (paragraph ? "Paragraf " + paragraph + " · " : "") + (isWords ? "Kelime Defterinde görüntüle" : "Metindeki yerine git");
+          if (isWords) return '<button class="article-collection-modal__item" data-collection-index="' + index + '" type="button"><span class="article-collection-modal__item-content"><span class="article-collection-modal__item-title">' + escapeHtml(text || "Kayıt") + '</span><span class="article-collection-modal__item-detail">' + escapeHtml(detail) + '</span><span class="article-collection-modal__item-meta">' + meta + '</span></span><span class="article-collection-modal__item-more" aria-hidden="true">•••</span></button>';
+          return '<article class="article-collection-modal__item"><button class="article-collection-modal__item-main" data-collection-index="' + index + '" type="button"><span class="article-collection-modal__item-content"><span class="article-collection-modal__item-title">' + escapeHtml(text || "Kayıt") + '</span><span class="article-collection-modal__item-detail">' + escapeHtml(detail) + '</span><span class="article-collection-modal__item-meta">' + meta + '</span></span></button><button class="article-collection-modal__item-menu-toggle" data-article-structure-menu="' + index + '" type="button" aria-label="' + escapeHtml(text || "Kayıt") + ' yapı işlemleri" aria-expanded="false">•••</button><div class="article-collection-modal__item-menu" data-article-structure-menu-content="' + index + '" hidden><button data-article-structure-action="edit" data-article-structure-index="' + index + '" type="button">Düzenle</button><button data-article-structure-action="show" data-article-structure-index="' + index + '" type="button">Metinde Göster</button></div></article>';
         }).join("") : '<p class="px-1 py-4 text-sm font-semibold" style="color: var(--text-secondary)">' + (isWords ? "Metinden seçip kelime defterine eklediğin kelimeler burada görünecek." : "Metinden ifade seçip önemli yapı olarak kaydettiğin notlar burada görünecek.") + '</p>';
-        modal.innerHTML = '<section class="article-collection-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="articleCollectionModalTitle"><header class="article-collection-modal__header"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Okuma Parçası</p><h3 id="articleCollectionModalTitle" class="mt-1 text-lg font-black">Kelime ve Yapılar</h3><p class="mt-1 text-sm font-semibold" style="color: var(--text-secondary)">' + (words.length + structures.length) + ' kayıt</p></div><button class="article-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl font-black" data-close-collection-modal type="button" aria-label="Pencereyi kapat">×</button></header><div class="article-collection-modal__tabs" role="tablist"><button class="article-collection-modal__tab" data-collection-tab="words" role="tab" aria-selected="' + isWords + '">Kelimeler (' + words.length + ')</button><button class="article-collection-modal__tab" data-collection-tab="structures" role="tab" aria-selected="' + !isWords + '">Önemli Yapılar (' + structures.length + ')</button></div><div class="article-collection-modal__list">' + items + '</div></section>';
+        const addStructure = isWords ? '' : '<div class="article-collection-modal__add-row"><p>Metinden bir ifadeyi seçebilir veya yapıyı elle girebilirsin.</p><button class="article-collection-modal__add" data-article-add-structure type="button">+ Yapı Ekle</button></div>';
+        modal.innerHTML = '<section class="article-collection-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="articleCollectionModalTitle"><header class="article-collection-modal__header"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Okuma Parçası</p><h3 id="articleCollectionModalTitle" class="mt-1 text-lg font-black">Kelime ve Yapılar</h3><p class="mt-1 text-sm font-semibold" style="color: var(--text-secondary)">' + (words.length + structures.length) + ' kayıt</p></div><button class="article-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl font-black" data-close-collection-modal type="button" aria-label="Pencereyi kapat">×</button></header><div class="article-collection-modal__tabs" role="tablist"><button class="article-collection-modal__tab" data-collection-tab="words" role="tab" aria-selected="' + isWords + '">Kelimeler (' + words.length + ')</button><button class="article-collection-modal__tab" data-collection-tab="structures" role="tab" aria-selected="' + !isWords + '">Önemli Yapılar (' + structures.length + ')</button></div>' + addStructure + '<div class="article-collection-modal__list">' + items + '</div></section>';
         modal.querySelector("[data-close-collection-modal]")?.addEventListener("click", close);
         modal.querySelectorAll("[data-collection-tab]").forEach(button => button.addEventListener("click", () => render(button.dataset.collectionTab)));
+        modal.querySelector("[data-article-add-structure]")?.addEventListener("click", () => { close(); openImportantStructureForm(importantContext); });
+        modal.querySelectorAll("[data-article-structure-menu]").forEach(button => button.addEventListener("click", () => {
+          const menu = modal.querySelector('[data-article-structure-menu-content="' + button.dataset.articleStructureMenu + '"]');
+          const willOpen = menu?.hidden !== false;
+          modal.querySelectorAll("[data-article-structure-menu-content]").forEach(item => { item.hidden = true; });
+          modal.querySelectorAll("[data-article-structure-menu]").forEach(item => item.setAttribute("aria-expanded", "false"));
+          if (menu && willOpen) { menu.hidden = false; button.setAttribute("aria-expanded", "true"); }
+        }));
+        modal.querySelectorAll("[data-article-structure-action]").forEach(button => button.addEventListener("click", () => {
+          const record = structures[Number(button.dataset.articleStructureIndex)];
+          if (!record) return;
+          if (button.dataset.articleStructureAction === "edit") { close(); openImportantStructureForm(importantContext, record); return; }
+          close(); activeArticleId = article.id; articleLanguageView = "en"; renderArticlesPage(); window.setTimeout(() => jumpToImportantStructure(record), 80);
+        }));
         modal.querySelectorAll("[data-collection-index]").forEach(button => button.addEventListener("click", () => {
           const record = records[Number(button.dataset.collectionIndex)]; if (!record) return;
           if (isWords) { close(); openWordModal(record.item.word, null, null, { mode: "view", wordId: record.item.id }); }
@@ -9873,6 +9912,8 @@
 
       reader.querySelectorAll(".word-token").forEach(button => {
         button.addEventListener("click", event => {
+          const selectedText = window.getSelection?.().toString().replace(/\s+/g, " ").trim() || "";
+          if (selectedText && selectedText !== button.textContent.trim()) { event.preventDefault(); event.stopPropagation(); return; }
           event.stopPropagation();
           if (button.classList.contains("article-saved-highlight")) {
             openSavedArticleWordPopover(button, article);
