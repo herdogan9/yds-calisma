@@ -1429,6 +1429,25 @@
       margin-bottom: 0;
     }
 
+    /* Reading passages should use regular body copy even though the legacy
+       interface applies a bold weight globally. Keep Read for Speed choices
+       emphasized so they remain visually distinct from the passage. */
+    #articleReadingBody,
+    #articleReadingBody p,
+    #articleReadingBody p *,
+    #rfsBody,
+    #rfsBody .article-bilingual-copy p,
+    #rfsBody .article-bilingual-copy p *,
+    #rfsBody .word-token,
+    #rfsBody .important-structure-highlight {
+      font-weight: 400 !important;
+    }
+
+    #rfsBody .rfs-answer,
+    #rfsBody .rfs-choice-group > b {
+      font-weight: 700 !important;
+    }
+
     .article-language-control { display: inline-flex; overflow: hidden; border: 1px solid var(--border-color); border-radius: .8rem; background: var(--bg-surface-secondary); }
     .article-language-choice { min-height: 42px; padding: .35rem .65rem; border-right: 1px solid var(--border-color); color: var(--text-secondary); font-size: .75rem; font-weight: 800; }
     .article-language-choice:last-child { border-right: 0; }
