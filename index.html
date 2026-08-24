@@ -1356,6 +1356,10 @@
     .article-collection-modal__tabs { display: flex; gap: .45rem; padding: .75rem 1.15rem 0; background: #fff; }
     .article-collection-modal__tab { flex: 1; min-height: 38px; border: 1px solid #cbd5e1; border-radius: .75rem; background: #f8fafc; color: #475569; font-size: .82rem; font-weight: 850; }
     .article-collection-modal__tab[aria-selected="true"] { border-color: #2563eb; background: #2563eb; color: #fff; }
+    .article-collection-modal__add-row { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .75rem 1.15rem 0; background: #fff; }
+    .article-collection-modal__add-row p { margin: 0; color: #64748b; font-size: .75rem; line-height: 1.35; }
+    .article-collection-modal__add { flex: 0 0 auto; min-height: 38px; border: 1px solid #2563eb; border-radius: .75rem; background: #eff6ff; color: #1d4ed8; padding: .5rem .8rem; font-size: .8rem; font-weight: 850; }
+    .article-collection-modal__add:hover, .article-collection-modal__add:focus-visible { background: #dbeafe; outline: 2px solid #93c5fd; outline-offset: 2px; }
     .cloud-restore-modal { position: fixed; inset: 0; z-index: 130; display: grid; place-items: center; padding: 1rem; background: rgb(15 23 42 / 52%); backdrop-filter: blur(5px); }
     .cloud-restore-modal__dialog { width: min(680px, 100%); max-height: calc(100vh - 2rem); overflow: auto; border: 1px solid #cbd5e1; border-radius: 1.25rem; background: #fff; color: #172033; box-shadow: 0 24px 70px rgb(15 23 42 / 32%); }
     .cloud-restore-modal__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1.15rem 1.15rem .85rem; border-bottom: 1px solid #e2e8f0; }
@@ -1377,7 +1381,7 @@
     .cloud-restore-continue { border: 1px solid #2563eb; background: #2563eb; color: #fff; }
     @keyframes articleCollectionBackdropIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes articleCollectionDialogIn { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
-    @media (max-width: 640px) { .article-collection-modal { align-items: end; padding: 0; } .article-collection-modal__dialog { width: 100%; max-height: 78vh; border-radius: 1.25rem 1.25rem 0 0; } .article-collection-modal__header { padding: .9rem 1rem .75rem; } .article-collection-modal__list { padding: .8rem 1rem 1rem; } .article-collection-modal__item { min-height: 76px; padding: .75rem .9rem; border-radius: .9rem; } .cloud-restore-modal { align-items: end; padding: 0; } .cloud-restore-modal__dialog { width: 100%; max-height: 88vh; border-radius: 1.25rem 1.25rem 0 0; } .cloud-restore-modal__header, .cloud-restore-modal__body { padding-left: 1rem; padding-right: 1rem; } }
+    @media (max-width: 640px) { .article-collection-modal { align-items: end; padding: 0; } .article-collection-modal__dialog { width: 100%; max-height: 78vh; border-radius: 1.25rem 1.25rem 0 0; } .article-collection-modal__header { padding: .9rem 1rem .75rem; } .article-collection-modal__add-row { align-items: stretch; flex-direction: column; padding-inline: 1rem; } .article-collection-modal__add { width: 100%; } .article-collection-modal__list { padding: .8rem 1rem 1rem; } .article-collection-modal__item { min-height: 76px; padding: .75rem .9rem; border-radius: .9rem; } .cloud-restore-modal { align-items: end; padding: 0; } .cloud-restore-modal__dialog { width: 100%; max-height: 88vh; border-radius: 1.25rem 1.25rem 0 0; } .cloud-restore-modal__header, .cloud-restore-modal__body { padding-left: 1rem; padding-right: 1rem; } }
 
     /* Source cards use the same quick collections as Reading Center cards. */
 
@@ -4098,7 +4102,8 @@
       modal.id = "rfsCollectionModal";
       modal.className = "article-collection-modal";
       const words = savedWordsForReadForSpeedArticle(article);
-      const structures = importantStructureNotes({ sourceModule: "read_for_speed", sourceId: article.id });
+      const importantContext = { sourceModule: "read_for_speed", sourceId: article.id, sourceTitle: article.title || "Read for Speed", rerender: () => renderReadForSpeedPage() };
+      const structures = importantStructureNotes(importantContext);
       const render = tab => {
         const isWords = tab === "words", records = isWords ? words : structures;
         const items = records.length ? records.map((record, index) => {
@@ -4106,9 +4111,11 @@
           const detail = isWords ? (record.turkish || record.meaning || "Türkçe anlam eklenmedi") : (record.meaning || "Anlam/not eklenmedi");
           return '<button class="article-collection-modal__item" data-rfs-collection-index="' + index + '" type="button"><span class="article-collection-modal__item-content"><span class="article-collection-modal__item-title">' + escapeHtml(text) + '</span><span class="article-collection-modal__item-detail">' + escapeHtml(detail) + '</span><span class="article-collection-modal__item-meta">' + (isWords ? "Kelime Defterinde görüntüle" : "Metindeki yerine git") + '</span></span><span class="article-collection-modal__item-more" aria-hidden="true">•••</span></button>';
         }).join("") : '<p class="px-1 py-4 text-sm font-semibold" style="color:var(--text-secondary)">' + (isWords ? "Bu metinden Kelime Defterine eklediğin kelimeler burada görünecek." : "Bu metinden önemli yapı olarak kaydettiğin ifadeler burada görünecek.") + '</p>';
-        modal.innerHTML = '<section class="article-collection-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="rfsCollectionModalTitle"><header class="article-collection-modal__header"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h3 id="rfsCollectionModalTitle" class="mt-1 text-lg font-black">Kelime ve Yapılar</h3><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">' + (words.length + structures.length) + ' kayıt</p></div><button class="article-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl font-black" data-close-rfs-collection-modal type="button" aria-label="Pencereyi kapat">×</button></header><div class="article-collection-modal__tabs" role="tablist"><button class="article-collection-modal__tab" data-rfs-tab="words" role="tab" aria-selected="' + isWords + '">Kelimeler (' + words.length + ')</button><button class="article-collection-modal__tab" data-rfs-tab="structures" role="tab" aria-selected="' + !isWords + '">Önemli Yapılar (' + structures.length + ')</button></div><div class="article-collection-modal__list">' + items + '</div></section>';
+        const addStructure = isWords ? '' : '<div class="article-collection-modal__add-row"><p>Metinden bir ifadeyi seçebilir veya yapıyı elle girebilirsin.</p><button class="article-collection-modal__add" data-rfs-add-structure type="button">+ Yapı Ekle</button></div>';
+        modal.innerHTML = '<section class="article-collection-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="rfsCollectionModalTitle"><header class="article-collection-modal__header"><div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Read for Speed</p><h3 id="rfsCollectionModalTitle" class="mt-1 text-lg font-black">Kelime ve Yapılar</h3><p class="mt-1 text-sm font-semibold" style="color:var(--text-secondary)">' + (words.length + structures.length) + ' kayıt</p></div><button class="article-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl font-black" data-close-rfs-collection-modal type="button" aria-label="Pencereyi kapat">×</button></header><div class="article-collection-modal__tabs" role="tablist"><button class="article-collection-modal__tab" data-rfs-tab="words" role="tab" aria-selected="' + isWords + '">Kelimeler (' + words.length + ')</button><button class="article-collection-modal__tab" data-rfs-tab="structures" role="tab" aria-selected="' + !isWords + '">Önemli Yapılar (' + structures.length + ')</button></div>' + addStructure + '<div class="article-collection-modal__list">' + items + '</div></section>';
         modal.querySelector("[data-close-rfs-collection-modal]")?.addEventListener("click", close);
         modal.querySelectorAll("[data-rfs-tab]").forEach(button => button.addEventListener("click", () => render(button.dataset.rfsTab)));
+        modal.querySelector("[data-rfs-add-structure]")?.addEventListener("click", () => { close(); openImportantStructureForm(importantContext); });
         modal.querySelectorAll("[data-rfs-collection-index]").forEach(button => button.addEventListener("click", () => {
           const record = records[Number(button.dataset.rfsCollectionIndex)];
           if (isWords && record) { close(); openWordModal(record.word, null, null, { mode: "view", wordId: record.id }); }
@@ -4598,6 +4605,8 @@
         languageControl.querySelector("[data-rfs-translation-edit]")?.addEventListener("click", () => openReadForSpeedTranslationEditor(article));
         enableReadForSpeedWordTokens(isBilingual ? document.querySelector("#rfsBody [data-rfs-language-copy=en]") : document.getElementById("rfsBody"));
         document.querySelectorAll("#rfsBody .word-token").forEach(button => button.addEventListener("click", event => {
+          const selectedText = window.getSelection?.().toString().replace(/\s+/g, " ").trim() || "";
+          if (selectedText && selectedText !== button.textContent.trim()) { event.preventDefault(); event.stopPropagation(); return; }
           event.stopPropagation();
           openReadForSpeedWordModal(button, article);
         }));
@@ -8032,7 +8041,9 @@
         if (event.target.closest(".rfs-answer, .important-structures-panel")) return;
         const selected = window.getSelection(); const text = selected?.toString().replace(/\s+/g, " ").trim() || "";
         const range = selected?.rangeCount ? selected.getRangeAt(0) : null;
-        const paragraph = range?.commonAncestorContainer?.parentElement?.closest?.("[data-structure-paragraph]");
+        const commonAncestor = range?.commonAncestorContainer;
+        const selectionAnchor = commonAncestor?.nodeType === Node.ELEMENT_NODE ? commonAncestor : commonAncestor?.parentElement;
+        const paragraph = selectionAnchor?.closest?.("[data-structure-paragraph]");
         if (!range || !paragraph || !text || text.length > 120 || !/[A-Za-z]/.test(text)) return;
         const before = range.cloneRange(); before.selectNodeContents(paragraph); before.setEnd(range.startContainer, range.startOffset);
         const startOffset = before.toString().length; const endOffset = startOffset + text.length;
