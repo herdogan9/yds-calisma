@@ -744,15 +744,110 @@
       outline-offset: 2px;
     }
 
-    /* The fifth daily task keeps the desktop plan balanced without changing
-       the single-column mobile layout. */
-    .daily-tasks-grid {
+    .daily-tasks-layout {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: .75rem;
+      grid-template-columns: minmax(0, 1.68fr) minmax(280px, .92fr);
+      gap: 18px;
+      align-items: stretch;
     }
+    .daily-plan-panel {
+      min-width: 0;
+      border: 1px solid #e4eaf2;
+      border-radius: 18px;
+      background: #fff;
+      padding: 16px 18px;
+      box-shadow: 0 6px 20px rgb(15 23 42 / 4%);
+    }
+    .daily-plan-panel__header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .daily-plan-panel__title { color: #2563eb; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+    .daily-plan-panel__total { color: #475569; font-size: 13px; font-weight: 700; }
+    .daily-plan-panel__track,
+    .daily-question-row__track,
+    .daily-study-card__track { display: block; overflow: hidden; border-radius: 999px; background: #e2e8f0; }
+    .daily-plan-panel__track { height: 6px; margin-top: 12px; }
+    .daily-question-row__track,
+    .daily-study-card__track { height: 4px; }
+    .daily-plan-panel__track > span,
+    .daily-question-row__track > span,
+    .daily-study-card__track > span { display: block; height: 100%; border-radius: inherit; background: #2563eb; }
+    .daily-question-list { margin-top: 8px; }
+    .daily-question-row {
+      display: grid;
+      min-height: 58px;
+      width: 100%;
+      gap: 9px;
+      border: 0;
+      border-top: 1px solid #edf1f6;
+      border-radius: 8px;
+      background: transparent;
+      padding: 10px 8px;
+      color: #0f172a;
+      text-align: left;
+      transition: background-color .15s ease;
+    }
+    .daily-question-row:first-child { border-top-color: transparent; }
+    .daily-question-row:hover { background: #eff6ff; }
+    .daily-question-row:focus-visible,
+    .daily-study-card:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+    .daily-question-row__head { display: flex; align-items: center; gap: 12px; }
+    .daily-question-row__title { min-width: 0; flex: 1; font-size: 15px; font-weight: 650; line-height: 1.25; }
+    .daily-question-row__status { flex: 0 0 auto; color: #64748b; font-size: 13px; font-weight: 650; }
+    .daily-question-row__arrow { flex: 0 0 14px; color: #64748b; font-size: 17px; font-weight: 700; text-align: right; }
+    .daily-question-row.is-completed { background: #f4fcf8; }
+    .daily-question-row.is-completed .daily-question-row__title::before { content: "✓ "; color: #059669; }
+    .daily-question-row.is-completed .daily-question-row__arrow { color: #059669; }
+    .daily-question-row.is-completed .daily-question-row__track > span { background: #059669; }
+    .daily-study-panel { display: flex; flex-direction: column; }
+    .daily-study-cards { display: grid; flex: 1; grid-template-rows: repeat(4, minmax(106px, 1fr)); gap: 12px; margin-top: 14px; }
+    .daily-study-card {
+      display: grid;
+      min-width: 0;
+      align-content: space-between;
+      gap: 9px;
+      border: 1px solid #dfe7f1;
+      border-radius: 14px;
+      background: #f8fafc;
+      padding: 13px 14px;
+      color: #0f172a;
+      text-align: left;
+      box-shadow: 0 2px 8px rgb(15 23 42 / 3%);
+      transition: transform .15s ease, border-color .15s ease, background-color .15s ease;
+    }
+    .daily-study-card:hover { border-color: #93c5fd; background: #f3f8ff; transform: translateY(-1px); }
+    .daily-study-card__head,
+    .daily-study-card__footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .daily-study-card__title { font-size: 14px; font-weight: 700; letter-spacing: .025em; text-transform: uppercase; }
+    .daily-study-card__status { color: #475569; font-size: 13px; font-weight: 700; }
+    .daily-study-card__description,
+    .daily-study-card__remaining { color: #64748b; font-size: 12px; font-weight: 600; }
+    .daily-study-card__action { color: #2563eb; font-size: 12px; font-weight: 700; }
+    .daily-study-card.is-completed { border-color: #bbf7d0; background: #f5fcf8; }
+    .daily-study-card.is-completed .daily-study-card__status,
+    .daily-study-card.is-completed .daily-study-card__remaining,
+    .daily-study-card.is-completed .daily-study-card__action { color: #047857; }
+    .daily-study-card.is-completed .daily-study-card__track > span { background: #059669; }
+    [data-theme="dark"] .daily-plan-panel { border-color: var(--border-color); background: var(--bg-surface); box-shadow: none; }
+    [data-theme="dark"] .daily-plan-panel__total,
+    [data-theme="dark"] .daily-question-row__status,
+    [data-theme="dark"] .daily-question-row__arrow,
+    [data-theme="dark"] .daily-study-card__status,
+    [data-theme="dark"] .daily-study-card__description,
+    [data-theme="dark"] .daily-study-card__remaining { color: var(--text-secondary); }
+    [data-theme="dark"] .daily-plan-panel__track,
+    [data-theme="dark"] .daily-question-row__track,
+    [data-theme="dark"] .daily-study-card__track { background: #334155; }
+    [data-theme="dark"] .daily-question-row { border-color: #334155; color: var(--text-primary); }
+    [data-theme="dark"] .daily-question-row:hover { background: #26364e; }
+    [data-theme="dark"] .daily-question-row.is-completed,
+    [data-theme="dark"] .daily-study-card.is-completed { background: #173c32; }
+    [data-theme="dark"] .daily-study-card { border-color: var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary); }
+    [data-theme="dark"] .daily-study-card:hover { background: #26364e; }
 
-    .question-task-card { grid-column: 1 / -1; }
+    @media (max-width: 767px) {
+      .daily-tasks-layout { grid-template-columns: 1fr; }
+      .daily-plan-panel { padding: 15px 14px; }
+      .daily-study-cards { grid-template-rows: none; }
+    }
 
     @media (max-width: 1023px) {
       .daily-task-action {
@@ -763,8 +858,7 @@
     }
 
     @media (max-width: 639px) {
-      .daily-tasks-grid { grid-template-columns: 1fr; }
-      .question-task-card { grid-column: auto; }
+      .daily-tasks-layout { grid-template-columns: 1fr; }
 
       .daily-task-card > div {
         flex-wrap: nowrap;
@@ -2062,6 +2156,36 @@
     .home-dashboard-primary,
     .home-dashboard-secondary { gap: 10px !important; }
 
+    .focus-word-sidebar-card { display: grid; min-width: 0; min-height: 230px; gap: 12px; overflow: hidden; border: 1px solid var(--border-color); border-radius: 18px; background: var(--bg-surface); padding: 15px; box-shadow: 0 3px 9px rgb(15 23 42 / 5%); }
+    .focus-word-sidebar-header { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 12px; }
+    .focus-word-sidebar-label { color: #3b82f6; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .focus-word-sidebar-count { flex: 0 0 auto; border: 1px solid var(--border-color); border-radius: 999px; background: var(--bg-surface-secondary); padding: 4px 8px; color: var(--text-secondary); font-size: 12px; font-weight: 700; line-height: 1; }
+    .focus-word-sidebar-content { display: grid; min-width: 0; align-content: start; gap: 6px; }
+    .focus-word-sidebar-term { margin: 0; overflow: hidden; color: var(--text-primary); font-size: clamp(25px, 2.2vw, 31px); font-weight: 700; letter-spacing: -.035em; line-height: 1.08; overflow-wrap: anywhere; }
+    .focus-word-sidebar-meaning { display: -webkit-box; margin: 0; overflow: hidden; color: #2563eb; font-size: 15px; font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+    .focus-word-sidebar-example { min-width: 0; margin-top: 4px; border-left: 3px solid #3b82f6; border-radius: 0 9px 9px 0; background: var(--bg-surface-secondary); padding: 8px 10px; }
+    .focus-word-sidebar-example > span,
+    .focus-word-sidebar-synonyms > span { color: var(--text-secondary); font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+    .focus-word-sidebar-example p { display: -webkit-box; margin: 3px 0 0; overflow: hidden; color: var(--text-primary); font-size: 12px; font-weight: 500; line-height: 1.45; overflow-wrap: anywhere; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+    .focus-word-sidebar-synonyms { display: grid; min-width: 0; gap: 5px; margin-top: 2px; }
+    .focus-word-sidebar-synonym-list { display: flex; min-width: 0; flex-wrap: wrap; gap: 5px; }
+    .focus-word-sidebar-chip { display: inline-flex; max-width: 100%; overflow: hidden; border: 1px solid color-mix(in srgb, #3b82f6 32%, var(--border-color)); border-radius: 999px; background: color-mix(in srgb, #dbeafe 55%, var(--bg-surface)); padding: 4px 8px; color: color-mix(in srgb, var(--text-primary) 70%, #2563eb); font-size: 11px; font-weight: 600; line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
+    .focus-word-sidebar-controls { display: grid; grid-template-columns: 40px minmax(0, 1fr) 40px; gap: 8px; align-self: end; }
+    .focus-word-sidebar-controls button { min-width: 0; min-height: 38px; border: 1px solid var(--border-color); border-radius: 9px; background: var(--bg-surface); color: #2563eb; padding: 6px 8px; font-size: 12px; font-weight: 600; }
+    .focus-word-sidebar-controls button:first-child,
+    .focus-word-sidebar-controls button:last-child { padding: 0; font-size: 22px; line-height: 1; }
+    .focus-word-sidebar-controls button:hover:not(:disabled) { border-color: #60a5fa; background: color-mix(in srgb, #dbeafe 48%, var(--bg-surface)); }
+    .focus-word-sidebar-controls button:focus-visible { outline: 3px solid rgb(37 99 235 / 25%); outline-offset: 2px; }
+    .focus-word-sidebar-empty { align-content: start; min-height: 190px; }
+    .focus-word-sidebar-empty h5,
+    .focus-word-sidebar-empty p { margin: 0; }
+    .focus-word-sidebar-empty h5 { color: var(--text-primary); font-size: 15px; }
+    .focus-word-sidebar-empty p { color: var(--text-secondary); font-size: 12px; line-height: 1.45; }
+    .focus-word-sidebar-empty button { justify-self: start; border: 0; background: transparent; color: #2563eb; padding: 4px 0; font-size: 12px; font-weight: 700; }
+    [data-theme="dark"] .focus-word-sidebar-meaning { color: #60a5fa; }
+    [data-theme="dark"] .focus-word-sidebar-chip { border-color: #506176; background: #263142; color: #cbd5e1; }
+    [data-theme="dark"] .focus-word-sidebar-controls button:hover:not(:disabled) { border-color: #60a5fa; background: #263b5a; }
+
     .home-daily-tasks-panel { padding: 13px !important; }
     .home-daily-tasks-panel > div:first-child { margin-bottom: 11px !important; }
     .home-daily-tasks-panel > .h-2 { margin-bottom: 11px !important; }
@@ -2207,6 +2331,7 @@
       .daily-word-carousel-stage .daily-word-card { min-height: 0; padding: 12px 16px !important; }
       .daily-word-content { padding-inline: 20px; }
       .daily-word-example { margin-top: 14px; padding: 10px 12px; }
+      .focus-word-sidebar-card { width: 100%; min-height: 0; }
     }
   </style>
 </head>
@@ -2419,6 +2544,7 @@
     let examTarget = normalizeExamTarget(loadJson(STORAGE_EXAM_TARGET, null));
     let returnViewAfterQuestion = "";
     let solveMode = "document";
+    let dailyQuestionCategory = null;
     let wrongReviewIds = [];
     let pendingWord = null;
     let wordModalMode = "create";
@@ -3200,6 +3326,12 @@
         const byId = new Map(questionBank.map(item => [item.id, item]));
         const sourceIds = wrongReviewSession?.questionIds?.length ? wrongReviewSession.questionIds : (wrongReviewIds.length ? wrongReviewIds : wrongQuestionIds);
         return sourceIds.map(id => byId.get(id)).filter(Boolean);
+      }
+      if (solveMode === "daily-category" && dailyQuestionCategory) {
+        return questionBank.filter(item => {
+          const number = Number(item.questionNumber || 0);
+          return number >= dailyQuestionCategory.start && number <= dailyQuestionCategory.end;
+        });
       }
       return questionBank.filter(item => item.documentId === activeDocumentId);
     }
@@ -4997,41 +5129,34 @@
       const pool = dailyWordPool();
       const words = dailyWordItems();
       if (!words.length) {
-        return '<section class="mb-4 rounded-2xl border border-dashed border-blue-200 bg-blue-50/60 p-4">' +
-          '<div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">' +
-            '<div>' +
-              '<h4 class="text-xs font-black uppercase text-blue-500">Odak Kelimeler</h4>' +
-              '<p class="mt-2 text-sm font-black text-slate-600">Henüz tekrar kelimesi yok.</p>' +
-              '<p class="mt-1 text-sm text-slate-500">Kart Çalışması’nda Orta veya Zor seçtiğin, ya da Çoktan Seçmeli’de yanlış yaptığın kelimeler burada birikir.</p>' +
-              '<button id="dailyWordGoToWordsBtn" class="mt-3 rounded-xl bg-blue-600 px-3 py-2 text-sm font-black text-white">Kelime Defterine Git</button>' +
-            '</div>' +
-          '</div>' +
+        return '<section class="focus-word-sidebar-card focus-word-sidebar-empty" aria-labelledby="dailyWordPoolTitle">' +
+          '<div class="focus-word-sidebar-header"><h4 id="dailyWordPoolTitle" class="focus-word-sidebar-label">Odak Kelime</h4></div>' +
+          '<h5>Henüz tekrar kelimesi yok.</h5>' +
+          '<p>Kart Çalışması’nda Orta veya Zor seçtiğin, ya da Çoktan Seçmeli’de yanlış yaptığın kelimeler burada birikir.</p>' +
+          '<button id="dailyWordGoToWordsBtn">Kelime Defterine Git</button>' +
         '</section>';
       }
       const index = Math.max(0, words.findIndex(word => word.id === pool.currentWordId));
       const item = words[index];
       const synonymText = wordMeaningNote(item);
       const example = wordExample(item);
-      const titleSizeClass = dailyWordTitleSizeClass(item.word);
-      const synonymChips = synonymText.split(/[;,/|]+/).map(value => value.trim()).filter(Boolean);
-      return '<section class="daily-word-panel mb-3 rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="dailyWordPoolTitle">' +
-        '<div class="daily-word-header flex flex-col gap-2 md:flex-row md:items-center md:justify-between">' +
-          '<div>' +
-            '<h4 id="dailyWordPoolTitle" class="daily-word-section-label text-xs font-black uppercase text-blue-500">Odak Kelimeler</h4>' +
-          '</div>' +
-          '<div class="flex flex-wrap items-center gap-2">' +
-            '<span aria-label="' + (index + 1) + '. kelime, toplam ' + words.length + ' kelime" class="daily-word-control">' + (index + 1) + ' / ' + words.length + '</span>' +
-            '<button id="dailyWordShuffleBtn" aria-label="Zorlandığım kelimeleri karıştır" class="daily-word-control daily-word-shuffle">↻ Karıştır</button>' +
-          '</div>' +
+      const synonymChips = synonymText.split(/[;,/|]+/).map(value => value.trim()).filter(Boolean).slice(0, 3);
+      const meaning = wordTurkish(item) || "";
+      return '<section class="focus-word-sidebar-card" aria-labelledby="dailyWordPoolTitle">' +
+        '<div class="focus-word-sidebar-header">' +
+          '<h4 id="dailyWordPoolTitle" class="focus-word-sidebar-label">Odak Kelime</h4>' +
+          '<span aria-label="' + (index + 1) + '. kelime, toplam ' + words.length + ' kelime" class="focus-word-sidebar-count">' + (index + 1) + ' / ' + words.length + '</span>' +
         '</div>' +
-        '<div class="daily-word-carousel-stage">' +
-          '<button id="dailyWordPrevBtn" aria-label="Önceki kelime" class="daily-word-arrow daily-word-arrow--previous z-10 rounded-full border border-slate-300 bg-white text-2xl leading-none text-blue-700">‹</button>' +
-          '<article class="daily-word-card min-w-0 w-full rounded-xl border border-slate-200 bg-slate-50"><div class="daily-word-card-content daily-word-content flex h-full min-w-0 flex-col justify-center">' +
-            '<h5 class="daily-word-title daily-word-term ' + titleSizeClass + ' font-extrabold tracking-tight text-slate-950">' + escapeHtml(item.word) + '</h5><p class="daily-word-meaning font-bold text-blue-700">' + escapeHtml(wordTurkish(item) || "") + '</p>' +
-            (example ? '<div class="daily-word-example"><p class="text-[14px] font-bold leading-[1.5] text-slate-700">' + escapeHtml(example) + '</p>' + (item.contextTranslation ? '<p class="mt-1 text-xs font-semibold text-slate-500">' + escapeHtml(item.contextTranslation) + '</p>' : '') + '</div>' : '') +
-            (synonymChips.length ? '<div class="daily-word-synonym-row"><span class="daily-word-synonym-label">Yakın anlamlılar</span>' + synonymChips.map(value => '<span class="daily-word-synonym-chip">' + escapeHtml(value) + '</span>').join("") + '</div>' : '') +
-          '</div></article>' +
-          '<button id="dailyWordNextBtn" aria-label="Sonraki kelime" class="daily-word-arrow daily-word-arrow--next z-10 rounded-full border border-slate-300 bg-white text-2xl leading-none text-blue-700">›</button>' +
+        '<div class="focus-word-sidebar-content">' +
+          '<h5 class="focus-word-sidebar-term" title="' + escapeHtml(item.word) + '">' + escapeHtml(item.word) + '</h5>' +
+          '<p class="focus-word-sidebar-meaning" title="' + escapeHtml(meaning) + '">' + escapeHtml(meaning) + '</p>' +
+          (example ? '<div class="focus-word-sidebar-example"><span>Örnek</span><p title="' + escapeHtml(example) + '">' + escapeHtml(example) + '</p></div>' : '') +
+          (synonymChips.length ? '<div class="focus-word-sidebar-synonyms"><span>Yakın anlamlılar</span><div class="focus-word-sidebar-synonym-list">' + synonymChips.map(value => '<b class="focus-word-sidebar-chip">' + escapeHtml(value) + '</b>').join("") + '</div></div>' : '') +
+        '</div>' +
+        '<div class="focus-word-sidebar-controls">' +
+          '<button id="dailyWordPrevBtn" aria-label="Önceki odak kelime">‹</button>' +
+          '<button id="dailyWordShuffleBtn" aria-label="Odak kelimeleri karıştır">↻ Karıştır</button>' +
+          '<button id="dailyWordNextBtn" aria-label="Sonraki odak kelime">›</button>' +
         '</div>' +
       '</section>';
     }
@@ -5103,48 +5228,126 @@
       setView("yds");
     }
 
+    function startDailyQuestionCategory(category) {
+      const ranges = {
+        vocabulary: { title: "Kelime", start: 1, end: 6 },
+        grammar: { title: "Tense-Modal-Passive", start: 7, end: 11 },
+        conjunction: { title: "Bağlaç", start: 12, end: 16 },
+        cloze: { title: "Cloze Test", start: 17, end: 21 },
+        sentenceCompletion: { title: "Cümle Tamamlama", start: 22, end: 26 },
+        englishTurkish: { title: "İngilizce-Türkçe", start: 27, end: 32 },
+        turkishEnglish: { title: "Türkçe-İngilizce", start: 33, end: 38 },
+        closestMeaning: { title: "Yakın Anlam", start: 39, end: 41 },
+        paragraphCompletion: { title: "Paragraf Tamamlama", start: 42, end: 44 },
+        irrelevantSentence: { title: "Akışı Bozan", start: 45, end: 48 },
+      };
+      const selected = ranges[category];
+      if (!selected) return;
+      const questions = questionBank.filter(item => {
+        const number = Number(item.questionNumber || 0);
+        return number >= selected.start && number <= selected.end;
+      });
+      if (!questions.length) {
+        showToast(selected.title + " için henüz soru kaynağı yok.");
+        setView("yds");
+        return;
+      }
+      dailyQuestionCategory = selected;
+      activeDocumentId = questions[0].documentId;
+      currentIndex = 0;
+      answered = false;
+      stats.correct = 0;
+      stats.wrong = 0;
+      solveMode = "daily-category";
+      questionSolvingSessionId = createActivitySession("question-solving");
+      localStorage.setItem(STORAGE_QUESTION_SESSION, questionSolvingSessionId);
+      wrongReviewIds = [];
+      setView("solve");
+    }
+
     function renderDailyTasksPanel() {
       ensureDailyProgress();
-      const labels = dailyTaskLabels();
       const summary = dailyTaskSummary();
       const streak = calculateStreak();
+      const questionTasks = [
+        ["vocabulary", "Kelime", 1, 6],
+        ["grammar", "Tense-Modal-Passive", 7, 11],
+        ["conjunction", "Bağlaç", 12, 16],
+        ["cloze", "Cloze Test", 17, 21],
+        ["sentenceCompletion", "Cümle Tamamlama", 22, 26],
+        ["englishTurkish", "İngilizce → Türkçe", 27, 32],
+        ["turkishEnglish", "Türkçe → İngilizce", 33, 38],
+        ["closestMeaning", "Yakın Anlam", 39, 41],
+        ["paragraphCompletion", "Paragraf Tamamlama", 42, 44],
+        ["irrelevantSentence", "Akışı Bozan", 45, 48],
+      ];
+      const studyTasks = [
+        ["flashcards", "Kart Çalışması", "Kelime tekrarları", "flashcards", "Başla →"],
+        ["multipleChoice", "Çoktan Seçmeli", "Günlük soru çalışması", "multipleChoice", "Başla →"],
+        ["articles", "Makale", "Okuma ve analiz", "articles", "Parça Seç →"],
+        ["readForSpeed", "Read for Speed", "Hızlı okuma", "readForSpeed", "Parça Seç →"],
+      ];
+      const answeredToday = new Set(dailyQuestionResults.filter(item => item?.dateKey === todayKey()).map(item => String(item.questionId || "")));
+      const progressForQuestionTask = item => {
+        const count = questionBank.filter(question => answeredToday.has(String(question.id)) && Number(question.questionNumber || 0) >= item[2] && Number(question.questionNumber || 0) <= item[3]).length;
+        return { count: Math.min(count, item[3] - item[2] + 1), target: item[3] - item[2] + 1 };
+      };
+      const progressForStudyTask = item => {
+        if (item[3] === "flashcards") {
+          const session = activeDailyWordCardSession() || (dailyWordCardSession?.dateKey === todayKey() ? dailyWordCardSession : null);
+          if (session) return { count: Number(session.reviewedCount || 0), target: Number(session.targetCount || dailyGoals.flashcards) };
+        }
+        if (item[3] === "articles") {
+          const past = dailyProgress.pastExamReading || {};
+          const external = dailyProgress.externalReading || {};
+          return { count: taskProgressCount(past) + taskProgressCount(external), target: Number(past.target || 0) + Number(external.target || 0) };
+        }
+        const task = dailyProgress[item[3]] || {};
+        return { count: taskProgressCount(task), target: Number(task.target || 0) };
+      };
+      const questionProgress = questionTasks.map(item => progressForQuestionTask(item));
+      const questionTotal = questionProgress.reduce((total, item) => total + item.target, 0);
+      const questionCount = questionProgress.reduce((total, item) => total + item.count, 0);
+      const questionPercent = questionTotal ? Math.round(questionCount / questionTotal * 100) : 0;
+      const questionRow = (item, index) => {
+        const progress = questionProgress[index];
+        const count = Math.min(progress.count, progress.target || progress.count);
+        const completed = progress.target > 0 && count >= progress.target;
+        const percent = progress.target > 0 ? Math.min(100, Math.round(count / progress.target * 100)) : 0;
+        return '<button class="daily-question-row ' + (completed ? "is-completed " : "") + 'daily-question-task" data-question-task="' + item[0] + '" type="button">' +
+          '<span class="daily-question-row__head"><span class="daily-question-row__title">' + item[1] + '</span><span class="daily-question-row__status">' + count + ' / ' + progress.target + '</span><span class="daily-question-row__arrow" aria-hidden="true">' + (completed ? "" : "›") + '</span></span>' +
+          '<span class="daily-question-row__track" aria-hidden="true"><span style="width:' + percent + '%"></span></span>' +
+        '</button>';
+      };
+      const studyCard = item => {
+        const progress = progressForStudyTask(item);
+        const count = Math.min(progress.count, progress.target || progress.count);
+        const completed = progress.target > 0 && count >= progress.target;
+        const percent = progress.target > 0 ? Math.min(100, Math.round(count / progress.target * 100)) : 0;
+        const remaining = Math.max(0, progress.target - count);
+        const unit = item[3] === "articles" ? " parça kaldı" : item[3] === "readForSpeed" ? " çalışma kaldı" : " kaldı";
+        return '<button class="daily-study-card ' + (completed ? "is-completed " : "") + 'daily-study-task" data-study-task="' + item[0] + '" type="button">' +
+          '<span class="daily-study-card__head"><span class="daily-study-card__title">' + item[1] + '</span><span class="daily-study-card__status">' + count + ' / ' + progress.target + '</span></span>' +
+          '<span class="daily-study-card__description">' + item[2] + '</span>' +
+          '<span class="daily-study-card__track" aria-hidden="true"><span style="width:' + percent + '%"></span></span>' +
+          '<span class="daily-study-card__footer"><span class="daily-study-card__remaining">' + (completed ? "✓ Tamamlandı" : remaining + unit) + '</span><span class="daily-study-card__action">' + (completed ? "Tamamlandı" : item[4]) + '</span></span>' +
+        '</button>';
+      };
+      const dateLabel = formatTurkishDate().replace(/ (Pazartesi|Salı|Çarşamba|Perşembe|Cuma|Cumartesi|Pazar)$/i, " · $1");
       return '<section class="home-daily-tasks-panel rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' +
         '<div class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">' +
           '<div>' +
-            '<p class="home-daily-date text-xs font-black uppercase tracking-wide text-blue-500">' + escapeHtml(formatTurkishDate()) + '</p>' +
-            '<h3 class="home-daily-heading mt-1 text-xl font-black text-slate-950">Bugünkü Görevler</h3>' +
-            '<p class="home-daily-summary mt-1 text-sm font-semibold text-slate-500">Günlük ilerleme: %' + summary.percent + ' · Tamamlanan: ' + summary.completed + ' / ' + summary.total + ' · Seri: ' + streak + ' gün</p>' +
+            '<p class="home-daily-date text-xs font-black uppercase tracking-wide text-blue-500">' + escapeHtml(dateLabel) + '</p>' +
+            '<h3 class="home-daily-heading mt-1 text-xl font-black text-slate-950">Bugünkü Çalışma</h3>' +
+            '<div class="mt-1 flex flex-wrap items-center gap-2"><p class="home-daily-summary text-sm font-semibold text-slate-500">' + summary.completed + ' / ' + summary.total + ' tamamlandı · %' + summary.percent + '</p>' + (streak > 0 ? '<span class="rounded-full bg-amber-50 px-2 py-1 text-xs font-bold text-amber-700">🔥 ' + streak + ' gün seri</span>' : '') + '</div>' +
           '</div>' +
           '<button id="dailyGoalSettingsBtn" class="home-goal-settings rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-600 hover:bg-slate-50">Hedefleri Düzenle</button>' +
         '</div>' +
         '<div class="mb-4 h-2 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full bg-blue-600" style="width:' + summary.percent + '%"></div></div>' +
-        '<div class="daily-tasks-grid">' + Object.entries(labels).map(([key, meta]) => {
-          const session = key === "flashcards" ? (activeDailyWordCardSession() || (dailyWordCardSession?.dateKey === todayKey() ? dailyWordCardSession : null)) : null;
-          const task = session ? { ...dailyProgress[key], count: session.reviewedCount, target: session.targetCount, completed: session.completed } : dailyProgress[key];
-          if (!task || Number(task.target || 0) <= 0) return "";
-          const count = Math.min(taskProgressCount(task), task.target);
-          const percent = task.target ? Math.min(100, Math.round((count / task.target) * 100)) : 100;
-          const completed = task.completed || count >= task.target;
-          const cardStateClass = completed ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-slate-50';
-          const statusClass = completed ? 'text-emerald-700' : 'text-slate-500';
-          const statusLabel = completed ? '✓ Tamamlandı' : count + ' / ' + task.target;
-          const progressClass = completed ? 'bg-emerald-600' : 'bg-blue-600';
-          const action = completed
-            ? ''
-            : '<button class="daily-task-start daily-task-action bg-blue-600 text-white hover:bg-blue-500" data-task="' + key + '">' + dailyTaskActionLabel(key, task, count) + '</button>';
-          return '<article class="daily-task-card ' + (key === "difficultWords" ? "question-task-card " : "") + 'rounded-xl border p-3 ' + cardStateClass + '">' +
-            '<div class="flex items-center gap-3">' +
-              '<div class="min-w-0 flex-1">' +
-                '<div class="flex flex-wrap items-center justify-between gap-2">' +
-                  '<h4 class="home-daily-task-title truncate text-sm font-black text-slate-950">' + meta.title + '</h4>' +
-                  '<span class="home-daily-task-status text-xs font-black ' + statusClass + '">' + statusLabel + '</span>' +
-                '</div>' +
-                '<div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200"><div class="h-full rounded-full ' + progressClass + '" style="width:' + percent + '%"></div></div>' +
-              '</div>' +
-              action +
-            '</div>' +
-          '</article>';
-        }).join("") + '</div>' +
+        '<div class="daily-tasks-layout">' +
+          '<section class="daily-plan-panel daily-question-panel" aria-labelledby="dailyQuestionPanelTitle"><div class="daily-plan-panel__header"><h4 id="dailyQuestionPanelTitle" class="daily-plan-panel__title">Soru Çözümü</h4><span class="daily-plan-panel__total">' + questionCount + ' / ' + questionTotal + '</span></div><span class="daily-plan-panel__track" aria-hidden="true"><span style="width:' + questionPercent + '%"></span></span><div class="daily-question-list">' + questionTasks.map(questionRow).join("") + '</div></section>' +
+          '<section class="daily-plan-panel daily-study-panel" aria-labelledby="dailyStudyPanelTitle"><div class="daily-plan-panel__header"><h4 id="dailyStudyPanelTitle" class="daily-plan-panel__title">Diğer Çalışmalar</h4></div><div class="daily-study-cards">' + studyTasks.map(studyCard).join("") + '</div></section>' +
+        '</div>' +
       '</section>';
     }
 
@@ -5232,6 +5435,30 @@
           if (task === "difficultWords") startQuestionSolvingTask();
         });
       });
+      document.querySelectorAll(".daily-question-task").forEach(button => {
+        button.addEventListener("click", () => startDailyQuestionCategory(button.dataset.questionTask));
+      });
+      document.querySelectorAll(".daily-study-task").forEach(button => {
+        button.addEventListener("click", () => {
+          const task = button.dataset.studyTask;
+          if (task === "flashcards") startOrResumeDailyWordCards();
+          if (task === "multipleChoice") {
+            wordSessionSize = String(dailyGoals.multipleChoice);
+            localStorage.setItem("yds-word-session-size-v1", wordSessionSize);
+            startWordStudy("quiz");
+          }
+          if (task === "articles") {
+            activeArticleId = "__list__";
+            setView("articles");
+          }
+          if (task === "readForSpeed") {
+            const active = activeReadForSpeedArticle();
+            readForSpeedActiveArticle = active;
+            readForSpeedMode = active ? "reader" : "list";
+            setView("read-for-speed");
+          }
+        });
+      });
     }
 
     function renderHomeActionPanel() {
@@ -5304,10 +5531,9 @@
         '<div class="home-dashboard-grid grid gap-3 xl:grid-cols-[minmax(0,1fr)_360px]">' +
           '<div class="home-dashboard-primary grid content-start gap-3 self-start">' +
             renderDailyTasksPanel() +
-            renderDailyWordPanel() +
             renderHomeActionPanel() +
           '</div>' +
-          '<div class="home-dashboard-secondary grid gap-3 self-start xl:sticky xl:top-4">' + renderWeeklySummaryPanel() + renderRecentWordsPanel() + '</div>' +
+          '<div class="home-dashboard-secondary grid gap-3 self-start xl:sticky xl:top-4">' + renderWeeklySummaryPanel() + renderDailyWordPanel() + renderRecentWordsPanel() + '</div>' +
         '</div>';
       bindDailyTasksPanel();
       bindDailyWordPanel();
