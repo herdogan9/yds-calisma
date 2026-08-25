@@ -2136,15 +2136,35 @@
     }
 
     .home-daily-wrong-panel {
+      padding: 12px !important;
       border-color: var(--border-color) !important;
       background: var(--bg-surface) !important;
       box-shadow: 0 4px 12px rgb(15 23 42 / 4%) !important;
     }
-    .daily-wrong-question-card { min-height: 320px; border-color: var(--border-color) !important; background: var(--bg-surface-secondary) !important; }
-    .daily-wrong-option { min-width: 0; }
+    .daily-wrong-review-header { gap: 8px !important; }
+    .daily-wrong-review-header p.mt-1 { margin-top: 2px !important; }
+    .daily-wrong-question-card {
+      min-height: 0;
+      margin-top: 10px !important;
+      padding: 12px !important;
+      border-color: var(--border-color) !important;
+      background: var(--bg-surface-secondary) !important;
+    }
+    .daily-wrong-passage { margin-bottom: 10px !important; padding: 10px !important; }
+    .daily-wrong-question-text { line-height: 1.55 !important; }
+    .daily-wrong-options { margin-top: 10px !important; gap: 6px !important; }
+    .daily-wrong-option { min-width: 0; gap: 8px !important; padding: 8px 10px !important; }
+    .daily-wrong-option > span:first-child { width: 30px !important; height: 30px !important; }
+    .daily-wrong-option > span:last-child { padding-top: 2px !important; line-height: 1.4 !important; }
     .daily-wrong-option:disabled { cursor: default; opacity: 1; }
     .daily-wrong-question-text,
     .daily-wrong-option > span:last-child { overflow-wrap: anywhere; word-break: normal; }
+    .daily-wrong-feedback { margin-top: 10px !important; padding: 10px !important; }
+    .daily-wrong-feedback > p.mt-1 { margin-top: 2px !important; }
+    .daily-wrong-answer-action { margin-top: 10px !important; }
+    .daily-wrong-answer-action > button { padding-top: 8px !important; padding-bottom: 8px !important; }
+    .daily-wrong-navigation { margin-top: 10px !important; gap: 8px !important; }
+    .daily-wrong-navigation > button { padding-top: 7px !important; padding-bottom: 7px !important; }
 
     .daily-word-panel { padding: 8px 14px !important; }
     .daily-word-header { margin-bottom: 2px; }
@@ -2268,7 +2288,10 @@
       .daily-word-carousel-stage .daily-word-card { min-height: 0; padding: 12px 16px !important; }
       .daily-word-content { padding-inline: 20px; }
       .daily-word-example { margin-top: 14px; padding: 10px 12px; }
-      .daily-wrong-question-card { min-height: 0; padding: 14px !important; }
+      .home-daily-wrong-panel { padding: 10px !important; }
+      .daily-wrong-question-card { min-height: 0; margin-top: 8px !important; padding: 10px !important; }
+      .daily-wrong-options { margin-top: 8px !important; gap: 5px !important; }
+      .daily-wrong-navigation { margin-top: 8px !important; }
       .daily-wrong-navigation { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .daily-wrong-navigation > span { grid-column: 1 / -1; grid-row: 1; justify-self: center; }
       .daily-wrong-navigation > button:first-child { grid-column: 1; grid-row: 2; width: 100%; }
@@ -5372,8 +5395,8 @@
         : summary.total < 5
           ? "Yanlış havuzunda bugün tekrar edebileceğin " + summary.total + " soru var."
           : "Geçmişte yanlış cevapladığın sorulardan bugüne seçilenler.";
-      const heading = '<div class="daily-wrong-review-header flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">' +
-        '<div><p class="text-xs font-black uppercase tracking-wide text-blue-500">Günün 5 Yanlışı</p><p class="mt-1 text-sm font-semibold text-slate-500">' + escapeHtml(subtitle) + '</p></div>' +
+      const heading = '<div class="daily-wrong-review-header flex items-start justify-between gap-2">' +
+        '<div class="min-w-0"><p class="text-xs font-black uppercase tracking-wide text-blue-500">Günün 5 Yanlışı</p><p class="mt-1 text-sm font-semibold text-slate-500">' + escapeHtml(subtitle) + '</p></div>' +
         '<span class="daily-wrong-review-progress shrink-0 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">' + progressLabel + '</span>' +
       '</div>';
 
@@ -5430,18 +5453,18 @@
       }).join("");
       const feedback = result
         ? result.outcome === "correct"
-          ? '<div class="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3"><p class="font-black text-emerald-800">✓ Doğru cevap</p><p class="mt-1 text-sm font-semibold text-slate-600">Bu soru Yanlış Sorular havuzundan çıkarıldı.</p></div>'
-          : '<div class="mt-4 rounded-xl border border-red-200 bg-red-50 p-3"><p class="font-black text-red-800">✕ Yanlış cevap</p><p class="mt-1 text-sm font-semibold text-slate-600">Bu soru Yanlış Sorular havuzunda kalmaya devam edecek.</p>' + (question.explanation ? '<div class="mt-3 border-t border-red-200 pt-3 text-sm leading-6 text-slate-700"><strong>Açıklama:</strong> ' + escapeHtml(question.explanation) + '</div>' : '') + '</div>'
+          ? '<div class="daily-wrong-feedback mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3"><p class="font-black text-emerald-800">✓ Doğru cevap</p><p class="mt-1 text-sm font-semibold text-slate-600">Bu soru Yanlış Sorular havuzundan çıkarıldı.</p></div>'
+          : '<div class="daily-wrong-feedback mt-4 rounded-xl border border-red-200 bg-red-50 p-3"><p class="font-black text-red-800">✕ Yanlış cevap</p><p class="mt-1 text-sm font-semibold text-slate-600">Bu soru Yanlış Sorular havuzunda kalmaya devam edecek.</p>' + (question.explanation ? '<div class="mt-3 border-t border-red-200 pt-3 text-sm leading-6 text-slate-700"><strong>Açıklama:</strong> ' + escapeHtml(question.explanation) + '</div>' : '') + '</div>'
         : "";
 
       return '<section class="home-daily-wrong-panel rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">' + heading +
         '<article class="daily-wrong-question-card mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">' +
           (result ? '<div class="mb-4 flex justify-end"><span class="text-xs font-black ' + (result.outcome === "correct" ? 'text-emerald-700' : 'text-red-700') + '">' + (result.outcome === "correct" ? 'Doğru' : 'Yanlış') + '</span></div>' : '') +
-          (question.passage ? '<div class="mb-4 rounded-xl bg-white p-3 text-sm font-medium leading-6 text-slate-600">' + escapeHtml(question.passage) + '</div>' : '') +
+          (question.passage ? '<div class="daily-wrong-passage mb-4 rounded-xl bg-white p-3 text-sm font-medium leading-6 text-slate-600">' + escapeHtml(question.passage) + '</div>' : '') +
           '<p class="daily-wrong-question-text text-base font-semibold leading-7 text-slate-900">' + escapeHtml(question.question || question.prompt || "") + '</p>' +
-          '<div class="mt-4 grid gap-2">' + options + '</div>' +
+          '<div class="daily-wrong-options mt-4 grid gap-2">' + options + '</div>' +
           feedback +
-          (!result ? '<div class="mt-4 flex justify-end"><button id="dailyWrongCheckBtn" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-slate-300"' + (isAnswerKey(selectedKey) ? '' : ' disabled') + '>Cevabı Kontrol Et</button></div>' : '') +
+          (!result ? '<div class="daily-wrong-answer-action mt-4 flex justify-end"><button id="dailyWrongCheckBtn" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-slate-300"' + (isAnswerKey(selectedKey) ? '' : ' disabled') + '>Cevabı Kontrol Et</button></div>' : '') +
         '</article>' + dailyWrongReviewNavigationHtml(record, summary, index) + '</section>';
     }
 
