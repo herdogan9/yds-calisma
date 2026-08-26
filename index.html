@@ -2313,7 +2313,7 @@
       <button id="brandHomeBtn" class="yds-brand-card mb-2 shrink-0 rounded-xl border border-transparent bg-transparent transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500" aria-label="Ana Sayfaya Git">
         <span class="yds-brand-copy">
           <span class="yds-brand-title">YDS Çalışma</span>
-          <span class="yds-brand-subtitle">Henüz dünyaya gelmeden hayatımı güzelleştiren kızıma…</span>
+          <span class="yds-brand-subtitle">Nil’im, bu yolun en güzel sebebi sensin.</span>
         </span>
       </button>
 
@@ -5590,12 +5590,12 @@
             setView("articles");
           }
           if (task === "readForSpeed") {
-            const active = activeReadForSpeedArticle();
-            readForSpeedActiveArticle = active;
-            readForSpeedMode = active ? "reader" : "list";
+            readForSpeedReviewAttemptId = null;
+            readForSpeedActiveArticle = null;
+            readForSpeedMode = "list";
             setView("read-for-speed");
           }
-          if (task === "difficultWords") startQuestionSolvingTask();
+          if (task === "difficultWords") setView("yds");
         });
       });
     }
