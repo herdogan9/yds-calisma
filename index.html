@@ -2391,6 +2391,11 @@
     }
 
     const baseBank = JSON.parse(document.getElementById("question-data").textContent);
+    const VERIFIED_ANSWER_CORRECTIONS = Object.freeze({
+      "kelime-set-02-q-029-029": "E",
+      "kelime-set-02-q-030-030": "C",
+      "kelime-set-01-q-071-069": "D",
+    });
     const STORAGE_UPLOADS = "yds-uploaded-pdfs-v1";
     const STORAGE_WORDS = "yds-wordbook-v1";
     const STORAGE_ARTICLES = "yds-articles-v1";
@@ -3265,7 +3270,12 @@
 
     function rebuildBank() {
       documents = [...baseBank.documents, ...(uploadedBank.documents || [])];
-      questionBank = [...baseBank.questions, ...(uploadedBank.questions || [])];
+      questionBank = [...baseBank.questions, ...(uploadedBank.questions || [])].map(question => {
+        const correctedAnswer = VERIFIED_ANSWER_CORRECTIONS[question.id];
+        return correctedAnswer && question.answer !== correctedAnswer
+          ? { ...question, answer: correctedAnswer, correctAnswer: correctedAnswer }
+          : question;
+      });
       const validQuestionIds = new Set(questionBank.map(item => item.id));
       if (uploadedBankHydrated) {
         wrongQuestionState = Object.fromEntries(Object.entries(wrongQuestionState).filter(([id]) => validQuestionIds.has(id)));
