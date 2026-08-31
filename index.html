@@ -2396,6 +2396,11 @@
       "kelime-set-02-q-030-030": "C",
       "kelime-set-01-q-071-069": "D",
     });
+    const VERIFIED_ANSWER_CORRECTIONS_BY_TEXT = Object.freeze([
+      ["being patient with someone does not necessarily mean", "E"],
+      ["wide range of theories that attempt to", "C"],
+      ["architectural analysis is not only a", "D"],
+    ]);
     const STORAGE_UPLOADS = "yds-uploaded-pdfs-v1";
     const STORAGE_WORDS = "yds-wordbook-v1";
     const STORAGE_ARTICLES = "yds-articles-v1";
@@ -3271,8 +3276,10 @@
     function rebuildBank() {
       documents = [...baseBank.documents, ...(uploadedBank.documents || [])];
       questionBank = [...baseBank.questions, ...(uploadedBank.questions || [])].map(question => {
-        const correctedAnswer = VERIFIED_ANSWER_CORRECTIONS[question.id];
-        return correctedAnswer && question.answer !== correctedAnswer
+        const questionText = String(question.question || question.prompt || question.stem || "").toLowerCase();
+        const correctedAnswer = VERIFIED_ANSWER_CORRECTIONS[question.id]
+          || VERIFIED_ANSWER_CORRECTIONS_BY_TEXT.find(([fragment]) => questionText.includes(fragment))?.[1];
+        return correctedAnswer && (question.answer !== correctedAnswer || question.correctAnswer !== correctedAnswer)
           ? { ...question, answer: correctedAnswer, correctAnswer: correctedAnswer }
           : question;
       });
