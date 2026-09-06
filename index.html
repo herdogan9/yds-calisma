@@ -2395,11 +2395,15 @@
       "kelime-set-02-q-029-029": "E",
       "kelime-set-02-q-030-030": "C",
       "kelime-set-01-q-071-069": "D",
+      "bag-lac-set-01-q-029-029": "E",
+      "bag-lac-set-01-q-028-028": "B",
     });
     const VERIFIED_ANSWER_CORRECTIONS_BY_TEXT = Object.freeze([
       ["being patient with someone does not necessarily mean", "E"],
       ["wide range of theories that attempt to", "C"],
       ["architectural analysis is not only a", "D"],
+      ["the name anne anastasi is synonymous with psychometrics", "E"],
+      ["insurance policy against crop losses", "B"],
     ]);
     const STORAGE_UPLOADS = "yds-uploaded-pdfs-v1";
     const STORAGE_WORDS = "yds-wordbook-v1";
@@ -3107,12 +3111,26 @@
           const text = isWords ? (record.word || "Kelime") : questionStructureLabel(record);
           const detail = isWords ? (record.turkish || record.meaning || "Türkçe anlam eklenmedi") : questionStructureDetail(record);
           const location = question ? "Soru " + (question.questionNumber || "-") + " · Çözümde aç" : "Kaynağa bağlı kayıt";
-          return '<button class="article-collection-modal__item" data-source-collection-index="' + index + '" type="button">' +
+          if (isWords) return '<button class="article-collection-modal__item" data-source-collection-index="' + index + '" type="button">' +
             '<span class="article-collection-modal__item-content">' +
               '<span class="article-collection-modal__item-title">' + escapeHtml(text) + '</span>' +
               '<span class="article-collection-modal__item-detail">' + escapeHtml(detail) + '</span>' +
               '<span class="article-collection-modal__item-meta">' + escapeHtml(location) + '</span>' +
             '</span><span class="article-collection-modal__item-more" aria-hidden="true">•••</span></button>';
+          return '<article class="article-collection-modal__item">' +
+            '<button class="article-collection-modal__item-main" data-source-collection-index="' + index + '" type="button">' +
+              '<span class="article-collection-modal__item-content">' +
+                '<span class="article-collection-modal__item-title">' + escapeHtml(text) + '</span>' +
+                '<span class="article-collection-modal__item-detail">' + escapeHtml(detail) + '</span>' +
+                '<span class="article-collection-modal__item-meta">' + escapeHtml(location) + '</span>' +
+              '</span>' +
+            '</button>' +
+            '<button class="article-collection-modal__item-menu-toggle" data-source-structure-menu="' + index + '" type="button" aria-label="' + escapeHtml(text) + ' yapı işlemleri" aria-expanded="false">•••</button>' +
+            '<div class="article-collection-modal__item-menu" data-source-structure-menu-content="' + index + '" hidden>' +
+              '<button data-source-structure-action="edit" data-source-structure-index="' + index + '" type="button">Düzenle</button>' +
+              '<button data-source-structure-action="show" data-source-structure-index="' + index + '" type="button">Soruda Göster</button>' +
+            '</div>' +
+          '</article>';
         }).join("")
         : '<p class="px-1 py-4 text-sm font-semibold" style="color: var(--text-secondary)">' + (isWords ? "Soru çözerken Kelime Defterine eklediğin kelimeler burada görünecek." : "Soru çözümünde eklediğin önemli yapı notları burada görünecek.") + "</p>";
       const modal = document.createElement("div");
@@ -3124,6 +3142,24 @@
       const close = () => modal.remove();
       modal.addEventListener("click", event => { if (event.target === modal) close(); });
       modal.querySelector("[data-close-source-collection-modal]")?.addEventListener("click", close);
+      modal.querySelectorAll("[data-source-structure-menu]").forEach(button => button.addEventListener("click", () => {
+        const menu = modal.querySelector('[data-source-structure-menu-content="' + button.dataset.sourceStructureMenu + '"]');
+        const willOpen = menu?.hidden !== false;
+        modal.querySelectorAll("[data-source-structure-menu-content]").forEach(item => { item.hidden = true; });
+        modal.querySelectorAll("[data-source-structure-menu]").forEach(item => item.setAttribute("aria-expanded", "false"));
+        if (menu && willOpen) { menu.hidden = false; button.setAttribute("aria-expanded", "true"); }
+      }));
+      modal.querySelectorAll("[data-source-structure-action]").forEach(button => button.addEventListener("click", () => {
+        const record = records[Number(button.dataset.sourceStructureIndex)];
+        if (!record) return;
+        if (button.dataset.sourceStructureAction === "edit") {
+          close();
+          openQuickNoteDrawer({ note: record, onSaved: () => openSourceCardCollectionPopup(documentInfo, "structures") });
+          return;
+        }
+        close();
+        goToNoteSource(record);
+      }));
       modal.querySelectorAll("[data-source-collection-index]").forEach(button => button.addEventListener("click", () => {
         const record = records[Number(button.dataset.sourceCollectionIndex)];
         if (!record) return;
@@ -3472,13 +3508,16 @@
       return new Date(date.getTime() - offset).toISOString().slice(0, 10);
     }
 
+    const DAILY_WRONG_REVIEW_LIMIT = 10;
+
     function normalizeDailyWrongReviewStore(value) {
       const raw = value && typeof value === "object" && !Array.isArray(value) ? value : {};
       const rawRecords = raw.records && typeof raw.records === "object" && !Array.isArray(raw.records) ? raw.records : {};
       const records = {};
       Object.entries(rawRecords).forEach(([date, candidate]) => {
         if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !candidate || typeof candidate !== "object") return;
-        const questionIds = [...new Set((Array.isArray(candidate.questionIds) ? candidate.questionIds : []).filter(id => typeof id === "string" && id))].slice(0, 5);
+        const targetCount = Number.isInteger(candidate.targetCount) ? Math.min(Math.max(candidate.targetCount, 1), DAILY_WRONG_REVIEW_LIMIT) : 5;
+        const questionIds = [...new Set((Array.isArray(candidate.questionIds) ? candidate.questionIds : []).filter(id => typeof id === "string" && id))].slice(0, DAILY_WRONG_REVIEW_LIMIT);
         const results = {};
         const drafts = {};
         const rawResults = candidate.results && typeof candidate.results === "object" ? candidate.results : {};
@@ -3497,6 +3536,7 @@
         });
         records[date] = {
           date,
+          targetCount,
           questionIds,
           results,
           drafts,
@@ -3521,7 +3561,8 @@
     function createDailyWrongReviewRecord(date, questionIds, now = new Date().toISOString(), random = Math.random) {
       return {
         date,
-        questionIds: shuffleDailyWrongQuestionIds(questionIds, random).slice(0, 5),
+        targetCount: DAILY_WRONG_REVIEW_LIMIT,
+        questionIds: shuffleDailyWrongQuestionIds(questionIds, random).slice(0, DAILY_WRONG_REVIEW_LIMIT),
         results: {},
         drafts: {},
         currentIndex: 0,
@@ -3583,6 +3624,16 @@
       let record = dailyWrongReviewStore.records[date];
       if (!record) {
         record = createDailyWrongReviewRecord(date, wrongQuestions().map(question => question.id));
+        saveDailyWrongReviewRecord(record);
+      } else if ((record.targetCount || 5) < DAILY_WRONG_REVIEW_LIMIT) {
+        const existingIds = new Set(record.questionIds);
+        const additions = shuffleDailyWrongQuestionIds(wrongQuestions().map(question => question.id)).filter(questionId => !existingIds.has(questionId));
+        record = {
+          ...record,
+          targetCount: DAILY_WRONG_REVIEW_LIMIT,
+          questionIds: [...record.questionIds, ...additions].slice(0, DAILY_WRONG_REVIEW_LIMIT),
+          updatedAt: new Date().toISOString(),
+        };
         saveDailyWrongReviewRecord(record);
       }
       record.questionIds.forEach(questionId => {
@@ -4797,7 +4848,14 @@
         const recoveredAnswers = new Map(recovered.questions.map(question => [question.displayNumber, question.correctOption]));
         article.contentNodes.forEach(node => { if (node.type === "binary_choice" && !node.correctOption && recoveredAnswers.has(node.displayNumber)) node.correctOption = recoveredAnswers.get(node.displayNumber); });
         const isReview = Boolean(readForSpeedReviewAttemptId);
-        const progress = isReview ? (readForSpeedAttempts(article).find(attempt => attempt.id === readForSpeedReviewAttemptId) || latestCompletedReadForSpeedAttempt(article)) : readForSpeedProgress(article);
+        // Immediately after checking, activeAttemptId still points at the attempt
+        // that has just been completed. Keep rendering that exact attempt so its
+        // answers and correct/wrong states do not flash into a new blank attempt.
+        // A fresh attempt is created only through the explicit retry flow.
+        const completedActiveAttempt = readForSpeedAttempts(article).find(attempt => attempt.id === article.activeAttemptId && (attempt.completed || attempt.checked)) || null;
+        const progress = isReview
+          ? (readForSpeedAttempts(article).find(attempt => attempt.id === readForSpeedReviewAttemptId) || latestCompletedReadForSpeedAttempt(article))
+          : (completedActiveAttempt || readForSpeedProgress(article));
         const stats = (() => { const nodes = article.contentNodes.filter(node => node.type === "binary_choice"); const answers = progress.selectedAnswers || {}; const correct = nodes.filter(node => answers[node.questionId] === String(node.correctOption || "").toUpperCase()).length; const wrong = nodes.filter(node => answers[node.questionId] && answers[node.questionId] !== String(node.correctOption || "").toUpperCase()).length; const blank = nodes.length - Object.keys(answers).filter(id => ["A", "B"].includes(answers[id])).length; return { total: nodes.length, correct, wrong, blank, percent: nodes.length ? Math.round(correct / nodes.length * 100) : 0 }; })();
         const clean = !!article.cleanReading;
         const hasTurkishTranslation = typeof article.turkishText === "string" && article.turkishText.trim().length > 0;
@@ -5409,11 +5467,11 @@
       const progressLabel = summary.total ? (index + 1) + " / " + summary.total : "0 / 0";
       const subtitle = summary.total === 0
         ? "Yanlış yaptığın sorular burada günlük tekrar için otomatik olarak karşına gelecek."
-        : summary.total < 5
+        : summary.total < DAILY_WRONG_REVIEW_LIMIT
           ? "Yanlış havuzunda bugün tekrar edebileceğin " + summary.total + " soru var."
           : "Geçmişte yanlış cevapladığın sorulardan bugüne seçilenler.";
       const heading = '<div class="daily-wrong-review-header flex items-start justify-between gap-2">' +
-        '<div class="min-w-0"><p class="text-xs font-black uppercase tracking-wide text-blue-500">Günün 5 Yanlışı</p><p class="mt-1 text-sm font-semibold text-slate-500">' + escapeHtml(subtitle) + '</p></div>' +
+        '<div class="min-w-0"><p class="text-xs font-black uppercase tracking-wide text-blue-500">Günün 10 Yanlışı</p><p class="mt-1 text-sm font-semibold text-slate-500">' + escapeHtml(subtitle) + '</p></div>' +
         '<span class="daily-wrong-review-progress shrink-0 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">' + progressLabel + '</span>' +
       '</div>';
 
@@ -8645,8 +8703,14 @@
           return;
         }
         const now = new Date().toISOString();
+        const structureFields = item.sourceType === "question" ? {
+          highlightedText: titleInput.value.trim(),
+          selectedText: titleInput.value.trim(),
+          meaning: bodyInput.value.trim() || null,
+        } : {};
         const record = normalizeNote({
           ...item,
+          ...structureFields,
           content,
           createdAt: note?.createdAt || now,
           updatedAt: now,
