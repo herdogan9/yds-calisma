@@ -1899,15 +1899,18 @@
     .important-structure-modal > form { width: min(440px, 100%); border: 1px solid var(--border-color); border-radius: 1rem; padding: 1rem; background: var(--bg-surface); color: var(--text-primary); box-shadow: 0 18px 48px rgb(15 23 42 / 28%); }
     @media (max-width: 768px) { .important-structures-panel { inset: auto 0 0 0; width: 100%; max-height: 80vh; border-radius: 1.25rem 1.25rem 0 0; box-shadow: 0 -12px 36px rgb(15 23 42 / 22%); animation-name: importantStructuresUp; } @keyframes importantStructuresUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } } }
 
-    /* Compact notebook editor: keeps the notebook visible while the note stays focused. */
-    .note-drawer-overlay { position: fixed; inset: 0; z-index: 90; background: rgb(15 23 42 / 42%); backdrop-filter: blur(3px); animation: noteDrawerBackdropIn 150ms ease-out both; }
-    .note-drawer { position: absolute; inset: 12px 12px 12px auto; display: flex; width: min(580px, calc(100vw - 24px)); overflow: hidden; flex-direction: column; border: 1px solid var(--border-color); border-radius: 1.35rem; background: var(--bg-surface); color: var(--text-primary); box-shadow: -22px 0 60px rgb(15 23 42 / 24%); animation: noteDrawerIn 190ms cubic-bezier(.22,.8,.26,1) both; }
-    .note-drawer-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 20px 22px 18px; border-bottom: 1px solid var(--border-color); background: linear-gradient(135deg, color-mix(in srgb, #dbeafe 62%, var(--bg-surface)), var(--bg-surface) 72%); }
+    /* Compact notebook drawer: read first, edit on demand. */
+    .note-drawer-overlay { position: fixed; inset: 0; z-index: 90; background: rgb(15 23 42 / 38%); backdrop-filter: blur(4px); animation: noteDrawerBackdropIn 150ms ease-out both; }
+    .note-drawer { position: absolute; inset: 12px 12px 12px auto; display: flex; width: clamp(540px, 40vw, 680px); max-width: calc(100vw - 24px); overflow: hidden; flex-direction: column; border: 1px solid var(--border-color); border-radius: 1.35rem; background: var(--bg-surface); color: var(--text-primary); box-shadow: -22px 0 60px rgb(15 23 42 / 24%); animation: noteDrawerIn 190ms cubic-bezier(.22,.8,.26,1) both; }
+    .note-drawer-header { display: flex; flex: 0 0 auto; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 21px 24px 19px; border-bottom: 1px solid color-mix(in srgb, #93c5fd 42%, var(--border-color)); background: linear-gradient(135deg, color-mix(in srgb, #dbeafe 78%, var(--bg-surface)), color-mix(in srgb, #eff6ff 42%, var(--bg-surface)) 72%); }
     .note-drawer-heading { display: flex; min-width: 0; align-items: flex-start; gap: 12px; }
-    .note-drawer-icon { display: grid; width: 42px; height: 42px; flex: 0 0 auto; place-items: center; border: 1px solid #bfdbfe; border-radius: .85rem; background: #eff6ff; color: #2563eb; font-size: 20px; font-weight: 900; box-shadow: 0 4px 12px rgb(37 99 235 / 10%); }
+    .note-drawer-icon { display: grid; width: 46px; height: 46px; flex: 0 0 auto; place-items: center; border: 1px solid #bfdbfe; border-radius: .95rem; background: color-mix(in srgb, #eff6ff 86%, var(--bg-surface)); color: #2563eb; font-size: 21px; font-weight: 900; box-shadow: 0 5px 16px rgb(37 99 235 / 11%); }
     .note-drawer-eyebrow { margin: 0; color: #2563eb; font-size: 11px; font-weight: 900; letter-spacing: .11em; text-transform: uppercase; }
-    .note-drawer-title { margin: 3px 0 0; color: var(--text-primary); font-size: 22px; font-weight: 900; line-height: 1.15; letter-spacing: -.02em; }
+    .note-drawer-title { margin: 3px 0 0; color: var(--text-primary); font-size: 21px; font-weight: 900; line-height: 1.15; letter-spacing: -.02em; }
     .note-drawer-subtitle { margin: 5px 0 0; color: var(--text-secondary); font-size: 13px; font-weight: 600; line-height: 1.35; }
+    .note-drawer-header-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; }
+    .note-reader-edit { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: 7px; border: 1px solid #2563eb; border-radius: .85rem; background: #2563eb; color: #fff; padding: 8px 16px; font-size: 13px; font-weight: 900; box-shadow: 0 7px 18px rgb(37 99 235 / 22%); }
+    .note-reader-edit:hover { background: #1d4ed8; }
     .note-drawer-close { display: grid; width: 40px; height: 40px; flex: 0 0 auto; place-items: center; border: 1px solid var(--border-color); border-radius: .8rem; background: var(--bg-surface); color: var(--text-secondary); font-size: 22px; font-weight: 900; transition: border-color .15s ease, background .15s ease, color .15s ease, transform .15s ease; }
     .note-drawer-close:hover { border-color: #93c5fd; background: #eff6ff; color: #1d4ed8; transform: rotate(3deg); }
     .note-drawer-form { min-height: 0; flex: 1 1 auto; overflow-y: auto; padding: 20px 22px 24px; }
@@ -1916,15 +1919,45 @@
     .note-drawer-source-copy { min-width: 0; }
     .note-drawer-source-copy small { display: block; color: #2563eb; font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
     .note-drawer-source-copy strong { display: block; margin-top: 2px; overflow: hidden; color: var(--text-primary); font-size: 13px; font-weight: 750; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
+    .note-reader { min-height: 0; flex: 1 1 auto; overflow-y: auto; background: color-mix(in srgb, #f8fbff 82%, var(--bg-surface)); padding: 25px 30px 32px; }
+    .note-reader-hero { position: relative; overflow: hidden; border: 1px solid color-mix(in srgb, #93c5fd 52%, var(--border-color)); border-radius: 1.1rem; background: linear-gradient(135deg, color-mix(in srgb, #eff6ff 86%, var(--bg-surface)), color-mix(in srgb, #dbeafe 58%, var(--bg-surface))); padding: 16px 22px 16px 27px; box-shadow: 0 8px 22px rgb(37 99 235 / 7%); }
+    .note-reader-hero.is-long { padding-block: 15px; }
+    .note-reader-hero.is-extra-long { padding-block: 14px; }
+    .note-reader-hero-accent { position: absolute; inset: 0 auto 0 0; width: 6px; background: #2563eb; }
+    .note-reader-title { display: -webkit-box; margin: 0; overflow: hidden; color: color-mix(in srgb, #1d4ed8 82%, var(--text-primary)); font-size: clamp(26px, 2vw, 28px); font-weight: 900; line-height: 1.18; letter-spacing: -.022em; overflow-wrap: anywhere; text-wrap: balance; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+    .note-reader-title.is-long { font-size: clamp(22px, 1.8vw, 26px); line-height: 1.19; letter-spacing: -.016em; }
+    .note-reader-title.is-extra-long { font-size: clamp(20px, 1.6vw, 23px); line-height: 1.2; letter-spacing: -.01em; }
+    .note-reader-source { width: 100%; text-align: left; transition: border-color .15s ease, background .15s ease, transform .15s ease; }
+    .note-reader-source-footer { margin: 12px 0 0; border-color: color-mix(in srgb, #bfdbfe 72%, var(--border-color)); background: color-mix(in srgb, #eff6ff 56%, var(--bg-surface)); padding: 10px 12px; }
+    .note-reader-source-footer .note-drawer-source-icon { width: 30px; height: 30px; background: color-mix(in srgb, #dbeafe 72%, var(--bg-surface)); font-size: 15px; }
+    .note-reader-source-footer .note-drawer-source-copy strong { font-size: 12px; font-weight: 700; }
+    .note-reader-source:not(:disabled) { cursor: pointer; }
+    .note-reader-source:not(:disabled):hover { border-color: #60a5fa; background: color-mix(in srgb, #dbeafe 72%, var(--bg-surface)); transform: translateY(-1px); }
+    .note-reader-source:disabled { cursor: default; opacity: .78; }
+    .note-reader-source-arrow { margin-left: auto; color: #2563eb; font-size: 18px; font-weight: 900; }
+    .note-reader-section { margin-top: 12px; border: 1px solid var(--border-color); border-radius: 1.05rem; background: var(--bg-surface); padding: 16px 18px 18px; box-shadow: 0 7px 20px rgb(15 23 42 / 4%); }
+    .note-reader-section-heading { display: flex; align-items: center; gap: 10px; }
+    .note-reader-section-heading h4 { margin: 0; color: var(--text-primary); font-size: 16px; font-weight: 900; letter-spacing: -.01em; }
+    .note-reader-section-icon { display: grid; width: 34px; height: 34px; flex: 0 0 auto; place-items: center; border: 1px solid #bfdbfe; border-radius: .7rem; background: color-mix(in srgb, #eff6ff 82%, var(--bg-surface)); color: #2563eb; font-size: 18px; font-weight: 900; }
+    .note-reader-section-content { margin-top: 11px; border: 1px solid color-mix(in srgb, #cbd5e1 68%, var(--border-color)); border-radius: .85rem; background: color-mix(in srgb, #f8fafc 82%, var(--bg-surface)); color: var(--text-primary); padding: 12px 14px; font-size: 16.5px; font-weight: 600; line-height: 1.58; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .note-reader-example { border-color: color-mix(in srgb, #93c5fd 48%, var(--border-color)); background: linear-gradient(145deg, color-mix(in srgb, #eff6ff 78%, var(--bg-surface)), color-mix(in srgb, #dbeafe 36%, var(--bg-surface))); }
+    .note-reader-example-en { margin-top: 11px; color: var(--text-primary); font-size: 16.5px; font-weight: 850; line-height: 1.58; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .note-reader-example-tr { margin-top: 11px; border-top: 1px solid color-mix(in srgb, #93c5fd 45%, var(--border-color)); color: var(--text-secondary); padding-top: 11px; font-size: 16.5px; font-weight: 650; line-height: 1.58; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .note-reader-empty { margin: 0; color: var(--text-secondary); font-size: 14px; font-weight: 600; }
+    .note-reader-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 9px; margin-top: 19px; border-top: 1px solid var(--border-color); padding-top: 14px; color: var(--text-secondary); font-size: 12px; font-weight: 750; }
+    .note-reader-meta-pill { display: inline-flex; min-height: 32px; align-items: center; gap: 6px; border: 1px solid var(--border-color); border-radius: 999px; background: var(--bg-surface); color: var(--text-primary); padding: 5px 10px; box-shadow: 0 3px 10px rgb(15 23 42 / 4%); }
+    .note-reader-meta-pill > span:first-child { color: #2563eb; font-size: 14px; }
     .note-editor-field { display: grid; gap: 7px; }
-    .note-editor-field + .note-editor-field { margin-top: 17px; }
+    .note-editor-field + .note-editor-field { margin-top: 14px; }
     .note-editor-label-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
     .note-editor-label { color: var(--text-primary); font-size: 13px; font-weight: 850; }
     .note-editor-required { color: #e11d48; }
     .note-editor-help { color: var(--text-secondary); font-size: 11px; font-weight: 600; }
     .note-editor-title-input, .note-editor-textarea { width: 100%; border: 1px solid var(--border-color); background: var(--bg-surface-secondary); color: var(--text-primary); outline: 0; transition: border-color .15s ease, background .15s ease, box-shadow .15s ease; }
     .note-editor-title-input { height: 48px; border-radius: .85rem; padding: 0 14px; font-size: 16px; font-weight: 800; }
-    .note-editor-textarea { height: clamp(260px, 42vh, 440px); min-height: 240px; resize: vertical; border-radius: 1rem; padding: 15px 16px; font-size: 15px; font-weight: 550; line-height: 1.65; }
+    .note-editor-textarea { height: 82px; min-height: 72px; resize: vertical; border-radius: .9rem; padding: 12px 14px; font-size: 15px; font-weight: 550; line-height: 1.55; }
+    .note-editor-textarea.is-example { height: 94px; }
+    .note-editor-textarea.is-extra { height: 78px; }
     .note-editor-title-input::placeholder, .note-editor-textarea::placeholder { color: color-mix(in srgb, var(--text-secondary) 72%, transparent); }
     .note-editor-title-input:focus, .note-editor-textarea:focus { border-color: #3b82f6; background: var(--bg-surface); box-shadow: 0 0 0 4px rgb(59 130 246 / 13%); }
     .note-editor-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-top: 9px; color: var(--text-secondary); font-size: 11px; font-weight: 650; }
@@ -1951,26 +1984,27 @@
       .note-drawer-title { font-size: 20px; }
       .note-drawer-subtitle { display: none; }
       .note-drawer-form { padding: 16px; }
-      .note-editor-textarea { height: min(38vh, 340px); min-height: 210px; }
+      .note-reader { padding: 18px 16px 26px; }
+      .note-reader-hero { padding: 15px 18px 15px 23px; }
+      .note-reader-title { font-size: 25px; }
+      .note-reader-title.is-long { font-size: 21px; }
+      .note-reader-title.is-extra-long { font-size: 19px; }
+      .note-reader-section { margin-top: 12px; padding: 16px; }
+      .note-reader-section-content, .note-reader-example-en, .note-reader-example-tr { font-size: 16px; }
+      .note-reader-edit { min-height: 38px; padding-inline: 12px; }
+      .note-editor-textarea { height: 78px; min-height: 68px; }
+      .note-editor-textarea.is-example { height: 88px; }
       .note-drawer-footer { align-items: stretch; flex-direction: column; padding: 12px 16px 16px; }
       .note-drawer-shortcut { text-align: center; }
       .note-drawer-actions { display: grid; grid-template-columns: 1fr 1fr; }
     }
     @media (prefers-reduced-motion: reduce) { .note-drawer-overlay, .note-drawer { animation: none; } }
 
-    /* Mobil not kartları: düzenleyici açmadan ayrıntıyı aynı listede gösterir. */
-    .note-detail-toggle { display: none; }
-    @media (max-width: 760px) {
-      .note-card-title { transition: margin .22s ease; }
-      .note-card-preview { display: block !important; max-height: 4.5em; overflow: hidden; transition: max-height .24s ease; -webkit-box-orient: initial; -webkit-line-clamp: unset !important; }
-      .note-card.is-expanded .note-card-title { display: block; -webkit-line-clamp: unset; }
-      .note-card.is-expanded .note-card-preview { max-height: 55dvh; overflow-y: auto; overscroll-behavior: contain; }
-      .note-detail-toggle { display: inline-flex; width: fit-content; align-items: center; gap: 7px; margin-top: 12px; border: 1px solid var(--border-color); border-radius: 999px; background: var(--bg-surface); color: #2563eb; padding: 7px 10px; font-size: 12px; font-weight: 800; }
-      .note-detail-toggle-chevron { font-size: 15px; line-height: 1; transition: transform .22s ease; }
-      .note-card.is-expanded .note-detail-toggle-chevron { transform: rotate(180deg); }
-    }
-    @media (prefers-reduced-motion: reduce) { .note-card-preview, .note-detail-toggle-chevron { transition: none; } }
-
+    /* Notebook cards and controls keep the existing visual language at a denser scale. */
+    .note-card-title, .note-card-preview { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; }
+    .note-card-title { -webkit-line-clamp: 2; line-clamp: 2; }
+    .note-card-preview { -webkit-line-clamp: 3; line-clamp: 3; }
+    .note-card:focus-visible { border-color: #3b82f6; outline: 3px solid rgb(59 130 246 / 20%); outline-offset: 2px; }
     /* Ana sayfa UI polishing: mevcut bilgi mimarisini koruyup dikey yoğunluğu
        ve tipografik ağırlıkları daha kontrollü hale getirir. */
     @media (min-width: 1024px) {
@@ -2591,7 +2625,6 @@
     let noteSearchQuery = "";
     let noteSearchTimer = null;
     let noteSortMode = "newest";
-    let expandedNoteId = null;
     const STUDY_CONTENT_FONT_SIZES = [18, 20, 22, 24, 26, 28, 30, 32];
     const STUDY_CONTENT_FONT_SIZE_KEY = "studyContentFontSize";
     function closestStudyContentFontSize(value) {
@@ -3283,7 +3316,7 @@
         if (!record) return;
         if (button.dataset.sourceStructureAction === "edit") {
           close();
-          openQuickNoteDrawer({ note: record, onSaved: () => openSourceCardCollectionPopup(documentInfo, "structures") });
+          openQuickNoteDrawer({ note: record, mode: "edit", onSaved: () => openSourceCardCollectionPopup(documentInfo, "structures") });
           return;
         }
         close();
@@ -8775,7 +8808,10 @@
     function filteredNotes() {
       const query = normalizeLookup(noteSearchQuery);
       return notes
-        .filter(note => !query || normalizeLookup(note.content).includes(query) || normalizeLookup(note.highlightedText).includes(query) || normalizeLookup(note.meaning).includes(query) || normalizeLookup(note.sourceTitle).includes(query) || normalizeLookup(String(note.questionNumber || "")).includes(query))
+        .filter(note => {
+          const matchesQuery = !query || normalizeLookup(note.content).includes(query) || normalizeLookup(note.highlightedText).includes(query) || normalizeLookup(note.meaning).includes(query) || normalizeLookup(note.sourceTitle).includes(query) || normalizeLookup(String(note.questionNumber || "")).includes(query);
+          return matchesQuery;
+        })
         .sort((a, b) => {
           if (noteSortMode === "oldest") return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
           if (noteSortMode === "title-asc") return noteTitle(a).localeCompare(noteTitle(b), "tr");
@@ -8838,114 +8874,257 @@
       return titleIndex < 0 ? "" : lines.slice(titleIndex + 1).join("\n").trim();
     }
 
+    function noteReaderParts(note) {
+      const body = notePreview(note);
+      if (!body) return { meaning: "", example: "", translation: "", content: "" };
+      const sectionKeys = new Map([
+        ["anlamı:", "meaning"],
+        ["örnek cümle:", "example"],
+        ["türkçe karşılığı:", "translation"],
+        ["ek not:", "content"],
+      ]);
+      const structured = { meaning: [], example: [], translation: [], content: [] };
+      let activeSection = "";
+      let hasStructuredSections = false;
+      body.split(/\r?\n/).forEach(line => {
+        const section = sectionKeys.get(line.trim().toLocaleLowerCase("tr-TR"));
+        if (section) {
+          activeSection = section;
+          hasStructuredSections = true;
+          return;
+        }
+        structured[activeSection || "content"].push(line);
+      });
+      if (hasStructuredSections) {
+        return Object.fromEntries(Object.entries(structured).map(([key, lines]) => [key, lines.join("\n").trim()]));
+      }
+      const blocks = body.split(/\n\s*\n/).map(block => block.trim()).filter(Boolean);
+      const meaningBlocks = [];
+      while (blocks[0] && blocks[0].split(/\r?\n/).filter(Boolean).every(line => line.trim().startsWith("="))) meaningBlocks.push(blocks.shift());
+      let meaning = meaningBlocks.join("\n\n").trim();
+      if (!meaning && note?.meaning && normalizeLookup(body) === normalizeLookup(note.meaning)) {
+        meaning = body;
+        blocks.length = 0;
+      }
+      if (meaning && !blocks.length) return { meaning, example: "", translation: "", content: "" };
+      const remaining = blocks.join("\n\n").trim();
+      const lines = remaining.split(/\r?\n/);
+      const translationIndex = lines.findIndex(line => line.trim().startsWith("→"));
+      if (translationIndex >= 0) {
+        return {
+          meaning,
+          example: lines.slice(0, translationIndex).join("\n").trim(),
+          translation: lines.slice(translationIndex).join("\n").trim(),
+          content: "",
+        };
+      }
+      if (meaning && remaining) return { meaning, example: remaining, translation: "", content: "" };
+      return { meaning, example: "", translation: "", content: meaning ? "" : body };
+    }
+
+    function noteMeaningText(value) {
+      const text = String(value || "").trim();
+      return !text || text.startsWith("=") ? text : "= " + text;
+    }
+
+    function noteTranslationText(value) {
+      const text = String(value || "").trim();
+      return !text || text.startsWith("→") ? text : "→ " + text;
+    }
+
+    function noteEditorMeaning(value) {
+      return String(value || "").replace(/(^|\n)\s*=\s?/g, "$1").trim();
+    }
+
+    function noteEditorTranslation(value) {
+      return String(value || "").replace(/^\s*→\s?/, "").trim();
+    }
+
+    function serializeNoteContent(title, parts = {}) {
+      const blocks = [String(title || "").trim()];
+      const addSection = (label, value) => {
+        const text = String(value || "").trim();
+        if (text) blocks.push(label + "\n" + text);
+      };
+      addSection("Anlamı:", noteEditorMeaning(parts.meaning));
+      addSection("Örnek Cümle:", parts.example);
+      addSection("Türkçe Karşılığı:", noteEditorTranslation(parts.translation));
+      addSection("Ek Not:", parts.content);
+      return blocks.filter(Boolean).join("\n\n");
+    }
+
+    function noteDisplayPreview(note) {
+      const parts = noteReaderParts(note);
+      return [noteMeaningText(parts.meaning), parts.example, noteTranslationText(parts.translation), parts.content].filter(Boolean).join("\n\n");
+    }
+
     function formatNoteDate(value) {
       const date = new Date(value);
       return Number.isNaN(date.getTime()) ? "" : date.toLocaleDateString("tr-TR", { day: "numeric", month: "short", year: "numeric" });
     }
 
-    function openQuickNoteDrawer({ note = null, context = null, onSaved = null } = {}) {
+    function openQuickNoteDrawer({ note = null, context = null, onSaved = null, mode = null } = {}) {
       closeNoteDrawer();
-      const item = note ? normalizeNote(note) : normalizeNote({ ...context, content: context?.selectedText ? context.selectedText + "\n\n" : "" });
-      const initialTitle = String(item.content || "").trim() ? noteTitle(item) : "";
-      const initialBody = String(item.content || "").trim() ? notePreview(item) : "";
+      let item = note ? normalizeNote(note) : normalizeNote({ ...context, content: context?.selectedText ? context.selectedText + "\n\n" : "" });
+      let persisted = Boolean(note);
+      let drawerMode = mode || (persisted ? "read" : "edit");
+      let closeHandler = closeNoteDrawer;
       const overlay = document.createElement("div");
       overlay.id = "noteDrawerOverlay";
       overlay.className = "note-drawer-overlay";
-      const source = noteSourceLabel(item);
-      const noteKind = source ? "Kaynağa bağlı not" : "Serbest not";
-      overlay.innerHTML =
-        '<aside class="note-drawer" role="dialog" aria-modal="true" aria-labelledby="noteDrawerTitle">' +
-          '<header class="note-drawer-header">' +
-            '<div class="note-drawer-heading"><span class="note-drawer-icon" aria-hidden="true">▤</span><div><p class="note-drawer-eyebrow">' + escapeHtml(noteKind) + '</p><h2 class="note-drawer-title" id="noteDrawerTitle">' + (note ? "Notu Düzenle" : "Yeni Not") + '</h2><p class="note-drawer-subtitle">Başlığı kısa tut; açıklamaya örnek ve hatırlatıcılarını ekle.</p></div></div>' +
-            '<button type="button" data-note-drawer-close class="note-drawer-close" aria-label="Not düzenleyiciyi kapat">×</button>' +
-          '</header>' +
+      overlay.innerHTML = '<aside class="note-drawer" role="dialog" aria-modal="true" aria-labelledby="noteDrawerTitle"></aside>';
+      document.body.appendChild(overlay);
+      const drawer = overlay.querySelector(".note-drawer");
+
+      const drawerHeader = ({ title, subtitle = "", showEdit = false }) => {
+        const source = noteSourceLabel(item);
+        const noteKind = source ? "Kaynağa bağlı not" : "Serbest not";
+        return '<header class="note-drawer-header">' +
+          '<div class="note-drawer-heading"><span class="note-drawer-icon" aria-hidden="true">▤</span><div><p class="note-drawer-eyebrow">' + escapeHtml(noteKind) + '</p><h2 class="note-drawer-title" id="noteDrawerTitle">' + escapeHtml(title) + '</h2>' + (subtitle ? '<p class="note-drawer-subtitle">' + escapeHtml(subtitle) + '</p>' : "") + '</div></div>' +
+          '<div class="note-drawer-header-actions">' + (showEdit ? '<button type="button" class="note-reader-edit" data-note-reader-edit><span aria-hidden="true">✎</span><span>Düzenle</span></button>' : "") + '<button type="button" data-note-drawer-close class="note-drawer-close" aria-label="Not panelini kapat">×</button></div>' +
+        '</header>';
+      };
+
+      const bindCloseButtons = () => overlay.querySelectorAll("[data-note-drawer-close]").forEach(button => button.addEventListener("click", () => closeHandler()));
+
+      const renderReadMode = () => {
+        drawerMode = "read";
+        const source = noteSourceLabel(item);
+        const sourceExists = noteSourceExists(item);
+        const title = noteTitle(item);
+        const body = notePreview(item);
+        const parts = noteReaderParts(item);
+        const displayMeaning = noteMeaningText(parts.meaning);
+        const displayTranslation = noteTranslationText(parts.translation);
+        const titleSizeClass = title.length > 72 ? " is-extra-long" : title.length > 42 ? " is-long" : "";
+        const noteKind = source ? "Kaynağa bağlı" : "Serbest not";
+        closeHandler = closeNoteDrawer;
+        drawer.innerHTML = drawerHeader({ title: "Not Detayı", showEdit: true }) +
+          '<main class="note-reader" tabindex="-1">' +
+            '<section class="note-reader-hero' + titleSizeClass + '" aria-labelledby="noteReaderHeading"><span class="note-reader-hero-accent" aria-hidden="true"></span><h3 class="note-reader-title' + titleSizeClass + '" id="noteReaderHeading">' + escapeHtml(title) + '</h3></section>' +
+            (displayMeaning ? '<section class="note-reader-section note-reader-meaning"><div class="note-reader-section-heading"><span class="note-reader-section-icon" aria-hidden="true">≡</span><h4>Anlamı</h4></div><div class="note-reader-section-content">' + escapeHtml(displayMeaning) + '</div></section>' : "") +
+            (parts.example ? '<section class="note-reader-section note-reader-example"><div class="note-reader-section-heading"><span class="note-reader-section-icon" aria-hidden="true">“</span><h4>Örnek Cümle</h4></div><div class="note-reader-example-en">' + escapeHtml(parts.example) + '</div>' + (displayTranslation ? '<div class="note-reader-example-tr">' + escapeHtml(displayTranslation) + '</div>' : "") + '</section>' : "") +
+            (!parts.example && displayTranslation ? '<section class="note-reader-section note-reader-example"><div class="note-reader-section-heading"><span class="note-reader-section-icon" aria-hidden="true">“</span><h4>Türkçe Karşılığı</h4></div><div class="note-reader-example-tr">' + escapeHtml(displayTranslation) + '</div></section>' : "") +
+            (parts.content ? '<section class="note-reader-section note-reader-generic"><div class="note-reader-section-heading"><span class="note-reader-section-icon" aria-hidden="true">☰</span><h4>Not İçeriği</h4></div><div class="note-reader-section-content">' + escapeHtml(parts.content) + '</div></section>' : "") +
+            (!body ? '<section class="note-reader-section note-reader-generic"><p class="note-reader-empty">Bu notta açıklama bulunmuyor.</p></section>' : "") +
+            '<div class="note-reader-meta"><span class="note-reader-meta-pill"><span aria-hidden="true">▤</span><span>' + escapeHtml(noteKind) + '</span></span><span class="note-reader-meta-pill"><span aria-hidden="true">▣</span><span>' + escapeHtml(formatNoteDate(item.createdAt)) + '</span></span></div>' +
+            (source ? '<button type="button" class="note-drawer-source note-reader-source note-reader-source-footer" data-note-reader-source ' + (sourceExists ? "" : "disabled") + '><span class="note-drawer-source-icon" aria-hidden="true">↗</span><span class="note-drawer-source-copy"><small>Bağlı kaynak</small><strong title="' + escapeHtml(source) + '">' + escapeHtml(source) + '</strong></span>' + (sourceExists ? '<span class="note-reader-source-arrow" aria-hidden="true">→</span>' : "") + '</button>' : "") +
+          '</main>';
+        bindCloseButtons();
+        overlay.querySelector("[data-note-reader-edit]")?.addEventListener("click", renderEditMode);
+        overlay.querySelector("[data-note-reader-source]")?.addEventListener("click", () => {
+          closeNoteDrawer();
+          goToNoteSource(item);
+        });
+        window.setTimeout(() => overlay.querySelector("[data-note-reader-edit]")?.focus(), 0);
+      };
+
+      const renderEditMode = () => {
+        drawerMode = "edit";
+        const source = noteSourceLabel(item);
+        const initialTitle = String(item.content || "").trim() ? noteTitle(item) : "";
+        const initialParts = String(item.content || "").trim() ? noteReaderParts(item) : { meaning: "", example: "", translation: "", content: "" };
+        const initialMeaning = noteEditorMeaning(initialParts.meaning);
+        const initialExample = String(initialParts.example || "").trim();
+        const initialTranslation = noteEditorTranslation(initialParts.translation);
+        const initialExtra = String(initialParts.content || "").trim();
+        drawer.innerHTML = drawerHeader({ title: persisted ? "Notu Düzenle" : "Yeni Not", subtitle: "Başlığı kısa tut; açıklamaya örnek ve hatırlatıcılarını ekle." }) +
           '<form id="noteEditorForm" class="note-drawer-form">' +
             (source ? '<div class="note-drawer-source"><span class="note-drawer-source-icon" aria-hidden="true">↗</span><div class="note-drawer-source-copy"><small>Bağlı kaynak</small><strong title="' + escapeHtml(source) + '">' + escapeHtml(source) + '</strong></div></div>' : "") +
             '<label class="note-editor-field" for="noteTitleInput"><span class="note-editor-label-row"><span class="note-editor-label">Başlık <span class="note-editor-required">*</span></span><span class="note-editor-help">Not kartında görünen ilk satır</span></span><input id="noteTitleInput" class="note-editor-title-input" required autocomplete="off" placeholder="Örn. replace sb/sth with/by sb/sth" value="' + escapeHtml(initialTitle) + '"></label>' +
-            '<label class="note-editor-field" for="noteBodyInput"><span class="note-editor-label-row"><span class="note-editor-label">Açıklama</span><span class="note-editor-help">Anlam, kural veya örnek cümle</span></span><textarea id="noteBodyInput" class="note-editor-textarea" placeholder="Türkçe karşılığını, kullanım kuralını veya örnek cümleni yazabilirsin.">' + escapeHtml(initialBody) + '</textarea></label>' +
+            '<label class="note-editor-field" for="noteMeaningInput"><span class="note-editor-label-row"><span class="note-editor-label">Anlamı</span><span class="note-editor-help">İsteğe bağlı</span></span><textarea id="noteMeaningInput" class="note-editor-textarea" placeholder="Türkçe anlamını veya kısa açıklamasını yaz.">' + escapeHtml(initialMeaning) + '</textarea></label>' +
+            '<label class="note-editor-field" for="noteExampleInput"><span class="note-editor-label-row"><span class="note-editor-label">Örnek Cümle</span><span class="note-editor-help">İngilizce örnek</span></span><textarea id="noteExampleInput" class="note-editor-textarea is-example" placeholder="Örn. Most countries were affected, and Turkey was no exception.">' + escapeHtml(initialExample) + '</textarea></label>' +
+            '<label class="note-editor-field" for="noteTranslationInput"><span class="note-editor-label-row"><span class="note-editor-label">Türkçe Karşılığı</span><span class="note-editor-help">Örnek cümlenin çevirisi</span></span><textarea id="noteTranslationInput" class="note-editor-textarea" placeholder="Örnek cümlenin Türkçe karşılığını yaz.">' + escapeHtml(initialTranslation) + '</textarea></label>' +
+            '<label class="note-editor-field" for="noteExtraInput"><span class="note-editor-label-row"><span class="note-editor-label">Ek Not</span><span class="note-editor-help">Kural veya hatırlatıcı</span></span><textarea id="noteExtraInput" class="note-editor-textarea is-extra" placeholder="Varsa ek kuralını veya hatırlatıcını yaz.">' + escapeHtml(initialExtra) + '</textarea></label>' +
             '<div class="note-editor-meta"><span class="note-editor-dirty" id="noteEditorDirty">Değişiklik yok</span><span><b id="noteEditorLineCount">0</b> satır · <b id="noteEditorCharCount">0</b> karakter</span></div>' +
             '<p id="noteEditorError" class="note-editor-error hidden" role="alert"></p>' +
           '</form>' +
-          '<footer class="note-drawer-footer"><span class="note-drawer-shortcut"><kbd>⌘/Ctrl</kbd> + <kbd>Enter</kbd> ile kaydet</span><div class="note-drawer-actions"><button type="button" data-note-drawer-close class="note-drawer-cancel">İptal</button><button type="submit" form="noteEditorForm" class="note-drawer-save">' + (note ? "Değişiklikleri Kaydet" : "Notu Kaydet") + '</button></div></footer>' +
-        '</aside>';
-      document.body.appendChild(overlay);
-      const titleInput = overlay.querySelector("#noteTitleInput");
-      const bodyInput = overlay.querySelector("#noteBodyInput");
-      const dirtyStatus = overlay.querySelector("#noteEditorDirty");
-      const editorContent = () => [titleInput.value.trim(), bodyInput.value.trim()].filter(Boolean).join("\n\n");
-      const isDirty = () => titleInput.value !== initialTitle || bodyInput.value !== initialBody;
-      const updateEditorMeta = () => {
-        const content = editorContent();
-        overlay.querySelector("#noteEditorLineCount").textContent = content ? String(content.split(/\r?\n/).length) : "0";
-        overlay.querySelector("#noteEditorCharCount").textContent = String(content.length);
-        dirtyStatus.textContent = isDirty() ? "Kaydedilmemiş değişiklik" : "Değişiklik yok";
-        dirtyStatus.classList.toggle("is-dirty", isDirty());
-        overlay.querySelector("#noteEditorError").classList.add("hidden");
-      };
-      const requestClose = () => {
-        if (isDirty() && !window.confirm("Kaydedilmemiş değişiklikler var. Not düzenleyici kapatılsın mı?")) return;
-        closeNoteDrawer();
-      };
-      titleInput.addEventListener("input", updateEditorMeta);
-      bodyInput.addEventListener("input", updateEditorMeta);
-      updateEditorMeta();
-      overlay.addEventListener("click", event => { if (event.target === overlay) requestClose(); });
-      overlay.querySelectorAll("[data-note-drawer-close]").forEach(button => button.addEventListener("click", requestClose));
-      overlay.addEventListener("keydown", event => {
-        if (event.key === "Escape") requestClose();
-        if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+          '<footer class="note-drawer-footer"><span class="note-drawer-shortcut"><kbd>⌘/Ctrl</kbd> + <kbd>Enter</kbd> ile kaydet</span><div class="note-drawer-actions"><button type="button" class="note-drawer-cancel" data-note-editor-cancel>İptal</button><button type="submit" form="noteEditorForm" class="note-drawer-save">' + (persisted ? "Değişiklikleri Kaydet" : "Notu Kaydet") + '</button></div></footer>';
+        const titleInput = overlay.querySelector("#noteTitleInput");
+        const meaningInput = overlay.querySelector("#noteMeaningInput");
+        const exampleInput = overlay.querySelector("#noteExampleInput");
+        const translationInput = overlay.querySelector("#noteTranslationInput");
+        const extraInput = overlay.querySelector("#noteExtraInput");
+        const editorInputs = [titleInput, meaningInput, exampleInput, translationInput, extraInput];
+        const dirtyStatus = overlay.querySelector("#noteEditorDirty");
+        const editorContent = () => serializeNoteContent(titleInput.value, { meaning: meaningInput.value, example: exampleInput.value, translation: translationInput.value, content: extraInput.value });
+        const isDirty = () => titleInput.value !== initialTitle || meaningInput.value !== initialMeaning || exampleInput.value !== initialExample || translationInput.value !== initialTranslation || extraInput.value !== initialExtra;
+        const updateEditorMeta = () => {
+          const content = editorContent();
+          overlay.querySelector("#noteEditorLineCount").textContent = content ? String(content.split(/\r?\n/).length) : "0";
+          overlay.querySelector("#noteEditorCharCount").textContent = String(content.length);
+          dirtyStatus.textContent = isDirty() ? "Kaydedilmemiş değişiklik" : "Değişiklik yok";
+          dirtyStatus.classList.toggle("is-dirty", isDirty());
+          overlay.querySelector("#noteEditorError").classList.add("hidden");
+        };
+        const confirmDiscard = () => !isDirty() || window.confirm("Kaydedilmemiş değişiklikler var. Değişiklikler iptal edilsin mi?");
+        closeHandler = () => { if (confirmDiscard()) closeNoteDrawer(); };
+        const cancelEdit = () => {
+          if (!confirmDiscard()) return;
+          if (persisted) renderReadMode();
+          else closeNoteDrawer();
+        };
+        bindCloseButtons();
+        overlay.querySelector("[data-note-editor-cancel]")?.addEventListener("click", cancelEdit);
+        editorInputs.forEach(input => input.addEventListener("input", updateEditorMeta));
+        updateEditorMeta();
+        overlay.querySelector("#noteEditorForm").addEventListener("submit", event => {
           event.preventDefault();
-          overlay.querySelector("#noteEditorForm").requestSubmit();
-        }
-      });
-      overlay.querySelector("#noteEditorForm").addEventListener("submit", event => {
-        event.preventDefault();
-        const content = editorContent();
-        const error = overlay.querySelector("#noteEditorError");
-        if (!titleInput.value.trim()) {
-          error.textContent = "Not başlığı boş bırakılamaz.";
-          error.classList.remove("hidden");
-          titleInput.focus();
-          return;
-        }
-        const now = new Date().toISOString();
-        const structureFields = item.sourceType === "question" ? {
-          highlightedText: titleInput.value.trim(),
-          selectedText: titleInput.value.trim(),
-          meaning: bodyInput.value.trim() || null,
-        } : {};
-        const record = normalizeNote({
-          ...item,
-          ...structureFields,
-          content,
-          createdAt: note?.createdAt || now,
-          updatedAt: now,
+          const content = editorContent();
+          const error = overlay.querySelector("#noteEditorError");
+          if (!titleInput.value.trim()) {
+            error.textContent = "Not başlığı boş bırakılamaz.";
+            error.classList.remove("hidden");
+            titleInput.focus();
+            return;
+          }
+          const now = new Date().toISOString();
+          const structureFields = item.sourceType === "question" || item.noteType === "important_structure" ? { highlightedText: titleInput.value.trim(), selectedText: titleInput.value.trim(), meaning: meaningInput.value.trim() || extraInput.value.trim() || null } : {};
+          const record = normalizeNote({ ...item, ...structureFields, content, createdAt: item.createdAt || now, updatedAt: now });
+          notes = persisted ? notes.map(existing => existing.id === item.id ? record : existing) : [record, ...notes];
+          persisted = true;
+          item = record;
+          saveNotes();
+          if (typeof onSaved === "function") {
+            closeNoteDrawer();
+            onSaved(record);
+          } else if (activeView === "notes") {
+            renderNotebook();
+            renderReadMode();
+          } else {
+            closeNoteDrawer();
+          }
         });
-        notes = note ? notes.map(existing => existing.id === note.id ? record : existing) : [record, ...notes];
-        saveNotes();
-        closeNoteDrawer();
-        if (typeof onSaved === "function") onSaved(record);
-        else if (activeView === "notes") renderNotebook();
+        const focusTarget = persisted ? (meaningInput.value ? meaningInput : exampleInput.value ? exampleInput : translationInput.value ? translationInput : extraInput.value ? extraInput : titleInput) : titleInput;
+        window.setTimeout(() => {
+          focusTarget.focus();
+          if (focusTarget !== titleInput) focusTarget.setSelectionRange(focusTarget.value.length, focusTarget.value.length);
+        }, 0);
+      };
+
+      overlay.addEventListener("click", event => { if (event.target === overlay) closeHandler(); });
+      overlay.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeHandler();
+        if (drawerMode === "edit" && event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+          event.preventDefault();
+          overlay.querySelector("#noteEditorForm")?.requestSubmit();
+        }
       });
-      const focusTarget = note && initialBody ? bodyInput : titleInput;
-      focusTarget.focus();
-      if (focusTarget === bodyInput) bodyInput.setSelectionRange(bodyInput.value.length, bodyInput.value.length);
+      if (drawerMode === "read") renderReadMode();
+      else renderEditMode();
     }
 
     function noteCardHtml(note) {
-      const preview = notePreview(note);
+      const preview = noteDisplayPreview(note).replace(/\n\s*\.{3}\s*$/, "").trim();
       const hasSource = note.sourceType !== "manual" && Boolean(note.sourceId || note.questionId);
       const sourceExists = noteSourceExists(note);
-      const sourceStatus = !hasSource ? "Serbest not" : !sourceExists ? "Kaynak artık mevcut değil" : "";
-      const expanded = expandedNoteId === note.id;
-      const previewId = "note-preview-" + String(note.id).replace(/[^a-zA-Z0-9_-]/g, "-");
-      return '<article class="note-card' + (expanded ? ' is-expanded' : '') + ' relative flex min-h-[220px] min-w-0 cursor-pointer flex-col rounded-2xl border border-slate-200 bg-slate-50 p-[22px] shadow-sm transition duration-150 hover:border-slate-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800" data-note-open="' + escapeHtml(note.id) + '">' +
+      const sourceStatus = !hasSource ? "Serbest not" : !sourceExists ? "Kaynak artık mevcut değil" : "Kaynağa bağlı";
+      return '<article class="note-card relative flex min-h-[170px] min-w-0 cursor-pointer flex-col rounded-2xl border border-slate-200 bg-slate-50 p-[18px] shadow-sm transition duration-150 hover:border-blue-200 hover:shadow-md dark:border-slate-700 dark:bg-slate-800" data-note-open="' + escapeHtml(note.id) + '" tabindex="0" role="button" aria-label="' + escapeHtml(noteTitle(note)) + ' notunu aç">' +
         '<div class="flex items-start justify-between gap-3"><p class="text-xs font-bold text-slate-500">' + escapeHtml(formatNoteDate(note.createdAt)) + '</p>' +
         '<button class="note-menu-toggle flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-lg font-black text-slate-500 hover:bg-slate-100 hover:text-blue-700 dark:border-slate-700 dark:bg-slate-900" data-note-id="' + escapeHtml(note.id) + '" aria-label="' + escapeHtml(noteTitle(note)) + ' not işlemleri" aria-expanded="false">…</button></div>' +
-        '<h3 class="note-card-title mt-4 line-clamp-3 break-words text-[clamp(20px,1.55vw,23px)] font-bold leading-[1.28] text-blue-700">' + escapeHtml(noteTitle(note)) + '</h3>' +
-        (preview ? '<p class="note-card-preview mt-2 whitespace-pre-wrap line-clamp-3 text-base font-medium leading-relaxed text-slate-700 dark:text-slate-300" id="' + previewId + '">' + escapeHtml(preview) + '</p>' : "") +
-        (preview ? '<button type="button" class="note-detail-toggle" data-note-detail="' + escapeHtml(note.id) + '" aria-expanded="' + String(expanded) + '" aria-controls="' + previewId + '"><span class="note-detail-toggle-label">' + (expanded ? 'Detayı gizle' : 'Detayı göster') + '</span><span class="note-detail-toggle-chevron" aria-hidden="true">⌄</span></button>' : "") +
-        '<div class="mt-auto flex min-w-0 items-center gap-2 border-t border-slate-200 pt-4 text-xs dark:border-slate-700">' + (sourceExists ? '<button class="note-source-link ml-auto flex w-full items-center justify-end text-blue-700 hover:text-blue-800" data-note-source="' + escapeHtml(note.id) + '" aria-label="Notun kaynağına git" title="Kaynağa git"><b aria-hidden="true" class="shrink-0 text-base">→</b></button>' : '<span class="' + (hasSource ? "font-medium text-slate-500" : "rounded-full border border-slate-200 px-2 py-0.5 font-bold text-slate-500 dark:border-slate-700") + '">' + sourceStatus + '</span>') + '</div>' +
+        '<h3 class="note-card-title mt-3 break-words text-[clamp(18px,1.45vw,21px)] font-bold leading-[1.28] text-blue-700">' + escapeHtml(noteTitle(note)) + '</h3>' +
+        (preview ? '<p class="note-card-preview mt-1.5 whitespace-pre-wrap text-[15px] font-medium leading-[1.55] text-slate-700 dark:text-slate-300">' + escapeHtml(preview) + '</p>' : "") +
+        '<div class="mt-3 flex min-w-0 items-center gap-2 border-t border-slate-200 pt-3 text-xs dark:border-slate-700"><span class="' + (hasSource && !sourceExists ? "font-medium text-slate-500" : "rounded-full border border-slate-200 px-2 py-0.5 font-bold text-slate-500 dark:border-slate-700") + '">' + sourceStatus + '</span>' + (sourceExists ? '<button class="note-source-link ml-auto flex h-8 w-8 items-center justify-center rounded-lg text-blue-700 hover:bg-blue-50 hover:text-blue-800" data-note-source="' + escapeHtml(note.id) + '" aria-label="Notun kaynağına git" title="Kaynağa git"><b aria-hidden="true" class="shrink-0 text-base">→</b></button>' : "") + '</div>' +
         '<div class="note-action-menu hidden absolute right-4 top-14 z-10 w-48 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl" data-note-menu="' + escapeHtml(note.id) + '">' +
           '<button data-note-action="edit" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50">Düzenle</button>' +
           (sourceExists ? '<button data-note-action="source" data-note-id="' + escapeHtml(note.id) + '" class="w-full rounded-lg px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-slate-50">Kaynağa Git</button>' : "") +
@@ -8954,88 +9133,91 @@
       '</article>';
     }
 
+    function notebookResultsHtml() {
+      const visibleNotes = filteredNotes();
+      return visibleNotes.length
+        ? '<section class="mt-4 grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">' + visibleNotes.map(noteCardHtml).join("") + '</section>'
+        : '<section class="mt-4 rounded-2xl border border-slate-200 bg-white px-6 py-14 text-center shadow-sm">' + (notes.length ? '<h2 class="text-xl font-black text-slate-950">Aramana uygun not bulunamadı.</h2><p class="mx-auto mt-2 max-w-md text-sm font-medium text-slate-500">Farklı bir kelime deneyebilirsin.</p><button id="clearNoteSearchBtn" class="mt-5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-black text-slate-700 hover:bg-slate-50">Aramayı Temizle</button>' : '<h2 class="text-xl font-black text-slate-950">Henüz not eklenmedi.</h2><p class="mx-auto mt-2 max-w-md text-sm font-medium text-slate-500">Okuma veya soru çözümü sırasında dikkatini çeken yapıları buraya kaydedebilirsin.</p><button id="firstNoteBtn" class="mt-5 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-lg shadow-blue-200">+ Yeni Not</button>') + '</section>';
+    }
+
     function renderNotebook() {
       pageTitle.textContent = "Not Defteri";
       renderMenu();
       renderStats();
-      const visibleNotes = filteredNotes();
       appArea.innerHTML =
-        '<section class="rounded-2xl border border-slate-200 bg-white px-5 py-[22px] shadow-sm sm:px-6">' +
+        '<section class="rounded-2xl border border-slate-200 bg-white px-5 py-[18px] shadow-sm sm:px-6">' +
           '<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">' +
             '<p class="text-sm font-medium text-slate-500">Pratik gramer, kalıp ve çalışma notlarını tek yerde tut.</p>' +
             '<div class="flex items-center justify-between gap-3"><button id="newNoteBtn" aria-label="Yeni not oluştur" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-sm hover:bg-blue-500">+ Yeni Not</button></div>' +
           '</div>' +
-          '<div class="mt-4 grid gap-2 sm:grid-cols-[minmax(0,1fr)_190px]">' +
-            '<input id="noteSearchInput" class="h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white" placeholder="Notlarda ara..." value="' + escapeHtml(noteSearchQuery) + '">' +
-            '<select id="noteSortSelect" class="h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:bg-white"><option value="newest"' + (noteSortMode === "newest" ? " selected" : "") + '>Son eklenen</option><option value="oldest"' + (noteSortMode === "oldest" ? " selected" : "") + '>İlk eklenen</option><option value="title-asc"' + (noteSortMode === "title-asc" ? " selected" : "") + '>A–Z</option><option value="title-desc"' + (noteSortMode === "title-desc" ? " selected" : "") + '>Z–A</option></select>' +
+          '<div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">' +
+            '<input id="noteSearchInput" class="h-11 min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white" placeholder="Notlarda ara..." value="' + escapeHtml(noteSearchQuery) + '">' +
+            '<select id="noteSortSelect" aria-label="Notları sırala" class="h-10 min-w-[168px] rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:bg-white"><option value="newest"' + (noteSortMode === "newest" ? " selected" : "") + '>Son eklenen</option><option value="oldest"' + (noteSortMode === "oldest" ? " selected" : "") + '>Eski → yeni</option><option value="title-asc"' + (noteSortMode === "title-asc" ? " selected" : "") + '>A → Z</option><option value="title-desc"' + (noteSortMode === "title-desc" ? " selected" : "") + '>Z → A</option></select>' +
           '</div>' +
-        '</section>' +
-        (visibleNotes.length ? '<section class="mt-4 grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">' + visibleNotes.map(noteCardHtml).join("") + '</section>' :
-          '<section class="mt-4 rounded-2xl border border-slate-200 bg-white px-6 py-14 text-center shadow-sm">' + (notes.length ? '<h2 class="text-xl font-black text-slate-950">Aramanla eşleşen not bulunamadı.</h2><button id="clearNoteSearchBtn" class="mt-5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-black text-slate-700 hover:bg-slate-50">Aramayı Temizle</button>' : '<h2 class="text-xl font-black text-slate-950">Henüz not eklenmedi.</h2><p class="mx-auto mt-2 max-w-md text-sm font-medium text-slate-500">Okuma veya soru çözümü sırasında dikkatini çeken yapıları buraya kaydedebilirsin.</p><button id="firstNoteBtn" class="mt-5 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-black text-white shadow-lg shadow-blue-200">+ Yeni Not</button>') + '</section>');
+        '</section><div id="notebookResults">' + notebookResultsHtml() + '</div>';
+      const bindNotebookResults = () => {
+        document.getElementById("firstNoteBtn")?.addEventListener("click", () => openQuickNoteDrawer());
+        document.getElementById("clearNoteSearchBtn")?.addEventListener("click", () => {
+          noteSearchQuery = "";
+          const searchInput = document.getElementById("noteSearchInput");
+          if (searchInput) searchInput.value = "";
+          renderNotebookResults();
+          searchInput?.focus({ preventScroll: true });
+        });
+        appArea.querySelectorAll(".note-menu-toggle").forEach(button => button.addEventListener("click", event => {
+          event.stopPropagation();
+          const menu = appArea.querySelector('[data-note-menu="' + button.dataset.noteId + '"]');
+          const shouldOpen = menu?.classList.contains("hidden");
+          appArea.querySelectorAll(".note-action-menu").forEach(item => item.classList.add("hidden"));
+          if (shouldOpen) { menu?.classList.remove("hidden"); button.setAttribute("aria-expanded", "true"); }
+        }));
+        appArea.querySelectorAll("[data-note-action]").forEach(button => button.addEventListener("click", () => {
+          const index = notes.findIndex(note => note.id === button.dataset.noteId);
+          if (index < 0) return;
+          const action = button.dataset.noteAction;
+          if (action === "edit") return openQuickNoteDrawer({ note: notes[index], mode: "edit" });
+          if (action === "source") return goToNoteSource(notes[index]);
+          if (action === "delete") {
+            if (!window.confirm('"' + noteTitle(notes[index]) + '" notunu silmek istediğine emin misin?')) return;
+            notes.splice(index, 1);
+          }
+          saveNotes();
+          renderNotebook();
+        }));
+        appArea.querySelectorAll("[data-note-open]").forEach(card => card.addEventListener("click", event => {
+          if (event.target.closest("button")) return;
+          const note = notes.find(item => item.id === card.dataset.noteOpen);
+          if (note) openQuickNoteDrawer({ note });
+        }));
+        appArea.querySelectorAll("[data-note-open]").forEach(card => card.addEventListener("keydown", event => {
+          if (event.target !== card || (event.key !== "Enter" && event.key !== " ")) return;
+          event.preventDefault();
+          const note = notes.find(item => item.id === card.dataset.noteOpen);
+          if (note) openQuickNoteDrawer({ note });
+        }));
+        appArea.querySelectorAll("[data-note-source]").forEach(button => button.addEventListener("click", event => {
+          event.stopPropagation();
+          const note = notes.find(item => item.id === button.dataset.noteSource);
+          if (note) goToNoteSource(note);
+        }));
+      };
+      const renderNotebookResults = () => {
+        const results = document.getElementById("notebookResults");
+        if (!results) return;
+        results.innerHTML = notebookResultsHtml();
+        bindNotebookResults();
+      };
       document.getElementById("newNoteBtn")?.addEventListener("click", () => openQuickNoteDrawer());
-      document.getElementById("firstNoteBtn")?.addEventListener("click", () => openQuickNoteDrawer());
-      document.getElementById("clearNoteSearchBtn")?.addEventListener("click", () => { noteSearchQuery = ""; renderNotebook(); });
       document.getElementById("noteSearchInput")?.addEventListener("input", event => {
         noteSearchQuery = event.target.value;
         clearTimeout(noteSearchTimer);
-        noteSearchTimer = setTimeout(renderNotebook, 180);
+        noteSearchTimer = setTimeout(renderNotebookResults, 180);
       });
       document.getElementById("noteSortSelect")?.addEventListener("change", event => {
         noteSortMode = event.target.value || "newest";
-        renderNotebook();
+        renderNotebookResults();
       });
-      const setMobileNoteExpanded = (card, expanded) => {
-        card.classList.toggle("is-expanded", expanded);
-        const button = card.querySelector("[data-note-detail]");
-        button?.setAttribute("aria-expanded", String(expanded));
-        const label = button?.querySelector(".note-detail-toggle-label");
-        if (label) label.textContent = expanded ? "Detayı gizle" : "Detayı göster";
-      };
-      const toggleMobileNoteDetails = card => {
-        const shouldExpand = !card.classList.contains("is-expanded");
-        appArea.querySelectorAll(".note-card.is-expanded").forEach(item => setMobileNoteExpanded(item, false));
-        setMobileNoteExpanded(card, shouldExpand);
-        expandedNoteId = shouldExpand ? card.dataset.noteOpen : null;
-      };
-      appArea.querySelectorAll(".note-menu-toggle").forEach(button => button.addEventListener("click", event => {
-        event.stopPropagation();
-        const menu = appArea.querySelector('[data-note-menu="' + button.dataset.noteId + '"]');
-        const shouldOpen = menu?.classList.contains("hidden");
-        appArea.querySelectorAll(".note-action-menu").forEach(item => item.classList.add("hidden"));
-        if (shouldOpen) { menu?.classList.remove("hidden"); button.setAttribute("aria-expanded", "true"); }
-      }));
-      appArea.querySelectorAll("[data-note-action]").forEach(button => button.addEventListener("click", () => {
-        const index = notes.findIndex(note => note.id === button.dataset.noteId);
-        if (index < 0) return;
-        const action = button.dataset.noteAction;
-        if (action === "edit") return openQuickNoteDrawer({ note: notes[index] });
-        if (action === "source") return goToNoteSource(notes[index]);
-        if (action === "delete") {
-          if (!window.confirm('"' + noteTitle(notes[index]) + '" notunu silmek istediğine emin misin?')) return;
-          notes.splice(index, 1);
-        }
-        saveNotes();
-        renderNotebook();
-      }));
-      appArea.querySelectorAll("[data-note-detail]").forEach(button => button.addEventListener("click", event => {
-        event.stopPropagation();
-        const card = button.closest("[data-note-open]");
-        if (card) toggleMobileNoteDetails(card);
-      }));
-      appArea.querySelectorAll("[data-note-open]").forEach(card => card.addEventListener("click", event => {
-        if (event.target.closest("button")) return;
-        if (window.matchMedia("(max-width: 760px)").matches) {
-          toggleMobileNoteDetails(card);
-          return;
-        }
-        const note = notes.find(item => item.id === card.dataset.noteOpen);
-        if (note) openQuickNoteDrawer({ note });
-      }));
-      appArea.querySelectorAll("[data-note-source]").forEach(button => button.addEventListener("click", event => {
-        event.stopPropagation();
-        const note = notes.find(item => item.id === button.dataset.noteSource);
-        if (note) goToNoteSource(note);
-      }));
+      bindNotebookResults();
     }
 
     function renderWordbook() {
