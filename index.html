@@ -2507,12 +2507,16 @@
       <div id="wordFormFields">
       <label class="mb-2 block text-sm font-black" for="wordInput">Kelime</label>
       <input id="wordInput" class="mb-4 w-full rounded-2xl border px-4 py-3 text-base font-semibold outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="Örn: memory" />
-      <label class="mb-2 block text-sm font-black" for="turkishInput">Türkçe Anlamı</label>
+      <label class="mb-2 block text-sm font-black" for="turkishInput">Türkçe</label>
       <textarea id="turkishInput" class="mb-4 min-h-20 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="Örn: hafıza"></textarea>
-      <label class="mb-2 block text-sm font-black" for="meaningInput">Synonyms</label>
+      <label class="mb-2 block text-sm font-black" for="meaningInput">Yakın Anlam</label>
       <textarea id="meaningInput" class="mb-4 min-h-20 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="Örn: leave, desert, give up"></textarea>
+      <label class="mb-2 block text-sm font-black" for="definitionInput">Definition</label>
+      <textarea id="definitionInput" class="mb-4 min-h-20 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="İngilizce tanımı yazabilirsin."></textarea>
       <label class="mb-2 block text-sm font-black" for="exampleInput">Örnek Cümle</label>
-      <textarea id="exampleInput" class="mb-5 min-h-20 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="Örnek cümleyi kendin yazabilirsin."></textarea>
+      <textarea id="exampleInput" class="mb-4 min-h-20 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="Örnek cümleyi kendin yazabilirsin."></textarea>
+      <label class="mb-2 block text-sm font-black" for="collocationInput">Collocation</label>
+      <textarea id="collocationInput" class="mb-5 min-h-20 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="Örn: vivid memory, recall a memory"></textarea>
       </div>
       <div id="wordViewFields" class="mb-5 hidden"></div>
       <div id="wordModalActions" class="flex gap-2"><button id="saveWordBtn" class="w-full rounded-2xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-950/40 hover:bg-blue-500">Kelime Defterine Ekle</button><button id="editWordBtn" class="hidden w-full rounded-2xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-950/40 hover:bg-blue-500">Düzenle</button></div>
@@ -5234,7 +5238,9 @@
     const wordInput = document.getElementById("wordInput");
     const turkishInput = document.getElementById("turkishInput");
     const meaningInput = document.getElementById("meaningInput");
+    const definitionInput = document.getElementById("definitionInput");
     const exampleInput = document.getElementById("exampleInput");
+    const collocationInput = document.getElementById("collocationInput");
 
     function closeDocumentActionMenus() {
       document.querySelectorAll(".document-action-menu.is-open").forEach(menu => menu.classList.remove("is-open"));
@@ -6016,9 +6022,22 @@
       if (window.innerWidth < 1024) closeSidebar();
     }
 
+    function uniqueRecordsById(records) {
+      const seen = new Set();
+      return (Array.isArray(records) ? records : []).filter(record => {
+        const id = String(record?.id || "");
+        if (!id || seen.has(id)) return false;
+        seen.add(id);
+        return true;
+      });
+    }
+
     function rebuildBank() {
-      documents = [...baseBank.documents, ...VOGA_ALL_DOCUMENTS, ...(uploadedBank.documents || [])];
-      questionBank = [...baseBank.questions, ...VOGA_ALL_QUESTIONS, ...(uploadedBank.questions || [])].map(repairImportedQuestionArtifacts).map(question => {
+      // Cloud snapshots also contain bundled sources so they remain portable.
+      // After a restore, prefer the current bundled copy and keep only one
+      // record per id; otherwise the 13 VOGA topics are counted twice.
+      documents = uniqueRecordsById([...baseBank.documents, ...VOGA_ALL_DOCUMENTS, ...(uploadedBank.documents || [])]);
+      questionBank = uniqueRecordsById([...baseBank.questions, ...VOGA_ALL_QUESTIONS, ...(uploadedBank.questions || [])]).map(repairImportedQuestionArtifacts).map(question => {
         const questionText = [question.question, question.prompt, question.stem, question.passage, question.sharedText]
           .filter(Boolean)
           .join(" ")
@@ -8939,8 +8958,17 @@
       };
       if (diagnostics.missingFromBackup.length || diagnostics.duplicateSourceIds.length || diagnostics.expectedSourceCount !== diagnostics.backupSourceCount) throw new BackupIntegrityError(diagnostics);
       const questionById = new Map();
-      (storedQuestions || []).forEach(question => questionById.set(String(question.id), question));
-      (questionBank || []).forEach(question => questionById.set(String(question.id), question));
+      // VOGA question text is immutable application data already embedded in
+      // index.html. Sending all 2,210 questions inside every JSONB snapshot can
+      // exceed Supabase's statement timeout. Keep user-imported questions in
+      // the backup and restore bundled VOGA content from the application.
+      const bundledVogaQuestionIds = new Set((VOGA_ALL_QUESTIONS || []).map(question => String(question.id)));
+      (storedQuestions || []).forEach(question => {
+        if (!bundledVogaQuestionIds.has(String(question.id))) questionById.set(String(question.id), question);
+      });
+      (questionBank || []).forEach(question => {
+        if (!bundledVogaQuestionIds.has(String(question.id))) questionById.set(String(question.id), question);
+      });
       return { sources: backupSources, questions: [...questionById.values()], diagnostics };
     }
 
@@ -8995,7 +9023,7 @@
 
     function backupSummary(payload) {
       const normalized = payload?.examProgress ? payload : normalizeBackupPayload(payload);
-      const questionsById = new Map([...(typeof baseBank !== "undefined" ? baseBank.questions || [] : []), ...((normalized.uploadedBank?.questions) || [])].map(question => [question.id, question]));
+      const questionsById = new Map([...(typeof baseBank !== "undefined" ? baseBank.questions || [] : []), ...(typeof VOGA_ALL_QUESTIONS !== "undefined" ? VOGA_ALL_QUESTIONS : []), ...((normalized.uploadedBank?.questions) || [])].map(question => [question.id, question]));
       const answers = questionBackupRecords(normalized.examProgress);
       let correct = 0, wrongAnswers = 0;
       answers.forEach(answer => {
@@ -9160,6 +9188,7 @@
     function inferWrongQuestionIdsFromProgress(progress, uploadedSources) {
       const questions = [
         ...((typeof baseBank !== "undefined" && Array.isArray(baseBank.questions)) ? baseBank.questions : []),
+        ...((typeof VOGA_ALL_QUESTIONS !== "undefined" && Array.isArray(VOGA_ALL_QUESTIONS)) ? VOGA_ALL_QUESTIONS : []),
         ...(Array.isArray(uploadedSources?.questions) ? uploadedSources.questions : []),
       ];
       const wrongIds = [];
@@ -9619,7 +9648,13 @@
             updated_at: uploadedAt,
           }]),
         });
-        if (!response.ok) throw new Error(await response.text() || "Buluta yedek alınamadı.");
+        if (!response.ok) {
+          const responseText = await response.text();
+          if (responseText.includes('"57014"') || responseText.includes("statement timeout")) {
+            throw new Error("Supabase yedek kaydını süre sınırı içinde tamamlayamadı. Sabit VOGA soru metinleri paketten çıkarıldı; sayfayı yenileyip yeniden deneyin.");
+          }
+          throw new Error(responseText || "Buluta yedek alınamadı.");
+        }
         // PostgreSQL stores a JSONB document atomically. Verify the committed
         // snapshot identity without downloading the multi-megabyte payload a
         // second time; the next restore still reads the complete document.
@@ -11258,10 +11293,14 @@
       wordModalEyebrow.textContent = wordModalMode === "edit" ? "KELİMEYİ DÜZENLE" : wordModalMode === "view" ? "KELİME DEFTERİNDE" : "SÖZLÜĞE EKLE";
       wordInput.value = record.word || pendingWord.word;
       turkishInput.value = record.turkish || record.meaning || "";
-      meaningInput.value = record.meaningNote || "";
-      exampleInput.value = record.example || "";
-      const viewRows = [["Türkçe anlamı", record.turkish || record.meaning], ["Yakın anlamlılar", record.meaningNote], ["Örnek cümle", record.example], ["Kelime türü", record.wordType], ["Kaynak", record.source || record.sourceArticle]].filter(([, value]) => String(value || "").trim());
-      wordViewFields.innerHTML = '<p class="mb-4 text-sm font-black text-emerald-600">✓ Kelime Defterinde</p>' + viewRows.map(([label, value]) => '<div class="mb-3 border-b pb-3" style="border-color:var(--border-color)"><p class="text-xs font-black uppercase tracking-wide" style="color:var(--text-secondary)">' + escapeHtml(label) + '</p><p class="mt-1 whitespace-pre-wrap font-semibold">' + escapeHtml(value) + '</p></div>').join("");
+      meaningInput.value = wordMeaningNote(record);
+      definitionInput.value = wordDefinition(record);
+      exampleInput.value = wordExample(record);
+      collocationInput.value = wordCollocations(record);
+      const primaryViewRows = [["Türkçe", wordTurkish(record)], ["Yakın Anlam", wordMeaningNote(record)], ["Definition", wordDefinition(record)], ["Örnek Cümle", wordExample(record)], ["Collocation", wordCollocations(record)]];
+      const metadataViewRows = [["Kelime türü", record.wordType], ["Kaynak", record.source || record.sourceArticle]].filter(([, value]) => String(value || "").trim());
+      const viewRows = primaryViewRows.concat(metadataViewRows);
+      wordViewFields.innerHTML = '<p class="mb-4 text-sm font-black text-emerald-600">✓ Kelime Defterinde</p>' + viewRows.map(([label, value]) => '<div class="mb-3 border-b pb-3" style="border-color:var(--border-color)"><p class="text-xs font-black uppercase tracking-wide" style="color:var(--text-secondary)">' + escapeHtml(label) + '</p><p class="mt-1 whitespace-pre-wrap font-semibold' + (String(value || "").trim() ? '' : ' italic') + '">' + escapeHtml(String(value || "").trim() || "Henüz eklenmedi.") + '</p></div>').join("");
       const viewing = wordModalMode === "view";
       wordFormFields.classList.toggle("hidden", viewing);
       wordViewFields.classList.toggle("hidden", !viewing);
@@ -11288,7 +11327,9 @@
       wordInput.value = "";
       turkishInput.value = "";
       meaningInput.value = "";
+      definitionInput.value = "";
       exampleInput.value = "";
+      collocationInput.value = "";
     }
 
     function saveWord() {
@@ -11297,8 +11338,10 @@
       const word = normalizeWord(wordInput.value);
       const turkish = turkishInput.value.trim();
       const meaningNote = meaningInput.value.trim();
+      const definition = definitionInput.value.trim();
       const example = exampleInput.value.trim();
-      if (!word || !turkish) return;
+      const collocations = collocationInput.value.trim();
+      if (!word) return;
       const selectedIndex = selectedWordId ? wordbook.findIndex(item => item.id === selectedWordId) : -1;
       const duplicate = wordbook.find(item => item.id !== selectedWordId && normalizeLookup(item.word) === normalizeLookup(word));
       if (wordModalMode === "create" && duplicate) {
@@ -11319,7 +11362,11 @@
         turkish,
         meaning: turkish,
         meaningNote,
+        synonyms: meaningNote,
+        definition,
         example,
+        context: example,
+        collocations,
         questionId: pendingWord?.questionId || existing?.questionId || null,
         createdAt: existing ? existing.createdAt : new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -11379,7 +11426,15 @@
     }
 
     function wordMeaningNote(item) {
-      return item?.meaningNote || "";
+      return item?.meaningNote || item?.synonyms || "";
+    }
+
+    function wordDefinition(item) {
+      return item?.definition || "";
+    }
+
+    function wordCollocations(item) {
+      return item?.collocations || item?.collocation || "";
     }
 
     function wordPartOfSpeech(item) {
@@ -11392,7 +11447,7 @@
     }
 
     function wordExample(item) {
-      return item?.example || item?.exampleSentence || item?.sentence || "";
+      return item?.example || item?.context || item?.exampleSentence || item?.sentence || "";
     }
 
     function wordTabsHtml(activeTab, showAddButton = true) {
@@ -11508,7 +11563,10 @@
         items = items.filter(item =>
           normalizeLookup(item.word).includes(query) ||
           normalizeLookup(wordTurkish(item)).includes(query) ||
-          normalizeLookup(wordMeaningNote(item)).includes(query)
+          normalizeLookup(wordMeaningNote(item)).includes(query) ||
+          normalizeLookup(wordDefinition(item)).includes(query) ||
+          normalizeLookup(wordExample(item)).includes(query) ||
+          normalizeLookup(wordCollocations(item)).includes(query)
         );
       }
       if (wordStatusFilter !== "all") {
@@ -12185,10 +12243,12 @@
               '<div class="meaning mt-3 hidden grid gap-2">' +
                 '<div class="rounded-xl border border-blue-200 bg-blue-50 p-3">' +
                   '<span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-white">TÜRKÇE</span>' +
-                  '<p class="mt-1 text-sm font-black text-blue-950">' + escapeHtml(wordTurkish(item)) + '</p>' +
+                  '<p class="mt-1 whitespace-pre-wrap text-sm font-black text-blue-950">' + escapeHtml(wordTurkish(item) || "Henüz eklenmedi.") + '</p>' +
                 '</div>' +
-                (wordMeaningNote(item) ? '<div class="rounded-xl border border-slate-200 bg-white p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-white">YAKIN ANLAM</span><p class="mt-2 text-sm font-semibold text-slate-800">' + escapeHtml(wordMeaningNote(item)) + '</p></div>' : '') +
-                (wordExample(item) ? '<div class="rounded-xl border border-slate-200 bg-white p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-white">ÖRNEK CÜMLE</span><p class="mt-2 text-sm font-semibold leading-relaxed text-slate-700">' + escapeHtml(wordExample(item)) + '</p></div>' : '') +
+                '<div class="rounded-xl border border-slate-200 bg-white p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-white">YAKIN ANLAM</span><p class="mt-2 whitespace-pre-wrap text-sm font-semibold text-slate-800">' + escapeHtml(wordMeaningNote(item) || "Henüz eklenmedi.") + '</p></div>' +
+                '<div class="rounded-xl border border-slate-200 bg-white p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-white">DEFINITION</span><p class="mt-2 whitespace-pre-wrap text-sm font-semibold leading-relaxed text-slate-700">' + escapeHtml(wordDefinition(item) || "Henüz eklenmedi.") + '</p></div>' +
+                '<div class="rounded-xl border border-slate-200 bg-white p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-white">ÖRNEK CÜMLE</span><p class="mt-2 whitespace-pre-wrap text-sm font-semibold leading-relaxed text-slate-700">' + escapeHtml(wordExample(item) || "Henüz eklenmedi.") + '</p></div>' +
+                '<div class="rounded-xl border border-slate-200 bg-white p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-white">COLLOCATION</span><p class="mt-2 whitespace-pre-wrap text-sm font-semibold leading-relaxed text-slate-700">' + escapeHtml(wordCollocations(item) || "Henüz eklenmedi.") + '</p></div>' +
               '</div>' +
             '</article>';
           }).join("") +
@@ -12643,9 +12703,11 @@
             '</div>' +
             (wordCardRevealed
               ? '<div class="grid gap-2 md:grid-cols-2">' +
-                  '<div class="rounded-xl border border-blue-200 bg-blue-50 p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">TÜRKÇE</span><p class="mt-2 text-base font-bold text-blue-950">' + escapeHtml(wordTurkish(item)) + '</p></div>' +
-                  '<div class="rounded-xl border border-blue-200 bg-blue-50 p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">YAKIN ANLAM</span><p class="mt-2 text-base font-bold text-blue-950">' + escapeHtml(wordMeaningNote(item) || "Yakın anlam eklenmedi.") + '</p></div>' +
-                  '<div class="rounded-xl border border-slate-200 bg-white p-3 md:col-span-2"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">ÖRNEK CÜMLE</span><p class="mt-2 text-sm font-semibold leading-relaxed text-slate-700">' + escapeHtml(example || "Bu kelime için örnek cümle henüz eklenmedi.") + '</p></div>' +
+                  '<div class="rounded-xl border border-blue-200 bg-blue-50 p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">TÜRKÇE</span><p class="mt-2 whitespace-pre-wrap text-base font-bold text-blue-950">' + escapeHtml(wordTurkish(item) || "Henüz eklenmedi.") + '</p></div>' +
+                  '<div class="rounded-xl border border-blue-200 bg-blue-50 p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">YAKIN ANLAM</span><p class="mt-2 whitespace-pre-wrap text-base font-bold text-blue-950">' + escapeHtml(wordMeaningNote(item) || "Yakın anlam eklenmedi.") + '</p></div>' +
+                  '<div class="rounded-xl border border-slate-200 bg-white p-3 md:col-span-2"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">DEFINITION</span><p class="mt-2 whitespace-pre-wrap text-sm font-semibold leading-relaxed text-slate-700">' + escapeHtml(wordDefinition(item) || "Definition henüz eklenmedi.") + '</p></div>' +
+                  '<div class="rounded-xl border border-slate-200 bg-white p-3 md:col-span-2"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">ÖRNEK CÜMLE</span><p class="mt-2 whitespace-pre-wrap text-sm font-semibold leading-relaxed text-slate-700">' + escapeHtml(example || "Bu kelime için örnek cümle henüz eklenmedi.") + '</p></div>' +
+                  '<div class="rounded-xl border border-slate-200 bg-white p-3 md:col-span-2"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">COLLOCATION</span><p class="mt-2 whitespace-pre-wrap text-sm font-semibold leading-relaxed text-slate-700">' + escapeHtml(wordCollocations(item) || "Collocation henüz eklenmedi.") + '</p></div>' +
                 '</div>'
               : '<div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm font-semibold leading-relaxed text-slate-500">Space tuşu veya Anlamı Göster ile kartı çevir. Değerlendirme seçenekleri cevap açıldıktan sonra gelir.</div>') +
           '</div>' +
@@ -12754,6 +12816,32 @@
       document.getElementById("quizCardsBtn").addEventListener("click", () => startWordStudy("cards", true));
     }
 
+    function wordQuizDetailCard(label, value, icon, wide = false) {
+      const content = String(value || "").trim();
+      return '<div class="' + (wide ? 'md:col-span-2 ' : '') + 'rounded-xl border border-slate-200 bg-white p-4">' +
+        '<div class="flex items-center gap-2">' +
+          '<span aria-hidden="true" class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-sm font-black text-blue-700">' + icon + '</span>' +
+          '<p class="text-xs font-black uppercase tracking-wide text-slate-500">' + escapeHtml(label) + '</p>' +
+        '</div>' +
+        '<p class="mt-3 whitespace-pre-wrap text-sm font-semibold leading-relaxed ' + (content ? 'text-slate-700' : 'italic text-slate-400') + '">' + escapeHtml(content || "Henüz eklenmedi.") + '</p>' +
+      '</div>';
+    }
+
+    function wordQuizDetailsHtml(item) {
+      return '<section class="word-quiz-details mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5" aria-label="Kelime detayları">' +
+        '<div class="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">' +
+          '<div><p class="text-xs font-black uppercase tracking-wide text-blue-600">Cevap sonrası tekrar</p><h5 class="mt-1 text-lg font-black text-slate-950">Kelime Detayları</h5></div>' +
+          '<p class="text-sm font-bold text-slate-500">' + escapeHtml(item.word || "") + '</p>' +
+        '</div>' +
+        '<div class="mt-4 grid gap-3 md:grid-cols-2">' +
+          wordQuizDetailCard("Yakın Anlam", wordMeaningNote(item), "≈") +
+          wordQuizDetailCard("DEFINITION", wordDefinition(item), "D") +
+          wordQuizDetailCard("Örnek Cümle", wordExample(item), "“", true) +
+          wordQuizDetailCard("COLLOCATION", wordCollocations(item), "↔", true) +
+        '</div>' +
+      '</section>';
+    }
+
     function renderWordQuiz(words) {
       const studyArea = document.getElementById("studyArea");
       if (wordPracticeWords().length < 2) {
@@ -12795,7 +12883,8 @@
             ? '<div class="mt-4 flex items-center justify-between gap-3 rounded-xl border ' + (selectedCorrect ? 'border-emerald-300 bg-emerald-50 text-emerald-950' : 'border-red-300 bg-red-50 text-red-950') + ' px-4 py-3">' +
                 '<p class="text-base font-black">' + (selectedCorrect ? 'Doğru' : 'Yanlış') + '</p>' +
                 '<button id="nextQuizWordBtn" class="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-blue-200 hover:bg-blue-500">' + (isLast ? 'Oturumu Tamamla' : 'Sonraki') + '</button>' +
-              '</div>'
+              '</div>' +
+              wordQuizDetailsHtml(target)
             : '') +
         '</article>';
 
