@@ -2511,8 +2511,6 @@
       <textarea id="turkishInput" class="mb-4 min-h-20 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="Örn: hafıza"></textarea>
       <label class="mb-2 block text-sm font-black" for="meaningInput">Yakın Anlam</label>
       <textarea id="meaningInput" class="mb-4 min-h-20 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="Örn: leave, desert, give up"></textarea>
-      <label class="mb-2 block text-sm font-black" for="definitionInput">Definition</label>
-      <textarea id="definitionInput" class="mb-4 min-h-20 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="İngilizce tanımı yazabilirsin."></textarea>
       <label class="mb-2 block text-sm font-black" for="exampleInput">Örnek Cümle</label>
       <textarea id="exampleInput" class="mb-4 min-h-20 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-blue-500" style="border-color:var(--border-color);background:var(--bg-surface-secondary);color:var(--text-primary)" placeholder="Örnek cümleyi kendin yazabilirsin."></textarea>
       <label class="mb-2 block text-sm font-black" for="collocationInput">Collocation</label>
@@ -5238,7 +5236,6 @@
     const wordInput = document.getElementById("wordInput");
     const turkishInput = document.getElementById("turkishInput");
     const meaningInput = document.getElementById("meaningInput");
-    const definitionInput = document.getElementById("definitionInput");
     const exampleInput = document.getElementById("exampleInput");
     const collocationInput = document.getElementById("collocationInput");
 
@@ -7012,8 +7009,26 @@
     function readForSpeedAttempts(article) {
       const legacy = article.progress && typeof article.progress === "object" ? article.progress : null;
       const attempts = Array.isArray(article.attempts) ? article.attempts : [];
-      if (!attempts.length && legacy) attempts.push({ ...legacy, id: legacy.id || `rfs-attempt:${article.id}:${legacy.completedAt || legacy.updatedAt || Date.now()}`, articleId: article.id });
+      // Older versions kept the current result only in `progress`. Some users
+      // can also have an `attempts` array from a previous retry. In that mixed
+      // shape the old guard ignored the newly checked progress, so the reader
+      // showed the result but the list card stayed stale until a later repair.
+      // Always reconcile the current progress into the durable attempt ledger.
+      let legacyId = null;
+      if (legacy) {
+        legacyId = legacy.id || `rfs-attempt:${article.id}:${legacy.completedAt || legacy.updatedAt || Date.now()}`;
+        const legacyAttempt = { ...legacy, id: legacyId, articleId: article.id };
+        const existingIndex = attempts.findIndex(attempt => attempt?.id === legacyId);
+        if (existingIndex < 0) attempts.push(legacyAttempt);
+        else {
+          const existing = attempts[existingIndex];
+          const legacyUpdatedAt = timestamp(legacyAttempt.updatedAt || legacyAttempt.completedAt || legacyAttempt.checkedAt);
+          const existingUpdatedAt = timestamp(existing?.updatedAt || existing?.completedAt || existing?.checkedAt);
+          if (legacyUpdatedAt >= existingUpdatedAt) attempts[existingIndex] = { ...existing, ...legacyAttempt };
+        }
+      }
       article.attempts = attempts.map(attempt => ({ ...attempt, id: attempt.id || `rfs-attempt:${article.id}:${Date.now()}`, articleId: article.id, selectedAnswers: attempt.selectedAnswers || {}, checked: !!attempt.checked, completed: !!attempt.completed, startedAt: attempt.startedAt || Date.now(), elapsedMs: Number(attempt.elapsedMs || 0), lastPosition: Number(attempt.lastPosition || 0) }));
+      if (legacyId) article.progress = article.attempts.find(attempt => attempt.id === legacyId) || legacy;
       return article.attempts;
     }
 
@@ -7225,9 +7240,14 @@
       }
       article.completedAttempts = attempts;
       const allAttempts = readForSpeedAttempts(article);
-      const current = allAttempts.find(attempt => attempt.id === progress.id) || progress;
+      let current = allAttempts.find(attempt => attempt.id === progress.id);
+      if (!current) {
+        current = { ...progress, id: progress.id || `rfs-attempt:${article.id}:${Date.now()}`, articleId: article.id };
+        allAttempts.push(current);
+      }
       Object.assign(current, { ...progress, completed: true, checked: true, completedAt, updatedAt: new Date().toISOString() });
       article.activeAttemptId = current.id;
+      article.progress = current;
       recordWeeklyActivity("reading", "reading:read-for-speed:" + article.id, completedAt);
       if (syncReadForSpeedDailyProgress()) saveDailyProgress(false);
     }
@@ -8916,7 +8936,7 @@
 
     // v5 adds a timestamped per-question pool state. Earlier versions merged
     // active/resolved arrays independently and could drop questions on refresh.
-    const BACKUP_SCHEMA_VERSION = 5;
+    const BACKUP_SCHEMA_VERSION = 6;
 
     class BackupIntegrityError extends Error {
       constructor(diagnostics) { super(`Yedek oluşturulamadı: uygulamada ${diagnostics.expectedSourceCount} kaynak bulunuyor ancak yedek paketine ${diagnostics.backupSourceCount} kaynak eklendi. Eksik ${diagnostics.missingFromBackup.length} kaynak tespit edilmeden yedek kaydedilmedi.`); this.name = "BackupIntegrityError"; this.diagnostics = diagnostics; }
@@ -9000,6 +9020,42 @@
       const values = (Array.isArray(items) ? items : [items]).flat().map(item => timestamp(item?.updatedAt || item?.createdAt));
       const latest = Math.max(0, ...values);
       return latest ? new Date(latest).toISOString() : null;
+    }
+
+    function articleHighlightState(article) {
+      return {
+        readingHighlights: Array.isArray(article?.readingHighlights) ? article.readingHighlights : [],
+        readingQuestionHighlights: article?.readingQuestionHighlights && typeof article.readingQuestionHighlights === "object"
+          ? article.readingQuestionHighlights
+          : {},
+      };
+    }
+
+    function articleHighlightCount(source = articles) {
+      return (Array.isArray(source) ? source : []).reduce((total, article) => {
+        const state = articleHighlightState(article);
+        return total + state.readingHighlights.length + Object.values(state.readingQuestionHighlights)
+          .reduce((count, highlights) => count + (Array.isArray(highlights) ? highlights.length : 0), 0);
+      }, 0);
+    }
+
+    function assertArticleHighlightsPersisted(expected, persisted, action) {
+      const persistedById = new Map((Array.isArray(persisted) ? persisted : []).map(article => [String(article?.id || ""), article]));
+      const mismatch = (Array.isArray(expected) ? expected : []).find(article => {
+        const stored = persistedById.get(String(article?.id || ""));
+        return !stored || JSON.stringify(articleHighlightState(stored)) !== JSON.stringify(articleHighlightState(article));
+      });
+      if (mismatch) throw new Error(`${action}: “${mismatch.title || "Başlıksız metin"}” içindeki sarı vurgular yerel depoda doğrulanamadı.`);
+    }
+
+    async function durableArticlesForBackup() {
+      // A mouse selection saves asynchronously to IndexedDB. Cloud backup must
+      // wait for that transaction; otherwise an immediate “Buluta Yedekle” can
+      // capture the previous, unhighlighted version of the passage.
+      await articleSaveQueue;
+      const persisted = (await loadDeployState(STORAGE_ARTICLES, articles)).map(normalizeArticleRecord);
+      assertArticleHighlightsPersisted(articles, persisted, "Bulut yedeği hazırlanamadı");
+      return persisted;
     }
 
     function questionBackupRecords(progress = examProgress) {
@@ -9089,6 +9145,7 @@
 
     async function backupPayload() {
       flushActiveQuestionWork();
+      const persistedArticles = await durableArticlesForBackup();
       const complete = await collectCompleteBackupData();
       const persistedBank = { documents: complete.sources, questions: complete.questions };
       const persistedProgress = normalizeExamProgress(loadJson(STORAGE_EXAM_PROGRESS, examProgress));
@@ -9122,7 +9179,7 @@
           sourceProgress: { records: JSON.parse(JSON.stringify(persistedProgress.exams || {})), updatedAt: maxUpdatedAt(Object.values(persistedProgress.exams || {})) },
           currentQuestionPositions: { records: Object.fromEntries(Object.entries(persistedProgress.exams || {}).map(([key, value]) => [key, value.currentQuestionId || null])), updatedAt: maxUpdatedAt(Object.values(persistedProgress.exams || {})) },
           words: { records: Array.isArray(persistedWords) ? persistedWords : wordbook, updatedAt: maxUpdatedAt(Array.isArray(persistedWords) ? persistedWords : wordbook) },
-          readingCenter: { records: articles, updatedAt: maxUpdatedAt(articles) },
+          readingCenter: { records: persistedArticles, updatedAt: maxUpdatedAt(persistedArticles) },
           readForSpeed: readForSpeedBackupModule(),
           notes: { records: Array.isArray(persistedNotes) ? persistedNotes.map(normalizeNote) : notes, updatedAt: maxUpdatedAt(Array.isArray(persistedNotes) ? persistedNotes : notes) },
           wrongQuestions: { records: persistedWrong, updatedAt: null },
@@ -9432,6 +9489,9 @@
       uploadedBank = nextBank;
       wordbook = nextWords;
       articles = nextArticles.map(normalizeArticleRecord);
+      // Re-attach immutable bundled passages omitted by old backups while
+      // preserving restored answers, eliminations and yellow highlights.
+      mergePastReadingSeeds();
       notes = nextNotes.map(normalizeNote);
       dailyQuestionResults = replace ? cloud.dailyQuestionResults : dailyQuestionResult.records;
       dailyWrongReviewStore = mergeDailyWrongReviewStores(dailyWrongReviewStore, cloud.dailyWrongReviews, replace);
@@ -9452,7 +9512,9 @@
       await saveUploadedBank(uploadedBank);
       uploadedBankHydrated = true;
       saveJson(STORAGE_WORDS, wordbook);
-      void saveArticles();
+      await saveArticles();
+      const persistedArticles = (await loadDeployState(STORAGE_ARTICLES, [])).map(normalizeArticleRecord);
+      assertArticleHighlightsPersisted(articles, persistedArticles, "Bulut geri yüklemesi tamamlanamadı");
       saveNotes();
       const persistedWords = loadJson(STORAGE_WORDS, []);
       const persistedNotes = loadJson(STORAGE_NOTES, []);
@@ -9477,16 +9539,17 @@
       const rfsText = `Read for Speed: ${mergedRfs.restored + mergedRfs.merged} metin geri yüklendi, ${mergedRfs.preserved} yerel metin korundu`;
       const attemptCount = readForSpeedBackupModule(readForSpeedArticles).attempts.length;
       const progressSummary = backupSummary({ uploadedBank, examProgress, wordbook, notes, wrongQuestionIds, questionAttempts: questionBackupRecords(examProgress) });
-      return { message: `${rfsText} · ${progressSummary.answers} soru cevabı (${progressSummary.correct} doğru · ${progressSummary.wrongAnswers} son yanlış) · ${progressSummary.wrong} yanlış soru havuzu ve ${progressSummary.attempts} attempt yerel depoda doğrulandı · Kelime Defteri: ${wordbook.length} kayıt · Not Defteri: ${notes.length} kayıt`, warnings: mergedRfs.warnings };
+      return { message: `${rfsText} · Çıkmış Parçalar: ${pastReadingArticles().length} parça ve ${articleHighlightCount(articles)} sarı vurgu geri yüklendi · ${progressSummary.answers} soru cevabı (${progressSummary.correct} doğru · ${progressSummary.wrongAnswers} son yanlış) · ${progressSummary.wrong} yanlış soru havuzu ve ${progressSummary.attempts} attempt yerel depoda doğrulandı · Kelime Defteri: ${wordbook.length} kayıt · Not Defteri: ${notes.length} kayıt`, warnings: mergedRfs.warnings };
     }
 
-    function restoreBackupPayload(payload) {
+    async function restoreBackupPayload(payload) {
       const normalized = normalizeBackupPayload(payload);
       const confirmed = window.confirm("Bu yedek mevcut PDF, kelime, makale ve yanlış soru verilerinin üzerine yazacak. Devam edilsin mi?");
       if (!confirmed) return;
       uploadedBank = normalized.uploadedBank;
       wordbook = normalized.wordbook;
       articles = normalized.articles.map(normalizeArticleRecord);
+      mergePastReadingSeeds();
       notes = normalized.notes;
       wrongQuestionState = normalized.wrongQuestionState;
       syncWrongQuestionArraysFromState();
@@ -9509,9 +9572,11 @@
         wordCustomSessionSize = Number(normalized.preferences.wordCustomSessionSize) || 20;
         localStorage.setItem("yds-word-custom-session-size-v1", String(wordCustomSessionSize));
       }
-      void saveUploadedBank(uploadedBank);
+      await saveUploadedBank(uploadedBank);
       saveJson(STORAGE_WORDS, wordbook);
-      void saveArticles();
+      await saveArticles();
+      const persistedArticles = (await loadDeployState(STORAGE_ARTICLES, [])).map(normalizeArticleRecord);
+      assertArticleHighlightsPersisted(articles, persistedArticles, "Yedekten geri yükleme tamamlanamadı");
       saveNotes();
       saveJson(STORAGE_DAILY_GOALS, dailyGoals);
       saveJson(STORAGE_DAILY_PROGRESS, dailyProgress);
@@ -9738,6 +9803,10 @@
       Object.values(examProgress?.exams || {}).forEach(progress => { const sourceId = String(progress.examId || "").replace(/^document:/, ""); if (!sourceId) return; const state = { sourceId, answers: progress.answers || {}, eliminatedOptions: progress.eliminatedOptions || {}, textHighlights: progress.textHighlights || {}, currentQuestionId: progress.currentQuestionId || null, manuallyCompleted: !!progress.manuallyCompleted, completedAt: progress.completedAt || null, updatedAt: progress.updatedAt || new Date().toISOString() }; rows.push(["sourceProgress", sourceId, state]); Object.entries(state.answers).forEach(([questionId, selectedKey]) => { const answer = { id: sourceId + ":" + questionId, questionId, sourceId, selectedKey, updatedAt: state.updatedAt }; rows.push(["questionAnswers", answer.id, answer]); rows.push(["attempts", questionId, { questionId, documentId: sourceId, selectedKey, status: "manual", attempts: [], createdAt: state.updatedAt, updatedAt: state.updatedAt }]); }); });
       wordbook.forEach(word => { const id = deployId(word, "word"); rows.push(["dictionaryWords", id, { ...word, wordId: id }]); });
       notes.forEach(note => rows.push(["notes", deployId(note, "note"), note]));
+      articles.forEach(article => {
+        const articleId = deployId(article, "article");
+        rows.push(["readingCenterArticles", articleId, { ...article, id: articleId }]);
+      });
       readForSpeedArticles.forEach(article => {
         const articleId = deployId(article, "rfs");
         rows.push(["readForSpeedArticles", articleId, { ...article, id: articleId }]);
@@ -9747,8 +9816,8 @@
       }); return rows;
     }
     async function deployApply(records) {
-      let changed = 0; deployRestoring = true;
-      try { for (const record of records) { const value = { ...record.payload, updatedAt: record.payload?.updatedAt || record.updated_at }; if (record.entity_type === "dictionaryWords") { const i = wordbook.findIndex(x => deployId(x, "word") === record.id); if (i < 0) wordbook.push(value); else if ((Date.parse(value.updatedAt) || 0) >= (Date.parse(wordbook[i].updatedAt) || 0)) wordbook[i] = value; changed++; } else if (record.entity_type === "notes") { const i = notes.findIndex(x => String(x.id) === record.id); if (i < 0) notes.push(value); else if ((Date.parse(value.updatedAt) || 0) >= (Date.parse(notes[i].updatedAt) || 0)) notes[i] = value; changed++; } else if (record.entity_type === "sourceProgress") { const key = "document:" + value.sourceId, current = examProgress.exams[key]; if (!current || (Date.parse(value.updatedAt) || 0) >= (Date.parse(current.updatedAt) || 0)) examProgress.exams[key] = { ...value, examId: key }; changed++; } else if (record.entity_type === "questionAnswers") { const key = "document:" + value.sourceId, current = examProgress.exams[key] || { examId: key, answers: {} }; current.answers = { ...current.answers, [value.questionId]: value.selectedKey }; current.updatedAt = value.updatedAt; examProgress.exams[key] = current; changed++; } else if (record.entity_type === "readForSpeedArticles") { const i = readForSpeedArticles.findIndex(x => String(x.id) === record.id); if (i < 0) readForSpeedArticles.push(value); else if ((Date.parse(value.updatedAt) || 0) >= (Date.parse(readForSpeedArticles[i].updatedAt) || 0)) readForSpeedArticles[i] = value; changed++; } else if (record.entity_type === "readForSpeedAttempts" || record.entity_type === "readingProgress") { const articleId = String(value.articleId || record.id), article = readForSpeedArticles.find(x => String(x.id) === articleId); if (article) { if (record.entity_type === "readingProgress") article.progress = value; else { const attempts = Array.isArray(article.attempts) ? article.attempts : []; const i = attempts.findIndex(x => String(x.id) === record.id); if (i < 0) attempts.push(value); else if ((Date.parse(value.updatedAt) || 0) >= (Date.parse(attempts[i].updatedAt) || 0)) attempts[i] = value; article.attempts = attempts; } changed++; } } } if (changed) { saveJson(STORAGE_WORDS, wordbook); saveNotes(); saveJson(STORAGE_EXAM_PROGRESS, examProgress); saveJson(STORAGE_READ_FOR_SPEED, readForSpeedArticles); rebuildBank(); } } finally { deployRestoring = false; } return changed;
+      let changed = 0, articlesChanged = false; deployRestoring = true;
+      try { for (const record of records) { const value = { ...record.payload, updatedAt: record.payload?.updatedAt || record.updated_at }; if (record.entity_type === "dictionaryWords") { const i = wordbook.findIndex(x => deployId(x, "word") === record.id); if (i < 0) wordbook.push(value); else if ((Date.parse(value.updatedAt) || 0) >= (Date.parse(wordbook[i].updatedAt) || 0)) wordbook[i] = value; changed++; } else if (record.entity_type === "notes") { const i = notes.findIndex(x => String(x.id) === record.id); if (i < 0) notes.push(value); else if ((Date.parse(value.updatedAt) || 0) >= (Date.parse(notes[i].updatedAt) || 0)) notes[i] = value; changed++; } else if (record.entity_type === "readingCenterArticles") { const normalized = normalizeArticleRecord(value); const i = articles.findIndex(x => String(x.id) === record.id); if (i < 0) { articles.push(normalized); articlesChanged = true; } else if ((Date.parse(normalized.updatedAt) || 0) >= (Date.parse(articles[i].updatedAt) || 0)) { articles[i] = normalized; articlesChanged = true; } changed++; } else if (record.entity_type === "sourceProgress") { const key = "document:" + value.sourceId, current = examProgress.exams[key]; if (!current || (Date.parse(value.updatedAt) || 0) >= (Date.parse(current.updatedAt) || 0)) examProgress.exams[key] = { ...value, examId: key }; changed++; } else if (record.entity_type === "questionAnswers") { const key = "document:" + value.sourceId, current = examProgress.exams[key] || { examId: key, answers: {} }; current.answers = { ...current.answers, [value.questionId]: value.selectedKey }; current.updatedAt = value.updatedAt; examProgress.exams[key] = current; changed++; } else if (record.entity_type === "readForSpeedArticles") { const i = readForSpeedArticles.findIndex(x => String(x.id) === record.id); if (i < 0) readForSpeedArticles.push(value); else if ((Date.parse(value.updatedAt) || 0) >= (Date.parse(readForSpeedArticles[i].updatedAt) || 0)) readForSpeedArticles[i] = value; changed++; } else if (record.entity_type === "readForSpeedAttempts" || record.entity_type === "readingProgress") { const articleId = String(value.articleId || record.id), article = readForSpeedArticles.find(x => String(x.id) === articleId); if (article) { if (record.entity_type === "readingProgress") article.progress = value; else { const attempts = Array.isArray(article.attempts) ? article.attempts : []; const i = attempts.findIndex(x => String(x.id) === record.id); if (i < 0) attempts.push(value); else if ((Date.parse(value.updatedAt) || 0) >= (Date.parse(attempts[i].updatedAt) || 0)) attempts[i] = value; article.attempts = attempts; } changed++; } } } if (changed) { saveJson(STORAGE_WORDS, wordbook); saveNotes(); saveJson(STORAGE_EXAM_PROGRESS, examProgress); saveJson(STORAGE_READ_FOR_SPEED, readForSpeedArticles); if (articlesChanged) await saveArticles(); rebuildBank(); } } finally { deployRestoring = false; } return changed;
     }
     async function deployIncrementalSync() {
       if (deploySyncActive) { deploySyncAgain = true; return deploySyncActive; }
@@ -10021,12 +10090,12 @@
         const file = event.target.files?.[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = () => {
+        reader.onload = async () => {
           try {
-            restoreBackupPayload(JSON.parse(reader.result));
-          } catch {
+            await restoreBackupPayload(JSON.parse(reader.result));
+          } catch (error) {
             const status = document.getElementById("backupStatus");
-            if (status) status.textContent = "Yedek dosyası okunamadı. JSON formatını kontrol et.";
+            if (status) status.textContent = error?.message || "Yedek dosyası okunamadı. JSON formatını kontrol et.";
           }
         };
         reader.readAsText(file);
@@ -10602,6 +10671,16 @@
       normalized.wordCount = Number(article?.wordCount || articleWordCount(normalized.text));
       normalized.readingTime = Number(article?.readingTime || articleReadMinutes(normalized.text));
       return normalized;
+    }
+
+    function normalizeArticleRecordInPlace(article) {
+      const normalized = normalizeArticleRecord(article);
+      if (!article || typeof article !== "object") return normalized;
+      Object.keys(article).forEach(key => {
+        if (!Object.prototype.hasOwnProperty.call(normalized, key)) delete article[key];
+      });
+      Object.assign(article, normalized);
+      return article;
     }
 
     function mergePastReadingSeeds() {
@@ -11294,10 +11373,9 @@
       wordInput.value = record.word || pendingWord.word;
       turkishInput.value = record.turkish || record.meaning || "";
       meaningInput.value = wordMeaningNote(record);
-      definitionInput.value = wordDefinition(record);
       exampleInput.value = wordExample(record);
       collocationInput.value = wordCollocations(record);
-      const primaryViewRows = [["Türkçe", wordTurkish(record)], ["Yakın Anlam", wordMeaningNote(record)], ["Definition", wordDefinition(record)], ["Örnek Cümle", wordExample(record)], ["Collocation", wordCollocations(record)]];
+      const primaryViewRows = [["Türkçe", wordTurkish(record)], ["Yakın Anlam", wordMeaningNote(record)], ["Örnek Cümle", wordExample(record)], ["Collocation", wordCollocations(record)]];
       const metadataViewRows = [["Kelime türü", record.wordType], ["Kaynak", record.source || record.sourceArticle]].filter(([, value]) => String(value || "").trim());
       const viewRows = primaryViewRows.concat(metadataViewRows);
       wordViewFields.innerHTML = '<p class="mb-4 text-sm font-black text-emerald-600">✓ Kelime Defterinde</p>' + viewRows.map(([label, value]) => '<div class="mb-3 border-b pb-3" style="border-color:var(--border-color)"><p class="text-xs font-black uppercase tracking-wide" style="color:var(--text-secondary)">' + escapeHtml(label) + '</p><p class="mt-1 whitespace-pre-wrap font-semibold' + (String(value || "").trim() ? '' : ' italic') + '">' + escapeHtml(String(value || "").trim() || "Henüz eklenmedi.") + '</p></div>').join("");
@@ -11327,7 +11405,6 @@
       wordInput.value = "";
       turkishInput.value = "";
       meaningInput.value = "";
-      definitionInput.value = "";
       exampleInput.value = "";
       collocationInput.value = "";
     }
@@ -11338,7 +11415,6 @@
       const word = normalizeWord(wordInput.value);
       const turkish = turkishInput.value.trim();
       const meaningNote = meaningInput.value.trim();
-      const definition = definitionInput.value.trim();
       const example = exampleInput.value.trim();
       const collocations = collocationInput.value.trim();
       if (!word) return;
@@ -11363,7 +11439,6 @@
         meaning: turkish,
         meaningNote,
         synonyms: meaningNote,
-        definition,
         example,
         context: example,
         collocations,
@@ -11427,10 +11502,6 @@
 
     function wordMeaningNote(item) {
       return item?.meaningNote || item?.synonyms || "";
-    }
-
-    function wordDefinition(item) {
-      return item?.definition || "";
     }
 
     function wordCollocations(item) {
@@ -11564,7 +11635,6 @@
           normalizeLookup(item.word).includes(query) ||
           normalizeLookup(wordTurkish(item)).includes(query) ||
           normalizeLookup(wordMeaningNote(item)).includes(query) ||
-          normalizeLookup(wordDefinition(item)).includes(query) ||
           normalizeLookup(wordExample(item)).includes(query) ||
           normalizeLookup(wordCollocations(item)).includes(query)
         );
@@ -12246,7 +12316,6 @@
                   '<p class="mt-1 whitespace-pre-wrap text-sm font-black text-blue-950">' + escapeHtml(wordTurkish(item) || "Henüz eklenmedi.") + '</p>' +
                 '</div>' +
                 '<div class="rounded-xl border border-slate-200 bg-white p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-white">YAKIN ANLAM</span><p class="mt-2 whitespace-pre-wrap text-sm font-semibold text-slate-800">' + escapeHtml(wordMeaningNote(item) || "Henüz eklenmedi.") + '</p></div>' +
-                '<div class="rounded-xl border border-slate-200 bg-white p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-white">DEFINITION</span><p class="mt-2 whitespace-pre-wrap text-sm font-semibold leading-relaxed text-slate-700">' + escapeHtml(wordDefinition(item) || "Henüz eklenmedi.") + '</p></div>' +
                 '<div class="rounded-xl border border-slate-200 bg-white p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-white">ÖRNEK CÜMLE</span><p class="mt-2 whitespace-pre-wrap text-sm font-semibold leading-relaxed text-slate-700">' + escapeHtml(wordExample(item) || "Henüz eklenmedi.") + '</p></div>' +
                 '<div class="rounded-xl border border-slate-200 bg-white p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-white">COLLOCATION</span><p class="mt-2 whitespace-pre-wrap text-sm font-semibold leading-relaxed text-slate-700">' + escapeHtml(wordCollocations(item) || "Henüz eklenmedi.") + '</p></div>' +
               '</div>' +
@@ -12705,9 +12774,8 @@
               ? '<div class="grid gap-2 md:grid-cols-2">' +
                   '<div class="rounded-xl border border-blue-200 bg-blue-50 p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">TÜRKÇE</span><p class="mt-2 whitespace-pre-wrap text-base font-bold text-blue-950">' + escapeHtml(wordTurkish(item) || "Henüz eklenmedi.") + '</p></div>' +
                   '<div class="rounded-xl border border-blue-200 bg-blue-50 p-3"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">YAKIN ANLAM</span><p class="mt-2 whitespace-pre-wrap text-base font-bold text-blue-950">' + escapeHtml(wordMeaningNote(item) || "Yakın anlam eklenmedi.") + '</p></div>' +
-                  '<div class="rounded-xl border border-slate-200 bg-white p-3 md:col-span-2"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">DEFINITION</span><p class="mt-2 whitespace-pre-wrap text-sm font-semibold leading-relaxed text-slate-700">' + escapeHtml(wordDefinition(item) || "Definition henüz eklenmedi.") + '</p></div>' +
-                  '<div class="rounded-xl border border-slate-200 bg-white p-3 md:col-span-2"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">ÖRNEK CÜMLE</span><p class="mt-2 whitespace-pre-wrap text-sm font-semibold leading-relaxed text-slate-700">' + escapeHtml(example || "Bu kelime için örnek cümle henüz eklenmedi.") + '</p></div>' +
-                  '<div class="rounded-xl border border-slate-200 bg-white p-3 md:col-span-2"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">COLLOCATION</span><p class="mt-2 whitespace-pre-wrap text-sm font-semibold leading-relaxed text-slate-700">' + escapeHtml(wordCollocations(item) || "Collocation henüz eklenmedi.") + '</p></div>' +
+                  '<div class="rounded-xl border border-blue-200 bg-blue-50 p-3 md:col-span-2"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">ÖRNEK CÜMLE</span><p class="mt-2 whitespace-pre-wrap text-sm font-semibold leading-relaxed text-blue-950">' + escapeHtml(example || "Bu kelime için örnek cümle henüz eklenmedi.") + '</p></div>' +
+                  '<div class="rounded-xl border border-blue-200 bg-blue-50 p-3 md:col-span-2"><span class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">COLLOCATION</span><p class="mt-2 whitespace-pre-wrap text-sm font-semibold leading-relaxed text-blue-950">' + escapeHtml(wordCollocations(item) || "Collocation henüz eklenmedi.") + '</p></div>' +
                 '</div>'
               : '<div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm font-semibold leading-relaxed text-slate-500">Space tuşu veya Anlamı Göster ile kartı çevir. Değerlendirme seçenekleri cevap açıldıktan sonra gelir.</div>') +
           '</div>' +
@@ -12816,14 +12884,11 @@
       document.getElementById("quizCardsBtn").addEventListener("click", () => startWordStudy("cards", true));
     }
 
-    function wordQuizDetailCard(label, value, icon, wide = false) {
+    function wordQuizDetailCard(label, value, wide = false) {
       const content = String(value || "").trim();
-      return '<div class="' + (wide ? 'md:col-span-2 ' : '') + 'rounded-xl border border-slate-200 bg-white p-4">' +
-        '<div class="flex items-center gap-2">' +
-          '<span aria-hidden="true" class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-sm font-black text-blue-700">' + icon + '</span>' +
-          '<p class="text-xs font-black uppercase tracking-wide text-slate-500">' + escapeHtml(label) + '</p>' +
-        '</div>' +
-        '<p class="mt-3 whitespace-pre-wrap text-sm font-semibold leading-relaxed ' + (content ? 'text-slate-700' : 'italic text-slate-400') + '">' + escapeHtml(content || "Henüz eklenmedi.") + '</p>' +
+      return '<div class="' + (wide ? 'md:col-span-2 ' : '') + 'rounded-xl border border-blue-200 bg-blue-50 p-4">' +
+        '<p class="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-black uppercase tracking-wide text-white">' + escapeHtml(label) + '</p>' +
+        '<p class="mt-3 whitespace-pre-wrap text-base font-bold leading-relaxed text-blue-950">' + escapeHtml(content || "Henüz eklenmedi.") + '</p>' +
       '</div>';
     }
 
@@ -12833,11 +12898,10 @@
           '<div><p class="text-xs font-black uppercase tracking-wide text-blue-600">Cevap sonrası tekrar</p><h5 class="mt-1 text-lg font-black text-slate-950">Kelime Detayları</h5></div>' +
           '<p class="text-sm font-bold text-slate-500">' + escapeHtml(item.word || "") + '</p>' +
         '</div>' +
-        '<div class="mt-4 grid gap-3 md:grid-cols-2">' +
-          wordQuizDetailCard("Yakın Anlam", wordMeaningNote(item), "≈") +
-          wordQuizDetailCard("DEFINITION", wordDefinition(item), "D") +
-          wordQuizDetailCard("Örnek Cümle", wordExample(item), "“", true) +
-          wordQuizDetailCard("COLLOCATION", wordCollocations(item), "↔", true) +
+        '<div class="mt-4 grid gap-3 md:grid-cols-[minmax(240px,0.45fr)_minmax(0,1fr)]">' +
+          wordQuizDetailCard("Yakın Anlam", wordMeaningNote(item)) +
+          wordQuizDetailCard("Örnek Cümle", wordExample(item)) +
+          wordQuizDetailCard("COLLOCATION", wordCollocations(item), true) +
         '</div>' +
       '</section>';
     }
@@ -12995,10 +13059,12 @@
     }
 
     function saveArticles() {
-      articles = articles.map(normalizeArticleRecord);
+      // Keep record identity stable: the reader retains the active article
+      // reference while its event handlers save and re-render it.
+      articles = articles.map(normalizeArticleRecordInPlace);
       // Serialize writes so a slower IndexedDB transaction can never replace
       // a newer article edit with an older snapshot.
-      const snapshot = articles.map(article => ({ ...article, bilingualParagraphs: (article.bilingualParagraphs || []).map(pair => ({ ...pair })) }));
+      const snapshot = JSON.parse(JSON.stringify(articles));
       articleSaveQueue = articleSaveQueue.catch(() => undefined).then(async () => {
         await saveDeployState(STORAGE_ARTICLES, snapshot);
         queueSupabaseAutoBackup();
@@ -13613,6 +13679,7 @@
       else delete all[number];
       article.eliminatedOptions = all;
       article.lastStudiedAt = new Date().toISOString();
+      article.updatedAt = article.lastStudiedAt;
       saveArticles();
       return true;
     }
@@ -13655,6 +13722,7 @@
       else delete all[number];
       article.readingQuestionHighlights = all;
       article.lastStudiedAt = new Date().toISOString();
+      article.updatedAt = article.lastStudiedAt;
       saveArticles();
       return true;
     }
@@ -14035,6 +14103,7 @@
           article.userAnswers[button.dataset.question] = button.dataset.key;
           article.answersChecked = false;
           article.lastStudiedAt = new Date().toISOString();
+          article.updatedAt = article.lastStudiedAt;
           saveArticles();
           renderArticleReader(article);
         });
@@ -14059,6 +14128,7 @@
           }
         });
         article.lastStudiedAt = new Date().toISOString();
+        article.updatedAt = article.lastStudiedAt;
         if (isYdsArticleWorkComplete(article)) markArticleDailyCompletion(article);
         saveArticles();
         renderArticleReader(article);
