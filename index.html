@@ -2366,6 +2366,36 @@
     }
     .daily-wrong-review-header { gap: 8px !important; }
     .daily-wrong-review-header p.mt-1 { margin-top: 2px !important; }
+    .daily-wrong-review-controls { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; }
+    body.daily-wrong-fullscreen { overflow: hidden; }
+    body.daily-wrong-fullscreen #appSidebar,
+    body.daily-wrong-fullscreen #sidebarOverlay,
+    body.daily-wrong-fullscreen .yds-top-dashboard,
+    body.daily-wrong-fullscreen .home-dashboard-secondary,
+    body.daily-wrong-fullscreen .home-dashboard-primary > :not(.home-daily-wrong-panel) { display: none !important; }
+    body.daily-wrong-fullscreen .home-daily-wrong-panel {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      max-width: none;
+      margin: 0 !important;
+      padding: clamp(12px, 2vw, 28px) !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    body.daily-wrong-fullscreen .daily-wrong-review-header,
+    body.daily-wrong-fullscreen .daily-wrong-navigation { flex-shrink: 0; }
+    body.daily-wrong-fullscreen .daily-wrong-question-card { flex: 1; min-height: 0; overflow-y: auto; }
+    body.daily-wrong-fullscreen .daily-wrong-question-text { font-size: clamp(18px, 1.6vw, 24px) !important; }
+    body.daily-wrong-fullscreen .daily-wrong-option-copy,
+    body.daily-wrong-fullscreen .daily-wrong-passage { font-size: clamp(16px, 1.25vw, 20px) !important; line-height: 1.6 !important; }
     .daily-wrong-question-card {
       min-height: 0;
       margin-top: 10px !important;
@@ -2664,6 +2694,96 @@
     .pa-mistake { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-color); }
     @media (max-width: 1100px) { .pa-workspace { grid-template-columns: 1fr; } .pa-workspace > section:nth-child(2) { position: static; max-height: none; overflow: visible; } }
     @media (max-width: 600px) { .pa-card { padding: 14px; } .pa-option { padding: 10px; } }
+    /* BEGIN SHARED PARAGRAPH IMPORT CSS */
+    .pa-import-page {
+      --pa-import-accent: #2563eb;
+      --pa-import-accent-border: #c4d5f6;
+      --pa-import-upload-border: #9bb8ee;
+      --pa-import-surface: var(--bg-surface, var(--surface, #fff));
+      --pa-import-muted-surface: var(--bg-surface-secondary, var(--surface-secondary, #f8fafc));
+      --pa-import-border: var(--border-color, var(--border, #dce3ec));
+      --pa-import-muted: var(--text-secondary, #64748b);
+      width: 100%; max-width: 1120px; margin-inline: auto;
+    }
+    [data-theme="dark"] .pa-import-page, .dark-theme .pa-import-page { --pa-import-accent: #8cb4ff; --pa-import-accent-border: #385581; --pa-import-upload-border: #5876a1; }
+    .pa-import-page .pa-toolbar, .pa-import-page .page-header { margin-bottom: 0; align-items: center; }
+    .pa-import-page > [aria-live="polite"]:empty { display: none; }
+    .pa-import-page .pa-toolbar h2, .pa-import-page .page-header h1 { margin: 6px 0 8px; font-size: clamp(25px, 2.1vw, 32px); letter-spacing: -.035em; line-height: 1.2; }
+    .pa-import-page .pa-toolbar p, .pa-import-page .page-header p { max-width: 640px; margin: 0; font-size: 16px; font-weight: 400 !important; line-height: 1.6; }
+    .pa-import-page .pa-eyebrow { color: var(--pa-import-accent); font-size: 12px; letter-spacing: .12em; }
+    .pa-import-page .pa-toolbar > .pa-btn { flex-shrink: 0; background: var(--pa-import-surface); color: var(--text-primary); border-color: var(--pa-import-border); }
+    .pa-import-layout { display: grid; grid-template-columns: minmax(0, 1fr) 272px; align-items: start; gap: 24px; }
+    .pa-import-card {
+      min-width: 0; padding: 24px !important; margin: 0; border: 1px solid var(--pa-import-border);
+      border-radius: 20px; background: var(--pa-import-surface); box-shadow: 0 8px 30px rgb(15 23 42 / 4%);
+    }
+    .pa-import-card [hidden] { display: none !important; }
+    .pa-import-card h3 { margin: 0 0 6px; font-size: 20px; letter-spacing: -.025em; line-height: 1.4; }
+    .pa-import-card > p { margin: 0; font-size: 15px; color: var(--pa-import-muted); font-weight: 400 !important; line-height: 1.6; }
+    .pa-import-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 5px; margin: 24px 0; border: 1px solid var(--pa-import-border); border-radius: 12px; background: var(--pa-import-muted-surface); }
+    .pa-import-tabs button { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 43px; padding: 10px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--pa-import-muted); font: inherit; font-size: 14px; font-weight: 600 !important; cursor: pointer; }
+    .pa-import-tabs button[aria-selected="true"] { background: var(--pa-import-surface); border-color: var(--pa-import-border); color: var(--pa-import-accent); box-shadow: 0 2px 5px rgb(15 23 42 / 5%); }
+    .pa-import-tabs svg, .pa-import-note svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .pa-import-tabs button:focus-visible, .pa-upload-zone:focus-visible, .pa-import-example summary:focus-visible { outline: 3px solid #93b4ff; outline-offset: 3px; }
+    .pa-upload-zone {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; min-height: 244px; padding: 22px 18px; border: 1.5px dashed var(--pa-import-upload-border); border-radius: 16px;
+      background: color-mix(in srgb, var(--pa-import-accent) 4%, var(--pa-import-surface)); color: var(--text-primary);
+      text-align: center; font: inherit; cursor: pointer; transition: background .18s, border-color .18s;
+    }
+    .pa-upload-zone:hover, .pa-upload-zone.is-dragging { border-color: var(--pa-import-accent); background: color-mix(in srgb, var(--pa-import-accent) 9%, var(--pa-import-surface)); }
+    .pa-upload-zone:disabled { opacity: .6; cursor: wait; }
+    .pa-upload-icon { display: grid; place-items: center; width: 58px; height: 58px; margin-bottom: 8px; border-radius: 16px; border: 1px solid var(--pa-import-accent-border); background: var(--pa-import-surface); color: var(--pa-import-accent); box-shadow: 0 4px 10px rgb(37 99 235 / 5%); }
+    .pa-upload-icon svg { width: 28px; height: 28px; }
+    .pa-upload-zone strong { font-size: 18px; font-weight: 600 !important; }
+    .pa-upload-zone > span:not(.pa-upload-icon) { font-size: 14px; color: var(--pa-import-muted); font-weight: 400 !important; }
+    .pa-upload-link { color: var(--pa-import-accent); font-weight: 600 !important; }
+    .pa-import-types { display: flex; gap: 6px; margin-top: 8px; }
+    .pa-import-types span { padding: 4px 9px; border: 1px solid var(--pa-import-border); border-radius: 6px; background: var(--pa-import-surface); font-size: 12px; font-weight: 600 !important; letter-spacing: .04em; color: var(--pa-import-muted); }
+    .pa-import-file-hint { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin-top: 14px; color: var(--pa-import-muted); font-size: 13px; line-height: 1.5; font-weight: 400 !important; }
+    .pa-import-text-label { display: block; margin-bottom: 10px; font-size: 14px; font-weight: 600 !important; }
+    .pa-import-textarea { display: block; width: 100%; min-height: 256px; max-height: 480px; padding: 16px; border: 1px solid var(--pa-import-border); border-radius: 12px; resize: vertical; background: var(--pa-import-muted-surface); color: var(--text-primary); font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important; font-size: 16px; line-height: 1.65; font-weight: 400 !important; }
+    .pa-import-textarea::placeholder { color: var(--pa-import-muted); opacity: .75; font-weight: 400 !important; }
+    .pa-import-textarea:focus { outline: 3px solid rgb(37 99 235 / 13%); border-color: var(--pa-import-accent); }
+    .pa-import-text-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 16px; }
+    .pa-import-count { color: var(--pa-import-muted); font-size: 13px; font-weight: 400 !important; }
+    .pa-import-text-footer .btn, .pa-import-text-footer .pa-btn { min-height: 44px; padding: 10px 22px; }
+    .pa-import-compatibility { margin: 24px 0 0; padding-top: 18px; border-top: 1px solid var(--pa-import-border); color: var(--pa-import-muted); font-size: 13px; font-weight: 400 !important; line-height: 1.6; }
+    .pa-import-guide { min-width: 0; padding: 22px 0; }
+    .pa-import-guide h3 { margin: 0 0 22px; font-size: 15px; font-weight: 600 !important; }
+    .pa-import-step { display: flex; gap: 12px; align-items: start; margin-bottom: 22px; }
+    .pa-import-step > span { display: grid; place-items: center; width: 38px; height: 38px; flex-shrink: 0; border: 1px solid var(--pa-import-accent-border); border-radius: 11px; background: color-mix(in srgb, var(--pa-import-accent) 7%, var(--pa-import-surface)); color: var(--pa-import-accent); font-size: 18px; }
+    .pa-import-step strong { display: block; margin: 0 0 3px; color: var(--text-primary); font-size: 14px; font-weight: 600 !important; }
+    .pa-import-step p { margin: 0; color: var(--pa-import-muted); font-size: 14px; font-weight: 400 !important; line-height: 1.6; }
+    .pa-import-note { display: flex; gap: 9px; padding: 14px; margin-top: 28px; border: 1px solid var(--pa-import-border); border-radius: 12px; color: var(--pa-import-muted); background: var(--pa-import-surface); font-size: 13px; line-height: 1.65; font-weight: 400 !important; }
+    .pa-import-note svg { margin-top: 2px; color: var(--pa-import-accent); }
+    .pa-import-example { margin-top: 20px; color: var(--pa-import-muted); font-size: 14px; }
+    .pa-import-example summary { cursor: pointer; font-weight: 600 !important; }
+    .pa-import-example pre { max-height: 260px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; margin-top: 12px; padding: 12px; border: 1px solid var(--pa-import-border); border-radius: 10px; background: var(--pa-import-surface); color: var(--text-primary); font-size: 12px; line-height: 1.65; font-weight: 400 !important; }
+    @media (max-width: 1100px) {
+      .pa-import-layout { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+      .pa-import-guide { display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; padding: 20px 4px; }
+      .pa-import-guide h3, .pa-import-note, .pa-import-example { grid-column: 1 / -1; }
+      .pa-import-guide h3 { margin-bottom: 18px; }
+      .pa-import-step { margin-bottom: 0; }
+      .pa-import-note { margin-top: 20px; }
+    }
+    @media (max-width: 600px) {
+      .pa-import-page .pa-toolbar { align-items: start; gap: 16px; }
+      .pa-import-page .pa-toolbar > .pa-btn { padding: 8px 12px; min-height: 40px; }
+      .pa-import-card { padding: 20px !important; border-radius: 16px; }
+      .pa-import-tabs { margin: 20px 0; }
+      .pa-import-tabs button { font-size: 13px; gap: 6px; }
+      .pa-upload-zone { min-height: 240px; padding: 24px 12px; }
+      .pa-upload-zone strong { font-size: 17px; }
+      .pa-import-guide { gap: 16px; }
+      .pa-import-step { gap: 9px; }
+      .pa-import-step > span { width: 32px; height: 32px; }
+      .pa-import-note { margin-top: 0; }
+    }
+    
+    .pa-import-file-hint span { font-weight: 400 !important; }
+    /* END SHARED PARAGRAPH IMPORT CSS */
   </style>
 </head>
 <body class="light-theme min-h-screen bg-slate-100 text-slate-900">
@@ -3522,8 +3642,8 @@
     }
 
     // Shared summary used by both Çıkmış Sorular and Denemeler cards.
-    function getSourceScore({ correct = 0, total = 0, solved = 0 } = {}) {
-      return total === 80 ? correct * 1.25 : solved > 0 ? Math.round(correct / solved * 100) : 0;
+    function getSourceScore({ correct = 0, solved = 0 } = {}) {
+      return solved > 0 ? Math.round(correct / solved * 10000) / 100 : 0;
     }
 
     function getProgressSummary({ sourceId, questions = [], storedProgress = null }) {
@@ -5845,6 +5965,11 @@
       const clone = value => JSON.parse(JSON.stringify(value));
       const empty = () => ({ version: 1, entries: [] });
       const wordCount = value => (value.match(/\S+/gu) || []).length;
+      const optionKeys = question => question?.type === "true_false" || (isObject(question?.options) && Object.hasOwn(question.options, "T") && Object.hasOwn(question.options, "F")) ? ["T", "F"] : keys;
+      const optionLabel = key => key === "T" ? "True" : key === "F" ? "False" : key;
+      const isMixed = content => content.questions.some(question => optionKeys(question).length === 2);
+      const formatLabel = content => isMixed(content) ? "5 True / False + 5 çoktan seçmeli" : "10 çoktan seçmeli soru";
+      const validOption = (entry, number, option) => Number.isInteger(number) && number >= 1 && number <= 10 && optionKeys(entry.content.questions[number - 1]).includes(option);
       function fingerprint(value) {
         let first = 2166136261, second = 5381;
         for (let i = 0; i < value.length; i++) {
@@ -5854,14 +5979,14 @@
         return `${(first >>> 0).toString(36)}-${(second >>> 0).toString(36)}`;
       }
       function contentIdentity(content) {
-        return JSON.stringify([content.passage, content.questions.map(q => [q.number, q.stem, keys.map(key => q.options[key])])]);
+        return JSON.stringify([content.passage, content.questions.map(q => [q.number, q.stem, optionKeys(q).map(key => q.options[key])])]);
       }
       function normalizeContent(input) {
         if (!isObject(input)) throw new Error("Metin ve soruları içeren bir JSON nesnesi bekleniyor.");
         const passage = input.passage ?? input.reading_passage ?? input.text;
         if (!nonempty(passage)) throw new Error("Okuma parçası bulunamadı. JSON içinde passage alanını kullanın.");
         if (passage.length > 100000) throw new Error("Okuma parçası çok uzun.");
-        if (!Array.isArray(input.questions) || input.questions.length !== 10) throw new Error("Metne bağlı tam 10 soru ve her soruda A–E seçenekleri olmalı.");
+        if (!Array.isArray(input.questions) || input.questions.length !== 10) throw new Error("Metne bağlı tam 10 soru olmalı: 5 True / False + 5 çoktan seçmeli veya eski biçimde 10 çoktan seçmeli.");
         if (["answers", "solutions"].some(key => input[key] != null)) throw new Error("JSON cevap anahtarını answer_key alanında gönderin.");
         const questions = input.questions.map((question, index) => {
           if (!isObject(question)) throw new Error(`Soru ${index + 1} geçersiz.`);
@@ -5870,13 +5995,15 @@
           const stem = question.stem ?? question.question ?? question.prompt;
           if (number !== index + 1 || !nonempty(stem)) throw new Error("Sorular 1–10 sırasında ve soru metinleri eksiksiz olmalı.");
           let options = question.options;
+          const expectedKeys = optionKeys(question);
           if (Array.isArray(options)) {
-            if (options.length !== 5) throw new Error(`Soru ${number}: A–E seçenekleri eksik.`);
-            options = Object.fromEntries(options.map((value, i) => [keys[i], isObject(value) ? value.text : value]));
+            if (options.length !== expectedKeys.length) throw new Error(`Soru ${number}: ${expectedKeys.join("/")} seçenekleri eksik.`);
+            options = Object.fromEntries(options.map((value, i) => [expectedKeys[i], isObject(value) ? value.text : value]));
           }
-          if (!isObject(options) || Object.keys(options).length !== 5 || !keys.every(key => nonempty(options[key]))) throw new Error(`Soru ${number}: A–E seçenekleri eksik veya boş.`);
-          return { number, type: question.type || "reading_comprehension", stem, options: Object.fromEntries(keys.map(key => [key, options[key]])) };
+          if (!isObject(options) || Object.keys(options).length !== expectedKeys.length || !expectedKeys.every(key => nonempty(options[key]))) throw new Error(`Soru ${number}: ${expectedKeys.join("/")} seçenekleri eksik veya boş.`);
+          return { number, type: expectedKeys.length === 2 ? "true_false" : question.type || "reading_comprehension", stem, options: Object.fromEntries(expectedKeys.map(key => [key, options[key]])) };
         });
+        if (isMixed({ questions }) && questions.some((question, index) => (question.type === "true_false") !== (index < 5))) throw new Error("Yeni düzende ilk 5 soru True / False (T/F), son 5 soru çoktan seçmeli (A–E) olmalı.");
         return {
           topic: nonempty(input.topic) ? input.topic : nonempty(input.title) ? input.title : "Okuma Çalışması",
           level: nonempty(input.level) ? input.level : "YDS",
@@ -5908,11 +6035,13 @@
         return entries.map(entry => {
           if (!isObject(entry) || !Number.isInteger(entry.number) || entry.number < 1 || entry.number > 10 || seen.has(entry.number)) throw new Error("Cevap anahtarında 1–10 soru numaraları eksiksiz ve benzersiz olmalı.");
           seen.add(entry.number);
-          if (!keys.includes(entry.correct_option)) throw new Error(`Soru ${entry.number}: doğru seçenek A–E harflerinden biri olmalı.`);
+          const questionKeys = optionKeys(content.questions[entry.number - 1]);
+          if (!questionKeys.includes(entry.correct_option)) throw new Error(`Soru ${entry.number}: doğru seçenek ${questionKeys.join("/")} harflerinden biri olmalı.`);
           for (const field of ["explanation", "evidence_sentence"]) if (entry[field] != null && typeof entry[field] !== "string") throw new Error(`Soru ${entry.number}: ${field} metin olmalı.`);
           if (entry.evidence_sentence && !content.passage.includes(entry.evidence_sentence)) throw new Error(`Soru ${entry.number}: kanıt cümlesi okuma parçasında birebir bulunamadı.`);
           const distractors = entry.distractor_explanations ?? {};
-          if (!isObject(distractors) || (Object.keys(distractors).length > 0 && (Object.keys(distractors).length !== 4 || !keys.filter(key => key !== entry.correct_option).every(key => nonempty(distractors[key]))))) throw new Error(`Soru ${entry.number}: dört yanlış seçeneğin açıklamaları eksiksiz olmalı.`);
+          const wrongKeys = questionKeys.filter(key => key !== entry.correct_option);
+          if (!isObject(distractors) || (Object.keys(distractors).length > 0 && (Object.keys(distractors).length !== wrongKeys.length || !wrongKeys.every(key => nonempty(distractors[key]))))) throw new Error(`Soru ${entry.number}: yanlış seçenek açıklamaları ${wrongKeys.join("/")} seçeneklerini eksiksiz içermeli.`);
           return { number: entry.number, correct_option: entry.correct_option, explanation: entry.explanation || "", evidence_sentence: entry.evidence_sentence || "", distractor_explanations: clone(distractors), paraphrases: analysisList(entry.paraphrases, "paraphrases", entry.number), vocabulary: analysisList(entry.vocabulary, "vocabulary", entry.number), grammar: analysisList(entry.grammar, "grammar", entry.number) };
         }).sort((a, b) => a.number - b.number);
       }
@@ -5942,8 +6071,9 @@
         if (heading) { if (topic === "Okuma Çalışması") topic = heading[1].trim(); introduction = introduction.slice(heading[0].length); }
         const questions = matches.map((match, index) => {
           const block = text.slice(match.index + match[0].length, matches[index + 1]?.index ?? text.length).trim();
-          const options = [...block.matchAll(/^[\t ]*(?:[-*][\t ]+)?(?:\*\*)?([A-E])[\t ]*[).:][\t ]*(?:\*\*)?[\t ]*/gm)];
-          if (options.length !== 5 || options.some((option, i) => option[1] !== keys[i])) throw new Error(`Soru ${index + 1}: TXT içindeki seçenekleri A) … E) … sırasında yazın.`);
+          const options = [...block.matchAll(/^[\t ]*(?:[-*][\t ]+)?(?:\*\*)?([A-E]|T|F)[\t ]*[).:][\t ]*(?:\*\*)?[\t ]*/gm)];
+          const expectedKeys = options[0]?.[1] === "T" ? ["T", "F"] : keys;
+          if (options.length !== expectedKeys.length || options.some((option, i) => option[1] !== expectedKeys[i])) throw new Error(`Soru ${index + 1}: TXT içindeki seçenekleri T) … F) … veya A) … E) … sırasında yazın.`);
           if (/^(?:#{1,6}\s*)?(?:Answer Key|Cevap Anahtarı|Answers|Solutions)\s*:/im.test(block)) throw new Error("Cevap anahtarı ve analiz içeren çalışmalar için JSON biçimini kullanın.");
           return { number: index + 1, stem: block.slice(0, options[0].index).trim(), options: Object.fromEntries(options.map((option, i) => [option[1], block.slice(option.index + option[0].length, options[i + 1]?.index ?? block.length).trim()])) };
         });
@@ -5960,7 +6090,9 @@
           try { input = JSON.parse(text); } catch { throw new Error("JSON okunamadı. Dosyanın tamamını, süslü parantezlerle birlikte ekleyin."); }
         } else input = parseTxt(text);
         const content = normalizeContent(input);
-        const id = nonempty(input.external_id) ? input.external_id : `local-reading-${fingerprint(contentIdentity(content))}`;
+        let id = nonempty(input.external_id) ? input.external_id : `local-reading-${fingerprint(contentIdentity(content))}`;
+        // A new question format has independent answers and note/source links on every device.
+        if (isMixed(content) && nonempty(input.external_id) && !id.endsWith("-tf-mcq")) id += "-tf-mcq";
         return { external_id: id, content, actual_word_count: wordCount(content.passage), answerKey: normalizeAnswerKey(input.answer_key, content) };
       }
       function validateLibrary(value) {
@@ -5980,8 +6112,8 @@
           }
           const progress = entry.progress;
           if (!isObject(progress) || !isObject(progress.answers) || !Number.isInteger(progress.currentQuestion) || progress.currentQuestion < 1 || progress.currentQuestion > 10) throw new Error("Kaydedilmiş cevaplar okunamadı.");
-          if (Object.entries(progress.answers).some(([number, option]) => !/^(?:[1-9]|10)$/.test(number) || !keys.includes(option))) throw new Error("Kaydedilmiş seçenek geçersiz.");
-          if (progress.eliminatedOptions != null && (!isObject(progress.eliminatedOptions) || Object.entries(progress.eliminatedOptions).some(([number, options]) => !/^(?:[1-9]|10)$/.test(number) || !Array.isArray(options) || options.some(option => !keys.includes(option))))) throw new Error("Kaydedilmiş elenen seçenekler geçersiz.");
+          if (Object.entries(progress.answers).some(([number, option]) => !/^(?:[1-9]|10)$/.test(number) || !validOption(entry, Number(number), option))) throw new Error("Kaydedilmiş seçenek geçersiz.");
+          if (progress.eliminatedOptions != null && (!isObject(progress.eliminatedOptions) || Object.entries(progress.eliminatedOptions).some(([number, options]) => !/^(?:[1-9]|10)$/.test(number) || !Array.isArray(options) || options.some(option => !validOption(entry, Number(number), option))))) throw new Error("Kaydedilmiş elenen seçenekler geçersiz.");
         }
         return value;
       }
@@ -6005,23 +6137,23 @@
         const result = clone(validateLibrary(library));
         const entry = result.entries.find(item => item.external_id === id);
         if (!entry) throw new Error("Çalışma bulunamadı.");
-        action(entry.progress);
+        action(entry.progress, entry);
         entry.updatedAt = now;
         return result;
       }
       function answer(library, id, number, option, now) {
-        if (!Number.isInteger(number) || number < 1 || number > 10 || !keys.includes(option)) throw new Error("Geçersiz soru veya seçenek.");
-        return change(library, id, progress => {
-          if (progress.completedAt) throw new Error("Tamamlanan çalışmanın cevapları korunur.");
+        return change(library, id, (progress, entry) => {
+          if (!validOption(entry, number, option)) throw new Error("Geçersiz soru veya seçenek.");
           if (progress.eliminatedOptions?.[number]?.includes(option)) throw new Error("Elenen seçeneği işaretlemek için önce elemeyi kaldırın.");
           progress.answers[number] = option; progress.currentQuestion = number;
         }, now);
       }
       function toggleElimination(library, id, number, option, now) {
-        if (!Number.isInteger(number) || number < 1 || number > 10 || !keys.includes(option)) throw new Error("Geçersiz soru veya seçenek.");
         validateLibrary(library);
         const entry = library.entries.find(item => item.external_id === id);
-        if (entry && (entry.progress.completedAt || entry.progress.answers[number] === option)) return clone(library);
+        if (!entry) throw new Error("Çalışma bulunamadı.");
+        if (!validOption(entry, number, option)) throw new Error("Geçersiz soru veya seçenek.");
+        if (entry && entry.progress.answers[number] === option) return clone(library);
         return change(library, id, progress => {
           const options = new Set(progress.eliminatedOptions?.[number] || []);
           if (options.has(option)) options.delete(option); else options.add(option);
@@ -6032,9 +6164,16 @@
         if (!Number.isInteger(number) || number < 1 || number > 10) throw new Error("Geçersiz soru numarası.");
         return change(library, id, progress => { progress.currentQuestion = number; });
       }
+      function compareEntries(a, b, sort = "recent") {
+        const completed = Number(Boolean(a.progress.completedAt)) - Number(Boolean(b.progress.completedAt));
+        if (completed) return completed;
+        if (sort === "az") return a.content.topic.localeCompare(b.content.topic, "en");
+        const field = sort === "studied" ? "updatedAt" : "createdAt";
+        return Date.parse(b[field]) - Date.parse(a[field]);
+      }
       function complete(library, id, now = new Date().toISOString()) {
-        return change(library, id, progress => {
-          if (Array.from({ length: 10 }, (_, index) => index + 1).some(number => !keys.includes(progress.answers[number]))) throw new Error("Tamamlamak için 10 sorunun tamamını yanıtlayın.");
+        return change(library, id, (progress, entry) => {
+          if (entry.content.questions.some(question => !validOption(entry, question.number, progress.answers[question.number]))) throw new Error("Tamamlamak için 10 sorunun tamamını yanıtlayın.");
           progress.completedAt ||= now;
         }, now);
       }
@@ -6083,9 +6222,10 @@
       }
       function regionText(entry, region = "passage") {
         if (region === "passage") return entry.content.passage;
-        const match = /^question:(10|[1-9]):(stem|[A-E])$/.exec(region);
+        const match = /^question:(10|[1-9]):(stem|[A-E]|T|F)$/.exec(region);
         if (!match) throw new Error("Geçersiz metin bölgesi.");
         const question = entry.content.questions[Number(match[1]) - 1];
+        if (match[2] !== "stem" && !optionKeys(question).includes(match[2])) throw new Error("Geçersiz metin bölgesi.");
         return match[2] === "stem" ? question.stem : question.options[match[2]];
       }
       function highlight(library, id, region, start, end) {
@@ -6145,14 +6285,14 @@
           highlight(id, region, start, end) { return mutate(library => highlight(library, id, region, start, end), id); },
         };
       }
-      const template = "Başlık: Academic Reading\nSeviye: Advanced YDS\n\nMETİN:\nİngilizce okuma parçasının tamamı\n\nSORULAR:\n" + Array.from({ length: 10 }, (_, i) => `${i + 1}. Question text?\nA) Option A\nB) Option B\nC) Option C\nD) Option D\nE) Option E`).join("\n\n");
-      return { parse, parseTxt, empty, validateLibrary, add, answer, toggleElimination, navigate, complete, remove, result, merge, isParagraphWordAddition, regionText, highlight, createStore, template };
+      const template = "Başlık: Academic Reading\nSeviye: Advanced YDS\n\nMETİN:\nİngilizce okuma parçasının tamamı\n\nSORULAR:\n" + Array.from({ length: 10 }, (_, i) => i < 5 ? `${i + 1}. Statement about the passage.\nT) True\nF) False` : `${i + 1}. Question text?\nA) Option A\nB) Option B\nC) Option C\nD) Option D\nE) Option E`).join("\n\n");
+      return { parse, parseTxt, empty, validateLibrary, add, answer, toggleElimination, navigate, compareEntries, complete, remove, result, merge, isParagraphWordAddition, optionKeys, optionLabel, formatLabel, regionText, highlight, createStore, template };
     }
     // END SHARED PARAGRAPH LOCAL
 
     const paragraphTools = createParagraphLocalTools();
     const paragraphStore = paragraphTools.createStore(openDeployDb, "appState");
-    let paragraphState = { generation: 0, loaded: false, loading: false, busy: false, entries: [], activeId: null, adding: false, draft: "", error: "", notice: "", query: "", statusFilter: "all", sort: "recent" };
+    let paragraphState = { importMode: "file", generation: 0, loaded: false, loading: false, busy: false, entries: [], activeId: null, adding: false, draft: "", error: "", notice: "", query: "", statusFilter: "all", sort: "recent" };
     function resetParagraphState() {
       setParagraphFocusMode(false); paragraphLastSelection = null;
       document.querySelector(".important-structure-selection")?.remove();
@@ -6213,12 +6353,12 @@
     }
     function chooseParagraphOption(option) {
       const entry = paragraphState.entries.find(item => item.external_id === paragraphState.activeId);
-      if (!entry || entry.progress.completedAt) return;
+      if (!entry) return;
       return paragraphAct(() => paragraphStore.answer(entry.external_id, entry.progress.currentQuestion, option));
     }
     function eliminateParagraphOption(option) {
       const entry = paragraphState.entries.find(item => item.external_id === paragraphState.activeId);
-      if (!entry || paragraphState.busy || entry.progress.completedAt || entry.progress.answers[entry.progress.currentQuestion] === option) return;
+      if (!entry || paragraphState.busy || entry.progress.answers[entry.progress.currentQuestion] === option) return;
       return paragraphAct(() => paragraphStore.toggleElimination(entry.external_id, entry.progress.currentQuestion, option));
     }
     function navigateParagraph(number) {
@@ -6375,6 +6515,9 @@
       }
     });
 
+    document.addEventListener("fullscreenchange", () => handleDailyWrongFullscreenChange());
+    window.addEventListener("keydown", event => handleDailyWrongFullscreenKeydown(event));
+
     function paragraphCompletionHtml(entry, result) {
       if (!entry.progress.completedAt || result) return "";
       return `<section class="pa-card"><h3>Çalışma tamamlandı</h3><p>Cevapların kaydedildi. Cevap anahtarı içeren JSON dosyasını yeniden eklediğinde puan ve analiz gösterilecek; mevcut cevapların korunur.</p><time datetime="${escapeHtml(entry.progress.completedAt)}">${escapeHtml(paragraphDate(entry.progress.completedAt))}</time></section>`;
@@ -6382,7 +6525,7 @@
 
     function paragraphQuestionAnalysisHtml(analysis) {
       if (!analysis) return "";
-      return `<section class="pa-analysis" aria-label="Soru analizi"><h3>Soru Analizi</h3><span class="pa-badge">${analysis.correct ? "Doğru" : "Yanlış"}</span><p>İşaretlenen: <strong>${escapeHtml(analysis.selected_option)}</strong> · Doğru cevap: <strong>${escapeHtml(analysis.correct_option)}</strong></p>${analysis.explanation ? `<p>${escapeHtml(analysis.explanation)}</p>` : ""}${analysis.evidence_sentence ? `<h4>Metindeki kanıt</h4><blockquote lang="en">${escapeHtml(analysis.evidence_sentence)}</blockquote>` : ""}${Object.keys(analysis.distractor_explanations).length ? `<h4>Yanlış seçenekler</h4><ul>${Object.entries(analysis.distractor_explanations).map(([key, value]) => `<li><strong>${escapeHtml(key)}:</strong> ${escapeHtml(value)}</li>`).join("")}</ul>` : ""}${[["Paraphrase ilişkileri", analysis.paraphrases], ["Önemli kelimeler", analysis.vocabulary], ["Gramer yapıları", analysis.grammar]].map(([title, values]) => values.length ? `<h4>${title}</h4><ul>${values.map(value => `<li>${escapeHtml(value)}</li>`).join("")}</ul>` : "").join("")}</section>`;
+      return `<section class="pa-analysis" aria-label="Soru analizi"><h3>Soru Analizi</h3><span class="pa-badge">${analysis.correct ? "Doğru" : "Yanlış"}</span><p>İşaretlenen: <strong>${escapeHtml(paragraphTools.optionLabel(analysis.selected_option))}</strong> · Doğru cevap: <strong>${escapeHtml(paragraphTools.optionLabel(analysis.correct_option))}</strong></p>${analysis.explanation ? `<p>${escapeHtml(analysis.explanation)}</p>` : ""}${analysis.evidence_sentence ? `<h4>Metindeki kanıt</h4><blockquote lang="en">${escapeHtml(analysis.evidence_sentence)}</blockquote>` : ""}${Object.keys(analysis.distractor_explanations).length ? `<h4>Yanlış seçenekler</h4><ul>${Object.entries(analysis.distractor_explanations).map(([key, value]) => `<li><strong>${escapeHtml(paragraphTools.optionLabel(key))}:</strong> ${escapeHtml(value)}</li>`).join("")}</ul>` : ""}${[["Paraphrase ilişkileri", analysis.paraphrases], ["Önemli kelimeler", analysis.vocabulary], ["Gramer yapıları", analysis.grammar]].map(([title, values]) => values.length ? `<h4>${title}</h4><ul>${values.map(value => `<li>${escapeHtml(value)}</li>`).join("")}</ul>` : "").join("")}</section>`;
     }
     function paragraphEntryStatus(entry) {
       return entry.progress.completedAt ? "completed" : Object.keys(entry.progress.answers).length ? "active" : "new";
@@ -6390,20 +6533,40 @@
     function paragraphLibraryCardsHtml() {
       const state = paragraphState, query = state.query.trim().toLocaleLowerCase("tr-TR");
       const filtered = state.entries.filter(item => (state.statusFilter === "all" || paragraphEntryStatus(item) === state.statusFilter) && (!query || (item.content.topic + " " + item.content.passage).toLocaleLowerCase("tr-TR").includes(query)));
-      filtered.sort((a, b) => state.sort === "az" ? a.content.topic.localeCompare(b.content.topic, "en") : Date.parse(state.sort === "studied" ? b.updatedAt : b.createdAt) - Date.parse(state.sort === "studied" ? a.updatedAt : a.createdAt));
+      filtered.sort((a, b) => paragraphTools.compareEntries(a, b, state.sort));
       if (!filtered.length) return `<div class="pa-library-empty"><h3>${state.entries.length ? "Bu filtrede çalışma yok" : "Henüz metin eklenmedi"}</h3><p>${state.entries.length ? "Aramayı veya çalışma durumunu değiştir." : "Yeni Metin Ekle ile JSON / TXT dosyanı ekle. Çalışmaların burada kartlar halinde saklanır."}</p></div>`;
       return `<div class="pa-library">${filtered.map(item => {
         const answered = Object.keys(item.progress.answers).length, status = paragraphEntryStatus(item), outcome = paragraphTools.result(item);
         const statusLabel = status === "completed" ? "Tamamlandı" : status === "active" ? "Devam ediyor" : "Yeni";
-        return `<article class="pa-card pa-study-card reading-content-card${status === "completed" ? " is-completed" : ""}"><div class="pa-card-head"><div class="pa-badges"><span class="pa-badge">EN</span></div><span class="pa-badge">${statusLabel}</span></div><h3 lang="en">${escapeHtml(item.content.topic)}</h3><p class="pa-preview" lang="en">${escapeHtml(item.content.passage.slice(0, 220))}${item.content.passage.length > 220 ? "…" : ""}</p><p class="pa-card-meta">${item.actual_word_count} kelime · 10 soru</p>${outcome ? `<p class="pa-card-result" aria-label="${outcome.correct} doğru, ${outcome.incorrect} yanlış, yüzde ${outcome.score}"><span class="pa-result-correct">${outcome.correct}D</span> · <span class="pa-result-wrong">${outcome.incorrect}Y</span> · %${outcome.score}</p>` : ""}${paragraphSavedBadges(item)}<div class="pa-card-progress"><div><span>SORU İLERLEMESİ · ${answered}/10</span><span>%${answered * 10}</span></div><div class="pa-card-track" role="progressbar" aria-label="Soru ilerlemesi" aria-valuenow="${answered}" aria-valuemin="0" aria-valuemax="10"><span style="width:${answered * 10}%"></span></div></div><div class="pa-card-actions"><button type="button" class="pa-btn pa-btn-primary" data-paragraph-open="${escapeHtml(item.external_id)}"${state.busy ? " disabled" : ""}>${status === "completed" ? "Cevaplarımı Gör" : status === "active" ? "Devam Et" : "Aç"}</button><details class="pa-card-menu"><summary class="pa-btn" aria-label="${escapeHtml(item.content.topic)} işlemleri" title="Çalışma işlemleri">⋯</summary><div class="pa-menu-panel"><button type="button" data-paragraph-delete="${escapeHtml(item.external_id)}"${state.busy ? " disabled" : ""}>Sil</button></div></details></div></article>`;
+        return `<article class="pa-card pa-study-card reading-content-card${status === "completed" ? " is-completed" : ""}"><div class="pa-card-head"><div class="pa-badges"><span class="pa-badge">EN</span></div><span class="pa-badge">${statusLabel}</span></div><h3 lang="en">${escapeHtml(item.content.topic)}</h3><p class="pa-preview" lang="en">${escapeHtml(item.content.passage.slice(0, 220))}${item.content.passage.length > 220 ? "…" : ""}</p><p class="pa-card-meta">${item.actual_word_count} kelime · ${escapeHtml(paragraphTools.formatLabel(item.content))}</p>${outcome ? `<p class="pa-card-result" aria-label="${outcome.correct} doğru, ${outcome.incorrect} yanlış, yüzde ${outcome.score}"><span class="pa-result-correct">${outcome.correct}D</span> · <span class="pa-result-wrong">${outcome.incorrect}Y</span> · %${outcome.score}</p>` : ""}${paragraphSavedBadges(item)}<div class="pa-card-progress"><div><span>SORU İLERLEMESİ · ${answered}/10</span><span>%${answered * 10}</span></div><div class="pa-card-track" role="progressbar" aria-label="Soru ilerlemesi" aria-valuenow="${answered}" aria-valuemin="0" aria-valuemax="10"><span style="width:${answered * 10}%"></span></div></div><div class="pa-card-actions"><button type="button" class="pa-btn pa-btn-primary" data-paragraph-open="${escapeHtml(item.external_id)}"${state.busy ? " disabled" : ""}>${status === "completed" ? "Cevaplarımı Gör" : status === "active" ? "Devam Et" : "Aç"}</button><details class="pa-card-menu"><summary class="pa-btn" aria-label="${escapeHtml(item.content.topic)} işlemleri" title="Çalışma işlemleri">⋯</summary><div class="pa-menu-panel"><button type="button" data-paragraph-delete="${escapeHtml(item.external_id)}"${state.busy ? " disabled" : ""}>Sil</button></div></details></div></article>`;
       }).join("")}</div>`;
+    }
+    function confirmParagraphRemoval(item) {
+      return new Promise(resolve => {
+        if (document.getElementById("paragraphRemoveModal")) { resolve(false); return; }
+        const modal = document.createElement("div");
+        modal.id = "paragraphRemoveModal";
+        modal.className = "cloud-restore-modal";
+        modal.innerHTML = '<section class="cloud-restore-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="paragraphRemoveTitle">' +
+          '<header class="cloud-restore-modal__header"><div><h3 id="paragraphRemoveTitle" class="text-xl font-black">Parçayı Sil</h3><p class="mt-2 text-sm font-semibold">' + escapeHtml(item.content.topic) + '</p></div></header>' +
+          '<div class="cloud-restore-modal__body"><p class="text-sm font-semibold">Bu parça ve cevapları kaldırılacak. Kelime ve not defterindeki kayıtlar korunur.</p>' +
+          '<div class="cloud-restore-modal__actions"><button type="button" class="cloud-restore-cancel" data-paragraph-remove-cancel>İptal</button><button type="button" class="cloud-restore-continue" data-paragraph-remove-confirm>Sil</button></div></div></section>';
+        const close = confirmed => { document.removeEventListener("keydown", onKeyDown); modal.remove(); resolve(confirmed); };
+        const onKeyDown = event => { if (event.key === "Escape") close(false); };
+        modal.addEventListener("click", event => { if (event.target === modal) close(false); });
+        modal.querySelector("[data-paragraph-remove-cancel]").addEventListener("click", () => close(false));
+        modal.querySelector("[data-paragraph-remove-confirm]").addEventListener("click", () => close(true));
+        document.body.append(modal);
+        document.addEventListener("keydown", onKeyDown);
+        modal.querySelector("[data-paragraph-remove-cancel]").focus();
+      });
     }
     async function deleteParagraphEntry(id) {
       if (paragraphState.busy || !paragraphState.loaded) return;
       const item = paragraphState.entries.find(entry => entry.external_id === id);
       if (!item) return;
       closeParagraphCardMenus();
-      if (!window.confirm(`“${item.content.topic}” çalışması ve bu çalışmaya ait tüm cevaplar silinsin mi?`)) return;
+      if (!await confirmParagraphRemoval(item)) return;
       const generation = paragraphState.generation;
       Object.assign(paragraphState, { busy: true, error: "", notice: "" });
       renderParagraphAnalysisPage();
@@ -6439,6 +6602,22 @@
       const results = document.getElementById("paLibraryResults");
       if (results) { results.innerHTML = paragraphLibraryCardsHtml(); bindParagraphOpenButtons(); }
     }
+    function paragraphImportIcon(kind) {
+      const paths = { file: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/><path d="M14 3v6h6M8 14h8M8 17h5"/>', text: '<path d="M5 5h14M12 5v14M8 19h8"/>', upload: '<path d="M12 16V4m-5 5 5-5 5 5M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>', info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7h.01"/>' };
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + paths[kind] + '</svg>';
+    }
+    function setParagraphImportMode(mode) {
+      if (mode !== "file" && mode !== "text") return;
+      paragraphState.importMode = mode;
+      document.querySelectorAll("[data-pa-import-mode]").forEach(button => {
+        const selected = button.dataset.paImportMode === mode;
+        button.setAttribute("aria-selected", String(selected)); button.tabIndex = selected ? 0 : -1;
+      });
+      for (const key of ["file", "text"]) {
+        const panel = document.getElementById("pa-" + key + "-panel");
+        if (panel) panel.hidden = key !== mode;
+      }
+    }
     function renderParagraphAnalysisPage() {
       document.querySelector(".important-structure-selection")?.remove();
       if (activeView !== "paragraph-analysis") return;
@@ -6447,10 +6626,41 @@
       const state = paragraphState, { busy, loading } = state;
       setParagraphFocusMode(paragraphFocusMode);
       const entry = state.entries.find(item => item.external_id === state.activeId);
-      const intro = `<header class="pa-toolbar"><div><div class="pa-eyebrow">Paragraf Analizi</div><h2 class="text-2xl font-black">Paragraf Analizi</h2><p>Metinlerini aç, 10 soruyu çöz, istediğin zaman kaldığın yerden devam et.</p></div>${paragraphButton("paNew", state.adding ? "Ekleme Alanını Kapat" : "Yeni Metin Ekle", busy || loading, true)}</header><div aria-live="polite">${loading ? "<p>Çalışmalar açılıyor…</p>" : busy ? "<p>Kaydediliyor…</p>" : state.notice ? `<p>${escapeHtml(state.notice)}</p>` : ""}${state.error ? `<p class="pa-error" role="alert">${escapeHtml(state.error)}</p>` : ""}</div>`;
+      const intro = `<header class="pa-toolbar"><div><div class="pa-eyebrow">Paragraf Analizi</div><h2 class="text-2xl font-black">${state.adding ? "Yeni bir parça ekle" : "Paragraf Analizi"}</h2><p>${state.adding ? "Okuma parçanı ve sorularını ekle, çalışmaya başla." : "Önce 5 True / False, sonra 5 çoktan seçmeli soru çöz. Kaldığın yerden devam et."}</p></div>${paragraphButton("paNew", state.adding ? "Listeye dön" : "Yeni Metin Ekle", busy || loading, !state.adding)}</header><div aria-live="polite">${loading ? "<p>Çalışmalar açılıyor…</p>" : busy ? "<p>Kaydediliyor…</p>" : state.notice ? `<p>${escapeHtml(state.notice)}</p>` : ""}${state.error ? `<p class="pa-error" role="alert">${escapeHtml(state.error)}</p>` : ""}</div>`;
       let body = "";
       if (state.adding) {
-        body = `<section class="pa-card"><h3>Metin ve Soruları Ekle</h3><p>JSON / TXT dosyanı seç veya içeriğini aşağıya yapıştır. Metin ve 10 soru birlikte açılır.</p><p>Cevap anahtarı içeren JSON dosyaları da desteklenir. Sonuçlar çalışma tamamlanınca açılır.</p><input id="paFile" type="file" accept=".json,.txt,.md,application/json,text/plain" hidden><div class="pa-actions">${paragraphButton("paChooseFile", "JSON / TXT Dosyası Seç", busy || loading)}</div><label for="paImportText" style="display:block;margin-top:16px">Metin ve 10 soru</label><textarea id="paImportText" class="pa-import-text" rows="12" placeholder="ChatGPT'den aldığın JSON veya metni buraya yapıştır…"${busy ? " disabled" : ""}>${escapeHtml(state.draft)}</textarea><div class="pa-actions">${paragraphButton("paImport", "Ekle ve Aç", busy || loading || !state.draft.trim(), true)}${paragraphButton("paCancel", "İptal", busy)}</div><details style="margin-top:18px"><summary>TXT biçim örneği</summary><p>Başlık, METİN ve SORULAR bölümlerini kullanabilirsin. Her soruda A–E seçenekleri olmalı.</p><pre class="pa-template">${escapeHtml(paragraphTools.template)}</pre></details></section>`;
+        const fileMode = state.importMode !== "text";
+        body = `<div class="pa-import-layout">
+          <section class="pa-import-card">
+            <h3>Çalışmanı içe aktar</h3><p>Sana uygun yöntemi seç.</p>
+            <div class="pa-import-tabs" role="tablist" aria-label="İçerik ekleme yöntemi">
+              <button id="pa-file-tab" type="button" role="tab" data-pa-import-mode="file" aria-controls="pa-file-panel" aria-selected="${fileMode}" tabindex="${fileMode ? 0 : -1}">${paragraphImportIcon("file")}Dosya yükle</button>
+              <button id="pa-text-tab" type="button" role="tab" data-pa-import-mode="text" aria-controls="pa-text-panel" aria-selected="${!fileMode}" tabindex="${fileMode ? -1 : 0}">${paragraphImportIcon("text")}Metin yapıştır</button>
+            </div>
+            <section id="pa-file-panel" role="tabpanel" aria-labelledby="pa-file-tab"${fileMode ? "" : " hidden"}>
+              <input id="paFile" type="file" accept=".json,.txt,.md,application/json,text/plain" hidden>
+              <button id="paChooseFile" type="button" class="pa-upload-zone"${busy || loading ? " disabled" : ""}>
+                <span class="pa-upload-icon">${paragraphImportIcon("upload")}</span><strong>Dosyanı buraya bırak</strong>
+                <span>veya <b class="pa-upload-link">dosya seçmek için tıkla</b></span>
+                <span class="pa-import-types"><span>JSON</span><span>TXT</span><span>MD</span></span>
+              </button>
+              <div class="pa-import-file-hint"><span>En fazla 1 MB</span><span>Seçince çalışma açılır.</span></div>
+            </section>
+            <section id="pa-text-panel" role="tabpanel" aria-labelledby="pa-text-tab"${fileMode ? " hidden" : ""}>
+              <label class="pa-import-text-label" for="paImportText">Metin ve 10 soru</label>
+              <textarea id="paImportText" class="pa-import-textarea" rows="9" placeholder="JSON veya TXT içeriğini buraya yapıştır…"${busy ? " disabled" : ""}>${escapeHtml(state.draft)}</textarea>
+              <div class="pa-import-text-footer"><span id="paImportCount" class="pa-import-count">${state.draft.length.toLocaleString("tr-TR")} karakter</span>${paragraphButton("paImport", "Ekle ve Aç", busy || loading || !state.draft.trim(), true)}</div>
+            </section>
+            <div class="pa-import-compatibility">Eski 10 soruluk dosyaların da desteklenir.</div>
+          </section>
+          <aside class="pa-import-guide" aria-label="Çalışma düzeni">
+            <h3>Bir parça, iki aşama</h3>
+            <div class="pa-import-step"><span>5</span><div><strong>True / False</strong><p>Önce metni anla.</p></div></div>
+            <div class="pa-import-step"><span>5</span><div><strong>Çoktan seçmeli</strong><p>Yorumla ve pekiştir.</p></div></div>
+            <div class="pa-import-note">${paragraphImportIcon("info")}Cevap anahtarı varsa sonuç ve analiz, çalışma bitince açılır.</div>
+            <details class="pa-import-example"><summary>TXT biçim örneği</summary><pre>${escapeHtml(paragraphTools.template)}</pre></details>
+          </aside>
+        </div>`;
       } else if (entry) {
         const { content, progress } = entry;
         const index = progress.currentQuestion, question = content.questions[index - 1];
@@ -6458,17 +6668,32 @@
         const outcome = paragraphTools.result(entry), analysis = outcome?.questions.find(item => item.number === index);
         const toolButton = (id, text, extra = "") => `<button type="button" id="${id}" class="article-toolbar-btn flex h-10 items-center justify-center rounded-xl px-3 text-xs font-black"${extra}>${text}</button>`;
         const savedCount = paragraphWords(entry).length + importantStructureNotes(paragraphContext(entry)).length;
-        body = `<header id="paragraphReaderToolbar" class="article-reader-toolbar pa-reader-toolbar" aria-label="Paragraf okuma araçları"><div class="article-toolbar-toprow">${toolButton("paBack", "← <span class=\"ml-1\">Listeye dön</span>", busy ? " disabled" : "")}<div class="article-reader-actions">${toolButton("paCollections", "Kelime ve Yapılar" + (savedCount ? " (" + savedCount + ")" : ""))}${TextSizeControls("paragraph")}<details id="paReaderMenu" class="pa-card-menu pa-reader-menu"><summary class="article-icon-btn flex h-10 w-10 items-center justify-center rounded-xl text-xl font-black" aria-label="Diğer işlemler" title="Diğer işlemler">⋯</summary><div class="pa-menu-panel pa-reader-menu-panel" role="menu">${paragraphButton("paAddStructure", "+ Yapı Ekle")}${paragraphButton("paAddNote", "Not Ekle")}${paragraphButton("paNotes", "Notlar (" + paragraphNotes(entry).length + ")")}${paragraphButton("paNew", "Yeni Metin Ekle", busy)}</div></details>${toolButton("paFocus", paragraphFocusMode ? "Odaktan Çık" : "Odak Modu", ' aria-pressed="' + paragraphFocusMode + '"')}</div></div><div class="pa-reader-progress"><span>${answered}/10 yanıtlandı</span><progress class="pa-progress" value="${answered}" max="10" aria-label="${answered}/10 yanıtlandı"></progress></div></header>${paragraphCompletionHtml(entry, outcome)}<div class="pa-workspace"><section class="pa-card pa-passage-card"><h3 class="pa-passage-title" lang="en" title="${escapeHtml(content.topic)}">${escapeHtml(content.topic)}</h3><div class="pa-passage article-body" data-paragraph-region="passage" data-study-content lang="en" style="--study-content-font-size:${studyContentFontSize}px">${paragraphTextHtml(entry)}</div></section><section class="pa-card"><nav class="pa-question-nav" aria-label="Paragraf soruları">${content.questions.map(item => `<button type="button" class="pa-btn${progress.answers[item.number] ? " pa-answered" : ""}${outcome ? outcome.questions.find(answer => answer.number === item.number)?.correct ? " pa-q-correct" : " pa-q-wrong" : ""}" data-paragraph-number="${item.number}" aria-label="Soru ${item.number}${progress.answers[item.number] ? ", yanıtlandı" : ""}"${index === item.number ? ' aria-current="step"' : ""}${busy ? " disabled" : ""}>${item.number}</button>`).join("")}</nav><p>Soru ${index}/10</p><fieldset class="pa-options" lang="en"><legend><span data-paragraph-region="question:${index}:stem">${paragraphTextHtml(entry, "question:" + index + ":stem")}</span></legend>${["A", "B", "C", "D", "E"].map(key => `<label data-paragraph-eliminate="${key}" title="${progress.answers[index] === key ? "Seçili şık elenemez" : progress.eliminatedOptions?.[index]?.includes(key) ? "Sağ tık: elemeyi kaldır" : "Sağ tık: şıkkı ele"}" class="pa-option${progress.eliminatedOptions?.[index]?.includes(key) ? " is-eliminated" : ""}${progress.answers[index] === key ? " pa-option-selected" : ""}${analysis?.correct_option === key ? " pa-option-correct" : analysis && progress.answers[index] === key ? " pa-option-wrong" : ""}"><input type="radio" name="paragraph-answer" value="${key}" aria-label="${key} seçeneği${progress.eliminatedOptions?.[index]?.includes(key) ? ", elendi" : ""}" data-paragraph-option="${key}"${busy || progress.completedAt || progress.eliminatedOptions?.[index]?.includes(key) ? " disabled" : ""}${progress.answers[index] === key ? " checked" : ""}><strong>${key}</strong><span><span data-paragraph-region="question:${index}:${key}">${paragraphTextHtml(entry, "question:" + index + ":" + key)}</span>${analysis && (analysis.correct_option === key || progress.answers[index] === key) ? `<small class="pa-option-note">${analysis.correct_option === key ? "Doğru cevap" : "İşaretlediğin cevap"}</small>` : ""}</span></label>`).join("")}</fieldset><div class="pa-actions">${paragraphButton("paPrev", "Önceki", busy || index === 1)}${paragraphButton("paNext", "Sonraki", busy || index === 10)}</div>${!progress.completedAt ? `<p>Yanıtların otomatik kaydedilir.</p>${paragraphButton("paSubmit", "Çalışmayı Tamamla", busy || answered !== 10, true)}` : ""}${paragraphQuestionAnalysisHtml(analysis)}</section></div>${importantStructuresPanelHtml(paragraphContext(entry))}`;
+        body = `<header id="paragraphReaderToolbar" class="article-reader-toolbar pa-reader-toolbar" aria-label="Paragraf okuma araçları"><div class="article-toolbar-toprow">${toolButton("paBack", "← <span class=\"ml-1\">Listeye dön</span>", busy ? " disabled" : "")}<div class="article-reader-actions">${toolButton("paCollections", "Kelime ve Yapılar" + (savedCount ? " (" + savedCount + ")" : ""))}${TextSizeControls("paragraph")}<details id="paReaderMenu" class="pa-card-menu pa-reader-menu"><summary class="article-icon-btn flex h-10 w-10 items-center justify-center rounded-xl text-xl font-black" aria-label="Diğer işlemler" title="Diğer işlemler">⋯</summary><div class="pa-menu-panel pa-reader-menu-panel" role="menu">${paragraphButton("paAddStructure", "+ Yapı Ekle")}${paragraphButton("paAddNote", "Not Ekle")}${paragraphButton("paNotes", "Notlar (" + paragraphNotes(entry).length + ")")}${paragraphButton("paNew", "Yeni Metin Ekle", busy)}</div></details>${toolButton("paFocus", paragraphFocusMode ? "Odaktan Çık" : "Odak Modu", ' aria-pressed="' + paragraphFocusMode + '"')}</div></div><div class="pa-reader-progress"><span>${answered}/10 yanıtlandı</span><progress class="pa-progress" value="${answered}" max="10" aria-label="${answered}/10 yanıtlandı"></progress></div></header>${paragraphCompletionHtml(entry, outcome)}<div class="pa-workspace"><section class="pa-card pa-passage-card"><h3 class="pa-passage-title" lang="en" title="${escapeHtml(content.topic)}">${escapeHtml(content.topic)}</h3><div class="pa-passage article-body" data-paragraph-region="passage" data-study-content lang="en" style="--study-content-font-size:${studyContentFontSize}px">${paragraphTextHtml(entry)}</div></section><section class="pa-card"><p>${escapeHtml(paragraphTools.formatLabel(content))}</p><nav class="pa-question-nav" aria-label="Paragraf soruları">${content.questions.map(item => `<button type="button" class="pa-btn${progress.answers[item.number] ? " pa-answered" : ""}${outcome ? outcome.questions.find(answer => answer.number === item.number)?.correct ? " pa-q-correct" : " pa-q-wrong" : ""}" data-paragraph-number="${item.number}" aria-label="Soru ${item.number}${progress.answers[item.number] ? ", yanıtlandı" : ""}"${index === item.number ? ' aria-current="step"' : ""}${busy ? " disabled" : ""}>${item.number}</button>`).join("")}</nav><p>Soru ${index}/10 · ${question.type === "true_false" ? "True / False" : "Çoktan seçmeli"}</p><fieldset class="pa-options" lang="en"><legend><span data-paragraph-region="question:${index}:stem">${paragraphTextHtml(entry, "question:" + index + ":stem")}</span></legend>${paragraphTools.optionKeys(question).map(key => `<label data-paragraph-eliminate="${key}" title="${progress.answers[index] === key ? "Seçili şık elenemez" : progress.eliminatedOptions?.[index]?.includes(key) ? "Sağ tık: elemeyi kaldır" : "Sağ tık: şıkkı ele"}" class="pa-option${progress.eliminatedOptions?.[index]?.includes(key) ? " is-eliminated" : ""}${progress.answers[index] === key ? " pa-option-selected" : ""}${analysis?.correct_option === key ? " pa-option-correct" : analysis && progress.answers[index] === key ? " pa-option-wrong" : ""}"><input type="radio" name="paragraph-answer" value="${key}" aria-label="${paragraphTools.optionLabel(key)} seçeneği${progress.eliminatedOptions?.[index]?.includes(key) ? ", elendi" : ""}" data-paragraph-option="${key}"${busy || progress.eliminatedOptions?.[index]?.includes(key) ? " disabled" : ""}${progress.answers[index] === key ? " checked" : ""}><strong>${key}</strong><span><span data-paragraph-region="question:${index}:${key}">${paragraphTextHtml(entry, "question:" + index + ":" + key)}</span>${analysis && (analysis.correct_option === key || progress.answers[index] === key) ? `<small class="pa-option-note">${analysis.correct_option === key ? "Doğru cevap" : "İşaretlediğin cevap"}</small>` : ""}</span></label>`).join("")}</fieldset><div class="pa-actions">${paragraphButton("paPrev", "Önceki", busy || index === 1)}${paragraphButton("paNext", "Sonraki", busy || index === 10)}</div>${!progress.completedAt ? `<p>Yanıtların otomatik kaydedilir.</p>${paragraphButton("paSubmit", "Çalışmayı Tamamla", busy || answered !== 10, true)}` : "<p>Cevaplarını değiştirebilirsin. Değişiklikler otomatik kaydedilir.</p>"}${paragraphQuestionAnalysisHtml(analysis)}</section></div>${importantStructuresPanelHtml(paragraphContext(entry))}`;
       } else {
         body = `<div class="pa-summary" aria-label="Paragraf Analizi özeti"><span class="pa-badge">${state.entries.length} çalışma</span><span class="pa-badge pa-summary-done">● ${state.entries.filter(item => paragraphEntryStatus(item) === "completed").length} tamamlandı</span><span class="pa-badge pa-summary-active">● ${state.entries.filter(item => paragraphEntryStatus(item) === "active").length} devam ediyor</span></div><div class="pa-filters"><input id="paSearch" aria-label="Metin ara" placeholder="Metin ara" value="${escapeHtml(state.query)}"><select id="paStatus" aria-label="Çalışma durumu"><option value="all">Çalışma durumu</option><option value="new">Yeni</option><option value="active">Devam ediyor</option><option value="completed">Tamamlandı</option></select><select id="paSort" aria-label="Sıralama"><option value="recent">Son eklenen</option><option value="az">Başlık A–Z</option><option value="studied">Son çalışılan</option></select></div><div id="paLibraryResults">${paragraphLibraryCardsHtml()}</div>`;
       }
       const messages = entry && !state.adding ? `<div class="${state.error ? "pa-reader-error" : "sr-only"}" aria-live="polite">${state.error ? `<p class="pa-error" role="alert">${escapeHtml(state.error)}</p>` : busy ? "Kaydediliyor…" : escapeHtml(state.notice)}</div>` : intro.slice(intro.indexOf('<div aria-live="polite">'));
-      appArea.innerHTML = `<div class="pa-page${entry && !state.adding ? " pa-reader-page" : ""}">${!state.adding && !entry ? `<section class="pa-card pa-library-shell">${intro}${body}</section>` : entry && !state.adding ? body.replace("</header>", "</header>" + messages) : intro + body}</div>`;
+      appArea.innerHTML = `<div class="pa-page${entry && !state.adding ? " pa-reader-page" : state.adding ? " pa-import-page" : ""}">${!state.adding && !entry ? `<section class="pa-card pa-library-shell">${intro}${body}</section>` : entry && !state.adding ? body.replace("</header>", "</header>" + messages) : intro + body}</div>`;
       const newButton = document.getElementById("paNew");
       if (newButton) newButton.onclick = () => { setParagraphFocusMode(false); Object.assign(state, { adding: !state.adding, activeId: null, error: "", notice: "" }); renderParagraphAnalysisPage(); };
-      document.getElementById("paChooseFile")?.addEventListener("click", () => document.getElementById("paFile").click());
-      document.getElementById("paFile")?.addEventListener("change", event => void importParagraphFile(event.target.files?.[0]));
-      document.getElementById("paImportText")?.addEventListener("input", event => { state.draft = event.target.value; document.getElementById("paImport").disabled = busy || !state.draft.trim(); });
+      document.querySelectorAll("[data-pa-import-mode]").forEach(button => {
+        button.onclick = () => setParagraphImportMode(button.dataset.paImportMode);
+        button.onkeydown = event => {
+          if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+          event.preventDefault();
+          const mode = event.key === "Home" ? "file" : event.key === "End" ? "text" : button.dataset.paImportMode === "file" ? "text" : "file";
+          setParagraphImportMode(mode); document.getElementById("pa-" + mode + "-tab").focus();
+        };
+      });
+      const uploadZone = document.getElementById("paChooseFile");
+      if (uploadZone) {
+        uploadZone.onclick = () => document.getElementById("paFile").click();
+        uploadZone.ondragover = event => { event.preventDefault(); if (!busy && !loading) uploadZone.classList.add("is-dragging"); };
+        uploadZone.ondragleave = () => uploadZone.classList.remove("is-dragging");
+        uploadZone.ondrop = event => { event.preventDefault(); uploadZone.classList.remove("is-dragging"); if (!busy && !loading) void importParagraphFile(event.dataTransfer.files[0]); };
+      }
+      document.getElementById("paFile")?.addEventListener("change", event => { const file = event.target.files?.[0]; event.target.value = ""; void importParagraphFile(file); });
+      document.getElementById("paImportText")?.addEventListener("input", event => { state.draft = event.target.value; document.getElementById("paImportCount").textContent = state.draft.length.toLocaleString("tr-TR") + " karakter"; document.getElementById("paImport").disabled = busy || !state.draft.trim(); });
       document.getElementById("paImport")?.addEventListener("click", () => void importParagraphText(state.draft));
       const back = () => { setParagraphFocusMode(false); Object.assign(state, { adding: false, activeId: null, error: "", notice: "" }); renderParagraphAnalysisPage(); };
       document.getElementById("paBack")?.addEventListener("click", back);
@@ -6489,6 +6714,7 @@
     }
 
     function setView(view) {
+      if (view !== "home") setDailyWrongFullscreen(false);
       if (activeView === "paragraph-analysis" && view !== "paragraph-analysis") resetParagraphState();
       activeView = view;
       if (view !== "paragraph-analysis") setParagraphFocusMode(false);
@@ -6910,6 +7136,36 @@
       '</section>';
     }
 
+    function setDailyWrongFullscreen(enabled) {
+      const wasEnabled = document.body.classList.contains("daily-wrong-fullscreen");
+      document.body.classList.toggle("daily-wrong-fullscreen", Boolean(enabled));
+      const button = document.getElementById("dailyWrongFullscreenBtn");
+      if (button) {
+        button.textContent = enabled ? "Tam Ekrandan Çık" : "Tam Ekran";
+        button.setAttribute("aria-pressed", String(Boolean(enabled)));
+      }
+      if (!enabled && wasEnabled && document.fullscreenElement === document.documentElement) {
+        void document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    async function toggleDailyWrongFullscreen() {
+      const enabled = !document.body.classList.contains("daily-wrong-fullscreen");
+      setDailyWrongFullscreen(enabled);
+      if (enabled && !document.fullscreenElement && document.documentElement.requestFullscreen) {
+        try { await document.documentElement.requestFullscreen(); }
+        catch { /* The viewport layout also works when native fullscreen is unavailable. */ }
+      }
+    }
+
+    function handleDailyWrongFullscreenChange() {
+      if (!document.fullscreenElement) setDailyWrongFullscreen(false);
+    }
+
+    function handleDailyWrongFullscreenKeydown(event) {
+      if (event.key === "Escape" && !document.fullscreenElement && !document.querySelector('#wordModal:not(.hidden), .important-structure-modal, #noteDrawerOverlay')) setDailyWrongFullscreen(false);
+    }
+
     function renderDailyWrongReviewPanel() {
       const record = ensureDailyWrongReviewRecord();
       const summary = dailyWrongReviewSummary(record);
@@ -6922,7 +7178,8 @@
           : "Geçmişte yanlış cevapladığın sorulardan bugüne seçilenler.";
       const heading = '<div class="daily-wrong-review-header flex items-start justify-between gap-2">' +
         '<div class="min-w-0"><p class="text-xs font-black uppercase tracking-wide text-blue-500">Günün 10 Yanlışı</p><p class="mt-1 text-sm font-semibold text-slate-500">' + escapeHtml(subtitle) + '</p></div>' +
-        '<span class="daily-wrong-review-progress shrink-0 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">' + progressLabel + '</span>' +
+        '<div class="daily-wrong-review-controls shrink-0"><span class="daily-wrong-review-progress rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">' + progressLabel + '</span>' +
+        '<button id="dailyWrongFullscreenBtn" type="button" aria-pressed="false" class="rounded-xl border border-blue-200 bg-white px-3 py-2 text-sm font-black text-blue-700 hover:bg-blue-50">Tam Ekran</button></div>' +
       '</div>';
 
       if (!summary.total) {
@@ -7011,6 +7268,8 @@
     }
 
     function bindDailyWrongReviewPanel() {
+      setDailyWrongFullscreen(document.body.classList.contains("daily-wrong-fullscreen"));
+      document.getElementById("dailyWrongFullscreenBtn")?.addEventListener("click", () => void toggleDailyWrongFullscreen());
       document.getElementById("dailyWrongOpenPoolBtn")?.addEventListener("click", () => setView("wrong"));
       document.getElementById("dailyWrongReviewAgainBtn")?.addEventListener("click", () => {
         updateDailyWrongReviewRecord({ currentIndex: 0, showSummary: false });
